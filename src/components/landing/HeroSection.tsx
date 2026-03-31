@@ -5,134 +5,72 @@ import { Button } from "@/components/ui/button";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-      {/* Background decorations */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-20 right-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl animate-pulse-glow" />
-        <div className="absolute bottom-20 left-10 w-96 h-96 bg-secondary/5 rounded-full blur-3xl animate-pulse-glow" style={{ animationDelay: "1.5s" }} />
-      </div>
+    <section className="relative min-h-[60vh] md:min-h-[75vh] lg:min-h-[85vh] flex flex-col justify-center pt-28 pb-16 md:pt-16 md:pb-12 overflow-hidden bg-background">
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/15 rounded-full blur-[120px] -z-10 pointer-events-none animate-pulse" style={{ animationDuration: '4s' }} />
+      <div className="absolute bottom-0 left-[-200px] w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[120px] -z-10 pointer-events-none animate-pulse" style={{ animationDuration: '7s' }} />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] -z-10" />
+      
+      {/* Floating Abstract Element */}
+      <motion.div
+        animate={{ y: [0, -20, 0], rotate: [0, 2, 0] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        className="hidden lg:flex absolute right-[5%] top-[20%] w-[320px] h-[340px] rounded-3xl border border-border/50 bg-card/40 glass p-6 shadow-2xl flex-col justify-between pointer-events-none z-0"
+      >
+        <div className="flex justify-between items-start">
+          <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center border border-primary/20">
+            <div className="w-5 h-5 rounded-md bg-primary/80" />
+          </div>
+          <div className="px-3 py-1 rounded-full bg-secondary/10 text-secondary text-[10px] font-bold tracking-widest uppercase border border-secondary/20">
+            Platform Match
+          </div>
+        </div>
+        <div className="space-y-4">
+          <div className="h-2 w-full bg-muted-foreground/20 rounded-full" />
+          <div className="h-2 w-4/5 bg-primary/40 rounded-full" />
+          <div className="h-2 w-2/3 bg-muted-foreground/20 rounded-full" />
+          <div className="h-2 w-5/6 bg-secondary/40 rounded-full" />
+        </div>
+        <div className="pt-5 border-t border-border/50 flex items-center justify-between">
+          <div className="flex -space-x-3">
+            <div className="w-10 h-10 rounded-full border-2 border-background bg-primary/30" />
+            <div className="w-10 h-10 rounded-full border-2 border-background bg-secondary/30" />
+            <div className="w-10 h-10 rounded-full border-2 border-background bg-muted" />
+          </div>
+          <div className="text-xs font-mono font-bold text-foreground">Active Now</div>
+        </div>
+      </motion.div>
 
-      <div className="container grid lg:grid-cols-2 gap-12 items-center">
+      <div className="container relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="space-y-8"
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-4xl space-y-8"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-accent-foreground text-sm font-medium">
-            🌍 Empowering Global Talent
+          <div className="font-mono text-xs md:text-sm font-semibold tracking-widest text-secondary uppercase">
+            Global Talent Platform
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
-            Freelancing with{" "}
-            <span className="text-primary">heart</span> and{" "}
-            <span className="text-secondary">skill.</span>
+          <h1 className="text-5xl md:text-7xl lg:text-[7rem] font-bold leading-[1.05] tracking-tight text-foreground select-none">
+            Freelancing with<br className="hidden md:block" />
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary"> heart and skill.</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-muted-foreground max-w-lg leading-relaxed">
-            Empowering global talent through world-class AI education, premium remote work, and international study opportunities.
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed font-medium pt-2">
+            Star9 Freelancer Ltd. gives you the tools to succeed. Master AI and freelancing skills at our Academy, or connect to remote jobs and international study opportunities via Star9 Global.
           </p>
 
-          <div className="flex flex-wrap gap-4">
-            <Button variant="hero" size="lg" asChild>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6 pt-8 z-10 relative">
+            <Button size="lg" className="w-full sm:w-auto rounded-md px-8 py-6 bg-primary hover:bg-primary/90 text-primary-foreground font-mono font-bold tracking-widest uppercase text-sm group transition-all hover:shadow-lg hover:shadow-primary/20" asChild>
               <Link to="/academy" className="gap-2">
-                Explore the Academy <ArrowRight className="!size-4" />
+                Start Free <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
-            <Button variant="hero-secondary" size="lg" asChild>
-              <Link to="/global" className="gap-2">
-                Discover Opportunities <ArrowRight className="!size-4" />
+            <Button variant="ghost" size="lg" className="w-full sm:w-auto rounded-md px-6 py-6 text-muted-foreground hover:text-foreground font-mono font-bold tracking-widest uppercase text-sm group" asChild>
+              <Link to="/global" className="gap-2 flex items-center justify-center">
+                Dashboard <ArrowRight className="size-4 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-secondary" />
               </Link>
             </Button>
-          </div>
-
-          {/* Quick stats */}
-          <div className="flex flex-wrap gap-8 pt-4">
-            <div>
-              <p className="text-2xl font-bold text-primary">2,500+</p>
-              <p className="text-sm text-muted-foreground">Active Learners</p>
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-secondary">150+</p>
-              <p className="text-sm text-muted-foreground">Remote Jobs Posted</p>
-            </div>
-            <div>
-              <p className="text-2xl font-bold">30+</p>
-              <p className="text-sm text-muted-foreground">Countries Reached</p>
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          className="hidden lg:flex justify-end pt-10"
-        >
-          <div className="relative w-full max-w-lg">
-            {/* The main glowing dashboard card */}
-            <div className="relative animate-float z-20">
-              <div className="w-[450px] rounded-2xl bg-card border border-primary/20 shadow-2xl overflow-hidden glass">
-                <div className="h-10 border-b flex items-center px-4 gap-2 bg-muted/50">
-                  <div className="w-3 h-3 rounded-full bg-destructive/80" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-400/80" />
-                  <div className="w-3 h-3 rounded-full bg-green-500/80" />
-                  <div className="ml-4 h-4 w-32 bg-background rounded-full border" />
-                </div>
-                <div className="p-6 grid grid-cols-3 gap-4 bg-gradient-to-br from-card to-muted/20">
-                  <div className="col-span-1 space-y-4">
-                    <div className="h-2 w-16 bg-muted-foreground/20 rounded-full" />
-                    <div className="h-10 w-full bg-primary/10 rounded-lg border border-primary/20 flex items-center px-3 gap-2">
-                       <div className="w-6 h-6 rounded-md bg-primary/20" />
-                       <div className="h-2 w-12 bg-primary/40 rounded-full" />
-                    </div>
-                    <div className="h-8 w-full bg-muted rounded-lg" />
-                    <div className="h-8 w-full bg-muted rounded-lg" />
-                  </div>
-                  <div className="col-span-2 space-y-4">
-                    <div className="flex justify-between items-end">
-                      <div>
-                        <div className="h-2 w-20 bg-muted-foreground/30 rounded-full mb-2" />
-                        <div className="h-5 w-32 bg-foreground/80 rounded-full" />
-                      </div>
-                      <div className="h-8 w-24 bg-secondary/20 rounded-full border border-secondary/30" />
-                    </div>
-                    <div className="h-32 w-full bg-accent/30 rounded-xl border border-accent flex items-end p-4">
-                       <div className="w-full flex justify-between items-end gap-2 h-20">
-                          {[40, 70, 45, 90, 65, 80, 50].map((h, i) => (
-                            <div key={i} className="w-full bg-primary/40 rounded-t-sm" style={{ height: `${h}%` }} />
-                          ))}
-                       </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Decorative floating elements */}
-              <motion.div 
-                animate={{ y: [0, -15, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -top-10 -right-10 w-32 p-4 rounded-xl bg-card border shadow-xl flex items-center gap-3 glass"
-              >
-                <div className="w-8 h-8 rounded-full bg-secondary/20 text-secondary flex items-center justify-center font-bold">✓</div>
-                <div>
-                  <div className="h-2 w-10 bg-muted-foreground/40 rounded-full mb-1" />
-                  <div className="h-3 w-16 bg-foreground/80 rounded-full" />
-                </div>
-              </motion.div>
-
-              <motion.div 
-                animate={{ y: [0, 15, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute -bottom-8 -left-12 w-40 p-4 rounded-xl bg-card border shadow-xl flex items-center gap-3 glass"
-              >
-                <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-primary-foreground text-xl">🚀</div>
-                <div>
-                  <div className="h-2 w-12 bg-muted-foreground/40 rounded-full mb-1" />
-                  <div className="h-3 w-20 bg-foreground/80 rounded-full" />
-                </div>
-              </motion.div>
-            </div>
           </div>
         </motion.div>
       </div>

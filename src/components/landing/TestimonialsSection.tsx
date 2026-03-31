@@ -4,28 +4,27 @@ import { Star } from "lucide-react";
 const testimonials = [
   {
     name: "Sarah Jenkins",
-    role: "Freelance Copywriter",
+    role: "Operations Manager",
     avatar: "S",
-    text: "Star9 changed my life. Between the prompt engineering course and the community gigs, my monthly income tripled within 6 months. Best investment ever.",
+    text: "The structured curriculum and access to curated opportunities allowed me to transition into a full-time remote role within six months.",
   },
   {
     name: "Kwame Osei",
-    role: "Data Science Student",
+    role: "Computer Science Scholar",
     avatar: "K",
-    text: "The global study platform helped me find a fully-funded master's degree in Germany. The vetting process made me feel secure through every step.",
+    text: "The platform's global resources provided invaluable guidance in securing my admission and managing the visa process for a top-tier European university.",
   },
   {
     name: "Elena Rodriguez",
-    role: "UI/UX Designer",
+    role: "Senior Product Designer",
     avatar: "E",
-    text: "I love the unified platform. Watching courses on one tab and applying for remote design roles on the other is a seamless workflow. Highly recommended!",
+    text: "Having educational resources, active community feedback, and direct job applications consolidated into a single unified workspace significantly streamlined my career transition.",
   }
 ];
 
 const TestimonialsSection = () => {
   return (
-    <section id="testimonials" className="py-24 overflow-hidden relative">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[100px] -z-10" />
+    <section id="testimonials" className="py-24 overflow-hidden relative bg-muted/10">
       
       <div className="container max-w-6xl">
         <motion.div 
@@ -34,9 +33,9 @@ const TestimonialsSection = () => {
           viewport={{ once: true }}
           className="text-center mb-16 space-y-4"
         >
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Loved by talent globally</h2>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Trusted by Professionals</h2>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-            Don't just take our word for it. Here is what our community members are saying about their journey.
+            Our members successfully leverage Star9 to advance their careers and academic pursuits on a global scale.
           </p>
         </motion.div>
 

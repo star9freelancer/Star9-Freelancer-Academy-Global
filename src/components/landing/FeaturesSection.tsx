@@ -4,18 +4,18 @@ import { Zap, Shield, Globe2, BookOpen, Users, TrendingUp } from "lucide-react";
 const features = [
   {
     icon: BookOpen,
-    title: "AI-Powered Curriculum",
-    description: "Learn cutting-edge skills like Prompt Engineering and AI workflows, updated weekly."
+    title: "Industry-Standard Curriculum",
+    description: "Access specialized digital skills training and structured pathways updated to meet modern market demands."
   },
   {
     icon: Globe2,
     title: "Global Reach",
-    description: "Access remote jobs and university programs across 30+ countries globally."
+    description: "Access remote jobs and international study programs across 30+ countries."
   },
   {
     icon: Shield,
     title: "Verified Opportunities",
-    description: "Every job and study program is manually vetted by our expert team for your safety."
+    description: "Every role and academic affiliation is manually vetted by our quality assurance team."
   },
   {
     icon: Users,
@@ -36,8 +36,10 @@ const features = [
 
 const FeaturesSection = () => {
   return (
-    <section id="features" className="py-24 bg-muted/30">
-      <div className="container max-w-6xl">
+    <section id="features" className="py-24 border-t border-border bg-card relative overflow-hidden">
+      <div className="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
+      <div className="absolute top-[60%] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-secondary/10 to-transparent" />
+      <div className="container relative z-10 max-w-6xl">
         <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
@@ -45,7 +47,7 @@ const FeaturesSection = () => {
             viewport={{ once: true }}
             className="text-3xl md:text-5xl font-bold tracking-tight"
           >
-            Everything you need to <span className="text-primary">succeed online.</span>
+            A Comprehensive <span className="text-primary">Ecosystem</span>
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -54,7 +56,7 @@ const FeaturesSection = () => {
             transition={{ delay: 0.1 }}
             className="text-lg text-muted-foreground"
           >
-            We provide the infrastructure for your freelance and academic journey, so you can focus on what matters most.
+            Providing the necessary infrastructure for your professional and academic advancement.
           </motion.p>
         </div>
 

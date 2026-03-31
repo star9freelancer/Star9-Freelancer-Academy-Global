@@ -2,14 +2,14 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ExternalLink, Moon, Sun, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/logo_transparent.png";
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [dark, setDark] = useState(() => {
     const stored = localStorage.getItem("star9-dark-mode");
     if (stored !== null) return stored === "true";
-    return document.documentElement.classList.contains("dark");
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -40,8 +40,8 @@ const Header = () => {
       }`}
     >
       <div className="container flex items-center justify-between h-16 md:h-18">
-        <Link to="/" className="flex items-center gap-2">
-          <img src={logo} alt="Star9 Freelancer" className="h-10 w-auto mix-blend-multiply dark:mix-blend-screen dark:invert" />
+        <Link to="/" className="flex items-center gap-2 z-50">
+          <img src={logo} alt="Star9" className="h-12 md:h-[56px] w-auto object-contain shrink-0" />
         </Link>
 
         {/* Desktop Nav */}

@@ -1,116 +1,99 @@
 import { motion } from "framer-motion";
-import { Check, Info } from "lucide-react";
+import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const tiers = [
   {
-    name: "Basic",
-    price: "Free",
-    description: "Perfect for beginners exploring opportunities.",
+    name: "$0",
+    description: "forever",
+    subtitle: "Everything you need to get started",
     features: [
-      "Access to community forum",
-      "View global jobs & programs",
-      "Basic AI templates",
-      "1 free course module per month"
+      "Access to community forums",
+      "5 job applications / month",
+      "Basic skill assessments",
+      "Profile creation",
+      "Weekly newsletter",
+      "No credit card required"
     ],
-    buttonText: "Get Started Free",
-    popular: false
+    buttonText: "START FREE — NO CARD NEEDED",
   },
   {
-    name: "Pro Freelancer",
-    price: "$29",
-    period: "/month",
-    description: "Everything you need to scale your income.",
+    name: "$5",
+    description: "/ month",
+    subtitle: "For power users who want no limits",
     features: [
-      "All Academy courses unlocked",
-      "Official Certificates",
-      "Apply to premium remote jobs",
-      "Direct client messaging",
-      "Resume & Portfolio reviews"
+      "Unlimited job applications",
+      "Premium course access",
+      "1-on-1 mentorship sessions",
+      "Priority study abroad",
+      "Resume feedback from experts",
+      "Exclusive networking events"
     ],
-    buttonText: "Upgrade to Pro",
-    popular: true
-  },
-  {
-    name: "Global Scholar",
-    price: "$49",
-    period: "/month",
-    description: "For serious students seeking abroad programs.",
-    features: [
-      "Everything in Pro",
-      "1-on-1 Visa consulting",
-      "University application assistance",
-      "Accommodation search support",
-      "Priority listing in talent pool"
-    ],
-    buttonText: "Become a Scholar",
-    popular: false
+    buttonText: "UPGRADE TO PRO",
+    highlighted: true,
   }
 ];
 
 const PricingSection = () => {
   return (
-    <section id="pricing" className="py-24">
-      <div className="container max-w-6xl">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16 space-y-4"
-        >
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Invest in your trajectory</h2>
-          <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-            Choose the plan that fits your career or educational goals. Transparent pricing, no hidden fees.
-          </p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {tiers.map((tier, idx) => (
+    <section id="pricing" className="py-24 overflow-hidden relative border-t border-border">
+      <div className="container max-w-5xl mx-auto px-4">
+        <div className="grid md:grid-cols-2">
+          {tiers.map((tier, i) => (
             <motion.div
-              key={idx}
+              key={tier.name}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              className={`relative bg-card rounded-3xl border p-8 flex flex-col ${
-                tier.popular ? "shadow-xl border-primary scale-105 z-10" : "shadow-sm"
-              }`}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              className={`p-10 md:p-14 ${i === 0 ? "border-b md:border-b-0 md:border-r border-border" : ""} bg-background`}
             >
-              {tier.popular && (
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider py-1 px-4 rounded-full">
-                  Most Popular
-                </div>
-              )}
-              
-              <div className="mb-6">
-                <h3 className="text-xl font-bold mb-2">{tier.name}</h3>
-                <p className="text-muted-foreground text-sm h-10">{tier.description}</p>
+              <div className="flex items-end gap-2 mb-2">
+                <h3 className="text-5xl font-bold tracking-tight text-foreground">{tier.name}</h3>
+                <span className="text-muted-foreground font-mono text-sm pb-1">{tier.description}</span>
               </div>
+              <p className="text-sm text-muted-foreground mb-10">{tier.subtitle}</p>
               
-              <div className="mb-8 flex items-baseline gap-1">
-                <span className="text-4xl font-extrabold">{tier.price}</span>
-                {tier.period && <span className="text-muted-foreground">{tier.period}</span>}
-              </div>
-
-              <div className="flex-1 space-y-4 mb-8">
-                {tier.features.map((feature, i) => (
-                  <div key={i} className="flex gap-3">
-                    <Check className="size-5 text-primary shrink-0" />
-                    <span className="text-sm font-medium">{feature}</span>
-                  </div>
+              <ul className="space-y-4 mb-12">
+                {tier.features.map((feature) => (
+                  <li key={feature} className="flex items-center gap-4 text-sm font-medium">
+                    <Check className="size-4 text-primary shrink-0" />
+                    <span>{feature}</span>
+                  </li>
                 ))}
-              </div>
-
+              </ul>
+              
               <Button 
-                variant={tier.popular ? "default" : "outline"} 
-                className={`w-full ${tier.popular ? "bg-primary text-primary-foreground hover:bg-primary/90" : ""}`}
-                size="lg"
+                className={`w-full py-6 font-mono font-bold tracking-widest text-xs uppercase rounded-md ${
+                  tier.highlighted 
+                    ? "bg-primary hover:bg-primary/90 text-primary-foreground border-none" 
+                    : "bg-transparent border border-border text-foreground hover:bg-muted"
+                }`}
+                variant={tier.highlighted ? "default" : "outline"}
               >
-                {tier.buttonText}
+                {tier.buttonText} →
               </Button>
             </motion.div>
           ))}
         </div>
+
+        {/* Payment Partners Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mt-16 pt-10 border-t border-border/50 text-center"
+        >
+          <p className="font-mono text-xs font-semibold tracking-widest text-muted-foreground uppercase mb-6">Trusted Global Payment Partners</p>
+          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-14 opacity-50 grayscale hover:grayscale-0 transition-all duration-300">
+            {/* Generic shapes as placeholders for partner logos */}
+            <div className="flex items-center gap-2 font-bold font-sans text-xl"><div className="w-6 h-6 rounded-full bg-foreground" /> Stripe</div>
+            <div className="flex items-center gap-2 font-bold font-sans text-xl"><div className="w-6 h-6 rotate-45 bg-foreground" /> PayPal</div>
+            <div className="flex items-center gap-2 font-bold font-sans text-xl"><div className="w-6 h-6 rounded bg-foreground" /> Visa</div>
+            <div className="flex items-center gap-2 font-bold font-sans text-xl"><div className="w-8 h-5 rounded-sm border-2 border-foreground" /> Mastercard</div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

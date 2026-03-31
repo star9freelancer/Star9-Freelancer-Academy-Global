@@ -1,25 +1,25 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Home, BookOpen, Users, Award, Settings, Menu, Bell, Search, Download, ThumbsUp, MessageSquare, ArrowRight, Play, Clock, TrendingUp } from "lucide-react";
+import { Home, BookOpen, Users, Award, Settings, Menu, Bell, Search, Download, ThumbsUp, MessageSquare, ArrowRight, Play, Clock, TrendingUp, Lock, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/logo_transparent.png";
 
 const courses = [
-  { id: 1, title: "AI Tools for Freelancers", progress: 72, modules: 12, completed: 8, category: "AI & Automation", nextLesson: "Using ChatGPT for Client Proposals" },
-  { id: 2, title: "Scaling Your Freelance Business", progress: 45, modules: 10, completed: 4, category: "Business", nextLesson: "Pricing Strategies That Work" },
-  { id: 3, title: "Advanced Prompt Engineering", progress: 20, modules: 8, completed: 1, category: "AI & Automation", nextLesson: "Chain-of-Thought Prompting" },
+  { id: 1, title: "AI Tools for Freelancers", progress: 72, modules: 12, completed: 8, category: "Artificial Intelligence", nextLesson: "Automating Client Onboarding" },
+  { id: 2, title: "Scaling Your Freelance Business", progress: 45, modules: 10, completed: 4, category: "Freelancing", nextLesson: "Enterprise Pricing" },
+  { id: 3, title: "Advanced Prompt Engineering", progress: 20, modules: 8, completed: 1, category: "Artificial Intelligence", nextLesson: "Context Optimization" },
 ];
 
 const communityPosts = [
-  { user: "Amara K.", avatar: "AK", time: "2h ago", text: "Just landed my first $500 gig using the pitch template from Module 4! 🎉", likes: 24 },
-  { user: "David O.", avatar: "DO", time: "4h ago", text: "Anyone else struggling with the Midjourney section? Would love a study group.", likes: 8 },
-  { user: "Fatima Z.", avatar: "FZ", time: "6h ago", text: "Completed the AI Tools certification! The ChatGPT workflow section was amazing.", likes: 31 },
+  { user: "Amara K.", avatar: "AK", time: "2h ago", text: "Secured a new client contract using the AI negotiation framework from Module 4.", likes: 24 },
+  { user: "David O.", avatar: "DO", time: "4h ago", text: "Looking for study partners to discuss the latest workflow automation methodologies.", likes: 8 },
+  { user: "Fatima Z.", avatar: "FZ", time: "6h ago", text: "Successfully completed the AI for Freelancers certification.", likes: 31 },
 ];
 
 const certificates = [
   { title: "AI Tools Fundamentals", date: "Feb 2026", unlocked: true },
-  { title: "Freelance Business Basics", date: "Jan 2026", unlocked: true },
-  { title: "Advanced Prompt Engineering", date: "Not yet earned", unlocked: false },
+  { title: "Freelance Business Operations", date: "Jan 2026", unlocked: true },
+  { title: "Advanced Prompting", date: "Not yet earned", unlocked: false },
 ];
 
 const sidebarLinks = [
@@ -36,12 +36,19 @@ const ProgressCircle = ({ percent }: { percent: number }) => {
   const offset = circ - (percent / 100) * circ;
   return (
     <svg width="88" height="88" className="shrink-0">
+      <defs>
+        <linearGradient id={`grad-${percent}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="hsl(var(--primary))" />
+          <stop offset="100%" stopColor="hsl(var(--secondary))" />
+        </linearGradient>
+      </defs>
       <circle cx="44" cy="44" r={r} fill="none" strokeWidth="6" className="stroke-muted" />
       <circle
         cx="44" cy="44" r={r} fill="none" strokeWidth="6"
         strokeDasharray={circ} strokeDashoffset={offset}
         strokeLinecap="round"
-        className="stroke-primary transition-all duration-700"
+        stroke={`url(#grad-${percent})`}
+        className="transition-all duration-700"
         transform="rotate(-90 44 44)"
       />
       <text x="44" y="44" textAnchor="middle" dominantBaseline="central" className="fill-foreground text-sm font-bold">
@@ -52,17 +59,25 @@ const ProgressCircle = ({ percent }: { percent: number }) => {
 };
 
 const Academy = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
   const [activeTab, setActiveTab] = useState("home");
 
   return (
-    <div className="min-h-screen flex bg-background">
+    <div className="min-h-screen flex bg-background relative overflow-hidden">
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div 
+          className="md:hidden fixed inset-0 z-40 bg-background/80 backdrop-blur-sm"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className={`${sidebarOpen ? "w-64" : "w-0 md:w-16"} transition-all duration-300 border-r bg-card shrink-0 overflow-hidden`}>
-        <div className="p-4 border-b flex items-center gap-2">
+      <aside className={`${sidebarOpen ? "translate-x-0 w-64" : "-translate-x-full w-64 md:w-16 md:translate-x-0"} absolute md:relative z-50 h-full flex flex-col transition-all duration-300 border-r bg-card shrink-0 overflow-hidden`}>
+        <div className="h-20 px-6 border-b flex items-center shrink-0 w-full">
           {sidebarOpen && (
-            <Link to="/">
-              <img src={logo} alt="Star9" className="h-8 w-auto mix-blend-multiply dark:mix-blend-screen dark:invert" />
+            <Link to="/" className="flex items-center">
+              <img src={logo} alt="Star9" className="h-[56px] w-auto object-contain" />
             </Link>
           )}
         </div>
@@ -73,11 +88,11 @@ const Academy = () => {
               <button
                 key={l.label}
                 onClick={() => setActiveTab(tabId)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
-                  activeTab === tabId ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground hover:bg-muted"
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors border-l-2 ${
+                  activeTab === tabId ? "bg-accent/50 text-foreground font-medium border-secondary" : "border-transparent text-muted-foreground hover:bg-muted"
                 }`}
               >
-                <l.icon className="size-4 shrink-0" />
+                <l.icon className={`size-4 shrink-0 ${activeTab === tabId ? "text-primary" : ""}`} />
                 {sidebarOpen && <span>{l.label}</span>}
               </button>
             );
@@ -85,33 +100,25 @@ const Academy = () => {
         </nav>
 
         {sidebarOpen && (
-          <div className="absolute bottom-4 left-4 right-4 space-y-4">
-            <div className="p-4 rounded-xl bg-accent/50 border">
-              <p className="text-xs font-semibold mb-1">Weekly Streak 🔥</p>
-              <p className="text-xs text-muted-foreground">5 days in a row! Keep it up.</p>
-              <div className="flex gap-1 mt-2">
+          <div className="mt-auto p-4 space-y-4">
+            <Link to="/global" className="w-full flex items-center justify-center gap-2 px-3 py-3 rounded-sm text-xs font-mono font-bold tracking-widest uppercase bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors border shadow-md">
+              <span>SWITCH TO GLOBAL</span>
+            </Link>
+
+            <div className="p-4 rounded-sm bg-accent/30 border">
+              <p className="text-xs font-mono font-semibold mb-1 flex items-center justify-between uppercase">Weekly Streak <Flame className="size-3 text-secondary" /></p>
+              <p className="text-xs text-muted-foreground font-mono">5 consecutive days.</p>
+              <div className="flex gap-1 mt-3">
                 {["M","T","W","T","F","S","S"].map((d, i) => (
-                  <div key={d+i} className={`w-6 h-6 rounded-full text-[10px] flex items-center justify-center font-medium ${i < 5 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>{d}</div>
+                  <div key={d+i} className={`w-6 h-6 rounded-sm font-mono text-[10px] flex items-center justify-center font-bold ${i < 5 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>{d}</div>
                 ))}
               </div>
             </div>
             
-            <Link to="/" className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted transition-colors border">
+            <Link to="/" className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-sm text-xs font-mono tracking-widest uppercase text-muted-foreground hover:bg-muted transition-colors border border-border">
               <ArrowRight className="size-4 shrink-0 rotate-180" />
-              <span>Back to Website</span>
+              <span>EXIT DASHBOARD</span>
             </Link>
-          </div>
-        )}
-
-        {sidebarOpen && (
-          <div className="absolute bottom-4 left-4 right-4 p-4 rounded-xl bg-accent/50 border">
-            <p className="text-xs font-semibold mb-1">Weekly Streak 🔥</p>
-            <p className="text-xs text-muted-foreground">5 days in a row! Keep it up.</p>
-            <div className="flex gap-1 mt-2">
-              {["M","T","W","T","F","S","S"].map((d, i) => (
-                <div key={d+i} className={`w-6 h-6 rounded-full text-[10px] flex items-center justify-center font-medium ${i < 5 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>{d}</div>
-              ))}
-            </div>
           </div>
         )}
       </aside>
@@ -119,7 +126,7 @@ const Academy = () => {
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar */}
-        <header className="h-16 border-b bg-card flex items-center justify-between px-4 md:px-6 shrink-0">
+        <header className="h-20 border-b bg-card flex items-center justify-between px-4 md:px-6 shrink-0">
           <div className="flex items-center gap-3">
             <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg hover:bg-muted">
               <Menu className="size-5" />
@@ -129,29 +136,29 @@ const Academy = () => {
               <input type="text" placeholder="Search courses..." className="bg-transparent text-sm outline-none w-48" />
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
             <button className="p-2 rounded-lg hover:bg-muted relative">
               <Bell className="size-5" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-secondary rounded-full" />
             </button>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold">
+              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold shrink-0">
                 EN
               </div>
-              <span className="hidden md:inline text-sm font-medium">Esther N.</span>
+              <span className="hidden sm:inline text-sm font-medium">Esther N.</span>
             </div>
           </div>
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8">
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 w-full">
           {activeTab === "home" && (
             <>
               {/* Welcome + Stats */}
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                  <h1 className="text-2xl md:text-3xl font-bold">Welcome back, Esther! 👋</h1>
-                  <p className="text-muted-foreground mt-1">Continue where you left off or explore new courses.</p>
+                  <h1 className="text-2xl md:text-3xl font-bold">Welcome back, Esther.</h1>
+                  <p className="text-muted-foreground mt-1">Review your progress or explore new modules.</p>
                 </div>
                 <div className="flex gap-4">
                   <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-accent border">
@@ -172,20 +179,21 @@ const Academy = () => {
               </div>
 
               {/* Continue Learning Banner */}
-              <div className="rounded-2xl bg-gradient-to-r from-primary/10 to-secondary/10 border p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
-                    <Play className="size-5 text-primary" />
+              <div className="relative overflow-hidden rounded-2xl border bg-card p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5" />
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="w-12 h-12 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
+                    <Play className="size-5 text-primary ml-1" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Continue Learning</p>
-                    <p className="font-semibold text-lg">AI Tools for Freelancers</p>
-                    <p className="text-xs md:text-sm text-muted-foreground flex items-center gap-1 mt-1">
-                      <Clock className="size-3.5" /> Next: Using ChatGPT for Client Proposals
+                    <p className="text-xs font-mono uppercase tracking-widest text-secondary mb-1">01 Continue Learning</p>
+                    <p className="font-bold text-xl uppercase tracking-tight">AI Tools for Freelancers</p>
+                    <p className="text-xs font-mono uppercase tracking-wide text-muted-foreground flex items-center gap-2 mt-2">
+                      <Clock className="size-3.5" /> Next: Automating Client Onboarding
                     </p>
                   </div>
                 </div>
-                <Button className="gap-2 shrink-0 md:w-auto w-full" size="default">
+                <Button className="gap-2 shrink-0 md:w-auto w-full font-mono text-xs font-bold tracking-widest uppercase rounded-xl h-12 px-6 bg-primary hover:bg-primary/90 text-primary-foreground relative z-10 shadow-lg shadow-primary/20" size="default">
                   Resume <ArrowRight className="!size-4" />
                 </Button>
               </div>
@@ -271,10 +279,10 @@ const Academy = () => {
                       cert.unlocked ? "bg-card shadow-card hover:shadow-card-hover hover:-translate-y-1" : "bg-muted/50 opacity-60"
                     }`}
                   >
-                    <div className={`w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center text-3xl ${
+                    <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
                       cert.unlocked ? "bg-secondary/10" : "bg-muted"
                     }`}>
-                      {cert.unlocked ? "🏆" : "🔒"}
+                      {cert.unlocked ? <Award className="size-8 text-secondary" /> : <Lock className="size-8 text-muted-foreground" />}
                     </div>
                     <h3 className="font-semibold text-base mb-2">{cert.title}</h3>
                     <p className="text-sm text-muted-foreground mb-4">{cert.unlocked ? `Earned ${cert.date}` : `Available: ${cert.date}`}</p>
