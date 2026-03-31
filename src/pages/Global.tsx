@@ -1,29 +1,50 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, Filter, MapPin, DollarSign, Clock, GraduationCap, Briefcase, ArrowLeft, Bell } from "lucide-react";
+import { Search, Filter, MapPin, DollarSign, Clock, GraduationCap, Briefcase, ArrowLeft, Bell, BookmarkPlus, ChevronDown, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.jpg";
 
 const jobs = [
-  { title: "Senior UI/UX Designer", company: "TechNova Inc.", salary: "$60k – $85k", type: "Full-time", level: "Senior", skills: ["Figma", "Design Systems", "Prototyping"], location: "Remote – Global" },
-  { title: "AI Content Specialist", company: "ContentLab", salary: "$40k – $55k", type: "Contract", level: "Mid", skills: ["ChatGPT", "Copywriting", "SEO"], location: "Remote – Africa" },
-  { title: "Full-Stack Developer", company: "BuildStack", salary: "$70k – $100k", type: "Full-time", level: "Senior", skills: ["React", "Node.js", "AWS"], location: "Remote – Global" },
-  { title: "Virtual Assistant", company: "ScaleOps", salary: "$25k – $35k", type: "Part-time", level: "Entry", skills: ["Admin", "Scheduling", "CRM"], location: "Remote – Global" },
-  { title: "Data Analyst", company: "InsightAI", salary: "$50k – $70k", type: "Full-time", level: "Mid", skills: ["Python", "SQL", "Tableau"], location: "Remote – Europe/Africa" },
+  { title: "Senior UI/UX Designer", company: "TechNova Inc.", salary: "$60k - $85k", type: "Full-time", level: "Senior", skills: ["Figma", "Design Systems", "Prototyping"], location: "Remote (Global)", saved: false },
+  { title: "AI Content Specialist", company: "ContentLab", salary: "$40k - $55k", type: "Contract", level: "Mid", skills: ["ChatGPT", "Copywriting", "SEO"], location: "Remote (Africa)", saved: true },
+  { title: "Full-Stack Developer", company: "BuildStack", salary: "$70k - $100k", type: "Full-time", level: "Senior", skills: ["React", "Node.js", "AWS"], location: "Remote (Global)", saved: false },
+  { title: "Virtual Assistant", company: "ScaleOps", salary: "$25k - $35k", type: "Part-time", level: "Entry", skills: ["Admin", "Scheduling", "CRM"], location: "Remote (Global)", saved: false },
+  { title: "Data Analyst", company: "InsightAI", salary: "$50k - $70k", type: "Full-time", level: "Mid", skills: ["Python", "SQL", "Tableau"], location: "Remote (Europe/Africa)", saved: false },
 ];
 
 const universities = [
-  { name: "University of Cape Town", country: "🇿🇦 South Africa", program: "Computer Science", deadline: "Mar 2026" },
-  { name: "Technical University of Munich", country: "🇩🇪 Germany", program: "Data Science & AI", deadline: "Apr 2026" },
-  { name: "University of Toronto", country: "🇨🇦 Canada", program: "Business Analytics", deadline: "May 2026" },
-  { name: "National University of Singapore", country: "🇸🇬 Singapore", program: "Information Systems", deadline: "Jun 2026" },
-  { name: "University of Edinburgh", country: "🇬🇧 United Kingdom", program: "Artificial Intelligence", deadline: "Apr 2026" },
-  { name: "KAIST", country: "🇰🇷 South Korea", program: "Software Engineering", deadline: "May 2026" },
+  { name: "University of Cape Town", country: "🇿🇦 South Africa", program: "Computer Science", deadline: "Mar 2026", rating: 4.8 },
+  { name: "Technical University of Munich", country: "🇩🇪 Germany", program: "Data Science & AI", deadline: "Apr 2026", rating: 4.9 },
+  { name: "University of Toronto", country: "🇨🇦 Canada", program: "Business Analytics", deadline: "May 2026", rating: 4.7 },
+  { name: "National University of Singapore", country: "🇸🇬 Singapore", program: "Information Systems", deadline: "Jun 2026", rating: 4.8 },
+  { name: "University of Edinburgh", country: "🇬🇧 United Kingdom", program: "Artificial Intelligence", deadline: "Apr 2026", rating: 4.6 },
+  { name: "KAIST", country: "🇰🇷 South Korea", program: "Software Engineering", deadline: "May 2026", rating: 4.9 },
 ];
 
 const Global = () => {
   const [tab, setTab] = useState<"work" | "study">("work");
   const [searchQuery, setSearchQuery] = useState("");
+  const [savedJobs, setSavedJobs] = useState<Set<number>>(new Set([1]));
+  const [showFilters, setShowFilters] = useState(false);
+
+  const toggleSave = (index: number) => {
+    setSavedJobs(prev => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  };
+
+  const filteredJobs = jobs.filter(j =>
+    j.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    j.skills.some(s => s.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
+  const filteredUnis = universities.filter(u =>
+    u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    u.program.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -63,22 +84,57 @@ const Global = () => {
         <div className="flex justify-center">
           <div className="inline-flex rounded-xl border bg-muted p-1">
             <button
-              onClick={() => setTab("work")}
+              onClick={() => { setTab("work"); setSearchQuery(""); }}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
                 tab === "work" ? "bg-card shadow-sm text-foreground" : "text-muted-foreground"
               }`}
             >
-              <Briefcase className="size-4" /> Remote Work
+              💼 Remote Work
             </button>
             <button
-              onClick={() => setTab("study")}
+              onClick={() => { setTab("study"); setSearchQuery(""); }}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
                 tab === "study" ? "bg-card shadow-sm text-foreground" : "text-muted-foreground"
               }`}
             >
-              <GraduationCap className="size-4" /> Study Abroad
+              🎓 Study Abroad
             </button>
           </div>
+        </div>
+
+        {/* Stats Row */}
+        <div className="flex justify-center gap-6 text-center">
+          {tab === "work" ? (
+            <>
+              <div className="px-4">
+                <p className="text-xl font-bold text-primary">{filteredJobs.length}</p>
+                <p className="text-xs text-muted-foreground">Open Roles</p>
+              </div>
+              <div className="px-4 border-l">
+                <p className="text-xl font-bold">{savedJobs.size}</p>
+                <p className="text-xs text-muted-foreground">Saved Jobs</p>
+              </div>
+              <div className="px-4 border-l">
+                <p className="text-xl font-bold text-secondary">12</p>
+                <p className="text-xs text-muted-foreground">New This Week</p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="px-4">
+                <p className="text-xl font-bold text-primary">{filteredUnis.length}</p>
+                <p className="text-xs text-muted-foreground">Programs</p>
+              </div>
+              <div className="px-4 border-l">
+                <p className="text-xl font-bold">6</p>
+                <p className="text-xs text-muted-foreground">Countries</p>
+              </div>
+              <div className="px-4 border-l">
+                <p className="text-xl font-bold text-secondary">3</p>
+                <p className="text-xs text-muted-foreground">Closing Soon</p>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Search */}
@@ -93,19 +149,85 @@ const Global = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button variant="outline" size="default" className="gap-2 shrink-0">
-            <Filter className="!size-4" /> Filters
+          <Button
+            variant="outline"
+            size="default"
+            className="gap-2 shrink-0"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <Filter className="!size-4" /> Filters <ChevronDown className={`!size-3 transition-transform ${showFilters ? "rotate-180" : ""}`} />
           </Button>
         </div>
+
+        {/* Filter Panel */}
+        {showFilters && (
+          <div className="max-w-2xl mx-auto rounded-xl border bg-card p-4">
+            {tab === "work" ? (
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <p className="text-xs font-semibold mb-2 text-muted-foreground uppercase">Role Type</p>
+                  {["Full-time", "Contract", "Part-time"].map(t => (
+                    <label key={t} className="flex items-center gap-2 text-sm py-1 cursor-pointer">
+                      <input type="checkbox" className="rounded border-border" /> {t}
+                    </label>
+                  ))}
+                </div>
+                <div>
+                  <p className="text-xs font-semibold mb-2 text-muted-foreground uppercase">Experience</p>
+                  {["Entry", "Mid", "Senior"].map(t => (
+                    <label key={t} className="flex items-center gap-2 text-sm py-1 cursor-pointer">
+                      <input type="checkbox" className="rounded border-border" /> {t}
+                    </label>
+                  ))}
+                </div>
+                <div>
+                  <p className="text-xs font-semibold mb-2 text-muted-foreground uppercase">Salary</p>
+                  {["$25k+", "$50k+", "$75k+"].map(t => (
+                    <label key={t} className="flex items-center gap-2 text-sm py-1 cursor-pointer">
+                      <input type="checkbox" className="rounded border-border" /> {t}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs font-semibold mb-2 text-muted-foreground uppercase">Region</p>
+                  {["Africa", "Europe", "Asia", "Americas"].map(t => (
+                    <label key={t} className="flex items-center gap-2 text-sm py-1 cursor-pointer">
+                      <input type="checkbox" className="rounded border-border" /> {t}
+                    </label>
+                  ))}
+                </div>
+                <div>
+                  <p className="text-xs font-semibold mb-2 text-muted-foreground uppercase">Program</p>
+                  {["Computer Science", "AI & Data", "Business"].map(t => (
+                    <label key={t} className="flex items-center gap-2 text-sm py-1 cursor-pointer">
+                      <input type="checkbox" className="rounded border-border" /> {t}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Content */}
         {tab === "work" ? (
           <div className="grid gap-4 max-w-4xl mx-auto">
-            {jobs.filter(j => j.title.toLowerCase().includes(searchQuery.toLowerCase()) || j.skills.some(s => s.toLowerCase().includes(searchQuery.toLowerCase()))).map((job, i) => (
+            {filteredJobs.map((job, i) => (
               <div key={i} className="rounded-xl border bg-card p-5 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="space-y-2">
-                    <h3 className="font-semibold text-lg">{job.title}</h3>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-lg">{job.title}</h3>
+                      <button
+                        onClick={() => toggleSave(i)}
+                        className={`p-1 rounded hover:bg-muted transition-colors ${savedJobs.has(i) ? "text-secondary" : "text-muted-foreground"}`}
+                      >
+                        <BookmarkPlus className="size-4" />
+                      </button>
+                    </div>
                     <p className="text-sm text-muted-foreground">{job.company}</p>
                     <div className="flex flex-wrap gap-2">
                       {job.skills.map((s) => (
@@ -127,19 +249,39 @@ const Global = () => {
                 </div>
               </div>
             ))}
+            {filteredJobs.length === 0 && (
+              <div className="text-center py-12 text-muted-foreground">
+                <p className="text-lg font-medium">No jobs found</p>
+                <p className="text-sm">Try adjusting your search or filters.</p>
+              </div>
+            )}
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
-            {universities.filter(u => u.name.toLowerCase().includes(searchQuery.toLowerCase()) || u.program.toLowerCase().includes(searchQuery.toLowerCase())).map((uni, i) => (
+            {filteredUnis.map((uni, i) => (
               <div key={i} className="rounded-xl border bg-card p-5 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5 flex flex-col">
-                <div className="text-2xl mb-3">{uni.country.split(" ")[0]}</div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-2xl">{uni.country.split(" ")[0]}</div>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Star className="size-3 fill-secondary text-secondary" /> {uni.rating}
+                  </div>
+                </div>
                 <h3 className="font-semibold mb-1">{uni.name}</h3>
                 <p className="text-sm text-muted-foreground mb-1">{uni.country}</p>
                 <p className="text-sm font-medium text-primary mb-1">{uni.program}</p>
                 <p className="text-xs text-muted-foreground mb-4">Deadline: {uni.deadline}</p>
-                <Button size="sm" className="mt-auto self-start">Apply Now</Button>
+                <div className="mt-auto flex gap-2">
+                  <Button size="sm" className="flex-1">Apply Now</Button>
+                  <Button size="sm" variant="outline">Details</Button>
+                </div>
               </div>
             ))}
+            {filteredUnis.length === 0 && (
+              <div className="col-span-full text-center py-12 text-muted-foreground">
+                <p className="text-lg font-medium">No programs found</p>
+                <p className="text-sm">Try adjusting your search or filters.</p>
+              </div>
+            )}
           </div>
         )}
       </div>

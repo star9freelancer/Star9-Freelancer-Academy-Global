@@ -1,13 +1,13 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { GraduationCap, Globe, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 const cards = [
   {
     title: "Star9 Freelancer Academy",
     subtitle: "Master AI Tools & Freelance Skills",
     description: "World-class courses in AI, digital skills, and freelance business building. Learn from industry experts and earn recognized certificates.",
-    icon: GraduationCap,
+    emoji: "🎓",
     link: "/academy",
     accent: "primary" as const,
   },
@@ -15,7 +15,7 @@ const cards = [
     title: "Star9 Global",
     subtitle: "Remote Jobs & Study Abroad Programs",
     description: "Access premium remote work opportunities and international academic programs. Build your career without borders.",
-    icon: Globe,
+    emoji: "🌍",
     link: "/global",
     accent: "secondary" as const,
   },
@@ -50,11 +50,7 @@ const DualBrandSection = () => {
                 to={card.link}
                 className="group block h-full rounded-2xl border bg-card p-8 shadow-card transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1"
               >
-                <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl mb-6 ${
-                  card.accent === "primary" ? "bg-primary/10 text-primary" : "bg-secondary/10 text-secondary"
-                }`}>
-                  <card.icon className="size-7" />
-                </div>
+                <div className="text-4xl mb-6">{card.emoji}</div>
                 <h3 className="text-xl font-bold mb-2">{card.title}</h3>
                 <p className={`text-sm font-semibold mb-3 ${
                   card.accent === "primary" ? "text-primary" : "text-secondary"
