@@ -35,7 +35,7 @@ const DualBrandSection = () => {
           className="text-center mb-24"
         >
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">The Infrastructure</p>
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">Two Ecosystems. One Vision.</h2>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6">Two Ecosystems. One Vision.</h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             A frictionless transition from acquiring cutting-edge skills to deploying them on the global stage.
           </p>

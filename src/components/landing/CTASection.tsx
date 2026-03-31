@@ -24,7 +24,7 @@ const CTASection = () => {
             </div>
             
             <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">Boarding Now</p>
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tighter mb-6 uppercase">
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-6 uppercase leading-tight">
               Launch Your <br className="hidden md:block"/><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Global Career</span>
             </h2>
             

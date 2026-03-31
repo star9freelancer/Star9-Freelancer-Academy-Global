@@ -28,7 +28,7 @@ const HeroSection = () => {
             </span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-bold leading-[1.1] tracking-tighter text-foreground">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-[1.1] tracking-tighter text-foreground">
             Freelancing with<br />
             <span className="relative inline-block">
               <span className="relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">

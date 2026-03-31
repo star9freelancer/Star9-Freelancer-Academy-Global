@@ -67,7 +67,7 @@ const FeaturesSection = () => {
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-[250px]">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-min md:auto-rows-[280px]">
           {/* Card 1: Large Span */}
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
