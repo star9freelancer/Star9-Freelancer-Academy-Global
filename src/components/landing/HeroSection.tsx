@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const HeroSection = () => {
@@ -20,8 +20,7 @@ const HeroSection = () => {
           className="space-y-8"
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-accent-foreground text-sm font-medium">
-            <Sparkles className="size-4 text-secondary" />
-            Empowering Global Talent
+            🌍 Empowering Global Talent
           </div>
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
@@ -46,6 +45,22 @@ const HeroSection = () => {
               </Link>
             </Button>
           </div>
+
+          {/* Quick stats */}
+          <div className="flex flex-wrap gap-8 pt-4">
+            <div>
+              <p className="text-2xl font-bold text-primary">2,500+</p>
+              <p className="text-sm text-muted-foreground">Active Learners</p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-secondary">150+</p>
+              <p className="text-sm text-muted-foreground">Remote Jobs Posted</p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold">30+</p>
+              <p className="text-sm text-muted-foreground">Countries Reached</p>
+            </div>
+          </div>
         </motion.div>
 
         <motion.div
@@ -55,12 +70,11 @@ const HeroSection = () => {
           className="hidden lg:flex justify-center"
         >
           <div className="relative w-full max-w-md">
-            {/* Abstract graphic */}
             <div className="relative animate-float">
               <div className="w-80 h-80 rounded-3xl bg-gradient-to-br from-primary/10 to-secondary/10 border border-border shadow-card p-8 space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
-                    <Sparkles className="size-5 text-primary" />
+                  <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-lg">
+                    🎓
                   </div>
                   <div>
                     <div className="h-3 w-24 bg-primary/20 rounded-full" />
@@ -77,8 +91,8 @@ const HeroSection = () => {
                   <div className="h-8 w-20 bg-secondary/20 rounded-lg" />
                 </div>
               </div>
-              <div className="absolute -top-4 -right-4 w-20 h-20 rounded-2xl bg-secondary/20 border border-secondary/30 animate-pulse-glow" />
-              <div className="absolute -bottom-4 -left-4 w-16 h-16 rounded-2xl bg-primary/20 border border-primary/30 animate-pulse-glow" style={{ animationDelay: "1s" }} />
+              <div className="absolute -top-4 -right-4 w-20 h-20 rounded-2xl bg-secondary/20 border border-secondary/30 flex items-center justify-center text-2xl">🌐</div>
+              <div className="absolute -bottom-4 -left-4 w-16 h-16 rounded-2xl bg-primary/20 border border-primary/30 flex items-center justify-center text-xl">💼</div>
             </div>
           </div>
         </motion.div>

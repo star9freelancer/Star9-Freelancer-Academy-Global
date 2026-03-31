@@ -6,7 +6,11 @@ import logo from "@/assets/logo.jpg";
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
-  const [dark, setDark] = useState(false);
+  const [dark, setDark] = useState(() => {
+    const stored = localStorage.getItem("star9-dark-mode");
+    if (stored !== null) return stored === "true";
+    return document.documentElement.classList.contains("dark");
+  });
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
@@ -17,6 +21,7 @@ const Header = () => {
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
+    localStorage.setItem("star9-dark-mode", String(dark));
   }, [dark]);
 
   const navLinks = [
@@ -89,6 +94,15 @@ const Header = () => {
               {l.label}
             </Link>
           ))}
+          <div className="flex items-center justify-between px-4 py-2">
+            <span className="text-sm text-muted-foreground">Dark Mode</span>
+            <button
+              onClick={() => setDark(!dark)}
+              className="p-2 rounded-lg hover:bg-accent transition-colors"
+            >
+              {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
+            </button>
+          </div>
           <div className="flex gap-2 pt-2">
             <Button variant="ghost-nav" size="sm" className="flex-1" asChild>
               <Link to="/academy">Log In</Link>
