@@ -13,12 +13,12 @@ const jobs = [
 ];
 
 const universities = [
-  { name: "University of Cape Town", country: "South Africa", program: "Computer Science", deadline: "Mar 2026", rating: 4.8 },
-  { name: "Technical University of Munich", country: "Germany", program: "Data Science & Analytics", deadline: "Apr 2026", rating: 4.9 },
-  { name: "University of Toronto", country: "Canada", program: "Business Analytics", deadline: "May 2026", rating: 4.7 },
-  { name: "National University of Singapore", country: "Singapore", program: "Information Systems", deadline: "Jun 2026", rating: 4.8 },
-  { name: "University of Edinburgh", country: "United Kingdom", program: "Machine Learning Concepts", deadline: "Apr 2026", rating: 4.6 },
-  { name: "KAIST", country: "South Korea", program: "Software Engineering", deadline: "May 2026", rating: 4.9 },
+  { name: "University of Cape Town", country: "South Africa", flag: "za", program: "Computer Science", deadline: "Mar 2026", rating: 4.8 },
+  { name: "Technical University of Munich", country: "Germany", flag: "de", program: "Data Science & Analytics", deadline: "Apr 2026", rating: 4.9 },
+  { name: "University of Toronto", country: "Canada", flag: "ca", program: "Business Analytics", deadline: "May 2026", rating: 4.7 },
+  { name: "National University of Singapore", country: "Singapore", flag: "sg", program: "Information Systems", deadline: "Jun 2026", rating: 4.8 },
+  { name: "University of Edinburgh", country: "United Kingdom", flag: "gb", program: "Machine Learning Concepts", deadline: "Apr 2026", rating: 4.6 },
+  { name: "KAIST", country: "South Korea", flag: "kr", program: "Software Engineering", deadline: "May 2026", rating: 4.9 },
 ];
 
 const Global = () => {
@@ -71,8 +71,8 @@ const Global = () => {
             <Bell className="size-5" />
             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-secondary rounded-full" />
           </button>
-          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold">
-            EN
+          <div className="flex items-center gap-3 pl-4 border-l border-border/50">
+            <img src="https://i.pravatar.cc/150?u=esther" alt="Esther N." className="w-8 h-8 rounded-full border border-border shrink-0 object-cover" />
           </div>
         </div>
       </header>
@@ -235,7 +235,12 @@ const Global = () => {
                         <BookmarkPlus className="size-4" />
                       </button>
                     </div>
-                    <p className="text-sm text-muted-foreground font-mono uppercase tracking-widest">{job.company}</p>
+                    <div className="flex flex-wrap gap-2 pt-1 pb-1">
+                      <div className="flex items-center gap-2 mr-4">
+                        <div className="w-6 h-6 rounded border border-border bg-accent flex items-center justify-center font-bold text-[10px] uppercase">{job.company.substring(0, 1)}</div>
+                        <p className="text-sm text-muted-foreground font-mono uppercase tracking-widest">{job.company}</p>
+                      </div>
+                    </div>
                     <div className="flex flex-wrap gap-2 pt-1">
                       {job.skills.map((s) => (
                         <span key={s} className="text-[10px] font-mono uppercase tracking-widest px-2 py-1 rounded-sm border bg-accent/30 text-muted-foreground font-bold">{s}</span>
@@ -267,8 +272,9 @@ const Global = () => {
             {filteredUnis.map((uni, i) => (
               <div key={i} className="rounded-md border bg-card p-6 shadow-card hover:shadow-card-hover transition-all duration-300 flex flex-col">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 rounded-sm bg-secondary/10 flex items-center justify-center text-secondary">
-                    <GraduationCap className="size-6" />
+                  <div className="w-12 h-12 rounded-sm bg-secondary/10 flex items-center justify-center overflow-hidden border border-secondary/20 relative">
+                    <img src={`https://flagcdn.com/w40/${uni.flag}.png`} alt={uni.country} className="w-full h-full object-cover opacity-80" />
+                    <div className="absolute inset-0 bg-secondary/10 mix-blend-multiply" />
                   </div>
                   <div className="flex items-center gap-1 text-xs font-mono font-bold text-muted-foreground">
                     <Star className="size-3 fill-secondary text-secondary" /> {uni.rating}

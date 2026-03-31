@@ -85,13 +85,13 @@ const PricingSection = () => {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="mt-16 pt-10 border-t border-border/50 text-center"
         >
-          <p className="font-mono text-xs font-semibold tracking-widest text-muted-foreground uppercase mb-6">Trusted Global Payment Partners</p>
-          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-14 opacity-50 grayscale hover:grayscale-0 transition-all duration-300">
-            {/* Generic shapes as placeholders for partner logos */}
-            <div className="flex items-center gap-2 font-bold font-sans text-xl"><div className="w-6 h-6 rounded-full bg-foreground" /> Stripe</div>
-            <div className="flex items-center gap-2 font-bold font-sans text-xl"><div className="w-6 h-6 rotate-45 bg-foreground" /> PayPal</div>
-            <div className="flex items-center gap-2 font-bold font-sans text-xl"><div className="w-6 h-6 rounded bg-foreground" /> Visa</div>
-            <div className="flex items-center gap-2 font-bold font-sans text-xl"><div className="w-8 h-5 rounded-sm border-2 border-foreground" /> Mastercard</div>
+          <p className="font-mono text-xs font-semibold tracking-widest text-muted-foreground uppercase mb-8">Trusted Global Infrastructure</p>
+          <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16 opacity-60 hover:opacity-100 transition-all duration-300">
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/stripe.svg" alt="Stripe" className="h-6 w-auto dark:invert transition-all" />
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/paypal.svg" alt="PayPal" className="h-6 w-auto dark:invert transition-all" />
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/visa.svg" alt="Visa" className="h-8 w-auto dark:invert transition-all pt-1" />
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/mastercard.svg" alt="Mastercard" className="h-8 w-auto dark:invert transition-all" />
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/applepay.svg" alt="Apple Pay" className="h-8 w-auto dark:invert transition-all" />
           </div>
         </motion.div>
       </div>

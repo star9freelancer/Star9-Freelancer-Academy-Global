@@ -25,10 +25,8 @@ const Header = () => {
   }, [dark]);
 
   const navLinks = [
-    { label: "About", href: "#about" },
-    { label: "Features", href: "#features" },
-    { label: "Testimonials", href: "#testimonials" },
-    { label: "Pricing", href: "#pricing" },
+    { label: "Ecosystem", href: "#about" },
+    { label: "Capabilities", href: "#features" },
     { label: "Academy", href: "/academy" },
     { label: "Global", href: "/global" },
   ];
@@ -36,18 +34,18 @@ const Header = () => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "glass border-b shadow-sm" : "bg-transparent"
+        scrolled ? "glass border-b border-border/50 shadow-sm" : "bg-transparent"
       }`}
     >
-      <div className="container flex items-center justify-between h-16 md:h-18">
+      <div className="container flex items-center justify-between h-20">
         <Link to="/" className="flex items-center gap-2 z-50">
-          <img src={logo} alt="Star9" className="h-12 md:h-[56px] w-auto object-contain shrink-0" />
+          <img src={logo} alt="Star9" className="h-10 md:h-[48px] w-auto object-contain shrink-0" />
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-2">
           {navLinks.map((l) => (
-            <Button key={l.label} variant="ghost-nav" size="sm" asChild>
+            <Button key={l.label} variant="ghost-nav" size="sm" className="font-mono uppercase tracking-widest text-[11px]" asChild>
               {l.href.startsWith("#") ? (
                 <a href={l.href}>{l.label}</a>
               ) : (
@@ -55,27 +53,24 @@ const Header = () => {
               )}
             </Button>
           ))}
-          <Button variant="ghost-nav" size="sm" asChild>
-            <a href="#foundation" className="flex items-center gap-1">
-              Star9 Foundation <ExternalLink className="!size-3" />
-            </a>
-          </Button>
         </nav>
 
-        <div className="hidden md:flex items-center gap-2">
+        <div className="hidden md:flex items-center gap-4">
           <button
             onClick={() => setDark(!dark)}
-            className="p-2 rounded-lg hover:bg-accent transition-colors"
+            className="p-2 rounded-lg hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Toggle dark mode"
           >
             {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
           </button>
-          <Button variant="ghost-nav" size="sm" asChild>
-            <Link to="/academy">Log In</Link>
-          </Button>
-          <Button variant="hero" size="sm" asChild>
-            <Link to="/academy">Get Started</Link>
-          </Button>
+          <div className="flex items-center gap-2 border-l border-border/50 pl-4">
+            <Button variant="ghost" size="sm" className="font-mono uppercase tracking-widest text-[11px]" asChild>
+              <Link to="/academy">Portal Login</Link>
+            </Button>
+            <Button variant="default" size="sm" className="font-mono uppercase tracking-widest text-[11px] rounded-none" asChild>
+              <Link to="/academy">Initialize</Link>
+            </Button>
+          </div>
         </div>
 
         {/* Mobile toggle */}

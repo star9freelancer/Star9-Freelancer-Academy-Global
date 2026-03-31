@@ -23,56 +23,71 @@ const cards = [
 
 const DualBrandSection = () => {
   return (
-    <section id="about" className="py-24">
-      <div className="container">
+    <section id="about" className="py-32 relative bg-background border-t border-border">
+      {/* Decorative vertical center line */}
+      <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-border/40" />
+      
+      <div className="container relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-24"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Two Ecosystems, One Vision</h2>
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">The Infrastructure</p>
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">Two Ecosystems. One Vision.</h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Whether you're building skills or building your career, Star9 has you covered.
+            A frictionless transition from acquiring cutting-edge skills to deploying them on the global stage.
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-12 md:gap-0 max-w-6xl mx-auto group/container">
           {cards.map((card, i) => (
             <motion.div
               key={card.title}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.15 }}
+              transition={{ delay: i * 0.2, duration: 0.7 }}
+              className={`md:px-12 group/card relative transition-all duration-700 hover:scale-[1.02] ${i === 0 ? "md:border-r border-border/40" : ""}`}
             >
-              <Link
-                to={card.link}
-                className={`group block h-full rounded-[2rem] border bg-card p-10 shadow-lg transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 relative overflow-hidden ${
-                  card.accent === "primary" ? "hover:border-primary/50" : "hover:border-secondary/50"
-                }`}
-              >
-                {/* Background ambient light */}
-                <div className={`absolute top-0 right-0 w-64 h-64 rounded-full blur-[80px] -z-10 opacity-0 group-hover:opacity-20 transition-opacity duration-500 ${
-                  card.accent === "primary" ? "bg-primary" : "bg-secondary"
-                }`} />
+              {/* Massive hover background ambient glow */}
+              <div className={`absolute inset-0 opacity-0 group-hover/card:opacity-10 transition-opacity duration-700 blur-[80px] -z-10 ${
+                card.accent === "primary" ? "bg-primary" : "bg-secondary"
+              }`} />
 
-                <div className={`mb-8 w-16 h-16 rounded-2xl flex items-center justify-center bg-muted/50 ${
-                  card.accent === "primary" ? "text-primary" : "text-secondary"
-                }`}>
-                  <card.icon className="size-8" />
+              <Link to={card.link} className="block relative">
+                <div className="mb-10 w-20 h-20 rounded-none border border-border/50 flex items-center justify-center bg-card shadow-sm group-hover/card:border-transparent transition-colors duration-500 relative overflow-hidden">
+                  <div className={`absolute inset-0 opacity-0 group-hover/card:opacity-20 transition-opacity duration-500 ${
+                    card.accent === "primary" ? "bg-primary" : "bg-secondary"
+                  }`} />
+                  <card.icon className={`size-8 transition-transform duration-500 group-hover/card:scale-110 ${
+                    card.accent === "primary" ? "text-primary" : "text-secondary"
+                  }`} />
                 </div>
-                <h3 className="text-2xl font-bold mb-3">{card.title}</h3>
-                <p className={`text-sm font-bold uppercase tracking-wider mb-4 ${
+                
+                <h3 className="text-3xl font-bold tracking-tight mb-4 group-hover/card:text-white transition-colors">
+                  {card.title}
+                </h3>
+                
+                <p className={`font-mono text-sm font-bold tracking-[0.1em] uppercase mb-6 flex items-center gap-3 ${
                   card.accent === "primary" ? "text-primary" : "text-secondary"
                 }`}>
+                  <span className="w-8 h-[1px] bg-current"></span>
                   {card.subtitle}
                 </p>
-                <p className="text-muted-foreground leading-relaxed text-lg mb-8">{card.description}</p>
-                <div className={`inline-flex items-center gap-2 font-semibold transition-all group-hover:gap-4 ${
-                  card.accent === "primary" ? "text-primary bg-primary/10 px-4 py-2 rounded-full" : "text-secondary bg-secondary/10 px-4 py-2 rounded-full"
-                }`}>
-                  Explore Platform <ArrowRight className="size-5" />
+                
+                <p className="text-muted-foreground leading-relaxed text-lg mb-10 max-w-md group-hover/card:text-muted-foreground/90 transition-colors">
+                  {card.description}
+                </p>
+                
+                <div className="flex items-center gap-4 border-t border-border/50 pt-8 mt-auto">
+                  <span className="text-sm font-mono tracking-widest uppercase font-semibold">Access Portal</span>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all duration-500 group-hover/card:w-16 ${
+                    card.accent === "primary" ? "bg-primary/5 border-primary/20 text-primary group-hover/card:bg-primary group-hover/card:text-white" : "bg-secondary/5 border-secondary/20 text-secondary group-hover/card:bg-secondary group-hover/card:text-white"
+                  }`}>
+                    <ArrowRight className="size-4" />
+                  </div>
                 </div>
               </Link>
             </motion.div>

@@ -5,47 +5,43 @@ import { Button } from "@/components/ui/button";
 
 const CTASection = () => {
   return (
-    <section className="py-24 relative overflow-hidden">
-      {/* Background decorations */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-primary/20 rounded-full blur-[120px] -z-10" />
-      <div className="absolute bottom-0 right-0 w-[400px] h-[300px] bg-secondary/20 rounded-full blur-[100px] -z-10" />
+    <section className="py-24 relative overflow-hidden border-t border-border bg-background">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-primary/10 rounded-full blur-[120px] -z-10" />
       
-      <div className="container max-w-4xl relative z-10">
+      <div className="container max-w-5xl relative z-10">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 30 }}
-          whileInView={{ opacity: 1, scale: 1, y: 0 }}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-card glass border border-primary/20 p-10 md:p-16 rounded-[2.5rem] text-center shadow-2xl relative overflow-hidden"
+          className="bg-card/50 glass border border-border p-12 md:p-20 text-center relative overflow-hidden"
         >
-          {/* Inner ambient glow */}
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 text-primary mb-8 border border-primary/20">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-building-2"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>
+          {/* Subtle grid pattern inside CTA */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
+
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="w-16 h-16 bg-background border border-border flex items-center justify-center mb-8">
+              <div className="w-3 h-3 bg-secondary animate-pulse" />
+            </div>
+            
+            <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">Boarding Now</p>
+            <h2 className="text-4xl md:text-6xl font-bold tracking-tighter mb-6 uppercase">
+              Launch Your <br className="hidden md:block"/><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Global Career</span>
+            </h2>
+            
+            <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto font-mono">
+              [ STATUS: APPROVED FOR DEPARTURE ]<br/>
+              Access curated coursework and remote job placements meeting international standards.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 w-full max-w-md">
+              <Button size="lg" className="w-full text-sm font-mono tracking-widest uppercase h-14 bg-primary hover:bg-primary/90 text-primary-foreground rounded-none group" asChild>
+                <Link to="/academy" className="flex items-center justify-between px-4">
+                  <span>Initialize</span>
+                  <ArrowRight className="size-4 group-hover:translate-x-2 transition-transform" />
+                </Link>
+              </Button>
+            </div>
           </div>
-          
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6">
-            Advance Your Professional Journey
-          </h2>
-          
-          <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
-            Access curated coursework, remote job placements, and academic opportunities designed to meet international industry standards.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" className="w-full sm:w-auto text-base gap-2 bg-primary hover:bg-primary/90 text-primary-foreground h-14 px-8 rounded-xl" asChild>
-              <Link to="/academy">
-                Start Learning Free <ArrowRight className="!size-5" />
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" className="w-full sm:w-auto text-base gap-2 h-14 px-8 rounded-xl bg-background/50 hover:bg-muted" asChild>
-              <Link to="/global">
-                Browse Remote Jobs
-              </Link>
-            </Button>
-          </div>
-          
-          <p className="mt-8 text-sm text-muted-foreground">
-            No credit card required for the basic tier.
-          </p>
         </motion.div>
       </div>
     </section>

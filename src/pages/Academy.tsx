@@ -11,9 +11,9 @@ const courses = [
 ];
 
 const communityPosts = [
-  { user: "Amara K.", avatar: "AK", time: "2h ago", text: "Secured a new client contract using the AI negotiation framework from Module 4.", likes: 24 },
-  { user: "David O.", avatar: "DO", time: "4h ago", text: "Looking for study partners to discuss the latest workflow automation methodologies.", likes: 8 },
-  { user: "Fatima Z.", avatar: "FZ", time: "6h ago", text: "Successfully completed the AI for Freelancers certification.", likes: 31 },
+  { user: "Amara K.", avatar: "https://i.pravatar.cc/150?u=amara", time: "2h ago", text: "Secured a new client contract using the AI negotiation framework from Module 4.", likes: 24 },
+  { user: "David O.", avatar: "https://i.pravatar.cc/150?u=david", time: "4h ago", text: "Looking for study partners to discuss the latest workflow automation methodologies.", likes: 8 },
+  { user: "Fatima Z.", avatar: "https://i.pravatar.cc/150?u=fatima", time: "6h ago", text: "Successfully completed the AI for Freelancers certification.", likes: 31 },
 ];
 
 const certificates = [
@@ -141,10 +141,8 @@ const Academy = () => {
               <Bell className="size-5" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-secondary rounded-full" />
             </button>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold shrink-0">
-                EN
-              </div>
+            <div className="flex items-center gap-3 pl-4 border-l border-border/50">
+              <img src="https://i.pravatar.cc/150?u=esther" alt="Esther N." className="w-8 h-8 rounded-full border border-border shrink-0 object-cover" />
               <span className="hidden sm:inline text-sm font-medium">Esther N.</span>
             </div>
           </div>
@@ -244,9 +242,7 @@ const Academy = () => {
               <div className="space-y-4 max-w-3xl">
                 {communityPosts.map((p, i) => (
                   <div key={i} className="rounded-xl border bg-card p-5 flex gap-4 hover:shadow-card transition-all">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-bold shrink-0">
-                      {p.avatar}
-                    </div>
+                    <img src={p.avatar} alt={p.user} className="w-10 h-10 rounded-full border border-border object-cover shrink-0" />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1.5">
                         <span className="text-sm font-semibold">{p.user}</span>
