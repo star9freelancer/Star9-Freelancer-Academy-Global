@@ -6,7 +6,7 @@ const Footer = () => (
   <footer className="border-t py-16 bg-card">
     <div className="container grid md:grid-cols-4 gap-10">
       <div className="space-y-4 md:col-span-1">
-        <img src={logo} alt="Star9 Freelancer" className="h-10 w-auto" />
+        <img src={logo} alt="Star9 Freelancer" className="h-10 w-auto mix-blend-multiply dark:mix-blend-screen dark:invert" />
         <p className="text-sm text-muted-foreground leading-relaxed">
           Freelancing with heart and skill. Empowering global talent since 2024.
         </p>

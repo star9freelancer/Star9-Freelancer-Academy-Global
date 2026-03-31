@@ -52,7 +52,7 @@ const Global = () => {
       <header className="h-16 border-b bg-card sticky top-0 z-40 flex items-center justify-between px-4 md:px-8">
         <div className="flex items-center gap-4">
           <Link to="/" className="flex items-center gap-2">
-            <img src={logo} alt="Star9" className="h-8 w-auto" />
+            <img src={logo} alt="Star9" className="h-8 w-auto mix-blend-multiply dark:mix-blend-screen dark:invert" />
           </Link>
           <Button variant="ghost" size="sm" asChild>
             <Link to="/" className="gap-1 text-muted-foreground">

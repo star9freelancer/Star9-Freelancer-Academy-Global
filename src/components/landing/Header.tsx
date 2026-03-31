@@ -26,6 +26,9 @@ const Header = () => {
 
   const navLinks = [
     { label: "About", href: "#about" },
+    { label: "Features", href: "#features" },
+    { label: "Testimonials", href: "#testimonials" },
+    { label: "Pricing", href: "#pricing" },
     { label: "Academy", href: "/academy" },
     { label: "Global", href: "/global" },
   ];
@@ -38,7 +41,7 @@ const Header = () => {
     >
       <div className="container flex items-center justify-between h-16 md:h-18">
         <Link to="/" className="flex items-center gap-2">
-          <img src={logo} alt="Star9 Freelancer" className="h-10 w-auto" />
+          <img src={logo} alt="Star9 Freelancer" className="h-10 w-auto mix-blend-multiply dark:mix-blend-screen dark:invert" />
         </Link>
 
         {/* Desktop Nav */}

@@ -48,21 +48,28 @@ const DualBrandSection = () => {
             >
               <Link
                 to={card.link}
-                className="group block h-full rounded-2xl border bg-card p-8 shadow-card transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1"
+                className={`group block h-full rounded-[2rem] border bg-card p-10 shadow-lg transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 relative overflow-hidden ${
+                  card.accent === "primary" ? "hover:border-primary/50" : "hover:border-secondary/50"
+                }`}
               >
-                <div className="text-4xl mb-6">{card.emoji}</div>
-                <h3 className="text-xl font-bold mb-2">{card.title}</h3>
-                <p className={`text-sm font-semibold mb-3 ${
+                {/* Background ambient light */}
+                <div className={`absolute top-0 right-0 w-64 h-64 rounded-full blur-[80px] -z-10 opacity-0 group-hover:opacity-20 transition-opacity duration-500 ${
+                  card.accent === "primary" ? "bg-primary" : "bg-secondary"
+                }`} />
+
+                <div className="text-5xl mb-8">{card.emoji}</div>
+                <h3 className="text-2xl font-bold mb-3">{card.title}</h3>
+                <p className={`text-sm font-bold uppercase tracking-wider mb-4 ${
                   card.accent === "primary" ? "text-primary" : "text-secondary"
                 }`}>
                   {card.subtitle}
                 </p>
-                <p className="text-muted-foreground leading-relaxed mb-6">{card.description}</p>
-                <span className={`inline-flex items-center gap-1 text-sm font-semibold transition-transform group-hover:translate-x-1 ${
-                  card.accent === "primary" ? "text-primary" : "text-secondary"
+                <p className="text-muted-foreground leading-relaxed text-lg mb-8">{card.description}</p>
+                <div className={`inline-flex items-center gap-2 font-semibold transition-all group-hover:gap-4 ${
+                  card.accent === "primary" ? "text-primary bg-primary/10 px-4 py-2 rounded-full" : "text-secondary bg-secondary/10 px-4 py-2 rounded-full"
                 }`}>
-                  Explore <ArrowRight className="size-4" />
-                </span>
+                  Explore Platform <ArrowRight className="size-5" />
+                </div>
               </Link>
             </motion.div>
           ))}
