@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "@/lib/supabase";
 import { Search, Filter, MapPin, DollarSign, Clock, GraduationCap, Briefcase, ArrowLeft, Bell, BookmarkPlus, ChevronDown, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo_transparent.png";
@@ -26,6 +27,28 @@ const Global = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [savedJobs, setSavedJobs] = useState<Set<number>>(new Set([1]));
   const [showFilters, setShowFilters] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        navigate('/auth');
+      } else {
+        setUser(session.user);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        navigate('/auth');
+      } else {
+        setUser(session.user);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
   const toggleSave = (index: number) => {
     setSavedJobs(prev => {
@@ -72,7 +95,9 @@ const Global = () => {
             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-secondary rounded-full" />
           </button>
           <div className="flex items-center gap-3 pl-4 border-l border-border/50">
-            <img src="https://i.pravatar.cc/150?u=esther" alt="Esther N." className="w-8 h-8 rounded-full border border-border shrink-0 object-cover" />
+            <div className="w-8 h-8 rounded-full border border-border shrink-0 bg-primary/20 flex items-center justify-center text-primary font-bold uppercase" title={user?.email}>
+              {user?.email?.charAt(0) || "U"}
+            </div>
           </div>
         </div>
       </header>

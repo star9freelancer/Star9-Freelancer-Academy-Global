@@ -29,6 +29,7 @@ const Header = () => {
     { label: "Capabilities", href: "#features" },
     { label: "Academy", href: "/academy" },
     { label: "Global", href: "/global" },
+    { label: "Admin Portal", href: "/admin" },
   ];
 
   return (
@@ -65,10 +66,10 @@ const Header = () => {
           </button>
           <div className="flex items-center gap-2 border-l border-border/50 pl-4">
             <Button variant="ghost" size="sm" className="font-mono uppercase tracking-widest text-[11px]" asChild>
-              <Link to="/academy">Portal Login</Link>
+              <Link to="/auth">Portal Login</Link>
             </Button>
             <Button variant="default" size="sm" className="font-mono uppercase tracking-widest text-[11px] rounded-none" asChild>
-              <Link to="/academy">Initialize</Link>
+              <Link to="/auth">Initialize</Link>
             </Button>
           </div>
         </div>
@@ -103,10 +104,10 @@ const Header = () => {
           </div>
           <div className="flex gap-2 pt-2">
             <Button variant="ghost-nav" size="sm" className="flex-1" asChild>
-              <Link to="/academy">Log In</Link>
+              <Link to="/auth">Log In</Link>
             </Button>
             <Button variant="hero" size="sm" className="flex-1" asChild>
-              <Link to="/academy">Get Started</Link>
+              <Link to="/auth">Get Started</Link>
             </Button>
           </div>
         </div>
