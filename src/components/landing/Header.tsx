@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ExternalLink, Moon, Sun, Menu, X } from "lucide-react";
+import { ExternalLink, Moon, Sun, Menu, X, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo_transparent.png";
+import { supabase } from "@/lib/supabase";
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const [dark, setDark] = useState(() => {
     const stored = localStorage.getItem("star9-dark-mode");
     if (stored !== null) return stored === "true";
@@ -16,7 +18,20 @@ const Header = () => {
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+
+    // Auth check
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      subscription.unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -65,12 +80,23 @@ const Header = () => {
             {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
           </button>
           <div className="flex items-center gap-2 border-l border-border/50 pl-4">
-            <Button variant="ghost" size="sm" className="font-mono uppercase tracking-widest text-[11px]" asChild>
-              <Link to="/auth">Portal Login</Link>
-            </Button>
-            <Button variant="default" size="sm" className="font-mono uppercase tracking-widest text-[11px] rounded-none" asChild>
-              <Link to="/auth">Initialize</Link>
-            </Button>
+            {user ? (
+              <Button variant="default" size="sm" className="font-mono uppercase tracking-widest text-[11px] rounded-none gap-2" asChild>
+                <Link to="/academy">
+                  <LayoutDashboard className="size-3" />
+                  My Academy
+                </Link>
+              </Button>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" className="font-mono uppercase tracking-widest text-[11px]" asChild>
+                  <Link to="/auth">Portal Login</Link>
+                </Button>
+                <Button variant="default" size="sm" className="font-mono uppercase tracking-widest text-[11px] rounded-none" asChild>
+                  <Link to="/auth">Initialize</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
 
@@ -103,12 +129,20 @@ const Header = () => {
             </button>
           </div>
           <div className="flex gap-2 pt-2">
-            <Button variant="ghost-nav" size="sm" className="flex-1" asChild>
-              <Link to="/auth">Log In</Link>
-            </Button>
-            <Button variant="hero" size="sm" className="flex-1" asChild>
-              <Link to="/auth">Get Started</Link>
-            </Button>
+            {user ? (
+              <Button variant="hero" size="sm" className="flex-1" asChild>
+                <Link to="/academy" onClick={() => setMobileOpen(false)}>My Academy</Link>
+              </Button>
+            ) : (
+              <>
+                <Button variant="ghost-nav" size="sm" className="flex-1" asChild>
+                  <Link to="/auth" onClick={() => setMobileOpen(false)}>Log In</Link>
+                </Button>
+                <Button variant="hero" size="sm" className="flex-1" asChild>
+                  <Link to="/auth" onClick={() => setMobileOpen(false)}>Get Started</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       )}
