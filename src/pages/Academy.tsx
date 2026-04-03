@@ -235,11 +235,6 @@ const Academy = () => {
                       <l.icon className={`size-[18px] shrink-0 transition-colors duration-200 ${
                         isActive ? "text-primary" : "text-zinc-500 group-hover:text-zinc-300"
                       }`} />
-                      <span className={`text-[11px] font-mono tracking-widest uppercase font-semibold whitespace-nowrap transition-all duration-200 ${
-                        sidebarHovered ? "opacity-100 max-w-[200px]" : "opacity-0 max-w-0 overflow-hidden"
-                      } ${isActive ? "text-primary" : "text-zinc-400 group-hover:text-zinc-200"}`}>
-                        {l.label}
-                      </span>
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="right" sideOffset={8} className="font-mono text-[10px] uppercase tracking-widest">
