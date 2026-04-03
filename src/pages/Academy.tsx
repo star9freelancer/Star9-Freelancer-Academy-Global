@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { 
   Home, BookOpen, Users, Award, Settings, Menu, Bell, Search, 
   ArrowRight, Download, Play, Clock, TrendingUp, Sparkles, 
-  CheckCircle2, XCircle, FileText, Linkedin, Twitter, Globe, 
+  CheckCircle2, XCircle, FileText, Globe, Link as LinkIcon, 
   CreditCard, UploadCloud, BadgeCheck, Briefcase, Cpu, Database
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -98,6 +98,7 @@ const Academy = () => {
   const studentLinks = [
     { id: "profile", icon: Users, label: "My Profile" },
     { id: "academy", icon: BookOpen, label: "My Academy" },
+    { id: "certificates", icon: Award, label: "My Certificates" },
     { id: "applications", icon: Briefcase, label: "My Applications" },
   ];
 
@@ -225,7 +226,7 @@ const Academy = () => {
                     <div className="space-y-2">
                       <Label className="text-xs">LinkedIn URL</Label>
                       <div className="relative">
-                        <Linkedin className="absolute left-3 top-2.5 w-4 h-4 text-muted-foreground" />
+                        <LinkIcon className="absolute left-3 top-2.5 w-4 h-4 text-muted-foreground" />
                         <Input className="pl-9 bg-background/50" defaultValue="https://linkedin.com/in/username" />
                       </div>
                     </div>
@@ -316,6 +317,77 @@ const Academy = () => {
                   <CardFooter className="border-t pt-4">
                     <Button variant="outline" className="w-full font-mono uppercase text-xs tracking-widest gap-2">Resume Module <Play className="w-3 h-3" /></Button>
                   </CardFooter>
+                </Card>
+
+                {/* Course 3: Completed */}
+                <Card className="glass border-border/50 shadow-card flex flex-col opacity-80 filter saturate-50">
+                  <CardHeader>
+                    <Badge className="w-fit mb-2 bg-green-500/20 text-green-500">Corporate Training</Badge>
+                    <CardTitle>Enterprise Security</CardTitle>
+                    <CardDescription>Remote data compliance protocols.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex-1 flex flex-col">
+                    <div className="mb-4">
+                      <div className="flex justify-between text-xs mb-1 font-mono text-green-500 uppercase"><span>Completed</span><span>100%</span></div>
+                      <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                        <div className="h-full bg-green-500 w-full" />
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="border-t pt-4 gap-2">
+                    <Button variant="outline" className="flex-1 font-mono uppercase text-xs tracking-widest border-green-500/30 text-green-500 hover:bg-green-500/10">Review</Button>
+                    <Button className="flex-1 font-mono uppercase text-xs tracking-widest bg-green-500 hover:bg-green-600 text-white gap-2" onClick={() => setActiveTab("certificates")}><Award className="w-3 h-3" /> Claim</Button>
+                  </CardFooter>
+                </Card>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "certificates" && (
+            <div className="space-y-6 relative z-10">
+              <div className="flex justify-between items-end">
+                <div>
+                  <h1 className="text-3xl font-bold tracking-tight">My Certificates</h1>
+                  <p className="text-muted-foreground">View and download your earned immutable credentials.</p>
+                </div>
+                <div className="hidden sm:flex items-center gap-2 bg-muted/50 px-4 py-2 rounded-lg border border-border">
+                  <Award className="w-5 h-5 text-secondary" />
+                  <span className="font-mono text-sm tracking-widest uppercase font-bold text-foreground">Earned: 1</span>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <Card className="glass overflow-hidden group shadow-card hover:shadow-card-hover transition-all">
+                  {/* Decorative Certificate Background Pattern */}
+                  <div className="h-32 bg-gradient-to-r from-green-500/20 to-primary/20 relative flex items-center justify-center p-6 border-b border-border/50">
+                    <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '16px 16px' }} />
+                    <Award className="w-16 h-16 text-primary group-hover:scale-110 transition-transform duration-500 z-10" />
+                  </div>
+                  <CardHeader className="text-center pt-6">
+                    <Badge className="mx-auto mb-2 bg-green-500/10 text-green-500">Verified Credential</Badge>
+                    <CardTitle className="text-2xl font-serif">Enterprise Security</CardTitle>
+                    <CardDescription className="font-mono mt-2 text-xs">Issued on October 1st, 2026</CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <p className="text-sm text-muted-foreground">Certifies successfully completing all remote data compliance protocol examinations on the Star9 Network.</p>
+                    <div className="mt-6 p-3 bg-background/50 rounded flex justify-between items-center text-xs font-mono">
+                      <span className="text-muted-foreground">ID: ST9-8472-CERT</span>
+                      <a href="#" className="text-primary hover:underline">Verify</a>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="bg-muted/30 pt-4 flex gap-3">
+                    <Button className="flex-1 font-mono uppercase tracking-widest text-xs gap-2" variant="outline"><Globe className="w-4 h-4"/> Add to LinkedIn</Button>
+                    <Button className="flex-1 font-mono uppercase tracking-widest text-xs gap-2 bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 border"><Download className="w-4 h-4"/> Download PDF</Button>
+                  </CardFooter>
+                </Card>
+
+                {/* Placeholder for future certs */}
+                <Card className="glass border-dashed shadow-none flex flex-col items-center justify-center text-center p-12 opacity-50 relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-transparent to-secondary/5 group-hover:to-secondary/10 transition-colors pointer-events-none" />
+                  <Award className="w-12 h-12 text-muted-foreground mb-4" />
+                  <h3 className="font-mono uppercase tracking-widest font-bold mb-2">Awaiting Credential</h3>
+                  <p className="text-sm text-muted-foreground max-w-[200px]">Complete additional courses in My Academy to unlock more certificates.</p>
+                  <Button variant="outline" className="mt-6 font-mono text-xs uppercase tracking-widest bg-background/50" onClick={() => setActiveTab("academy")}>View Academy</Button>
                 </Card>
               </div>
             </div>
