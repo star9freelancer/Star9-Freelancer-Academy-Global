@@ -3,13 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { 
   Users, Menu, Bell, Search, ArrowRight, CheckCircle2, 
-  XCircle, CreditCard, Database, Briefcase
+  XCircle, CreditCard, Database, Briefcase, Flame, Award, 
+  Trash2, ShieldCheck, Mail
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import logo from "@/assets/logo_transparent.png";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { toast } from "sonner";
 
 // Verification Badge Component
 const VerificationBadge = ({ status }: { status: "verified" | "pending" | "rejected" | string }) => {
@@ -32,29 +34,48 @@ const Admin = () => {
   const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
   const [activeTab, setActiveTab] = useState("users");
   const [user, setUser] = useState<any>(null);
+  const [students, setStudents] = useState<any[]>([]);
+  const [loadingStudents, setLoadingStudents] = useState(true);
   
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const checkAdmin = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         navigate('/auth');
-      } else {
-        setUser(session.user);
-        // Normally: if (session.user.role !== 'admin') navigate('/academy');
+        return;
       }
-    });
+      setUser(session.user);
+      
+      // Fetch initial student list
+      fetchStudents();
+    };
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
-        navigate('/auth');
-      } else {
-        setUser(session.user);
-      }
-    });
-
-    return () => subscription.unsubscribe();
+    checkAdmin();
   }, [navigate]);
+
+  const fetchStudents = async () => {
+    setLoadingStudents(true);
+    const { data } = await supabase
+      .from('profiles')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (data) setStudents(data);
+    setLoadingStudents(false);
+  };
+
+  const setVerification = async (studentId: string, status: string) => {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ verification_status: status })
+      .eq('id', studentId);
+    
+    if (!error) {
+      toast.success(`Verification status updated to ${status}`);
+      fetchStudents();
+    }
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -68,35 +89,36 @@ const Admin = () => {
   ];
 
   return (
-    <div className="min-h-screen flex bg-background relative overflow-hidden">
-      {/* Mobile overlay */}
+    <div className="min-h-screen flex bg-background relative overflow-hidden font-sans">
+      {/* Sidebar Overlay */}
       {sidebarOpen && (
-        <div 
-          className="md:hidden fixed inset-0 z-40 bg-background/80 backdrop-blur-sm"
-          onClick={() => setSidebarOpen(false)}
-        />
+        <div className="md:hidden fixed inset-0 z-40 bg-background/80 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
       )}
 
       {/* Sidebar */}
-      <aside className={`${sidebarOpen ? "translate-x-0 w-64" : "-translate-x-full w-64 md:w-16 md:translate-x-0"} absolute md:relative z-50 h-full flex flex-col transition-all duration-300 border-r bg-card shrink-0 overflow-hidden`}>
-        <div className="h-20 px-6 border-b flex items-center shrink-0 w-full bg-accent/30">
-          {sidebarOpen && (
-            <Link to="/" className="flex items-center gap-2">
-              <img src={logo} alt="Star9" className="h-[24px] w-auto object-contain" />
-              <span className="font-mono text-xs tracking-widest uppercase font-bold text-primary">ADMIN</span>
+      <aside className={`${sidebarOpen ? "translate-x-0 w-64" : "-translate-x-full w-64 md:w-20 md:translate-x-0"} absolute md:relative z-50 h-full flex flex-col transition-all duration-500 border-r bg-card/60 backdrop-blur-xl shrink-0 overflow-hidden`}>
+        <div className="h-24 px-6 flex items-center justify-center shrink-0 w-full bg-accent/20 border-b border-primary/10">
+          {sidebarOpen ? (
+            <Link to="/" className="flex flex-col items-center gap-1 group">
+              <img src={logo} alt="Star9" className="h-[28px] w-auto object-contain brightness-110" />
+              <span className="text-[10px] font-mono tracking-[0.3em] uppercase font-black text-primary/80 group-hover:text-primary transition-colors">Infrastructure Admin</span>
             </Link>
+          ) : (
+            <ShieldCheck className="size-6 text-primary animate-pulse" />
           )}
         </div>
-        <nav className="p-2 space-y-1">
+        <nav className="p-3 space-y-2">
           {adminLinks.map((l) => (
             <button
               key={l.id}
               onClick={() => setActiveTab(l.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors border-l-2 ${
-                activeTab === l.id ? "bg-accent/50 text-foreground font-medium border-primary" : "border-transparent text-muted-foreground hover:bg-muted"
+              className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-xs font-mono tracking-widest uppercase transition-all border ${
+                activeTab === l.id 
+                  ? "bg-primary text-primary-foreground font-bold border-primary shadow-lg shadow-primary/20" 
+                  : "border-transparent text-muted-foreground hover:bg-muted"
               }`}
             >
-              <l.icon className={`size-4 shrink-0 ${activeTab === l.id ? "text-primary" : ""}`} />
+              <l.icon className={`size-4 shrink-0 ${activeTab === l.id ? "text-white" : ""}`} />
               {sidebarOpen && <span>{l.label}</span>}
             </button>
           ))}
@@ -104,11 +126,11 @@ const Admin = () => {
 
         {sidebarOpen && (
           <div className="mt-auto p-4 space-y-4">
-            <Link to="/academy" className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-sm text-xs font-mono tracking-widest uppercase bg-secondary/10 text-secondary hover:bg-secondary/20 transition-colors border border-secondary/20">
+            <Link to="/academy" className="w-full flex items-center justify-center gap-2 px-3 py-3 rounded-xl text-[10px] font-mono tracking-widest uppercase bg-secondary/10 text-secondary hover:bg-secondary/20 transition-all border border-secondary/20">
               <Briefcase className="size-4 shrink-0" />
-              <span>STUDENT VIEW</span>
+              <span>TERMINAL VIEW</span>
             </Link>
-            <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-sm text-xs font-mono tracking-widest uppercase text-muted-foreground hover:bg-muted transition-colors border border-border">
+            <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 px-3 py-3 rounded-xl text-[10px] font-mono tracking-widest uppercase text-muted-foreground hover:bg-muted transition-colors border border-border">
               <ArrowRight className="size-4 shrink-0 rotate-180" />
               <span>LOG OUT</span>
             </button>
@@ -116,166 +138,208 @@ const Admin = () => {
         )}
       </aside>
 
-      {/* Main Content */}
+      {/* Workspace */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-20 border-b bg-card flex items-center justify-between px-4 md:px-6 shrink-0 z-10 relative">
-          <div className="flex items-center gap-3">
-            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg hover:bg-muted">
+        <header className="h-24 border-b bg-card/40 backdrop-blur-md flex items-center justify-between px-6 shrink-0 z-10 relative">
+          <div className="flex items-center gap-4">
+            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2.5 rounded-xl hover:bg-muted transition-all border border-transparent hover:border-border">
               <Menu className="size-5" />
             </button>
-            <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-muted rounded-lg border border-primary/20">
-              <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-              <span className="text-xs font-mono text-primary font-bold tracking-widest">SECURE ADMIN</span>
+            <div className="hidden lg:flex items-center gap-3 px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-xl">
+              <Search className="size-4 text-zinc-500" />
+              <input type="text" placeholder="Global CID Search..." className="bg-transparent text-xs font-mono outline-none w-64 uppercase tracking-widest" />
             </div>
           </div>
-          <div className="flex items-center gap-3 shrink-0">
-            <button className="p-2 rounded-lg hover:bg-muted relative">
-              <Bell className="size-5" />
-            </button>
-            <div className="flex items-center gap-3 pl-4 border-l border-border/50">
-              <div className="w-8 h-8 rounded-full border border-border shrink-0 bg-primary flex items-center justify-center text-primary-foreground font-bold uppercase">
-                {user?.email?.charAt(0) || "A"}
-              </div>
-            </div>
+          <div className="flex items-center gap-4">
+             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-orange-500/10 border border-orange-500/20">
+               <Flame className="size-4 text-secondary fill-secondary" />
+               <span className="text-xs font-mono font-bold text-secondary">ACTIVE PROTOCOLS</span>
+             </div>
+             <button className="p-2.5 rounded-xl hover:bg-muted relative transition-all">
+               <Bell className="size-5" />
+               <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full animate-ping" />
+             </button>
+             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white font-black text-sm uppercase shadow-lg shadow-primary/20">
+               {user?.email?.charAt(0) || "A"}
+             </div>
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 w-full bg-background relative">
-          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 w-full bg-background relative overflow-x-hidden">
+          <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-primary/5 rounded-full blur-[150px] pointer-events-none" />
 
           {activeTab === "users" && (
-            <div className="space-y-6 max-w-5xl relative z-10">
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">Network Verification</h1>
-                <p className="text-muted-foreground">Approve or reject user profile document submissions.</p>
+            <div className="space-y-8 max-w-6xl mx-auto relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                  <Badge className="mb-2 bg-primary/10 text-primary border-primary/20 py-0.5 font-mono text-[10px] tracking-widest uppercase">Admin Terminal</Badge>
+                  <h1 className="text-4xl font-bold tracking-tighter uppercase leading-none">Network Authentication</h1>
+                  <p className="text-muted-foreground mt-2 font-medium">Verify credentials and manage student study streaks across the Star9 Network.</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Button variant="outline" className="font-mono text-[10px] uppercase tracking-widest" onClick={fetchStudents}>Resync Students</Button>
+                  <Button className="font-mono text-[10px] uppercase tracking-widest bg-primary hover:bg-primary/90 text-primary-foreground">Generate Report</Button>
+                </div>
               </div>
 
-              <div className="rounded-xl border bg-card overflow-hidden glass shadow-card">
-                <table className="w-full text-sm text-left">
-                  <thead className="bg-muted/50 text-xs font-mono uppercase text-muted-foreground">
-                    <tr>
-                      <th className="px-6 py-4">User</th>
-                      <th className="px-6 py-4">Role</th>
-                      <th className="px-6 py-4">Documents</th>
-                      <th className="px-6 py-4">Status</th>
-                      <th className="px-6 py-4 text-right">Verification</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border/50">
-                    <tr className="hover:bg-muted/50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center font-bold">A</div>
-                          <div>
-                            <p className="font-medium">Amara K.</p>
-                            <p className="text-xs text-muted-foreground font-mono">amara@example.com</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4"><Badge variant="outline">Freelancer</Badge></td>
-                      <td className="px-6 py-4 text-primary text-xs underline cursor-pointer">View_Passport.pdf</td>
-                      <td className="px-6 py-4"><Badge className="bg-orange-500/20 text-orange-500">Pending</Badge></td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button size="icon" variant="ghost" className="text-green-500 hover:text-green-600 hover:bg-green-500/10"><CheckCircle2 className="w-5 h-5"/></Button>
-                          <Button size="icon" variant="ghost" className="text-red-500 hover:text-red-600 hover:bg-red-500/10"><XCircle className="w-5 h-5"/></Button>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr className="hover:bg-muted/50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center font-bold">D</div>
-                          <div>
-                            <p className="font-medium">David O.</p>
-                            <p className="text-xs text-muted-foreground font-mono flex items-center">david@example.com <VerificationBadge status="verified" /></p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4"><Badge variant="outline">Student</Badge></td>
-                      <td className="px-6 py-4 text-primary text-xs underline cursor-pointer">ID_Card.png</td>
-                      <td className="px-6 py-4"><Badge className="bg-blue-500/20 text-blue-500">Verified</Badge></td>
-                      <td className="px-6 py-4 text-right">
-                        <Button size="sm" variant="outline" className="font-mono text-xs border-red-500/50 text-red-500 hover:bg-red-500/10">Revoke</Button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div className="grid md:grid-cols-3 gap-6">
+                <Card className="glass border-border/50 bg-gradient-to-br from-card to-zinc-900/50">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground">Total Personnel</CardTitle>
+                    <h3 className="text-4xl font-bold">{students.length}</h3>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center gap-2 text-xs text-green-500 font-mono">
+                      <ArrowRight className="size-3 rotate-[-45deg]" /> +12% from last cycle
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="glass border-border/50 bg-gradient-to-br from-card to-zinc-900/50">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground">Highest Network Streak</CardTitle>
+                    <h3 className="text-4xl font-bold text-secondary">42 Days</h3>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono uppercase">
+                      <Award className="size-3" /> Record held by user_8472
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="glass border-border/50 bg-gradient-to-br from-card to-zinc-900/50">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground">Pending Verifications</CardTitle>
+                    <h3 className="text-4xl font-bold text-orange-500">{students.filter(s => s.verification_status === 'pending').length}</h3>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center gap-2 text-xs text-zinc-500 font-mono uppercase underline cursor-pointer hover:text-orange-500 transition-colors">
+                      Begin Auth Protocol
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="rounded-2xl border bg-card/30 backdrop-blur-xl border-border/50 shadow-2xl overflow-hidden glass">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-left">
+                    <thead className="bg-zinc-900/80 border-b border-border/50 text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
+                      <tr>
+                        <th className="px-6 py-5">Personnel ID</th>
+                        <th className="px-6 py-5">Role</th>
+                        <th className="px-6 py-5">Study Streak</th>
+                        <th className="px-6 py-5">Auth Status</th>
+                        <th className="px-6 py-5 text-right">Command</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border/20">
+                      {loadingStudents ? (
+                        <tr><td colSpan={5} className="px-6 py-12 text-center animate-pulse font-mono text-xs uppercase tracking-widest">Scanning Network...</td></tr>
+                      ) : students.length === 0 ? (
+                        <tr><td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">No personnel detected in the local network.</td></tr>
+                      ) : students.map((std) => (
+                        <tr key={std.id} className="hover:bg-zinc-800/20 transition-all duration-300 group">
+                          <td className="px-6 py-5">
+                            <div className="flex items-center gap-4">
+                              <div className="w-10 h-10 rounded-xl bg-accent border border-border/50 flex items-center justify-center font-black group-hover:border-primary/50 transition-colors">
+                                {std.email?.charAt(0).toUpperCase()}
+                              </div>
+                              <div className="space-y-0.5">
+                                <p className="font-bold uppercase tracking-tight group-hover:text-primary transition-colors">{std.full_name || std.email?.split('@')[0]}</p>
+                                <div className="flex items-center gap-2">
+                                  <Mail className="size-3 text-muted-foreground" />
+                                  <p className="text-[10px] text-muted-foreground font-mono">{std.email}</p>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-5">
+                            <Badge variant="outline" className="border-secondary/20 bg-secondary/5 text-secondary uppercase font-mono text-[9px] tracking-widest">{std.role}</Badge>
+                          </td>
+                          <td className="px-6 py-5">
+                            <div className="flex items-center gap-3">
+                              <div className="flex items-center gap-1.5">
+                                <Flame className="size-4 text-secondary fill-secondary" />
+                                <span className="text-sm font-black font-mono">{std.current_streak || 0}</span>
+                              </div>
+                              <div className="h-4 w-px bg-border hidden sm:block" />
+                              <span className="text-[10px] text-muted-foreground font-mono hidden sm:block">MAX: {std.longest_streak || 0}</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-5">
+                            {std.verification_status === 'verified' ? (
+                              <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20 rounded-full py-0.5 font-mono text-[10px] tracking-widest flex items-center w-fit gap-1"><ShieldCheck className="size-3" /> VERIFIED</Badge>
+                            ) : std.verification_status === 'pending' ? (
+                              <Badge className="bg-orange-500/10 text-orange-500 border-orange-500/20 rounded-full py-0.5 font-mono text-[10px] tracking-widest w-fit">PENDING AUTH</Badge>
+                            ) : (
+                              <Badge className="bg-red-500/10 text-red-500 border-red-500/20 rounded-full py-0.5 font-mono text-[10px] tracking-widest w-fit">RESTRICTED</Badge>
+                            )}
+                          </td>
+                          <td className="px-6 py-5 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              {std.verification_status !== 'verified' ? (
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button size="icon" variant="ghost" className="rounded-full text-green-500 hover:bg-green-500/10 border border-transparent hover:border-green-500/20" onClick={() => setVerification(std.id, 'verified')}>
+                                        <CheckCircle2 className="size-5" />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Authorize Access</TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              ) : (
+                                <Button variant="ghost" size="sm" className="text-[9px] font-mono tracking-widest uppercase hover:text-red-500 transition-colors" onClick={() => setVerification(std.id, 'pending')}>Revoke Auth</Button>
+                              )}
+                              <Button size="icon" variant="ghost" className="rounded-full text-muted-foreground hover:text-red-500 hover:bg-red-500/10">
+                                <Trash2 className="size-4" />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
 
           {activeTab === "intake" && (
-            <div className="space-y-6 max-w-5xl relative z-10">
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">Opportunity Intake</h1>
-                <p className="text-muted-foreground">Review external Google Form submissions and publish to Global Board.</p>
-              </div>
-
-              <Card className="glass border-border/50">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <Badge className="bg-secondary/20 text-secondary mb-2">Work Abroad - Pending</Badge>
-                      <CardTitle>Software Engineer in Berlin</CardTitle>
-                      <CardDescription>Submitted by TechCorp EU • 2 hours ago</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4 text-sm bg-background/50 p-6 rounded-md mx-6 border">
-                  <div><strong className="text-muted-foreground">Description:</strong> We are looking for 3 mid-level engineers willing to relocate to Germany. Visa sponsorship provided.</div>
-                  <div><strong className="text-muted-foreground">External Link:</strong> <a className="text-primary underline" href="#">https://forms.gle/xyz</a></div>
-                </CardContent>
-                <CardFooter className="mt-4 gap-3">
-                  <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-mono uppercase tracking-widest text-xs">Publish to Global Board</Button>
-                  <Button variant="outline" className="text-red-500 hover:text-red-600 font-mono uppercase tracking-widest text-xs border-red-500/20">Reject Spam</Button>
-                </CardFooter>
-              </Card>
+            <div className="space-y-6 max-w-5xl mx-auto relative z-10 py-12 text-center border-2 border-dashed rounded-3xl border-primary/20 bg-primary/5">
+              <Database className="size-16 text-primary/30 mx-auto mb-6" />
+              <h2 className="text-2xl font-bold uppercase tracking-tighter">Opportunity Ingestion Subsystem</h2>
+              <p className="text-muted-foreground max-w-md mx-auto">Connecting to external decentralized submission nodes. Check back once synchronization is complete.</p>
+              <Button className="mt-8 font-mono text-xs uppercase tracking-widest">Force Re-sync</Button>
             </div>
           )}
 
           {activeTab === "financials" && (
-            <div className="space-y-6 max-w-5xl relative z-10">
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">Financials & Invoicing</h1>
-                <p className="text-muted-foreground">Track, generate and view user invoices.</p>
-              </div>
+            <div className="space-y-12 max-w-6xl mx-auto relative z-10">
+               <div className="flex items-end justify-between">
+                 <div>
+                   <h1 className="text-4xl font-bold tracking-tighter uppercase leading-none">Fiscal Ledger</h1>
+                   <p className="text-muted-foreground mt-2 font-medium">Monitoring revenue streams and network-wide billing cycles.</p>
+                 </div>
+                 <Button className="bg-secondary hover:bg-secondary/90 text-white font-mono text-[10px] uppercase tracking-[0.2em] px-8 py-6 rounded-2xl shadow-xl shadow-secondary/20">Generate Fiscal Report</Button>
+               </div>
 
-              <div className="grid md:grid-cols-3 gap-4 mb-6">
-                 <Card className="glass"><CardContent className="p-6"><p className="text-muted-foreground text-sm font-mono uppercase mb-1">Total Revenue</p><h2 className="text-3xl font-bold">$14,250</h2></CardContent></Card>
-                 <Card className="glass"><CardContent className="p-6"><p className="text-muted-foreground text-sm font-mono uppercase mb-1">Pending Invoices</p><h2 className="text-3xl font-bold">12</h2></CardContent></Card>
-                 <Card className="glass border-primary/50 hover:bg-primary/5 cursor-pointer transition-colors"><CardContent className="p-6 flex items-center justify-between h-full"><span className="font-mono text-sm tracking-widest uppercase font-bold text-primary">Generate<br/>Invoice</span> <CreditCard className="w-8 h-8 text-primary/50" /></CardContent></Card>
-              </div>
-
-              <div className="rounded-xl border bg-card overflow-hidden glass">
-                <table className="w-full text-sm text-left">
-                  <thead className="bg-muted/50 text-xs font-mono uppercase text-muted-foreground">
-                    <tr>
-                      <th className="px-6 py-4">Invoice ID</th>
-                      <th className="px-6 py-4">User</th>
-                      <th className="px-6 py-4">Amount</th>
-                      <th className="px-6 py-4">Status</th>
-                      <th className="px-6 py-4 text-right">Date</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border/50">
-                    <tr className="hover:bg-muted/50">
-                      <td className="px-6 py-4 font-mono text-xs">INV-2026-001</td>
-                      <td className="px-6 py-4">Amara K.</td>
-                      <td className="px-6 py-4 font-mono font-bold">$299.00</td>
-                      <td className="px-6 py-4"><Badge className="bg-green-500/20 text-green-500">Paid</Badge></td>
-                      <td className="px-6 py-4 text-right text-muted-foreground font-mono text-xs">Oct 24, 2026</td>
-                    </tr>
-                    <tr className="hover:bg-muted/50">
-                      <td className="px-6 py-4 font-mono text-xs">INV-2026-002</td>
-                      <td className="px-6 py-4">David O.</td>
-                      <td className="px-6 py-4 font-mono font-bold">$450.00</td>
-                      <td className="px-6 py-4"><Badge className="bg-orange-500/20 text-orange-500">Pending</Badge></td>
-                      <td className="px-6 py-4 text-right text-muted-foreground font-mono text-xs">Oct 26, 2026</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+               <div className="grid md:grid-cols-4 gap-6">
+                 <Card className="glass border-border/50 p-8 h-48 flex flex-col justify-between">
+                   <p className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground">Total Gross</p>
+                   <h2 className="text-5xl font-black tracking-tighter">$14.2K</h2>
+                   <div className="text-[10px] font-mono text-green-500 uppercase">+2.4% THIS WEEK</div>
+                 </Card>
+                 <Card className="glass border-border/50 p-8 h-48 flex flex-col justify-between">
+                   <p className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground">Pending Payouts</p>
+                   <h2 className="text-5xl font-black tracking-tighter">12</h2>
+                   <div className="text-[10px] font-mono text-secondary uppercase tracking-[0.2em]">Attention Required</div>
+                 </Card>
+                 <Card className="glass border-primary/20 bg-primary/10 p-8 h-48 flex flex-col justify-center items-center gap-4 group cursor-pointer">
+                   <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/30 group-hover:scale-110 transition-transform">
+                     <CreditCard className="size-6" />
+                   </div>
+                   <p className="font-mono text-xs font-black uppercase tracking-widest text-primary">New Invoice</p>
+                 </Card>
+               </div>
             </div>
           )}
         </main>

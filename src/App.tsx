@@ -9,6 +9,7 @@ import Global from "./pages/Global.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Auth from "./pages/Auth.tsx";
 import Admin from "./pages/Admin.tsx";
+import CoursePlayer from "./pages/CoursePlayer.tsx";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/global" element={<Global />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/academy/course/:courseId" element={<CoursePlayer />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

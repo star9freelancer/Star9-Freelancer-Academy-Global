@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
-import { Search, Filter, MapPin, DollarSign, Clock, GraduationCap, Briefcase, ArrowLeft, Bell, BookmarkPlus, ChevronDown, Star } from "lucide-react";
+import { Search, Filter, MapPin, DollarSign, Clock, GraduationCap, Briefcase, ArrowLeft, Bell, BookmarkPlus, ChevronDown, Star, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import logo from "@/assets/logo_transparent.png";
 
 const jobs = [
@@ -23,7 +24,7 @@ const universities = [
 ];
 
 const Global = () => {
-  const [tab, setTab] = useState<"work" | "study">("work");
+  const [tab, setTab] = useState<"work" | "study" | "applications">("work");
   const [searchQuery, setSearchQuery] = useState("");
   const [savedJobs, setSavedJobs] = useState<Set<number>>(new Set([1]));
   const [showFilters, setShowFilters] = useState(false);
@@ -131,12 +132,21 @@ const Global = () => {
             >
               <GraduationCap className="size-4" /> Study Abroad
             </button>
+            <button
+              onClick={() => { setTab("applications"); setSearchQuery(""); }}
+              className={`flex items-center gap-2 px-6 py-3 rounded-md text-xs font-mono font-bold uppercase tracking-widest transition-all ${
+                tab === "applications" ? "bg-card shadow-sm text-foreground" : "text-muted-foreground"
+              }`}
+            >
+              <FileText className="size-4" /> My Applications
+            </button>
           </div>
         </div>
 
         {/* Stats Row */}
-        <div className="flex justify-center gap-6 text-center">
-          {tab === "work" ? (
+        {tab !== "applications" && (
+          <div className="flex justify-center gap-6 text-center">
+            {tab === "work" ? (
             <>
               <div className="px-4">
                 <p className="text-xl font-bold text-primary">{filteredJobs.length}</p>
@@ -168,6 +178,7 @@ const Global = () => {
             </>
           )}
         </div>
+        )}
 
         {/* Search */}
         <div className="flex items-center gap-3 max-w-2xl mx-auto">
@@ -292,7 +303,7 @@ const Global = () => {
               </div>
             )}
           </div>
-        ) : (
+        ) : tab === "study" ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {filteredUnis.map((uni, i) => (
               <div key={i} className="rounded-md border bg-card p-6 shadow-card hover:shadow-card-hover transition-all duration-300 flex flex-col">
@@ -324,7 +335,39 @@ const Global = () => {
               </div>
             )}
           </div>
-        )}
+        ) : tab === "applications" ? (
+          <div className="space-y-6 max-w-5xl mx-auto">
+            <div className="rounded-xl border bg-card overflow-hidden shadow-card">
+              <table className="w-full text-sm text-left">
+                <thead className="bg-muted/50 text-xs font-mono uppercase text-muted-foreground">
+                  <tr>
+                    <th className="px-6 py-4">Opportunity</th>
+                    <th className="px-6 py-4">Category</th>
+                    <th className="px-6 py-4">Date Applied</th>
+                    <th className="px-6 py-4">Status</th>
+                    <th className="px-6 py-4 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/50">
+                  <tr className="hover:bg-muted/50 transition-colors">
+                    <td className="px-6 py-4 font-medium">Senior UI Designer @ TechNova</td>
+                    <td className="px-6 py-4"><Badge variant="outline">Remote Work</Badge></td>
+                    <td className="px-6 py-4 font-mono text-muted-foreground">Oct 24, 2026</td>
+                    <td className="px-6 py-4"><Badge className="bg-blue-500/20 text-blue-500">In Review</Badge></td>
+                    <td className="px-6 py-4 text-right"><Button variant="ghost" size="sm" className="font-mono text-xs uppercase">View Tracking</Button></td>
+                  </tr>
+                  <tr className="hover:bg-muted/50 transition-colors">
+                    <td className="px-6 py-4 font-medium">BSc Computer Science @ UCT</td>
+                    <td className="px-6 py-4"><Badge variant="outline">Study Abroad</Badge></td>
+                    <td className="px-6 py-4 font-mono text-muted-foreground">Oct 20, 2026</td>
+                    <td className="px-6 py-4"><Badge className="bg-secondary/20 text-secondary">Accepted</Badge></td>
+                    <td className="px-6 py-4 text-right"><Button variant="ghost" size="sm" className="font-mono text-xs uppercase">View Tracking</Button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );
