@@ -1,7 +1,4 @@
 import React from "react";
-import { Award, ShieldCheck, Globe } from "lucide-react";
-import logo from "@/assets/logo_transparent.png";
-import goldSeal from "@/assets/gold_foil_seal.png";
 
 interface CertificateTemplateProps {
   studentName: string;
@@ -10,142 +7,275 @@ interface CertificateTemplateProps {
   issueDate: string;
 }
 
-const CertificateTemplate = React.forwardRef<HTMLDivElement, CertificateTemplateProps>(({ 
-  studentName, 
-  courseTitle, 
-  credentialId, 
-  issueDate 
+const CertificateTemplate = React.forwardRef<HTMLDivElement, CertificateTemplateProps>(({
+  studentName,
+  courseTitle,
+  credentialId,
+  issueDate
 }, ref) => {
   return (
-    <div 
+    <div
       ref={ref}
       style={{
-        width: '1122.5px', // A4 Landscape
-        height: '793.7px',
-        backgroundColor: '#fcfcf7', // Premium Ivory/Parchment
-        color: '#1e293b', // Slate-800
+        width: '1122px',
+        height: '794px',
+        backgroundColor: '#fffdf7',
         position: 'relative',
+        fontFamily: "'Inter', system-ui, sans-serif",
+        overflow: 'hidden',
+        boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        padding: '0',
-        fontFamily: "'Inter', system-ui, sans-serif",
-        overflow: 'hidden',
-        boxSizing: 'border-box'
+        justifyContent: 'center',
       }}
     >
-      {/* Subtle Paper Texture Overlay */}
-      <div 
-        className="absolute inset-0 opacity-[0.05] pointer-events-none"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-        }}
-      />
+      {/* Simple elegant border */}
+      <div style={{
+        position: 'absolute',
+        inset: '24px',
+        border: '3px solid #1a2744',
+        pointerEvents: 'none',
+      }} />
+      <div style={{
+        position: 'absolute',
+        inset: '32px',
+        border: '1px solid #c9b06b',
+        pointerEvents: 'none',
+      }} />
 
-      {/* Modern Academic Border: Navy & Gold */}
-      <div className="absolute inset-8 border-[6px] border-[#1e293b] pointer-events-none" />
-      <div className="absolute inset-[44px] border-[1px] border-[#c4a059]/40 pointer-events-none" />
+      {/* Content */}
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        padding: '60px 80px',
+        textAlign: 'center',
+        position: 'relative',
+        zIndex: 1,
+      }}>
 
-      {/* Main Content Area: Centered Vertically and Horizontally */}
-      <div className="flex-1 flex flex-col items-center justify-center w-full px-32 py-12 relative z-10 text-center">
-        
-        {/* Header Section */}
-        <div className="flex flex-col items-center mb-12 transform -translate-y-4">
-          <img src={logo} alt="Star9" className="h-16 mb-4 brightness-[0.2] contrast-150" />
-        </div>
+        {/* Decorative line */}
+        <div style={{
+          width: '80px',
+          height: '3px',
+          backgroundColor: '#c9b06b',
+          marginBottom: '28px',
+        }} />
 
-        {/* Certificate Title */}
-        <div className="space-y-4 mb-10">
-          <h1 
-            style={{ fontFamily: "'Playfair Display', serif" }}
-            className="text-6xl font-extrabold uppercase tracking-tight text-[#1e293b]"
-          >
-            Certificate of Achievement
-          </h1>
-          <p 
-            style={{ fontFamily: "'Playfair Display', serif" }}
-            className="text-2xl text-slate-500 italic"
-          >
-            This high-trust credential is presented to
-          </p>
-        </div>
+        {/* Title */}
+        <h1 style={{
+          fontFamily: "'Playfair Display', Georgia, serif",
+          fontSize: '48px',
+          fontWeight: 700,
+          color: '#1a2744',
+          letterSpacing: '6px',
+          textTransform: 'uppercase',
+          margin: '0 0 8px 0',
+          lineHeight: 1.2,
+        }}>
+          Certificate
+        </h1>
+        <p style={{
+          fontFamily: "'Playfair Display', Georgia, serif",
+          fontSize: '18px',
+          fontWeight: 400,
+          color: '#6b7280',
+          letterSpacing: '8px',
+          textTransform: 'uppercase',
+          margin: '0 0 32px 0',
+        }}>
+          of Achievement
+        </p>
 
-        {/* Recipient Information */}
-        <div className="space-y-10 flex flex-col items-center w-full mb-12">
-          <div className="w-full max-w-2xl border-b-2 border-slate-200 pb-2">
-             <h2 
-               style={{ fontFamily: "'Playfair Display', serif" }}
-               className="text-7xl font-black text-[#1e293b] px-8 tracking-tight"
-             >
-               {studentName}
-             </h2>
+        {/* Presented to */}
+        <p style={{
+          fontFamily: "'Playfair Display', Georgia, serif",
+          fontSize: '16px',
+          color: '#9ca3af',
+          fontStyle: 'italic',
+          margin: '0 0 16px 0',
+        }}>
+          This certificate is proudly presented to
+        </p>
+
+        {/* Student Name */}
+        <h2 style={{
+          fontFamily: "'Playfair Display', Georgia, serif",
+          fontSize: '52px',
+          fontWeight: 700,
+          color: '#1a2744',
+          margin: '0 0 8px 0',
+          letterSpacing: '-0.5px',
+          lineHeight: 1.1,
+        }}>
+          {studentName}
+        </h2>
+
+        {/* Underline */}
+        <div style={{
+          width: '300px',
+          height: '1px',
+          backgroundColor: '#d1d5db',
+          marginBottom: '24px',
+        }} />
+
+        {/* Description */}
+        <p style={{
+          fontFamily: "'Playfair Display', Georgia, serif",
+          fontSize: '15px',
+          color: '#9ca3af',
+          fontStyle: 'italic',
+          margin: '0 0 20px 0',
+          maxWidth: '500px',
+          lineHeight: 1.6,
+        }}>
+          for successfully completing all course requirements and demonstrating excellence in
+        </p>
+
+        {/* Course Title */}
+        <h3 style={{
+          fontFamily: "'Inter', system-ui, sans-serif",
+          fontSize: '22px',
+          fontWeight: 800,
+          color: '#1a2744',
+          letterSpacing: '3px',
+          textTransform: 'uppercase',
+          margin: '0 0 40px 0',
+        }}>
+          {courseTitle}
+        </h3>
+
+        {/* Decorative line */}
+        <div style={{
+          width: '80px',
+          height: '3px',
+          backgroundColor: '#c9b06b',
+          marginBottom: '40px',
+        }} />
+
+        {/* Footer: Date, Seal, Signature */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'flex-end',
+          justifyContent: 'space-between',
+          width: '100%',
+          maxWidth: '800px',
+        }}>
+
+          {/* Left: Date & ID */}
+          <div style={{ textAlign: 'left', minWidth: '200px' }}>
+            <p style={{
+              fontFamily: "'Inter', system-ui, sans-serif",
+              fontSize: '11px',
+              color: '#9ca3af',
+              margin: '0 0 4px 0',
+              letterSpacing: '1px',
+              textTransform: 'uppercase',
+            }}>
+              Date Issued
+            </p>
+            <p style={{
+              fontFamily: "'Playfair Display', Georgia, serif",
+              fontSize: '16px',
+              color: '#1a2744',
+              fontWeight: 600,
+              margin: '0 0 16px 0',
+            }}>
+              {issueDate}
+            </p>
+            <p style={{
+              fontFamily: "'Inter', system-ui, sans-serif",
+              fontSize: '9px',
+              color: '#c9b06b',
+              letterSpacing: '1px',
+              margin: 0,
+            }}>
+              {credentialId}
+            </p>
           </div>
 
-          <p 
-            style={{ fontFamily: "'Playfair Display', serif" }}
-            className="text-xl text-slate-500 italic max-w-2xl px-12"
-          >
-            for demonstrating operational excellence and architectural mastery in
-          </p>
+          {/* Center: SVG Seal */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <svg width="90" height="90" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Outer starburst */}
+              {Array.from({ length: 24 }).map((_, i) => {
+                const angle = (i * 15) * Math.PI / 180;
+                const r1 = 48;
+                const r2 = 42;
+                const x1 = 50 + r1 * Math.cos(angle);
+                const y1 = 50 + r1 * Math.sin(angle);
+                const midAngle = ((i * 15) + 7.5) * Math.PI / 180;
+                const x2 = 50 + r2 * Math.cos(midAngle);
+                const y2 = 50 + r2 * Math.sin(midAngle);
+                const nextAngle = ((i + 1) * 15) * Math.PI / 180;
+                const x3 = 50 + r1 * Math.cos(nextAngle);
+                const y3 = 50 + r1 * Math.sin(nextAngle);
+                return (
+                  <path
+                    key={i}
+                    d={`M${x1},${y1} L${x2},${y2} L${x3},${y3}`}
+                    fill="#c9b06b"
+                  />
+                );
+              })}
+              {/* Inner circle */}
+              <circle cx="50" cy="50" r="38" fill="#c9b06b" />
+              <circle cx="50" cy="50" r="35" fill="#fffdf7" stroke="#c9b06b" strokeWidth="1" />
+              <circle cx="50" cy="50" r="32" fill="none" stroke="#c9b06b" strokeWidth="0.5" />
+              {/* Star */}
+              <path
+                d="M50 22L56.2 38.5H73.5L59.7 48.5L65.8 65L50 55L34.2 65L40.3 48.5L26.5 38.5H43.8Z"
+                fill="#c9b06b"
+              />
+              {/* Inner ring text substitute - small dots */}
+              <circle cx="50" cy="50" r="28" fill="none" stroke="#c9b06b" strokeWidth="0.3" strokeDasharray="2 3" />
+            </svg>
+          </div>
 
-          <h3 className="text-4xl font-black text-[#1e293b] uppercase tracking-wide">
-            {courseTitle}
-          </h3>
+          {/* Right: Signature */}
+          <div style={{ textAlign: 'center', minWidth: '200px' }}>
+            <p style={{
+              fontFamily: "'Dancing Script', cursive",
+              fontSize: '32px',
+              color: '#1a2744',
+              margin: '0 0 4px 0',
+              lineHeight: 1,
+            }}>
+              Esther Hiuko
+            </p>
+            <div style={{
+              width: '180px',
+              height: '1px',
+              backgroundColor: '#1a2744',
+              margin: '0 auto 8px auto',
+            }} />
+            <p style={{
+              fontFamily: "'Inter', system-ui, sans-serif",
+              fontSize: '11px',
+              fontWeight: 700,
+              color: '#1a2744',
+              letterSpacing: '2px',
+              textTransform: 'uppercase',
+              margin: '0 0 2px 0',
+            }}>
+              Esther Hiuko
+            </p>
+            <p style={{
+              fontFamily: "'Inter', system-ui, sans-serif",
+              fontSize: '9px',
+              color: '#9ca3af',
+              letterSpacing: '2px',
+              textTransform: 'uppercase',
+              margin: 0,
+            }}>
+              Director of Operations
+            </p>
+          </div>
         </div>
       </div>
-
-      {/* Perfectly Symmetrical Footer Structure */}
-      <div className="w-full h-64 relative flex items-center px-32 pb-24">
-         
-         {/* Left Side: Metadata (Absolute Bottom-Left) */}
-         <div className="absolute left-32 bottom-20 space-y-4 text-left">
-            <div className="space-y-1">
-               <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Credential Proof</p>
-               <div className="grid gap-0.5">
-                  <p className="font-mono text-[10px] text-slate-400">ID: <span className="text-slate-800 font-bold ml-2">{credentialId}</span></p>
-                  <p className="font-mono text-[10px] text-slate-400">DATE: <span className="text-slate-800 font-bold ml-2">{issueDate}</span></p>
-               </div>
-            </div>
-            <div className="flex items-center gap-2 opacity-40">
-               <ShieldCheck className="size-3 text-slate-500" />
-               <span className="text-[8px] font-mono uppercase tracking-[0.4em] text-slate-400">STAR9_LEDGER_AUTHENTICATED</span>
-            </div>
-         </div>
-
-         {/* Center: Absolute Seal Centering with Authentic 3D Foil Asset */}
-         <div className="absolute left-1/2 bottom-10 -translate-x-1/2 flex flex-col items-center">
-            <img 
-               src={goldSeal} 
-               alt="Official Seal" 
-               className="size-32 drop-shadow-2xl object-contain"
-            />
-            <p className="text-[8px] font-black uppercase tracking-[0.5em] text-[#c4a059] mt-2">Executive Validation</p>
-         </div>
-
-         {/* Right Side: Presidential Signature (Absolute Bottom-Right) */}
-         <div className="absolute right-32 bottom-20 w-80 text-center flex flex-col items-center">
-            <div 
-              style={{ fontFamily: "'Dancing Script', serif", fontWeight: 700 }}
-              className="text-6xl text-[#1e293b] mb-2 transform -skew-x-6"
-            >
-               Esther Hiuko
-            </div>
-            <div className="h-[2px] w-full bg-slate-200 mb-3" />
-            <div className="space-y-0.5">
-               <p className="font-bold text-[12px] uppercase tracking-[0.2em] text-[#1e293b]">Esther Hiuko</p>
-               <p className="text-[10px] font-mono uppercase tracking-[0.4em] text-slate-400 font-bold mt-1">Director of Operations</p>
-            </div>
-         </div>
-
-      </div>
-
-      {/* Fixed Navigation/Identity Footer Line */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-8 text-[7px] font-mono uppercase tracking-[0.6em] text-slate-300">
-         <span>Authorized Network Signature</span>
-         <Globe className="size-3" />
-         <span>Global Recognition Protocol</span>
-      </div>
-
     </div>
   );
 });

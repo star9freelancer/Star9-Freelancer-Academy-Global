@@ -91,9 +91,9 @@ const Academy = () => {
       if (certificateRef.current) {
         try {
           const canvas = await html2canvas(certificateRef.current, {
-            scale: 3, // Premium high resolution
+            scale: 3,
             useCORS: true,
-            backgroundColor: '#fcfcf7',
+            backgroundColor: '#fffdf7',
             logging: false,
             removeContainer: true
           });
