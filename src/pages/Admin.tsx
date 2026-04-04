@@ -269,17 +269,94 @@ const Admin = () => {
         <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 w-full bg-background relative overflow-x-hidden">
           <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-primary/5 rounded-full blur-[150px] pointer-events-none" />
 
+          {activeTab === "dashboard" && (
+            <div className="space-y-8 max-w-6xl mx-auto relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                  <Badge className="mb-2 bg-primary/10 text-primary border-primary/20 py-1 font-mono text-[10px] tracking-widest uppercase">Admin Terminal</Badge>
+                  <h1 className="text-4xl font-bold tracking-tighter uppercase leading-none">Command Center</h1>
+                  <p className="text-muted-foreground mt-2 font-medium">Real-time infrastructure overview and network-wide diagnostics.</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Button variant="outline" className="font-mono text-[10px] uppercase tracking-widest" onClick={fetchAllData}>Resync Assets</Button>
+                  <Button className="font-mono text-[10px] uppercase tracking-widest bg-primary hover:bg-primary/90 text-primary-foreground">Network Map</Button>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-4 gap-6">
+                <Card className="glass border-border/50 bg-gradient-to-br from-card to-zinc-900/50">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground">Network Ingress</CardTitle>
+                    <h3 className="text-4xl font-bold">{stats.totalUsers}</h3>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center gap-2 text-xs text-green-500 font-mono">
+                      <Users className="size-3" /> Total Personnel
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="glass border-border/50 bg-gradient-to-br from-card to-zinc-900/50">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground">Certified Modules</CardTitle>
+                    <h3 className="text-4xl font-bold text-primary">{stats.totalCourses}</h3>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono uppercase">
+                      <BookOpen className="size-3" /> Active Academy Courses
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="glass border-border/50 bg-gradient-to-br from-card to-zinc-900/50">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground">Open Pipelines</CardTitle>
+                    <h3 className="text-4xl font-bold text-secondary">{stats.totalOpportunities}</h3>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono uppercase">
+                      <Briefcase className="size-3" /> Career Opportunities
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="glass border-border/50 bg-gradient-to-br from-card to-zinc-900/50">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground">Pending Auth</CardTitle>
+                    <h3 className="text-4xl font-bold text-orange-500">{stats.pendingVerifications}</h3>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center gap-2 text-xs text-zinc-500 font-mono uppercase underline cursor-pointer hover:text-orange-500 transition-colors" onClick={() => setActiveTab('users')}>
+                      Execute Protocol
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-6">
+                <Card className="glass md:col-span-2 border-border/50 p-8 flex items-center justify-between">
+                   <div className="space-y-2">
+                     <p className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground">System Status</p>
+                     <h3 className="text-2xl font-bold uppercase tracking-tight">Infrastructure Synchronized</h3>
+                     <p className="text-muted-foreground text-sm">All decentralized nodes are reporting healthy status across the Star9 network.</p>
+                   </div>
+                   <Activity className="size-12 text-primary animate-pulse" />
+                </Card>
+                <Card className="glass border-border/50 p-6 flex flex-col justify-center gap-4">
+                  <Button className="w-full font-mono text-[10px] uppercase tracking-widest" onClick={() => setActiveTab('courses')}>Deploy New Course</Button>
+                  <Button variant="outline" className="w-full font-mono text-[10px] uppercase tracking-widest" onClick={() => setActiveTab('intake')}>Ingest Opportunity</Button>
+                </Card>
+              </div>
+            </div>
+          )}
+
           {activeTab === "users" && (
             <div className="space-y-8 max-w-6xl mx-auto relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                  <Badge className="mb-2 bg-primary/10 text-primary border-primary/20 py-0.5 font-mono text-[10px] tracking-widest uppercase">Admin Terminal</Badge>
-                  <h1 className="text-4xl font-bold tracking-tighter uppercase leading-none">Network Authentication</h1>
-                  <p className="text-muted-foreground mt-2 font-medium">Verify credentials and manage student study streaks across the Star9 Network.</p>
+                  <Badge className="mb-2 bg-primary/10 text-primary border-primary/20 py-1 font-mono text-[10px] tracking-widest uppercase">Personnel Access</Badge>
+                  <h1 className="text-4xl font-bold tracking-tighter uppercase leading-none">User Authorization</h1>
+                  <p className="text-muted-foreground mt-2 font-medium">Verify credentials and manage personnel roles across the global infrastructure.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Button variant="outline" className="font-mono text-[10px] uppercase tracking-widest" onClick={fetchStudents}>Resync Students</Button>
-                  <Button className="font-mono text-[10px] uppercase tracking-widest bg-primary hover:bg-primary/90 text-primary-foreground">Generate Report</Button>
+                  <Button variant="outline" className="font-mono text-[10px] uppercase tracking-widest" onClick={fetchAllData}>Resync Network</Button>
                 </div>
               </div>
 
@@ -333,11 +410,14 @@ const Admin = () => {
                     </thead>
                     <tbody className="divide-y divide-border/20">
                       {loadingStudents ? (
-                        <tr><td colSpan={5} className="px-6 py-12 text-center animate-pulse font-mono text-xs uppercase tracking-widest">Scanning Network...</td></tr>
+                        <tr><td colSpan={5} className="px-6 py-12 text-center animate-pulse font-mono text-xs uppercase tracking-widest">Scanning Network Ingress...</td></tr>
                       ) : students.length === 0 ? (
                         <tr><td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">No personnel detected in the local network.</td></tr>
                       ) : students.map((std) => (
                         <tr key={std.id} className="hover:bg-zinc-800/20 transition-all duration-300 group">
+                          <td className="px-6 py-5 font-mono text-[10px]">
+                            {std.id.substring(0, 8)}
+                          </td>
                           <td className="px-6 py-5">
                             <div className="flex items-center gap-4">
                               <div className="w-10 h-10 rounded-xl bg-accent border border-border/50 flex items-center justify-center font-black group-hover:border-primary/50 transition-colors">
@@ -353,17 +433,16 @@ const Admin = () => {
                             </div>
                           </td>
                           <td className="px-6 py-5">
-                            <Badge variant="outline" className="border-secondary/20 bg-secondary/5 text-secondary uppercase font-mono text-[9px] tracking-widest">{std.role}</Badge>
-                          </td>
-                          <td className="px-6 py-5">
-                            <div className="flex items-center gap-3">
-                              <div className="flex items-center gap-1.5">
-                                <Flame className="size-4 text-secondary fill-secondary" />
-                                <span className="text-sm font-black font-mono">{std.current_streak || 0}</span>
-                              </div>
-                              <div className="h-4 w-px bg-border hidden sm:block" />
-                              <span className="text-[10px] text-muted-foreground font-mono hidden sm:block">MAX: {std.longest_streak || 0}</span>
-                            </div>
+                            <select 
+                              className="bg-zinc-900 border border-border/50 text-[10px] font-mono uppercase tracking-widest rounded px-2 py-1 outline-none"
+                              value={std.role}
+                              onChange={(e) => updateRole(std.id, e.target.value)}
+                            >
+                              <option value="student">STUDENT</option>
+                              <option value="freelancer">FREELANCER</option>
+                              <option value="admin">ADMIN</option>
+                              <option value="employer">EMPLOYER</option>
+                            </select>
                           </td>
                           <td className="px-6 py-5">
                             {std.verification_status === 'verified' ? (
@@ -404,12 +483,109 @@ const Admin = () => {
             </div>
           )}
 
+          {activeTab === "courses" && (
+            <div className="space-y-8 max-w-6xl mx-auto relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                  <Badge className="mb-2 bg-primary/10 text-primary border-primary/20 py-1 font-mono text-[10px] tracking-widest uppercase">Academy Operations</Badge>
+                  <h1 className="text-4xl font-bold tracking-tighter uppercase leading-none">Module Management</h1>
+                  <p className="text-muted-foreground mt-2 font-medium">Create, edit, and purge training modules from the Star9 Academy.</p>
+                </div>
+                <Button className="font-mono text-[10px] uppercase tracking-widest bg-primary hover:bg-primary/90 text-primary-foreground" onClick={handleCreateCourse}>
+                  <Plus className="mr-2 size-4" /> Deploy New Module
+                </Button>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {loadingCourses ? (
+                  <div className="col-span-full h-48 flex items-center justify-center font-mono text-xs uppercase tracking-widest">Scanning Academy HQ...</div>
+                ) : courses.length === 0 ? (
+                  <Card className="col-span-full glass border-dashed p-12 text-center opacity-50">
+                    <BookOpen className="size-12 mx-auto mb-4 text-muted-foreground" />
+                    <CardTitle className="uppercase tracking-widest text-sm">No Active Modules</CardTitle>
+                  </Card>
+                ) : courses.map((course) => (
+                  <Card key={course.id} className="glass border-border/50 hover:border-primary/30 transition-all group">
+                    <CardHeader>
+                      <div className="flex justify-between items-start">
+                        <Badge variant="outline" className="font-mono text-[9px] uppercase tracking-widest">{course.category}</Badge>
+                        <button onClick={() => handleDeleteCourse(course.id)} className="text-muted-foreground hover:text-red-500 transition-colors">
+                          <Trash2 className="size-4" />
+                        </button>
+                      </div>
+                      <CardTitle className="mt-2 group-hover:text-primary transition-colors leading-tight">{course.title}</CardTitle>
+                      <CardDescription className="font-mono text-[10px] uppercase tracking-widest">{course.status === 'published' ? '🟢 LIVE' : '🟡 DRAFTING'}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                       <div className="text-xs text-muted-foreground font-mono">
+                          Modules: {course.modules_covered?.length || 0} | AI Tools: {course.ai_tools_covered?.length || 0}
+                       </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
           {activeTab === "intake" && (
-            <div className="space-y-6 max-w-5xl mx-auto relative z-10 py-12 text-center border-2 border-dashed rounded-3xl border-primary/20 bg-primary/5">
-              <Database className="size-16 text-primary/30 mx-auto mb-6" />
-              <h2 className="text-2xl font-bold uppercase tracking-tighter">Opportunity Ingestion Subsystem</h2>
-              <p className="text-muted-foreground max-w-md mx-auto">Connecting to external decentralized submission nodes. Check back once synchronization is complete.</p>
-              <Button className="mt-8 font-mono text-xs uppercase tracking-widest">Force Re-sync</Button>
+            <div className="space-y-8 max-w-6xl mx-auto relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                  <Badge className="mb-2 bg-secondary/10 text-secondary border-secondary/20 py-1 font-mono text-[10px] tracking-widest uppercase">Global Logistics</Badge>
+                  <h1 className="text-4xl font-bold tracking-tighter uppercase leading-none">Job Ingestion</h1>
+                  <p className="text-muted-foreground mt-2 font-medium">Manage global opportunities and professional remote pipelines.</p>
+                </div>
+                <Button className="font-mono text-[10px] uppercase tracking-widest bg-secondary hover:bg-secondary/90 text-white" onClick={handleCreateOpportunity}>
+                  <Plus className="mr-2 size-4" /> Add Opportunity
+                </Button>
+              </div>
+
+              <div className="rounded-2xl border bg-card/30 backdrop-blur-xl border-border/50 shadow-2xl overflow-hidden glass">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-left">
+                    <thead className="bg-zinc-900/80 border-b border-border/50 text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
+                      <tr>
+                        <th className="px-6 py-5">Employer</th>
+                        <th className="px-6 py-5">Stream</th>
+                        <th className="px-6 py-5">Status</th>
+                        <th className="px-6 py-5 text-right">Command</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border/20">
+                      {loadingOpportunities ? (
+                        <tr><td colSpan={4} className="px-6 py-12 text-center animate-pulse font-mono text-xs uppercase tracking-widest">Scanning Global Clusters...</td></tr>
+                      ) : opportunities.length === 0 ? (
+                        <tr><td colSpan={4} className="px-6 py-12 text-center text-muted-foreground">No open pipelines detected.</td></tr>
+                      ) : opportunities.map((opp) => (
+                        <tr key={opp.id} className="hover:bg-zinc-800/20 transition-all duration-300 group">
+                          <td className="px-6 py-5">
+                            <div className="flex items-center gap-4">
+                              <div className="w-10 h-10 rounded-xl bg-secondary/10 border border-secondary/20 flex items-center justify-center font-black group-hover:border-secondary transition-colors text-secondary text-lg">
+                                {opp.employer_name?.charAt(0).toUpperCase()}
+                              </div>
+                              <div>
+                                <p className="font-bold uppercase tracking-tight">{opp.employer_name}</p>
+                                <a href={opp.application_link} target="_blank" className="text-[10px] text-muted-foreground font-mono flex items-center gap-1 hover:text-primary"><Globe className="size-3" /> External Pipeline</a>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-5">
+                             <Badge variant="outline" className="font-mono text-[9px] uppercase tracking-widest border-zinc-700">{opp.opportunity_category}</Badge>
+                          </td>
+                          <td className="px-6 py-5">
+                             <Badge className={`px-2 py-0.5 font-mono text-[9px] rounded-full uppercase tracking-widest ${opp.status === 'open' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'}`}>{opp.status}</Badge>
+                          </td>
+                          <td className="px-6 py-5 text-right">
+                             <Button size="icon" variant="ghost" className="rounded-full hover:bg-red-500/10 hover:text-red-500" onClick={() => handleDeleteOpportunity(opp.id)}>
+                               <Trash2 className="size-4" />
+                             </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           )}
 
