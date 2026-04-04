@@ -136,8 +136,9 @@ const Academy = () => {
     if (data) setCertificates(data);
   };
 
-  const fetchCourses = async () => {
+  const fetchCourses = async (userId?: string) => {
     setLoadingCourses(true);
+    const activeUserId = userId || user?.id;
     try {
       const { data, error } = await supabase
         .from('academy_courses')
@@ -147,11 +148,11 @@ const Academy = () => {
       setCourses(data || []);
       
       // Also fetch enrollments
-      if (user) {
+      if (activeUserId) {
         const { data: enrollmentData } = await supabase
           .from('user_enrollments')
           .select('course_id')
-          .eq('user_id', user.id);
+          .eq('user_id', activeUserId);
         
         if (enrollmentData) {
           setEnrollments(new Set(enrollmentData.map(e => e.course_id)));
@@ -172,7 +173,11 @@ const Academy = () => {
         const { data: profileData } = await supabase
           .from('profiles').select('*').eq('id', user.id).single();
         if (profileData) { setProfile(profileData); setProfileForm(profileData); }
-        if (!initialLoadDone) { initialLoadDone = true; fetchCourses(); fetchCertificates(user.id); }
+        if (!initialLoadDone) { 
+          initialLoadDone = true; 
+          fetchCourses(user.id); 
+          fetchCertificates(user.id); 
+        }
       }
     });
 
@@ -297,7 +302,8 @@ const Academy = () => {
          if (error.code === '23505') {
             toast.error("Already enrolled in this course");
          } else {
-            toast.error("Enrollment failed. Please try again.");
+            console.error("Enrollment error:", error);
+            toast.error(`Enrollment failed: ${error.message || 'Please try again.'}`);
          }
       } else {
          setEnrollments(prev => new Set([...prev, courseId]));
