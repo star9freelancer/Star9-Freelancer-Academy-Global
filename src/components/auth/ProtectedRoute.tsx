@@ -15,38 +15,56 @@ const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps)
   const location = useLocation();
 
   useEffect(() => {
+    let mounted = true;
+
     const checkAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        // Direct object retrieval is safer than nested destructuring
+        const { data, error: sessionError } = await supabase.auth.getSession();
         
-        if (!session) {
-          setAuthenticated(false);
-          setLoading(false);
+        if (sessionError || !data?.session) {
+          if (mounted) {
+            setAuthenticated(false);
+            setLoading(false);
+          }
           return;
         }
 
-        setAuthenticated(true);
+        if (mounted) setAuthenticated(true);
 
-        // Check for admin role if required
         if (requireAdmin) {
-          const { data: profile } = await supabase
+          const { data: profile, error: profileError } = await supabase
             .from('profiles')
             .select('role')
-            .eq('id', session.user.id)
-            .single();
+            .eq('id', data.session.user.id)
+            .maybeSingle(); // maybeSingle() is safer than single() for non-existent profiles
           
-          setIsAdmin(profile?.role === 'admin');
+          if (mounted) {
+            setIsAdmin(profile?.role === 'admin');
+          }
         }
-
       } catch (error) {
-        console.error("Auth check failed:", error);
-        setAuthenticated(false);
+        console.error("Critical Auth Error:", error);
+        if (mounted) setAuthenticated(false);
       } finally {
-        setLoading(false);
+        if (mounted) setLoading(false);
       }
     };
 
     checkAuth();
+    
+    // Safety timeout: Never hang longer than 10 seconds
+    const timer = setTimeout(() => {
+      if (loading && mounted) {
+        console.warn("Auth check timed out - forcing clearance.");
+        setLoading(false);
+      }
+    }, 10000);
+
+    return () => {
+      mounted = false;
+      clearTimeout(timer);
+    };
   }, [requireAdmin]);
 
   if (loading) {
