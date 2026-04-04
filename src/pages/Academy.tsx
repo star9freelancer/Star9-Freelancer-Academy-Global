@@ -4,10 +4,10 @@ import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { 
   Home, BookOpen, Users, Award, Settings, Menu, Bell, Search, 
-  ArrowRight, Download, Play, Clock, TrendingUp, Sparkles, 
+  ArrowLeft, ArrowRight, Download, Play, Clock, TrendingUp, Sparkles, 
   CheckCircle2, XCircle, FileText, Globe, Link as LinkIcon, 
   CreditCard, UploadCloud, BadgeCheck, Briefcase, Cpu, Database,
-  Phone, MapPin, User, Calendar, Trash2, Plus, X as XIcon, Save
+  Phone, MapPin, User, Calendar, Trash2, Plus, X as XIcon, Save, ShieldCheck
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -541,6 +541,8 @@ const Academy = () => {
                   </aside>
                 </div>
               )}
+            </div>
+          )}
 
           {activeTab === "certificates" && (
             <div className="space-y-6 relative z-10">

@@ -5,7 +5,7 @@ import {
   Users, Menu, Bell, Search, ArrowRight, CheckCircle2, 
   XCircle, CreditCard, Database, Briefcase, Flame, Award, 
   Trash2, ShieldCheck, Mail, Plus, Filter, LayoutGrid, BookOpen,
-  Globe, Activity
+  Globe, Activity, Play
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
