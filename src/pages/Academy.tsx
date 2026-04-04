@@ -4,6 +4,7 @@ import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import CertificateTemplate from "@/components/academy/CertificateTemplate";
 import CommunityChat from "@/components/academy/CommunityChat";
+import CourseCard from "@/components/academy/CourseCard";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { 
@@ -82,6 +83,8 @@ const Academy = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const certificateRef = useRef<HTMLDivElement>(null);
   const [activeCert, setActiveCert] = useState<any>(null);
+  const [enrollments, setEnrollments] = useState<Set<string>>(new Set());
+  const [enrolling, setEnrolling] = useState<string | null>(null);
 
   const handleDownloadPDF = async (cert: any) => {
     setActiveCert(cert);
@@ -142,6 +145,18 @@ const Academy = () => {
         .eq('status', 'published');
       if (error) console.error('Error fetching courses:', error.message);
       setCourses(data || []);
+      
+      // Also fetch enrollments
+      if (user) {
+        const { data: enrollmentData } = await supabase
+          .from('user_enrollments')
+          .select('course_id')
+          .eq('user_id', user.id);
+        
+        if (enrollmentData) {
+          setEnrollments(new Set(enrollmentData.map(e => e.course_id)));
+        }
+      }
     } finally {
       setLoadingCourses(false);
     }
@@ -267,6 +282,31 @@ const Academy = () => {
       }
     } catch (err) {
       // Silently ignore — non-critical
+    }
+  };
+
+  const handleEnroll = async (courseId: string) => {
+    if (!user) return;
+    setEnrolling(courseId);
+    try {
+      const { error } = await supabase
+        .from('user_enrollments')
+        .insert({ user_id: user.id, course_id: courseId });
+      
+      if (error) {
+         if (error.code === '23505') {
+            toast.error("Already enrolled in this course");
+         } else {
+            toast.error("Enrollment failed. Please try again.");
+         }
+      } else {
+         setEnrollments(prev => new Set([...prev, courseId]));
+         toast.success("Successfully enrolled in course");
+         // Join chat automatically
+         joinCourseChat(courseId);
+      }
+    } finally {
+      setEnrolling(null);
     }
   };
 
@@ -443,58 +483,56 @@ const Academy = () => {
                 <div className="flex justify-center items-center h-48">
                   <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
                 </div>
-              ) : courses.length === 0 ? (
-                <Card className="glass border-dashed text-center p-12 opacity-80">
-                  <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <CardTitle className="mb-2">No Published Courses</CardTitle>
-                  <CardDescription>There are currently no active courses available in the Academy. Check back soon!</CardDescription>
-                </Card>
               ) : (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {courses.map((course) => (
-                    <Card key={course.id} className="glass border-border/50 shadow-card hover:shadow-card-hover transition-all flex flex-col">
-                      <CardHeader>
-                        <Badge className="w-fit mb-2 bg-primary/20 text-primary hover:bg-primary/30">{course.category}</Badge>
-                        <CardTitle>{course.title}</CardTitle>
-                        <CardDescription>Published on {new Date(course.created_at).toLocaleDateString()}</CardDescription>
-                      </CardHeader>
-                      <CardContent className="flex-1 flex flex-col">
-                        <div className="mb-4">
-                          <div className="flex justify-between text-xs mb-1 font-mono uppercase"><span>Progress</span><span>0%</span></div>
-                          <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
-                            <div className="h-full bg-gradient-to-r from-primary to-secondary w-[0%]" />
-                          </div>
-                        </div>
-                        
-                        {course.lessons && course.lessons.length > 0 && (
-                          <div className="space-y-1.5 mb-6 text-left">
-                            <p className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground mb-2 text-left">Curriculum:</p>
-                            {course.lessons.slice(0, 3).map((lesson: any, idx: number) => (
-                              <div key={idx} className="flex items-center gap-2 text-xs text-muted-foreground">
-                                {lesson.type === 'video' ? <Play className="w-3 h-3 text-secondary" /> : <Database className="w-3 h-3 text-secondary" />}
-                                <span className="line-clamp-1">{lesson.title}</span>
-                              </div>
-                            ))}
-                            {course.lessons.length > 3 && (
-                              <p className="text-[10px] text-muted-foreground italic pl-5">+{course.lessons.length - 3} more modules</p>
-                            )}
-                          </div>
-                        )}
-                      </CardContent>
-                      <CardFooter className="border-t pt-4">
-                        <Button 
-                          className="w-full font-mono uppercase text-xs tracking-widest gap-2"
-                          onClick={() => { 
-                            setPlayingCourse(course); 
-                            setActiveLessonIdx(0); 
-                            joinCourseChat(course.id);
-                          }}
-                        >
-                          Start Module <Play className="w-3 h-3" />
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  ))}
+                <div className="space-y-12">
+                  {/* My Learning Section */}
+                  {courses.filter(c => enrollments.has(c.id)).length > 0 && (
+                    <div className="space-y-6">
+                      <div className="flex items-center gap-3">
+                         <div className="h-px flex-1 bg-border/50" />
+                         <h3 className="font-mono text-[10px] uppercase tracking-[0.4em] text-primary">My Active Learning</h3>
+                         <div className="h-px flex-1 bg-border/50" />
+                      </div>
+                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {courses.filter(c => enrollments.has(c.id)).map((course) => (
+                           <CourseCard 
+                             key={course.id} 
+                             course={course} 
+                             isEnrolled={true} 
+                             onOpen={() => { setPlayingCourse(course); setActiveLessonIdx(0); }}
+                           />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Catalog Section */}
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-3">
+                       <div className="h-px flex-1 bg-border/50" />
+                       <h3 className="font-mono text-[10px] uppercase tracking-[0.4em] text-muted-foreground">Available Masterclasses</h3>
+                       <div className="h-px flex-1 bg-border/50" />
+                    </div>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {courses.filter(c => !enrollments.has(c.id)).length === 0 ? (
+                        <Card className="glass border-dashed text-center p-12 opacity-80 col-span-full">
+                          <CheckCircle2 className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                          <CardTitle className="mb-2">Advanced Modules Cleared</CardTitle>
+                          <CardDescription>You are enrolled in all currently published academy tracks.</CardDescription>
+                        </Card>
+                      ) : (
+                        courses.filter(c => !enrollments.has(c.id)).map((course) => (
+                          <CourseCard 
+                            key={course.id} 
+                            course={course} 
+                            isEnrolled={false} 
+                            isEnrolling={enrolling === course.id}
+                            onEnroll={() => handleEnroll(course.id)}
+                          />
+                        ))
+                      )}
+                    </div>
+                  </div>
                 </div>
               )}
 

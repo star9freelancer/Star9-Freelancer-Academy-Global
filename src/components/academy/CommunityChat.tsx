@@ -56,7 +56,21 @@ const CommunityChat = ({ user, profile }: CommunityChatProps) => {
         .order("type", { ascending: true })
         .order("name", { ascending: true });
 
-      if (allGroups) setGroups(allGroups);
+      // Get my enrollments to filter course groups
+      const { data: enrollments } = await supabase
+        .from("user_enrollments")
+        .select("course_id")
+        .eq("user_id", user.id);
+
+      const enrolledIds = new Set((enrollments || []).map(e => e.course_id));
+
+      if (allGroups) {
+        // Only show general groups OR course groups you are enrolled in
+        const filteredGroups = allGroups.filter(g => 
+          g.type === "general" || enrolledIds.has(g.course_id)
+        );
+        setGroups(filteredGroups);
+      }
 
       // Get my memberships
       const { data: memberships } = await supabase
