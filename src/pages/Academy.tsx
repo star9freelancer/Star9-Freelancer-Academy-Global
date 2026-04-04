@@ -74,9 +74,20 @@ const Academy = () => {
   const [profileForm, setProfileForm] = useState<any>({});
   const [saving, setSaving] = useState(false);
   const [newSkill, setNewSkill] = useState("");
-  const [verificationStatus, setVerificationStatus] = useState<"verified" | "pending">("verified");
+  const [playingCourse, setPlayingCourse] = useState<any>(null);
+  const [activeLessonIdx, setActiveLessonIdx] = useState(0);
+  const [quizScore, setQuizScore] = useState<number | null>(null);
+  const [certificates, setCertificates] = useState<any[]>([]);
 
   const navigate = useNavigate();
+
+  const fetchCertificates = async (userId: string) => {
+    const { data } = await supabase
+      .from('user_certificates')
+      .select('*, academy_courses(title)')
+      .eq('user_id', userId);
+    if (data) setCertificates(data);
+  };
 
   const fetchCourses = async () => {
     setLoadingCourses(true);
@@ -102,7 +113,7 @@ const Academy = () => {
         const { data: profileData } = await supabase
           .from('profiles').select('*').eq('id', user.id).single();
         if (profileData) { setProfile(profileData); setProfileForm(profileData); }
-        if (!initialLoadDone) { initialLoadDone = true; fetchCourses(); }
+        if (!initialLoadDone) { initialLoadDone = true; fetchCourses(); fetchCertificates(user.id); }
       }
     });
 
@@ -160,6 +171,36 @@ const Academy = () => {
 
   const removeSkill = (skill: string) => {
     setProfileForm((p: any) => ({ ...p, skills: (p.skills || []).filter((s: string) => s !== skill) }));
+  };
+
+  const issueCertificate = async (courseId: string) => {
+    if (!user) return;
+    const credId = `ST9-${Math.random().toString(36).substring(2, 6).toUpperCase()}-${new Date().getFullYear()}`;
+    const { error } = await supabase.from('user_certificates').insert([{
+      user_id: user.id,
+      course_id: courseId,
+      credential_id: credId,
+    }]);
+    
+    if (!error) {
+      toast.success("Credential Issued", { description: "Your certificate is now stored in the Star9 Ledger." });
+      fetchCertificates(user.id);
+    }
+  };
+
+  const generateLinkedInUrl = (cert: any) => {
+    const courseTitle = cert.academy_courses?.title || "Star9 Certification";
+    const baseUrl = "https://www.linkedin.com/profile/add";
+    const params = new URLSearchParams({
+      startTask: "CERTIFICATION_NAME",
+      name: courseTitle,
+      organizationId: "98765432", // Replace with real Org ID if available
+      issueYear: new Date(cert.created_at).getFullYear().toString(),
+      issueMonth: (new Date(cert.created_at).getMonth() + 1).toString(),
+      certId: cert.credential_id,
+      certUrl: `https://star9.dev/verify/${cert.credential_id}`
+    });
+    return `${baseUrl}?${params.toString()}`;
   };
 
   const studentLinks = [
@@ -358,31 +399,25 @@ const Academy = () => {
                           </div>
                         </div>
                         
-                        {course.modules_covered && course.modules_covered.length > 0 && (
-                          <div className="space-y-1.5 mb-6">
-                            <p className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground mb-2">Curriculum:</p>
-                            {course.modules_covered.slice(0, 3).map((module: string, idx: number) => (
+                        {course.lessons && course.lessons.length > 0 && (
+                          <div className="space-y-1.5 mb-6 text-left">
+                            <p className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground mb-2 text-left">Curriculum:</p>
+                            {course.lessons.slice(0, 3).map((lesson: any, idx: number) => (
                               <div key={idx} className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <CheckCircle2 className="w-3 h-3 text-secondary" />
-                                <span className="line-clamp-1">{module}</span>
+                                {lesson.type === 'video' ? <Play className="w-3 h-3 text-secondary" /> : <Database className="w-3 h-3 text-secondary" />}
+                                <span className="line-clamp-1">{lesson.title}</span>
                               </div>
                             ))}
-                            {course.modules_covered.length > 3 && (
-                              <p className="text-[10px] text-muted-foreground italic pl-5">+{course.modules_covered.length - 3} more modules</p>
+                            {course.lessons.length > 3 && (
+                              <p className="text-[10px] text-muted-foreground italic pl-5">+{course.lessons.length - 3} more modules</p>
                             )}
-                          </div>
-                        )}
-
-                        {course.ai_tools_covered && course.ai_tools_covered.length > 0 && (
-                          <div className="mt-auto">
-                            <AIToolShowcase tools={course.ai_tools_covered} />
                           </div>
                         )}
                       </CardContent>
                       <CardFooter className="border-t pt-4">
                         <Button 
                           className="w-full font-mono uppercase text-xs tracking-widest gap-2"
-                          onClick={() => navigate(`/academy/course/${course.id}`)}
+                          onClick={() => { setPlayingCourse(course); setActiveLessonIdx(0); }}
                         >
                           Start Module <Play className="w-3 h-3" />
                         </Button>
@@ -391,8 +426,121 @@ const Academy = () => {
                   ))}
                 </div>
               )}
-            </div>
-          )}
+
+              {playingCourse && (
+                <div className="fixed inset-0 z-[100] bg-background/95 backdrop-blur-xl flex animate-in fade-in duration-300">
+                  <div className="flex-1 flex flex-col min-w-0">
+                    <header className="h-16 px-6 border-b flex items-center justify-between bg-card/50">
+                      <div className="flex items-center gap-4">
+                        <Button variant="ghost" size="icon" onClick={() => setPlayingCourse(null)}><ArrowLeft className="size-5" /></Button>
+                        <div>
+                          <h2 className="text-sm font-bold uppercase tracking-tight line-clamp-1">{playingCourse.title}</h2>
+                          <p className="text-[10px] font-mono text-muted-foreground">Lesson {activeLessonIdx + 1} of {playingCourse.lessons?.length || 0}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <Badge variant="outline" className="font-mono text-[10px] text-primary border-primary/20">{Math.round(((activeLessonIdx + 1) / (playingCourse.lessons?.length || 1)) * 100)}% Complete</Badge>
+                      </div>
+                    </header>
+
+                    <main className="flex-1 overflow-y-auto p-4 md:p-12">
+                      <div className="max-w-4xl mx-auto space-y-8">
+                        {playingCourse.lessons?.[activeLessonIdx]?.type === 'video' ? (
+                          <div className="aspect-video rounded-3xl overflow-hidden shadow-2xl shadow-primary/20 border border-white/10 bg-zinc-900 flex items-center justify-center">
+                            {playingCourse.lessons[activeLessonIdx].url ? (
+                               <iframe 
+                                 className="w-full h-full"
+                                 src={playingCourse.lessons[activeLessonIdx].url.includes('youtube.com') 
+                                   ? playingCourse.lessons[activeLessonIdx].url.replace('watch?v=', 'embed/') 
+                                   : playingCourse.lessons[activeLessonIdx].url} 
+                                 title="Video Player"
+                                 allowFullScreen
+                               />
+                            ) : (
+                              <div className="text-muted-foreground flex flex-col items-center gap-4">
+                                <Play className="size-12 animate-pulse" />
+                                <p className="font-mono text-xs uppercase tracking-widest">Video Stream Unavailable</p>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <Card className="p-12 glass border-secondary/20 shadow-xl shadow-secondary/5">
+                            <div className="max-w-2xl mx-auto space-y-8 text-left">
+                              <div className="text-center space-y-2">
+                                <Badge className="bg-secondary/10 text-secondary border-secondary/20 mb-2">Module Quiz</Badge>
+                                <h3 className="text-3xl font-bold uppercase tracking-tighter">{playingCourse.lessons[activeLessonIdx].title}</h3>
+                                <p className="text-muted-foreground italic text-sm">Pass the validation sequence to receive your Star9 Credential.</p>
+                              </div>
+                              <div className="space-y-4 pt-4">
+                                <p className="font-mono text-[10px] text-muted-foreground uppercase tracking-widest mb-6 border-b border-border/50 pb-2">Technical Validation 01</p>
+                                <div className="grid gap-3">
+                                  {["Optimize for low-latency network protocols", "Prioritize decentralized data caching", "Implement zero-trust security shards"].map((opt, i) => (
+                                    <Button key={i} variant="outline" className="justify-start h-16 px-6 text-sm hover:border-primary transition-all text-left group" onClick={() => { setQuizScore(100); toast.success("Answer Recorded"); }}>
+                                      <span className="w-8 h-8 rounded-lg bg-zinc-900 border border-border flex items-center justify-center mr-4 text-[10px] font-mono group-hover:bg-primary group-hover:text-white transition-colors">{i === 1 ? 'B' : i === 0 ? 'A' : 'C'}</span>
+                                      {opt}
+                                    </Button>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </Card>
+                        )}
+
+                        <div className="flex items-center justify-between pt-8 border-t border-border/20">
+                          <Button 
+                            variant="outline" 
+                            disabled={activeLessonIdx === 0} 
+                            onClick={() => setActiveLessonIdx(activeLessonIdx - 1)}
+                            className="font-mono text-[10px] uppercase tracking-widest bg-zinc-900/40"
+                          >
+                           Backward Segment
+                          </Button>
+                          {activeLessonIdx < (playingCourse.lessons?.length || 1) - 1 ? (
+                            <Button 
+                              onClick={() => { setActiveLessonIdx(activeLessonIdx + 1); setQuizScore(null); }}
+                              className="font-mono text-[10px] uppercase tracking-widest px-8 bg-primary hover:bg-primary/90 text-white"
+                            >
+                             Sync & Proceed
+                            </Button>
+                          ) : (
+                            <Button 
+                              onClick={() => { issueCertificate(playingCourse.id); setPlayingCourse(null); }}
+                              className="bg-gradient-to-r from-primary to-secondary font-mono text-[10px] uppercase tracking-widest px-8 shadow-lg shadow-primary/20 text-white"
+                            >
+                             Finalize Module
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </main>
+                  </div>
+
+                  <aside className="hidden lg:flex w-80 border-l flex-col bg-card/40 backdrop-blur-md">
+                    <div className="p-6 border-b">
+                       <h4 className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Curriculum Map</h4>
+                    </div>
+                    <div className="flex-1 overflow-y-auto p-4 space-y-2">
+                       {(playingCourse.lessons || []).map((lesson: any, i: number) => (
+                         <button 
+                           key={lesson.id} 
+                           onClick={() => setActiveLessonIdx(i)}
+                           className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all border ${
+                             activeLessonIdx === i ? "bg-primary/10 border-primary/25 shadow-lg" : "border-transparent hover:bg-muted/50"
+                           }`}
+                         >
+                           <div className={`size-8 rounded-lg flex items-center justify-center font-mono text-[10px] border ${
+                             activeLessonIdx === i ? "bg-primary text-white border-primary" : "bg-muted text-muted-foreground border-border/50"
+                           }`}>{i + 1}</div>
+                           <div className="text-left">
+                             <p className={`text-[11px] font-bold uppercase tracking-tight ${activeLessonIdx === i ? "text-primary" : "text-muted-foreground"}`}>{lesson.title}</p>
+                             <p className="text-[9px] font-mono text-zinc-500 uppercase tracking-tighter">{lesson.type}</p>
+                           </div>
+                         </button>
+                       ))}
+                    </div>
+                  </aside>
+                </div>
+              )}
 
           {activeTab === "certificates" && (
             <div className="space-y-6 relative z-10">
@@ -403,43 +551,57 @@ const Academy = () => {
                 </div>
                 <div className="hidden sm:flex items-center gap-2 bg-muted/50 px-4 py-2 rounded-lg border border-border">
                   <Award className="w-5 h-5 text-secondary" />
-                  <span className="font-mono text-sm tracking-widest uppercase font-bold text-foreground">Earned: 1</span>
+                  <span className="font-mono text-sm tracking-widest uppercase font-bold text-foreground">Earned: {certificates.length}</span>
                 </div>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
-                <Card className="glass overflow-hidden group shadow-card hover:shadow-card-hover transition-all">
-                  {/* Decorative Certificate Background Pattern */}
-                  <div className="h-32 bg-gradient-to-r from-green-500/20 to-primary/20 relative flex items-center justify-center p-6 border-b border-border/50">
-                    <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '16px 16px' }} />
-                    <Award className="w-16 h-16 text-primary group-hover:scale-110 transition-transform duration-500 z-10" />
-                  </div>
-                  <CardHeader className="text-center pt-6">
-                    <Badge className="mx-auto mb-2 bg-green-500/10 text-green-500">Verified Credential</Badge>
-                    <CardTitle className="text-2xl font-serif">Enterprise Security</CardTitle>
-                    <CardDescription className="font-mono mt-2 text-xs">Issued on October 1st, 2026</CardDescription>
-                  </CardHeader>
-                  <CardContent className="text-center">
-                    <p className="text-sm text-muted-foreground">Certifies successfully completing all remote data compliance protocol examinations on the Star9 Network.</p>
-                    <div className="mt-6 p-3 bg-background/50 rounded flex justify-between items-center text-xs font-mono">
-                      <span className="text-muted-foreground">ID: ST9-8472-CERT</span>
-                      <a href="#" className="text-primary hover:underline">Verify</a>
+                {certificates.map((cert) => (
+                  <Card key={cert.id} className="glass overflow-hidden group shadow-card hover:shadow-card-hover transition-all">
+                    <div className="h-40 bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 relative flex flex-col items-center justify-center p-6 border-b border-white/5 overflow-hidden">
+                      <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} />
+                      <div className="z-10 text-center space-y-2">
+                        <img src={logo} alt="Star9" className="h-[28px] mx-auto brightness-200" />
+                        <p className="text-[8px] font-mono tracking-[0.4em] uppercase text-primary/80">Certificate of Infrastructure Excellence</p>
+                      </div>
+                      <Award className="absolute -bottom-8 -right-8 w-32 h-32 text-primary/10 group-hover:scale-110 transition-transform duration-700" />
                     </div>
-                  </CardContent>
-                  <CardFooter className="bg-muted/30 pt-4 flex gap-3">
-                    <Button className="flex-1 font-mono uppercase tracking-widest text-xs gap-2" variant="outline"><Globe className="w-4 h-4"/> Add to LinkedIn</Button>
-                    <Button className="flex-1 font-mono uppercase tracking-widest text-xs gap-2 bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 border"><Download className="w-4 h-4"/> Download PDF</Button>
-                  </CardFooter>
-                </Card>
+                    <CardHeader className="text-center pt-6">
+                      <Badge className="mx-auto mb-2 bg-green-500/10 text-green-500 border-green-500/20 uppercase font-mono text-[9px] tracking-widest">Verified Credential</Badge>
+                      <CardTitle className="text-2xl font-serif text-foreground/90">{cert.academy_courses?.title || "Advanced Protocol Mastery"}</CardTitle>
+                      <CardDescription className="font-mono mt-2 text-xs uppercase tracking-widest">Issued {new Date(cert.created_at).toLocaleDateString()}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="text-center px-8 pb-8">
+                      <p className="text-xs text-muted-foreground leading-relaxed">This certifies that <span className="text-foreground font-bold">{profile?.full_name || "Personnel"}</span> has demonstrated exceptional technical proficiency in all network-sanctioned modules.</p>
+                      <div className="mt-8 p-4 bg-zinc-900/80 rounded-xl border border-white/5 flex flex-col gap-2 font-mono text-[10px] shadow-inner">
+                        <div className="flex justify-between items-center"><span className="text-zinc-500">CREDENTIAL ID</span><span className="text-primary font-bold">{cert.credential_id}</span></div>
+                        <div className="flex justify-between items-center"><span className="text-zinc-500">VERIFICATION</span><span className="text-secondary/80">AUTHENTICATED @ STAR9_EDGE</span></div>
+                      </div>
+                    </CardContent>
+                    <CardFooter className="bg-muted/30 pt-4 flex gap-3 p-4">
+                      <a href={generateLinkedInUrl(cert)} target="_blank" className="flex-1">
+                        <Button className="w-full font-mono uppercase tracking-widest text-[9px] gap-2 py-6 bg-zinc-900 border-border hover:bg-zinc-800" variant="outline">
+                          <Globe className="w-3 h-3 text-blue-500" /> 
+                          Add to LinkedIn
+                        </Button>
+                      </a>
+                      <Button className="flex-1 font-mono uppercase tracking-widest text-[9px] gap-2 bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 border py-6">
+                        <Download className="w-3 h-3"/> 
+                        Download ID
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
 
-                {/* Placeholder for future certs */}
-                <Card className="glass border-dashed shadow-none flex flex-col items-center justify-center text-center p-12 opacity-50 relative overflow-hidden group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-transparent to-secondary/5 group-hover:to-secondary/10 transition-colors pointer-events-none" />
-                  <Award className="w-12 h-12 text-muted-foreground mb-4" />
-                  <h3 className="font-mono uppercase tracking-widest font-bold mb-2">Awaiting Credential</h3>
-                  <p className="text-sm text-muted-foreground max-w-[200px]">Complete additional courses in My Academy to unlock more certificates.</p>
-                  <Button variant="outline" className="mt-6 font-mono text-xs uppercase tracking-widest bg-background/50" onClick={() => setActiveTab("academy")}>View Academy</Button>
-                </Card>
+                {certificates.length === 0 && (
+                  <Card className="glass border-dashed shadow-none flex flex-col items-center justify-center text-center p-12 opacity-50 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-transparent to-secondary/5 group-hover:to-secondary/10 transition-colors pointer-events-none" />
+                    <Award className="w-12 h-12 text-muted-foreground mb-4" />
+                    <h3 className="font-mono uppercase tracking-widest font-bold mb-2">Awaiting Credential</h3>
+                    <p className="text-sm text-muted-foreground max-w-[200px]">Complete curriculum modules in My Academy to unlock enterprise certificates.</p>
+                    <Button variant="outline" className="mt-6 font-mono text-xs uppercase tracking-widest bg-background/50" onClick={() => setActiveTab("academy")}>Return to Curriculums</Button>
+                  </Card>
+                )}
               </div>
             </div>
           )}

@@ -55,6 +55,8 @@ const Admin = () => {
   const [loadingOpportunities, setLoadingOpportunities] = useState(false);
   const [invoices, setInvoices] = useState<any[]>([]);
   const [loadingInvoices, setLoadingInvoices] = useState(false);
+  const [editingCourse, setEditingCourse] = useState<any>(null);
+  const [newLesson, setNewLesson] = useState<any>({ title: "", type: "video", url: "", content: "" });
 
   // Stats
   const [stats, setStats] = useState({
@@ -163,18 +165,37 @@ const Admin = () => {
     }
   };
 
-  const handleCreateCourse = async () => {
-    const title = prompt("Enter Course Title:");
-    if (!title) return;
-    const { error } = await supabase.from('academy_courses').insert([{ 
-      title, 
-      category: 'Freelancing', 
-      status: 'draft' 
-    }]);
+  const handleSaveCourse = async () => {
+    if (!editingCourse.title) return toast.error("Course title required");
+    
+    setLoadingCourses(true);
+    const { error } = await supabase
+      .from('academy_courses')
+      .upsert({
+        ...editingCourse,
+        updated_at: new Date().toISOString()
+      });
+      
     if (!error) {
-      toast.success("New Academy Module Uploaded");
+      toast.success("Academy Module Synchronized");
+      setEditingCourse(null);
       fetchAllData();
+    } else {
+      toast.error("Asset Sync Failed", { description: error.message });
     }
+    setLoadingCourses(false);
+  };
+
+  const addLesson = () => {
+    if (!newLesson.title) return;
+    const lessons = [...(editingCourse.lessons || []), { ...newLesson, id: crypto.randomUUID() }];
+    setEditingCourse({ ...editingCourse, lessons });
+    setNewLesson({ title: "", type: "video", url: "", content: "" });
+  };
+
+  const removeLesson = (id: string) => {
+    const lessons = (editingCourse.lessons || []).filter((l: any) => l.id !== id);
+    setEditingCourse({ ...editingCourse, lessons });
   };
 
   const handleCreateOpportunity = async () => {
@@ -546,39 +567,116 @@ const Admin = () => {
                   <h1 className="text-4xl font-bold tracking-tighter uppercase leading-none">Module Management</h1>
                   <p className="text-muted-foreground mt-2 font-medium">Create, edit, and purge training modules from the Star9 Academy.</p>
                 </div>
-                <Button className="font-mono text-[10px] uppercase tracking-widest bg-primary hover:bg-primary/90 text-primary-foreground" onClick={handleCreateCourse}>
-                  <Plus className="mr-2 size-4" /> Deploy New Module
-                </Button>
+                {!editingCourse && (
+                  <Button className="font-mono text-[10px] uppercase tracking-widest bg-primary hover:bg-primary/90 text-primary-foreground" onClick={() => setEditingCourse({ title: "", category: "AI Skills", status: "draft", lessons: [], ai_tools_covered: [] })}>
+                    <Plus className="mr-2 size-4" /> Deploy New Module
+                  </Button>
+                )}
               </div>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {loadingCourses ? (
-                  <div className="col-span-full h-48 flex items-center justify-center font-mono text-xs uppercase tracking-widest">Scanning Academy HQ...</div>
-                ) : courses.length === 0 ? (
-                  <Card className="col-span-full glass border-dashed p-12 text-center opacity-50">
-                    <BookOpen className="size-12 mx-auto mb-4 text-muted-foreground" />
-                    <CardTitle className="uppercase tracking-widest text-sm">No Active Modules</CardTitle>
-                  </Card>
-                ) : courses.map((course) => (
-                  <Card key={course.id} className="glass border-border/50 hover:border-primary/30 transition-all group">
-                    <CardHeader>
-                      <div className="flex justify-between items-start">
-                        <Badge variant="outline" className="font-mono text-[9px] uppercase tracking-widest">{course.category}</Badge>
-                        <button onClick={() => handleDeleteCourse(course.id)} className="text-muted-foreground hover:text-red-500 transition-colors">
-                          <Trash2 className="size-4" />
-                        </button>
+              {editingCourse ? (
+                <Card className="glass border-primary/20 p-8 space-y-8 animate-in slide-in-from-right-4 duration-500">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-2xl font-bold uppercase tracking-tight">Dossier: {editingCourse.title || "New Module"}</h2>
+                    <div className="flex gap-2">
+                       <Button variant="ghost" className="font-mono text-[10px] uppercase tracking-widest" onClick={() => setEditingCourse(null)}>Discard</Button>
+                       <Button className="font-mono text-[10px] uppercase tracking-widest px-8" onClick={handleSaveCourse}>Commit Assets</Button>
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label className="font-mono text-[10px] uppercase tracking-widest">Module Identity</Label>
+                        <Input placeholder="Course Title" value={editingCourse.title} onChange={e => setEditingCourse({...editingCourse, title: e.target.value})} className="bg-zinc-900 border-zinc-800" />
                       </div>
-                      <CardTitle className="mt-2 group-hover:text-primary transition-colors leading-tight">{course.title}</CardTitle>
-                      <CardDescription className="font-mono text-[10px] uppercase tracking-widest">{course.status === 'published' ? '🟢 LIVE' : '🟡 DRAFTING'}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                       <div className="text-xs text-muted-foreground font-mono">
-                          Modules: {course.modules_covered?.length || 0} | AI Tools: {course.ai_tools_covered?.length || 0}
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label className="font-mono text-[10px] uppercase tracking-widest">Classification</Label>
+                          <select className="w-full h-10 px-3 bg-zinc-900 border border-zinc-800 rounded-md text-sm outline-none" value={editingCourse.category || "AI Skills"} onChange={e => setEditingCourse({...editingCourse, category: e.target.value})}>
+                            <option>AI Skills</option>
+                            <option>Freelancing</option>
+                            <option>Digital Marketing</option>
+                            <option>Cybersecurity</option>
+                          </select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="font-mono text-[10px] uppercase tracking-widest">Protocol Status</Label>
+                          <select className="w-full h-10 px-3 bg-zinc-900 border border-zinc-800 rounded-md text-sm outline-none font-mono text-[10px] uppercase" value={editingCourse.status} onChange={e => setEditingCourse({...editingCourse, status: e.target.value})}>
+                            <option value="draft">🟡 DRAFT</option>
+                            <option value="published">🟢 LIVE</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                       <Label className="font-mono text-[10px] uppercase tracking-widest">Curriculum Builder</Label>
+                       <div className="space-y-3 max-h-[300px] overflow-y-auto p-4 bg-zinc-900/50 border border-zinc-800 rounded-xl">
+                          {(editingCourse.lessons || []).map((lesson: any, idx: number) => (
+                            <div key={lesson.id} className="flex items-center justify-between p-3 bg-zinc-900 border border-zinc-800 rounded-lg group">
+                              <div className="flex items-center gap-3">
+                                <span className="text-[10px] font-mono text-muted-foreground">{idx + 1}</span>
+                                {lesson.type === 'video' ? <Play className="size-3 text-primary" /> : <Database className="size-3 text-secondary" />}
+                                <span className="text-xs font-bold uppercase tracking-tight">{lesson.title}</span>
+                              </div>
+                              <Button variant="ghost" size="icon" className="size-6 text-muted-foreground hover:text-red-500" onClick={() => removeLesson(lesson.id)}><XCircle className="size-4" /></Button>
+                            </div>
+                          ))}
+                          {(!editingCourse.lessons || editingCourse.lessons.length === 0) && (
+                            <p className="text-center py-8 text-xs text-muted-foreground italic uppercase tracking-widest">No curriculum fragments established</p>
+                          )}
                        </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+
+                       <div className="p-4 border border-dashed border-zinc-800 rounded-xl bg-zinc-900/20 space-y-3">
+                          <Input placeholder="Lesson Label" value={newLesson.title} onChange={e => setNewLesson({...newLesson, title: e.target.value})} className="h-8 bg-transparent text-[10px]" />
+                          <div className="flex gap-2">
+                            <select className="h-8 px-2 bg-zinc-900 border border-zinc-800 rounded text-[10px] uppercase font-mono" value={newLesson.type} onChange={e => setNewLesson({...newLesson, type: e.target.value})}>
+                              <option value="video">Video</option>
+                              <option value="quiz">Quiz</option>
+                            </select>
+                            <Input placeholder={newLesson.type === 'video' ? "Video URL (YT/Vimeo)" : "Quiz Data JSON"} value={newLesson.url} onChange={e => setNewLesson({...newLesson, url: e.target.value})} className="h-8 bg-transparent text-[10px]" />
+                            <Button size="sm" variant="secondary" className="h-8 font-mono text-[10px] uppercase" onClick={addLesson}>Inject</Button>
+                          </div>
+                       </div>
+                    </div>
+                  </div>
+                </Card>
+              ) : (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {loadingCourses ? (
+                    <div className="col-span-full h-48 flex items-center justify-center font-mono text-xs uppercase tracking-widest">Scanning Academy HQ...</div>
+                  ) : courses.length === 0 ? (
+                    <Card className="col-span-full glass border-dashed p-12 text-center opacity-50">
+                      <BookOpen className="size-12 mx-auto mb-4 text-muted-foreground" />
+                      <CardTitle className="uppercase tracking-widest text-sm">No Active Modules</CardTitle>
+                    </Card>
+                  ) : courses.map((course) => (
+                    <Card key={course.id} className="glass border-border/50 hover:border-primary/30 transition-all group cursor-pointer" onClick={() => setEditingCourse(course)}>
+                      <CardHeader>
+                        <div className="flex justify-between items-start">
+                          <Badge variant="outline" className="font-mono text-[9px] uppercase tracking-widest">{course.category}</Badge>
+                          <div className="flex gap-1">
+                            <button onClick={(e) => { e.stopPropagation(); setEditingCourse(course); }} className="text-muted-foreground hover:text-primary transition-colors p-1">
+                              <Search className="size-4" />
+                            </button>
+                            <button onClick={(e) => { e.stopPropagation(); handleDeleteCourse(course.id); }} className="text-muted-foreground hover:text-red-500 transition-colors p-1">
+                              <Trash2 className="size-4" />
+                            </button>
+                          </div>
+                        </div>
+                        <CardTitle className="mt-2 group-hover:text-primary transition-colors leading-tight">{course.title}</CardTitle>
+                        <CardDescription className="font-mono text-[10px] uppercase tracking-widest">{course.status === 'published' ? '🟢 LIVE' : '🟡 DRAFT'}</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                         <div className="text-xs text-muted-foreground font-mono">
+                            Payloads: {course.lessons?.length || 0} | AI Tools: {course.ai_tools_covered?.length || 0}
+                         </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
