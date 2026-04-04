@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import CertificateTemplate from "@/components/academy/CertificateTemplate";
+import CommunityChat from "@/components/academy/CommunityChat";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { 
@@ -120,6 +121,7 @@ const Academy = () => {
   };
   const [quizScore, setQuizScore] = useState<number | null>(null);
   const [certificates, setCertificates] = useState<any[]>([]);
+  const [activeLessonIdx, setActiveLessonIdx] = useState(0);
 
   const navigate = useNavigate();
 
@@ -244,6 +246,28 @@ const Academy = () => {
       certUrl: `${window.location.origin}/verify/${cert.credential_id}`
     });
     return `${baseUrl}?${params.toString()}`;
+  };
+
+  // Auto-join course chat group when starting a course
+  const joinCourseChat = async (courseId: string) => {
+    try {
+      // Find the chat group for this course
+      const { data: group } = await supabase
+        .from('chat_groups')
+        .select('id')
+        .eq('course_id', courseId)
+        .eq('type', 'course')
+        .single();
+
+      if (group && user) {
+        // Try to join (will silently fail if already a member due to UNIQUE constraint)
+        await supabase
+          .from('chat_members')
+          .upsert({ group_id: group.id, user_id: user.id }, { onConflict: 'group_id,user_id' });
+      }
+    } catch (err) {
+      // Silently ignore — non-critical
+    }
   };
 
   const studentLinks = [
@@ -460,7 +484,11 @@ const Academy = () => {
                       <CardFooter className="border-t pt-4">
                         <Button 
                           className="w-full font-mono uppercase text-xs tracking-widest gap-2"
-                          onClick={() => { setPlayingCourse(course); setActiveLessonIdx(0); }}
+                          onClick={() => { 
+                            setPlayingCourse(course); 
+                            setActiveLessonIdx(0); 
+                            joinCourseChat(course.id);
+                          }}
                         >
                           Start Module <Play className="w-3 h-3" />
                         </Button>
@@ -660,43 +688,7 @@ const Academy = () => {
           )}
 
           {activeTab === "community" && (
-            <div className="space-y-6 max-w-5xl relative z-10">
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">Star9 Community</h1>
-                <p className="text-muted-foreground">Connect with other freelancers, students, and mentors globally.</p>
-              </div>
-
-              <div className="grid md:grid-cols-3 gap-6">
-                <Card className="glass md:col-span-2 border-border/50 min-h-[400px] flex flex-col items-center justify-center p-8 text-center">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                    <Globe className="w-8 h-8 text-primary" />
-                  </div>
-                  <h2 className="text-xl font-bold mb-2">Global Feed Server Offline</h2>
-                  <p className="text-muted-foreground text-sm max-w-[400px]">The real-time community chat is currently being set up. Stay tuned for live networking capabilities.</p>
-                  <Button className="mt-6 font-mono uppercase tracking-widest text-xs">Join Discord Instead</Button>
-                </Card>
-
-                <div className="space-y-6">
-                  <Card className="glass border-border/50">
-                    <CardHeader>
-                      <CardTitle className="text-sm font-mono tracking-widest uppercase">Active Members</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      {['Amara K.', 'David O.', 'Sarah L.'].map((name, i) => (
-                        <div key={name} className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs uppercase">{name.charAt(0)}</div>
-                          <div>
-                            <p className="text-sm font-medium">{name}</p>
-                            <p className="text-xs text-muted-foreground">Online recently</p>
-                          </div>
-                          {i === 1 && <VerificationBadge status="verified" />}
-                        </div>
-                      ))}
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-            </div>
+            <CommunityChat user={user} profile={profile} />
           )}
 
           {activeTab === "settings" && (
