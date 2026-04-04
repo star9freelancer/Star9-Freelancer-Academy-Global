@@ -18,7 +18,7 @@ INSERT INTO academy_courses (title, category, status, lessons, ai_tools_covered)
 VALUES 
 (
   'The Freelance AI Masterclass', 
-  'AI Skills', 
+  'AI for Freelancers', 
   'published',
   '[
     {"id": "l1", "title": "Precision Prompt Engineering", "type": "video", "url": "https://www.youtube.com/watch?v=jC4v5AS4RIM"},
