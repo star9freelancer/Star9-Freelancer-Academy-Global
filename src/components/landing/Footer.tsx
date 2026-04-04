@@ -29,6 +29,7 @@ const Footer = () => (
         <div className="flex flex-col gap-3 text-sm text-muted-foreground">
           <Link to="/academy" className="hover:text-primary transition-colors flex items-center gap-2"><MonitorPlay className="size-3" /> Academy</Link>
           <Link to="/global" className="hover:text-secondary transition-colors flex items-center gap-2"><MonitorPlay className="size-3" /> Global</Link>
+          <Link to="/admin" className="hover:text-amber-500 transition-colors flex items-center gap-2 opacity-50 hover:opacity-100"><MonitorPlay className="size-3" /> Admin Portal</Link>
           <a href="#foundation" className="hover:text-foreground transition-colors flex items-center gap-2"><MonitorPlay className="size-3" /> Foundation</a>
         </div>
       </div>

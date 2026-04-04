@@ -44,7 +44,6 @@ const Header = () => {
     { label: "Capabilities", href: "#features" },
     { label: "Academy", href: "/academy" },
     { label: "Global", href: "/global" },
-    { label: "Admin Portal", href: "/admin" },
   ];
 
   return (

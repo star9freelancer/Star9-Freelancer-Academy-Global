@@ -127,11 +127,11 @@ const HeroSection = () => {
           >
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 bg-secondary flex items-center justify-center text-primary-foreground font-bold font-mono text-lg">
-                AI
+                MT
               </div>
               <div>
                 <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-1">Module Active</p>
-                <p className="font-bold text-sm text-foreground">Academy Synchronized</p>
+                <p className="font-bold text-sm text-foreground">Master AI Tools</p>
               </div>
             </div>
           </motion.div>
