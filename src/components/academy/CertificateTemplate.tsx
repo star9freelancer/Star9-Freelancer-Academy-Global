@@ -42,18 +42,8 @@ const CertificateTemplate = React.forwardRef<HTMLDivElement, CertificateTemplate
       />
 
       {/* Modern Academic Border: Navy & Gold */}
-      <div className="absolute inset-6 border-[8px] border-[#1e293b] pointer-events-none" />
-      <div className="absolute inset-[32px] border-[2px] border-[#c4a059] pointer-events-none" />
-      
-      {/* Inner Decorative Corners */}
-      {[
-        'top-[32px] left-[32px] border-t-8 border-l-8',
-        'top-[32px] right-[32px] border-t-8 border-r-8',
-        'bottom-[32px] left-[32px] border-b-8 border-l-8',
-        'bottom-[32px] right-[32px] border-b-8 border-r-8'
-      ].map((classes, i) => (
-        <div key={i} className={`absolute size-24 border-[#1e293b] ${classes}`} />
-      ))}
+      <div className="absolute inset-8 border-[6px] border-[#1e293b] pointer-events-none" />
+      <div className="absolute inset-[44px] border-[1px] border-[#c4a059]/40 pointer-events-none" />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col items-center w-full px-32 py-24 relative z-10">
@@ -103,10 +93,6 @@ const CertificateTemplate = React.forwardRef<HTMLDivElement, CertificateTemplate
           </h3>
         </div>
 
-        {/* Background Decorative Seal */}
-        <div className="absolute right-24 top-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none">
-           <Award className="size-[500px]" />
-        </div>
       </div>
 
       {/* Official Bottom Section */}
@@ -121,26 +107,28 @@ const CertificateTemplate = React.forwardRef<HTMLDivElement, CertificateTemplate
          </div>
 
          {/* Center: The Academic Gold Medal */}
+         {/* Center: The Academic Gold Foil Seal */}
          <div className="relative group">
-            <div className="size-28 rounded-full border-4 border-[#1e293b] bg-white shadow-xl flex flex-col items-center justify-center p-1 relative">
-                <div className="size-full rounded-full border border-[#c4a059]/30 flex flex-col items-center justify-center bg-gradient-to-br from-white to-slate-50">
-                    <Award className="size-12 text-[#c4a059]" />
-                </div>
+            <div className="size-28 rounded-full border-[1px] border-[#c4a059]/50 p-1 flex items-center justify-center relative overflow-hidden">
+               <div className="absolute inset-0 bg-[#c4a059]/10" />
+               <div className="size-full rounded-full bg-gradient-to-br from-white to-slate-100 flex flex-col items-center justify-center border-[4px] border-[#c4a059] relative shadow-lg">
+                  <Award className="size-10 text-[#c4a059] drop-shadow-sm" />
+               </div>
             </div>
          </div>
 
          {/* Right: Signature Block */}
-         <div className="text-center w-72">
+         <div className="text-center w-80 flex flex-col items-center">
             <div 
-              style={{ fontFamily: "'Dancing Script', serif" }}
-              className="text-5xl text-slate-400 mb-2 relative"
+              style={{ fontFamily: "'Dancing Script', serif", fontWeight: 700 }}
+              className="text-5xl text-[#1e293b] mb-1 transform -rotate-1"
             >
-               <span className="text-[#1e293b]">Esther Hiuko</span>
+               Esther Hiuko
             </div>
-            <div className="h-[2px] w-full bg-[#1e293b] mb-2" />
+            <div className="h-[1.5px] w-64 bg-slate-300 mb-2" />
             <div className="space-y-0.5">
-               <p className="font-black text-xs uppercase tracking-[0.2em] text-slate-800 underline decoration-[#c4a059] decoration-2 underline-offset-4">Esther Hiuko</p>
-               <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-slate-400 font-bold mt-2">Director of Operations</p>
+               <p className="font-bold text-[11px] uppercase tracking-[0.2em] text-slate-800 underline decoration-[#c4a059] decoration-2 underline-offset-8">Esther Hiuko</p>
+               <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 font-bold mt-3">Director of Operations</p>
             </div>
          </div>
       </div>
