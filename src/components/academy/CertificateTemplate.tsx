@@ -59,39 +59,33 @@ const CertificateTemplate = React.forwardRef<HTMLDivElement, CertificateTemplate
       <div className="flex-1 flex flex-col items-center w-full px-32 py-24 relative z-10">
         
         {/* Header Section */}
-        <div className="flex flex-col items-center mb-12">
-          <img src={logo} alt="Star9" className="h-20 mb-4 brightness-[0.2] contrast-150" />
-          <p className="font-mono text-[10px] tracking-[0.4em] uppercase text-[#c4a059] font-black">Star9 Infrastructure Academy</p>
+        <div className="flex flex-col items-center mb-8">
+          <img src={logo} alt="Star9" className="h-16 mb-2 brightness-[0.2] contrast-150" />
         </div>
 
         {/* Certificate Title */}
-        <div className="text-center space-y-4 mb-12">
+        <div className="text-center space-y-2 mb-8">
           <h1 
             style={{ fontFamily: "'Playfair Display', serif" }}
-            className="text-6xl font-extrabold uppercase tracking-tight text-[#1e293b]"
+            className="text-5xl font-extrabold uppercase tracking-tight text-[#1e293b]"
           >
             Certificate of Achievement
           </h1>
-          <div className="flex items-center justify-center gap-4">
-             <div className="h-px w-24 bg-[#c4a059]/40" />
-             <p className="text-[11px] font-mono tracking-[0.2em] uppercase text-slate-500">Official Operational Credential</p>
-             <div className="h-px w-24 bg-[#c4a059]/40" />
-          </div>
         </div>
 
         {/* Recipient Information */}
-        <div className="text-center space-y-10 flex flex-col items-center w-full">
+        <div className="text-center space-y-6 flex flex-col items-center w-full">
           <p 
             style={{ fontFamily: "'Playfair Display', serif" }}
-            className="text-2xl text-slate-500 italic"
+            className="text-xl text-slate-500 italic"
           >
             This is to certify that
           </p>
 
-          <div className="w-full max-w-3xl border-b-2 border-slate-200 pb-4">
+          <div className="w-full max-w-3xl border-b border-slate-200 pb-2">
              <h2 
                style={{ fontFamily: "'Playfair Display', serif" }}
-               className="text-7xl font-black text-[#1e293b] px-8"
+               className="text-6xl font-black text-[#1e293b] px-8"
              >
                {studentName}
              </h2>
@@ -99,12 +93,12 @@ const CertificateTemplate = React.forwardRef<HTMLDivElement, CertificateTemplate
 
           <p 
             style={{ fontFamily: "'Playfair Display', serif" }}
-            className="text-xl text-slate-500 italic max-w-2xl px-12"
+            className="text-base text-slate-500 italic max-w-2xl px-12"
           >
-            has successfully fulfilled all requirements and demonstrated operational mastery in
+            has successfully fulfilled all requirements and demonstrated mastery in
           </p>
 
-          <h3 className="text-4xl font-black text-[#c4a059] uppercase tracking-wide">
+          <h3 className="text-3xl font-black text-[#1e293b] uppercase tracking-wide">
             {courseTitle}
           </h3>
         </div>
@@ -119,31 +113,18 @@ const CertificateTemplate = React.forwardRef<HTMLDivElement, CertificateTemplate
       <div className="w-full px-24 pb-20 flex items-center justify-between mt-auto">
          
          {/* Left: Metadata & Validation */}
-         <div className="space-y-4">
-            <div className="space-y-1">
-               <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#c4a059] font-bold">Credential Reference</p>
-               <div className="grid gap-0.5">
-                  <p className="font-mono text-[11px] text-slate-500">GEN_ID: <span className="font-bold text-slate-800">{credentialId}</span></p>
-                  <p className="font-mono text-[11px] text-slate-500">DATED: <span className="font-bold text-slate-800">{issueDate}</span></p>
-               </div>
-            </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded bg-slate-100 border border-slate-200">
-               <ShieldCheck className="size-4 text-slate-400" />
-               <span className="text-[9px] font-mono uppercase tracking-widest text-slate-500">Immutable Ledger Proof Verified</span>
+         <div className="space-y-2">
+            <div className="grid gap-0.5">
+               <p className="font-mono text-[9px] text-slate-400">ID: <span className="font-bold text-slate-800">{credentialId}</span></p>
+               <p className="font-mono text-[9px] text-slate-400">DATE: <span className="font-bold text-slate-800">{issueDate}</span></p>
             </div>
          </div>
 
          {/* Center: The Academic Gold Medal */}
          <div className="relative group">
-            {/* Sunburst effect */}
-            <div className="absolute inset-0 bg-[#c4a059]/10 rounded-full blur-2xl group-hover:bg-[#c4a059]/20 transition-all" />
-            <div className="size-36 rounded-full border-4 border-[#1e293b] bg-white shadow-2xl flex flex-col items-center justify-center p-1 relative">
-                <div className="size-full rounded-full border-2 border-[#c4a059]/30 flex flex-col items-center justify-center bg-gradient-to-br from-white to-slate-50">
-                    <Award className="size-16 text-[#c4a059]" />
-                    <p className="text-[8px] font-black uppercase tracking-tighter mt-1">Certified</p>
-                    <div className="flex gap-0.5 mt-0.5">
-                       {[1,2,3,4,5].map(i => <Check key={i} className="size-1.5 text-[#c4a059]" strokeWidth={4} />)}
-                    </div>
+            <div className="size-28 rounded-full border-4 border-[#1e293b] bg-white shadow-xl flex flex-col items-center justify-center p-1 relative">
+                <div className="size-full rounded-full border border-[#c4a059]/30 flex flex-col items-center justify-center bg-gradient-to-br from-white to-slate-50">
+                    <Award className="size-12 text-[#c4a059]" />
                 </div>
             </div>
          </div>
@@ -164,12 +145,6 @@ const CertificateTemplate = React.forwardRef<HTMLDivElement, CertificateTemplate
          </div>
       </div>
 
-      {/* Global Ledger Tag */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-6 text-[8px] font-mono uppercase tracking-[0.4em] text-slate-300">
-         <span>Authorized Network Signature</span>
-         <Globe className="size-2.5" />
-         <span>Global Recognition Protocol</span>
-      </div>
 
     </div>
   );
