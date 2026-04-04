@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Award, FileCheck, Globe } from "lucide-react";
+import { Award, Globe, ShieldCheck, Check } from "lucide-react";
 import logo from "@/assets/logo_transparent.png";
 
 interface CertificateTemplateProps {
@@ -18,12 +18,11 @@ const CertificateTemplate = React.forwardRef<HTMLDivElement, CertificateTemplate
   return (
     <div 
       ref={ref}
-      className="certificate-container"
       style={{
         width: '1122.5px', // A4 Landscape
         height: '793.7px',
-        backgroundColor: '#09090b', // Deep Obsidian
-        color: '#ffffff',
+        backgroundColor: '#fcfcf7', // Premium Ivory/Parchment
+        color: '#1e293b', // Slate-800
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
@@ -34,70 +33,65 @@ const CertificateTemplate = React.forwardRef<HTMLDivElement, CertificateTemplate
         boxSizing: 'border-box'
       }}
     >
-      {/* Background Texture Overlay */}
+      {/* Subtle Paper Texture Overlay */}
       <div 
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        className="absolute inset-0 opacity-[0.05] pointer-events-none"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-          filter: 'contrast(120%) brightness(100%)'
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
         }}
       />
 
-      {/* Ornate Triple Gold Border */}
-      <div className="absolute inset-8 border-[1px] border-[#c5a059]/30 rounded-sm pointer-events-none" />
-      <div className="absolute inset-10 border-[3px] border-[#c5a059]/50 rounded-sm pointer-events-none" />
-      <div className="absolute inset-[44px] border-[1px] border-[#c5a059]/30 rounded-sm pointer-events-none" />
+      {/* Modern Academic Border: Navy & Gold */}
+      <div className="absolute inset-6 border-[8px] border-[#1e293b] pointer-events-none" />
+      <div className="absolute inset-[32px] border-[2px] border-[#c4a059] pointer-events-none" />
       
-      {/* Corner Flourishes */}
+      {/* Inner Decorative Corners */}
       {[
-        'top-8 left-8 border-t-4 border-l-4',
-        'top-8 right-8 border-t-4 border-r-4',
-        'bottom-8 left-8 border-b-4 border-l-4',
-        'bottom-8 right-8 border-b-4 border-r-4'
+        'top-[32px] left-[32px] border-t-8 border-l-8',
+        'top-[32px] right-[32px] border-t-8 border-r-8',
+        'bottom-[32px] left-[32px] border-b-8 border-l-8',
+        'bottom-[32px] right-[32px] border-b-8 border-r-8'
       ].map((classes, i) => (
-        <div key={i} className={`absolute size-16 border-[#c5a059] ${classes} rounded-sm`} />
+        <div key={i} className={`absolute size-24 border-[#1e293b] ${classes}`} />
       ))}
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col items-center w-full px-24 py-20 relative z-10">
+      <div className="flex-1 flex flex-col items-center w-full px-32 py-24 relative z-10">
         
         {/* Header Section */}
-        <div className="flex flex-col items-center mb-10">
-          <img src={logo} alt="Star9" className="h-20 mb-6 drop-shadow-2xl brightness-125" />
-          <div className="h-[2px] w-48 bg-gradient-to-r from-transparent via-[#c5a059] to-transparent" />
+        <div className="flex flex-col items-center mb-12">
+          <img src={logo} alt="Star9" className="h-20 mb-4 brightness-[0.2] contrast-150" />
+          <p className="font-mono text-[10px] tracking-[0.4em] uppercase text-[#c4a059] font-black">Star9 Infrastructure Academy</p>
         </div>
 
         {/* Certificate Title */}
-        <div className="text-center space-y-3 mb-10">
+        <div className="text-center space-y-4 mb-12">
           <h1 
-            style={{
-               fontFamily: "'Playfair Display', serif",
-               fontStyle: 'italic',
-               letterSpacing: '0.1em'
-            }}
-            className="text-6xl font-extrabold uppercase text-transparent bg-clip-text bg-gradient-to-b from-[#f3e3ad] via-[#c5a059] to-[#926a31]"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+            className="text-6xl font-extrabold uppercase tracking-tight text-[#1e293b]"
           >
-            Certificate of Excellence
+            Certificate of Achievement
           </h1>
-          <p className="text-[10px] font-mono tracking-[0.6em] uppercase text-[#c5a059] font-bold">
-            Authorized Protocol Infrastructure Achievement
-          </p>
+          <div className="flex items-center justify-center gap-4">
+             <div className="h-px w-24 bg-[#c4a059]/40" />
+             <p className="text-[11px] font-mono tracking-[0.2em] uppercase text-slate-500">Official Operational Credential</p>
+             <div className="h-px w-24 bg-[#c4a059]/40" />
+          </div>
         </div>
 
-        {/* Body Text */}
-        <div className="text-center space-y-8 flex flex-col items-center w-full max-w-2xl">
+        {/* Recipient Information */}
+        <div className="text-center space-y-10 flex flex-col items-center w-full">
           <p 
             style={{ fontFamily: "'Playfair Display', serif" }}
-            className="text-xl text-zinc-400 italic"
+            className="text-2xl text-slate-500 italic"
           >
-            This high-trust credential is presented as formal recognition of mastery to
+            This is to certify that
           </p>
 
-          <div className="w-full relative py-4">
-             <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-zinc-700 to-transparent" />
+          <div className="w-full max-w-3xl border-b-2 border-slate-200 pb-4">
              <h2 
                style={{ fontFamily: "'Playfair Display', serif" }}
-               className="text-6xl font-black text-white px-8 tracking-tight"
+               className="text-7xl font-black text-[#1e293b] px-8"
              >
                {studentName}
              </h2>
@@ -105,66 +99,76 @@ const CertificateTemplate = React.forwardRef<HTMLDivElement, CertificateTemplate
 
           <p 
             style={{ fontFamily: "'Playfair Display', serif" }}
-            className="text-lg text-zinc-400 italic"
+            className="text-xl text-slate-500 italic max-w-2xl px-12"
           >
-            for successfully conferring operational standards and architectural proficiency in
+            has successfully fulfilled all requirements and demonstrated operational mastery in
           </p>
 
-          <h3 className="text-2xl font-bold uppercase tracking-[0.2em] text-[#c5a059]/90 border border-[#c5a059]/20 px-8 py-3 bg-[#c5a059]/5 rounded-sm">
+          <h3 className="text-4xl font-black text-[#c4a059] uppercase tracking-wide">
             {courseTitle}
           </h3>
         </div>
 
-        {/* Validation Footnote */}
-        <div className="mt-12 flex items-center gap-6 text-[9px] font-mono uppercase tracking-[0.4em] text-zinc-600">
-           <span>Credential Authenticated @ Star9 Edge</span>
-           <ShieldCheck className="size-3 text-zinc-700" />
-           <span>Global Reciprocal Recognition Protocol</span>
+        {/* Background Decorative Seal */}
+        <div className="absolute right-24 top-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none">
+           <Award className="size-[500px]" />
         </div>
       </div>
 
-      {/* Footer Signature Section */}
-      <div className="w-full h-56 bg-zinc-900/40 border-t border-zinc-800/80 mt-auto px-16 flex items-center justify-between relative overflow-hidden">
-         {/* Subtle pattern background for footer */}
-         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '20px 20px' }} />
-
-         {/* Left: Credential ID Block */}
+      {/* Official Bottom Section */}
+      <div className="w-full px-24 pb-20 flex items-center justify-between mt-auto">
+         
+         {/* Left: Metadata & Validation */}
          <div className="space-y-4">
-           <div className="flex items-center gap-2">
-              <Globe className="size-4 text-[#c5a059]" />
-              <p className="text-[10px] font-mono tracking-widest text-[#c5a059] font-bold">DIGITAL_LEDGER_PROOF</p>
-           </div>
-           <div className="grid gap-1">
-             <p className="font-mono text-[10px] text-zinc-500 uppercase">HashID: <span className="text-zinc-300 ml-2">{credentialId}</span></p>
-             <p className="font-mono text-[10px] text-zinc-500 uppercase">Issued: <span className="text-zinc-300 ml-2">{issueDate}</span></p>
-           </div>
+            <div className="space-y-1">
+               <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#c4a059] font-bold">Credential Reference</p>
+               <div className="grid gap-0.5">
+                  <p className="font-mono text-[11px] text-slate-500">GEN_ID: <span className="font-bold text-slate-800">{credentialId}</span></p>
+                  <p className="font-mono text-[11px] text-slate-500">DATED: <span className="font-bold text-slate-800">{issueDate}</span></p>
+               </div>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded bg-slate-100 border border-slate-200">
+               <ShieldCheck className="size-4 text-slate-400" />
+               <span className="text-[9px] font-mono uppercase tracking-widest text-slate-500">Immutable Ledger Proof Verified</span>
+            </div>
          </div>
 
-         {/* Center: The Royal Seal */}
-         <div className="relative">
-            <div className="size-32 rounded-full shadow-[0_0_50px_rgba(197,160,89,0.2)] flex items-center justify-center border-2 border-[#c5a059]/30 bg-gradient-to-br from-[#f3e3ad] via-[#c5a059] to-[#926a31] p-1">
-               <div className="size-full rounded-full border-2 border-white/20 border-dashed animate-[spin_30s_linear_infinite]" />
-               <Award className="absolute size-14 text-white/90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
+         {/* Center: The Academic Gold Medal */}
+         <div className="relative group">
+            {/* Sunburst effect */}
+            <div className="absolute inset-0 bg-[#c4a059]/10 rounded-full blur-2xl group-hover:bg-[#c4a059]/20 transition-all" />
+            <div className="size-36 rounded-full border-4 border-[#1e293b] bg-white shadow-2xl flex flex-col items-center justify-center p-1 relative">
+                <div className="size-full rounded-full border-2 border-[#c4a059]/30 flex flex-col items-center justify-center bg-gradient-to-br from-white to-slate-50">
+                    <Award className="size-16 text-[#c4a059]" />
+                    <p className="text-[8px] font-black uppercase tracking-tighter mt-1">Certified</p>
+                    <div className="flex gap-0.5 mt-0.5">
+                       {[1,2,3,4,5].map(i => <Check key={i} className="size-1.5 text-[#c4a059]" strokeWidth={4} />)}
+                    </div>
+                </div>
             </div>
          </div>
 
          {/* Right: Signature Block */}
-         <div className="text-center w-64">
-           <div 
-             style={{ fontFamily: "'Dancing Script', 'Cursive', serif" }}
-             className="text-4xl text-white italic mb-2 tracking-wide drop-shadow-md pb-1"
-           >
-             Esther Hiuko
-           </div>
-           <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-zinc-600 to-transparent mb-3" />
-           <p className="text-[11px] font-black uppercase tracking-[0.2em] text-white">Esther Hiuko</p>
-           <p className="text-[9px] font-mono uppercase tracking-[0.3em] text-[#c5a059] mt-1">Director of Operations</p>
+         <div className="text-center w-72">
+            <div 
+              style={{ fontFamily: "'Dancing Script', serif" }}
+              className="text-5xl text-slate-400 mb-2 relative"
+            >
+               <span className="text-[#1e293b]">Esther Hiuko</span>
+            </div>
+            <div className="h-[2px] w-full bg-[#1e293b] mb-2" />
+            <div className="space-y-0.5">
+               <p className="font-black text-xs uppercase tracking-[0.2em] text-slate-800 underline decoration-[#c4a059] decoration-2 underline-offset-4">Esther Hiuko</p>
+               <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-slate-400 font-bold mt-2">Director of Operations</p>
+            </div>
          </div>
       </div>
-      
-      {/* Decorative filigree */}
-      <div className="absolute top-10 left-10 size-16 opacity-10 flex items-center justify-center transform -rotate-45">
-         <FileCheck className="size-full text-[#c5a059]" />
+
+      {/* Global Ledger Tag */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-6 text-[8px] font-mono uppercase tracking-[0.4em] text-slate-300">
+         <span>Authorized Network Signature</span>
+         <Globe className="size-2.5" />
+         <span>Global Recognition Protocol</span>
       </div>
 
     </div>

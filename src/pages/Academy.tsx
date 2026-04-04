@@ -91,9 +91,11 @@ const Academy = () => {
       if (certificateRef.current) {
         try {
           const canvas = await html2canvas(certificateRef.current, {
-            scale: 2, // High resolution
+            scale: 3, // Premium high resolution
             useCORS: true,
-            backgroundColor: '#09090b'
+            backgroundColor: '#fcfcf7',
+            logging: false,
+            removeContainer: true
           });
           
           const imgData = canvas.toDataURL('image/png');
