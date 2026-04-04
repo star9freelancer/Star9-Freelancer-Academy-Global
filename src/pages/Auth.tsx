@@ -135,7 +135,7 @@ export default function Auth() {
                 <CardTitle className="font-mono uppercase tracking-widest">Initialize Account</CardTitle>
                 <CardDescription>Join the Star9 collective and elevate your workflow.</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
+              <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2 md:col-span-2">
                     <Label htmlFor="reg-email">Email Address</Label>
