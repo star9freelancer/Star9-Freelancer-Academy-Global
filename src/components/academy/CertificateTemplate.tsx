@@ -1,6 +1,6 @@
-import React from 'react';
-import { Award, Globe, ShieldCheck, Check } from "lucide-react";
+import { Award, ShieldCheck, Globe } from "lucide-react";
 import logo from "@/assets/logo_transparent.png";
+import goldSeal from "@/assets/gold_foil_seal.png";
 
 interface CertificateTemplateProps {
   studentName: string;
@@ -45,37 +45,36 @@ const CertificateTemplate = React.forwardRef<HTMLDivElement, CertificateTemplate
       <div className="absolute inset-8 border-[6px] border-[#1e293b] pointer-events-none" />
       <div className="absolute inset-[44px] border-[1px] border-[#c4a059]/40 pointer-events-none" />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col items-center w-full px-32 py-24 relative z-10">
+      {/* Main Content Area: Centered Vertically and Horizontally */}
+      <div className="flex-1 flex flex-col items-center justify-center w-full px-32 py-12 relative z-10 text-center">
         
         {/* Header Section */}
-        <div className="flex flex-col items-center mb-8">
-          <img src={logo} alt="Star9" className="h-16 mb-2 brightness-[0.2] contrast-150" />
+        <div className="flex flex-col items-center mb-12 transform -translate-y-4">
+          <img src={logo} alt="Star9" className="h-16 mb-4 brightness-[0.2] contrast-150" />
         </div>
 
         {/* Certificate Title */}
-        <div className="text-center space-y-2 mb-8">
+        <div className="space-y-4 mb-10">
           <h1 
             style={{ fontFamily: "'Playfair Display', serif" }}
-            className="text-5xl font-extrabold uppercase tracking-tight text-[#1e293b]"
+            className="text-6xl font-extrabold uppercase tracking-tight text-[#1e293b]"
           >
             Certificate of Achievement
           </h1>
+          <p 
+            style={{ fontFamily: "'Playfair Display', serif" }}
+            className="text-2xl text-slate-500 italic"
+          >
+            This high-trust credential is presented to
+          </p>
         </div>
 
         {/* Recipient Information */}
-        <div className="text-center space-y-6 flex flex-col items-center w-full">
-          <p 
-            style={{ fontFamily: "'Playfair Display', serif" }}
-            className="text-xl text-slate-500 italic"
-          >
-            This is to certify that
-          </p>
-
-          <div className="w-full max-w-3xl border-b border-slate-200 pb-2">
+        <div className="space-y-10 flex flex-col items-center w-full mb-12">
+          <div className="w-full max-w-2xl border-b-2 border-slate-200 pb-2">
              <h2 
                style={{ fontFamily: "'Playfair Display', serif" }}
-               className="text-6xl font-black text-[#1e293b] px-8"
+               className="text-7xl font-black text-[#1e293b] px-8 tracking-tight"
              >
                {studentName}
              </h2>
@@ -83,56 +82,68 @@ const CertificateTemplate = React.forwardRef<HTMLDivElement, CertificateTemplate
 
           <p 
             style={{ fontFamily: "'Playfair Display', serif" }}
-            className="text-base text-slate-500 italic max-w-2xl px-12"
+            className="text-xl text-slate-500 italic max-w-2xl px-12"
           >
-            has successfully fulfilled all requirements and demonstrated mastery in
+            for demonstrating operational excellence and architectural mastery in
           </p>
 
-          <h3 className="text-3xl font-black text-[#1e293b] uppercase tracking-wide">
+          <h3 className="text-4xl font-black text-[#1e293b] uppercase tracking-wide">
             {courseTitle}
           </h3>
         </div>
-
       </div>
 
-      {/* Official Bottom Section */}
-      <div className="w-full px-24 pb-20 flex items-center justify-between mt-auto">
+      {/* Perfectly Symmetrical Footer Structure */}
+      <div className="w-full h-64 relative flex items-center px-32 pb-24">
          
-         {/* Left: Metadata & Validation */}
-         <div className="space-y-2">
-            <div className="grid gap-0.5">
-               <p className="font-mono text-[9px] text-slate-400">ID: <span className="font-bold text-slate-800">{credentialId}</span></p>
-               <p className="font-mono text-[9px] text-slate-400">DATE: <span className="font-bold text-slate-800">{issueDate}</span></p>
-            </div>
-         </div>
-
-         {/* Center: The Academic Gold Medal */}
-         {/* Center: The Academic Gold Foil Seal */}
-         <div className="relative group">
-            <div className="size-28 rounded-full border-[1px] border-[#c4a059]/50 p-1 flex items-center justify-center relative overflow-hidden">
-               <div className="absolute inset-0 bg-[#c4a059]/10" />
-               <div className="size-full rounded-full bg-gradient-to-br from-white to-slate-100 flex flex-col items-center justify-center border-[4px] border-[#c4a059] relative shadow-lg">
-                  <Award className="size-10 text-[#c4a059] drop-shadow-sm" />
+         {/* Left Side: Metadata (Absolute Bottom-Left) */}
+         <div className="absolute left-32 bottom-20 space-y-4 text-left">
+            <div className="space-y-1">
+               <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Credential Proof</p>
+               <div className="grid gap-0.5">
+                  <p className="font-mono text-[10px] text-slate-400">ID: <span className="text-slate-800 font-bold ml-2">{credentialId}</span></p>
+                  <p className="font-mono text-[10px] text-slate-400">DATE: <span className="text-slate-800 font-bold ml-2">{issueDate}</span></p>
                </div>
             </div>
+            <div className="flex items-center gap-2 opacity-40">
+               <ShieldCheck className="size-3 text-slate-500" />
+               <span className="text-[8px] font-mono uppercase tracking-[0.4em] text-slate-400">STAR9_LEDGER_AUTHENTICATED</span>
+            </div>
          </div>
 
-         {/* Right: Signature Block */}
-         <div className="text-center w-80 flex flex-col items-center">
+         {/* Center: Absolute Seal Centering with Authentic 3D Foil Asset */}
+         <div className="absolute left-1/2 bottom-10 -translate-x-1/2 flex flex-col items-center">
+            <img 
+               src={goldSeal} 
+               alt="Official Seal" 
+               className="size-32 drop-shadow-2xl object-contain"
+            />
+            <p className="text-[8px] font-black uppercase tracking-[0.5em] text-[#c4a059] mt-2">Executive Validation</p>
+         </div>
+
+         {/* Right Side: Presidential Signature (Absolute Bottom-Right) */}
+         <div className="absolute right-32 bottom-20 w-80 text-center flex flex-col items-center">
             <div 
               style={{ fontFamily: "'Dancing Script', serif", fontWeight: 700 }}
-              className="text-5xl text-[#1e293b] mb-1 transform -rotate-1"
+              className="text-6xl text-[#1e293b] mb-2 transform -skew-x-6"
             >
                Esther Hiuko
             </div>
-            <div className="h-[1.5px] w-64 bg-slate-300 mb-2" />
+            <div className="h-[2px] w-full bg-slate-200 mb-3" />
             <div className="space-y-0.5">
-               <p className="font-bold text-[11px] uppercase tracking-[0.2em] text-slate-800 underline decoration-[#c4a059] decoration-2 underline-offset-8">Esther Hiuko</p>
-               <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 font-bold mt-3">Director of Operations</p>
+               <p className="font-bold text-[12px] uppercase tracking-[0.2em] text-[#1e293b]">Esther Hiuko</p>
+               <p className="text-[10px] font-mono uppercase tracking-[0.4em] text-slate-400 font-bold mt-1">Director of Operations</p>
             </div>
          </div>
+
       </div>
 
+      {/* Fixed Navigation/Identity Footer Line */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-8 text-[7px] font-mono uppercase tracking-[0.6em] text-slate-300">
+         <span>Authorized Network Signature</span>
+         <Globe className="size-3" />
+         <span>Global Recognition Protocol</span>
+      </div>
 
     </div>
   );
