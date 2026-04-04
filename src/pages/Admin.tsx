@@ -15,6 +15,14 @@ import { Label } from "@/components/ui/label";
 import logo from "@/assets/logo_transparent.png";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { toast } from "sonner";
+import { 
+  Sheet, 
+  SheetContent, 
+  SheetDescription, 
+  SheetHeader, 
+  SheetTitle, 
+  SheetTrigger 
+} from "@/components/ui/sheet";
 
 // Verification Badge Component
 const VerificationBadge = ({ status }: { status: "verified" | "pending" | "rejected" | string }) => {
@@ -53,7 +61,9 @@ const Admin = () => {
     totalUsers: 0,
     totalCourses: 0,
     totalOpportunities: 0,
-    pendingVerifications: 0
+    pendingVerifications: 0,
+    highestStreak: 0,
+    recordHolderName: "Initializing..."
   });
   
   const navigate = useNavigate();
@@ -90,12 +100,18 @@ const Admin = () => {
       const { data: invData } = await supabase.from('invoices').select('*').order('created_at', { ascending: false });
       if (invData) setInvoices(invData);
 
-      // 5. Calculate Stats
+      // 5. Calculate Truthful Stats
+      const streaks = userData?.map(u => u.current_streak || 0) || [0];
+      const maxStreak = Math.max(...streaks);
+      const recordHolder = userData?.find(u => (u.current_streak || 0) === maxStreak);
+
       setStats({
         totalUsers: userData?.length || 0,
         totalCourses: courseData?.length || 0,
         totalOpportunities: oppData?.length || 0,
-        pendingVerifications: userData?.filter(u => u.verification_status === 'pending').length || 0
+        pendingVerifications: userData?.filter(u => u.verification_status === 'pending').length || 0,
+        highestStreak: maxStreak,
+        recordHolderName: recordHolder?.full_name || recordHolder?.email?.split('@')[0] || "None"
       });
     } finally {
       setLoadingStudents(false);
@@ -375,11 +391,11 @@ const Admin = () => {
                 <Card className="glass border-border/50 bg-gradient-to-br from-card to-zinc-900/50">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground">Highest Network Streak</CardTitle>
-                    <h3 className="text-4xl font-bold text-secondary">42 Days</h3>
+                    <h3 className="text-4xl font-bold text-secondary">{stats.highestStreak} Days</h3>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono uppercase">
-                      <Award className="size-3" /> Record held by user_8472
+                      <Award className="size-3" /> Record held by {stats.recordHolderName}
                     </div>
                   </CardContent>
                 </Card>
@@ -424,7 +440,7 @@ const Admin = () => {
                                 {std.email?.charAt(0).toUpperCase()}
                               </div>
                               <div className="space-y-0.5">
-                                <p className="font-bold uppercase tracking-tight group-hover:text-primary transition-colors">{std.full_name || std.email?.split('@')[0]}</p>
+                                <p className="font-bold uppercase tracking-tight group-hover:text-primary transition-colors">{std.full_name || "UNNAMED AGENT"}</p>
                                 <div className="flex items-center gap-2">
                                   <Mail className="size-3 text-muted-foreground" />
                                   <p className="text-[10px] text-muted-foreground font-mono">{std.email}</p>
@@ -455,20 +471,59 @@ const Admin = () => {
                           </td>
                           <td className="px-6 py-5 text-right">
                             <div className="flex items-center justify-end gap-2">
-                              {std.verification_status !== 'verified' ? (
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <Button size="icon" variant="ghost" className="rounded-full text-green-500 hover:bg-green-500/10 border border-transparent hover:border-green-500/20" onClick={() => setVerification(std.id, 'verified')}>
-                                        <CheckCircle2 className="size-5" />
-                                      </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>Authorize Access</TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
-                              ) : (
-                                <Button variant="ghost" size="sm" className="text-[9px] font-mono tracking-widest uppercase hover:text-red-500 transition-colors" onClick={() => setVerification(std.id, 'pending')}>Revoke Auth</Button>
-                              )}
+                              <Sheet>
+                                <SheetTrigger asChild>
+                                  <Button size="sm" variant="outline" className="text-[9px] font-mono tracking-widest uppercase">Review Profile</Button>
+                                </SheetTrigger>
+                                <SheetContent className="glass-deep border-l border-primary/20 w-[400px] sm:w-[540px]">
+                                  <SheetHeader className="pb-8 border-b border-border/20">
+                                    <Badge className="w-fit mb-4 bg-primary/10 text-primary border-primary/20">Personnel Dossier</Badge>
+                                    <SheetTitle className="text-3xl font-bold tracking-tighter uppercase">{std.full_name || "Unnamed Agent"}</SheetTitle>
+                                    <SheetDescription className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                                      Registered: {new Date(std.created_at).toLocaleDateString()}
+                                    </SheetDescription>
+                                  </SheetHeader>
+                                  
+                                  <div className="py-8 space-y-8 overflow-y-auto max-h-[calc(100vh-200px)]">
+                                    <div className="grid grid-cols-2 gap-6">
+                                      <div className="space-y-1">
+                                        <p className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground">Territory</p>
+                                        <p className="font-bold uppercase tracking-tight">{std.city}, {std.country}</p>
+                                      </div>
+                                      <div className="space-y-1">
+                                        <p className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground">Comm Line</p>
+                                        <p className="font-bold uppercase tracking-tight">{std.phone_number || "No Data"}</p>
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="space-y-2">
+                                      <p className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground">Personal Bio</p>
+                                      <p className="text-sm text-muted-foreground leading-relaxed italic">"{std.bio || "No biography established in personal archives."}"</p>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                      <p className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground">Mastery Profile</p>
+                                      <div className="flex flex-wrap gap-2">
+                                        {std.skills && std.skills.length > 0 ? std.skills.map((s: string) => (
+                                          <Badge key={s} variant="outline" className="font-mono text-[9px] uppercase tracking-widest">{s}</Badge>
+                                        )) : <p className="text-xs text-muted-foreground">No indexed skills discovered.</p>}
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="pt-8 border-t border-border/20 space-y-4">
+                                       <p className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground">Administrative Override</p>
+                                       <div className="flex gap-3">
+                                         {std.verification_status !== 'verified' ? (
+                                           <Button className="flex-1 bg-green-600 hover:bg-green-500 text-white font-mono text-[10px] uppercase tracking-widest" onClick={() => setVerification(std.id, 'verified')}>Authorize Access</Button>
+                                         ) : (
+                                           <Button className="flex-1 bg-red-600/10 text-red-500 border-red-500/20 hover:bg-red-500 hover:text-white font-mono text-[10px] uppercase tracking-widest" onClick={() => setVerification(std.id, 'pending')}>Revoke Auth</Button>
+                                         )}
+                                       </div>
+                                    </div>
+                                  </div>
+                                </SheetContent>
+                              </Sheet>
+
                               <Button size="icon" variant="ghost" className="rounded-full text-muted-foreground hover:text-red-500 hover:bg-red-500/10">
                                 <Trash2 className="size-4" />
                               </Button>

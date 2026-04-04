@@ -29,11 +29,17 @@ const Global = () => {
   const [savedJobs, setSavedJobs] = useState<Set<number>>(new Set([1]));
   const [showFilters, setShowFilters] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) setUser(user);
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (user) {
+        setUser(user);
+        const { data: profileData } = await supabase
+          .from('profiles').select('*').eq('id', user.id).single();
+        if (profileData) setProfile(profileData);
+      }
     });
   }, []);
 
@@ -82,8 +88,12 @@ const Global = () => {
             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-secondary rounded-full" />
           </button>
           <div className="flex items-center gap-3 pl-4 border-l border-border/50">
-            <div className="w-8 h-8 rounded-full border border-border shrink-0 bg-primary/20 flex items-center justify-center text-primary font-bold uppercase" title={user?.email}>
-              {user?.email?.charAt(0) || "U"}
+            <div className="w-8 h-8 rounded-full border border-border shrink-0 bg-primary/20 flex items-center justify-center text-primary font-bold uppercase overflow-hidden">
+              {profile?.avatar_url ? (
+                <img src={profile.avatar_url} alt="avatar" className="w-full h-full object-cover" />
+              ) : (
+                <span>{profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "U"}</span>
+              )}
             </div>
           </div>
         </div>

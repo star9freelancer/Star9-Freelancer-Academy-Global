@@ -286,12 +286,16 @@ const Academy = () => {
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-secondary rounded-full" />
             </button>
             <div className="flex items-center gap-3 pl-4 border-l border-border/50">
-              <div className="w-8 h-8 rounded-full border border-border shrink-0 bg-primary/20 flex items-center justify-center text-primary font-bold uppercase">
-                {user?.email?.charAt(0) || "U"}
+              <div className="w-8 h-8 rounded-full border border-border shrink-0 bg-primary/20 flex items-center justify-center text-primary font-bold uppercase overflow-hidden">
+                {profile?.avatar_url ? (
+                  <img src={profile.avatar_url} alt="avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <span>{profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "U"}</span>
+                )}
               </div>
-              <span className="hidden sm:inline text-sm font-medium flex items-center">
-                {user?.email?.split('@')[0] || "User"}
-                <VerificationBadge status={verificationStatus} />
+              <span className="hidden sm:inline text-sm font-medium flex items-center gap-1">
+                {profile?.full_name || user?.email?.split('@')[0] || "User"}
+                <VerificationBadge status={profile?.verification_status || 'pending'} />
               </span>
             </div>
           </div>
@@ -308,9 +312,24 @@ const Academy = () => {
           {activeTab === "academy" && (
             <div className="space-y-6 relative z-10">
               <div>
-                <h1 className="text-3xl font-bold tracking-tight">My Academy</h1>
-                <p className="text-muted-foreground">Continue learning and mastering your craft.</p>
+                <h1 className="text-3xl font-bold tracking-tight">My Academy: {profile?.full_name || 'Personnel'}</h1>
+                <p className="text-muted-foreground">Continue learning and mastering your craft, {profile?.full_name?.split(' ')[0] || 'Agent'}.</p>
               </div>
+
+              {profile?.verification_status !== 'verified' && (
+                <div className="p-6 rounded-2xl border border-orange-500/20 bg-orange-500/5 backdrop-blur-md flex flex-col md:flex-row items-center justify-between gap-4 animate-pulse">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-500">
+                      <ShieldCheck className="size-6" />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-bold uppercase tracking-tight text-orange-500">Administrative Authorization Pending</h4>
+                      <p className="text-xs text-muted-foreground">Some network features are restricted until an administrator verifies your personnel credentials.</p>
+                    </div>
+                  </div>
+                  <Button variant="outline" className="border-orange-500/20 text-orange-500 hover:bg-orange-500/10 font-mono text-[10px] uppercase tracking-widest" onClick={() => setActiveTab('settings')}>Review My Profile</Button>
+                </div>
+              )}
 
               {loadingCourses ? (
                 <div className="flex justify-center items-center h-48">
