@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound.tsx";
 import Auth from "./pages/Auth.tsx";
 import Admin from "./pages/Admin.tsx";
 import CoursePlayer from "./pages/CoursePlayer.tsx";
+import Verify from "./pages/Verify.tsx";
 
 import ProtectedRoute from "./components/auth/ProtectedRoute.tsx";
 
@@ -32,6 +33,9 @@ const App = () => (
           
           {/* Protected Admin Routes */}
           <Route path="/admin" element={<ProtectedRoute requireAdmin><Admin /></ProtectedRoute>} />
+          
+          {/* Public Verification Route */}
+          <Route path="/verify/:credentialId" element={<Verify />} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>

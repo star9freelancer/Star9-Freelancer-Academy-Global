@@ -1,5 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
+import CertificateTemplate from "@/components/academy/CertificateTemplate";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { 
@@ -75,7 +78,44 @@ const Academy = () => {
   const [saving, setSaving] = useState(false);
   const [newSkill, setNewSkill] = useState("");
   const [playingCourse, setPlayingCourse] = useState<any>(null);
-  const [activeLessonIdx, setActiveLessonIdx] = useState(0);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const certificateRef = useRef<HTMLDivElement>(null);
+  const [activeCert, setActiveCert] = useState<any>(null);
+
+  const handleDownloadPDF = async (cert: any) => {
+    setActiveCert(cert);
+    setIsDownloading(true);
+    
+    // Allow state to update and render the hidden template
+    setTimeout(async () => {
+      if (certificateRef.current) {
+        try {
+          const canvas = await html2canvas(certificateRef.current, {
+            scale: 2, // High resolution
+            useCORS: true,
+            backgroundColor: '#09090b'
+          });
+          
+          const imgData = canvas.toDataURL('image/png');
+          const pdf = new jsPDF({
+            orientation: 'landscape',
+            unit: 'px',
+            format: [1122.5, 793.7]
+          });
+          
+          pdf.addImage(imgData, 'PNG', 0, 0, 1122.5, 793.7);
+          pdf.save(`Star9_Certificate_${cert.credential_id}.pdf`);
+          toast.success("Certificate downloaded successfully");
+        } catch (err) {
+          console.error("PDF generation error:", err);
+          toast.error("Failed to generate PDF. Please try again.");
+        } finally {
+          setIsDownloading(false);
+          setActiveCert(null);
+        }
+      }
+    }, 500);
+  };
   const [quizScore, setQuizScore] = useState<number | null>(null);
   const [certificates, setCertificates] = useState<any[]>([]);
 
@@ -189,16 +229,17 @@ const Academy = () => {
   };
 
   const generateLinkedInUrl = (cert: any) => {
-    const courseTitle = cert.academy_courses?.title || "Star9 Certification";
+    const courseTitle = cert.academy_courses?.title || "Star9 Professional Certification";
     const baseUrl = "https://www.linkedin.com/profile/add";
     const params = new URLSearchParams({
       startTask: "CERTIFICATION_NAME",
       name: courseTitle,
-      organizationId: "98765432", // Replace with real Org ID if available
+      organizationName: "Star9 Infrastructure",
+      // organizationId: "0000000", // If you have a LinkedIn Page ID, insert it here for the logo
       issueYear: new Date(cert.created_at).getFullYear().toString(),
       issueMonth: (new Date(cert.created_at).getMonth() + 1).toString(),
       certId: cert.credential_id,
-      certUrl: `https://star9.dev/verify/${cert.credential_id}`
+      certUrl: `${window.location.origin}/verify/${cert.credential_id}`
     });
     return `${baseUrl}?${params.toString()}`;
   };
@@ -587,8 +628,16 @@ const Academy = () => {
                           Add to LinkedIn
                         </Button>
                       </a>
-                      <Button className="flex-1 font-mono uppercase tracking-widest text-[9px] gap-2 bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 border py-6">
-                        <Download className="w-3 h-3"/> 
+                      <Button 
+                        disabled={isDownloading}
+                        onClick={() => handleDownloadPDF(cert)}
+                        className="flex-1 font-mono uppercase tracking-widest text-[9px] gap-2 bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 border py-6"
+                      >
+                        {isDownloading && activeCert?.id === cert.id ? (
+                          <div className="size-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <Download className="w-3 h-3"/>
+                        )} 
                         Download ID
                       </Button>
                     </CardFooter>
@@ -974,6 +1023,19 @@ const Academy = () => {
           )}
 
         </main>
+
+        {/* Hidden Export Engine */}
+        <div className="fixed left-[-9999px] top-[-9999px]">
+           {activeCert && (
+             <CertificateTemplate 
+               ref={certificateRef}
+               studentName={profile?.full_name || "Star9 Personnel"}
+               courseTitle={activeCert.academy_courses?.title || "Operational Mastery"}
+               credentialId={activeCert.credential_id}
+               issueDate={new Date(activeCert.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
+             />
+           )}
+        </div>
       </div>
     </div>
   );
