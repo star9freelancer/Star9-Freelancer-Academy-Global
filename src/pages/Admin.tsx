@@ -40,20 +40,13 @@ const Admin = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const checkAdmin = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate('/auth');
-        return;
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        setUser(user);
+        fetchStudents();
       }
-      setUser(session.user);
-      
-      // Fetch initial student list
-      fetchStudents();
-    };
-
-    checkAdmin();
-  }, [navigate]);
+    });
+  }, []);
 
   const fetchStudents = async () => {
     setLoadingStudents(true);

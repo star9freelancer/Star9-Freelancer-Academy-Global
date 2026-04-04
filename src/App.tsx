@@ -11,6 +11,8 @@ import Auth from "./pages/Auth.tsx";
 import Admin from "./pages/Admin.tsx";
 import CoursePlayer from "./pages/CoursePlayer.tsx";
 
+import ProtectedRoute from "./components/auth/ProtectedRoute.tsx";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -21,11 +23,16 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/academy" element={<Academy />} />
-          <Route path="/global" element={<Global />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/academy/course/:courseId" element={<CoursePlayer />} />
+          
+          {/* Protected Student Routes */}
+          <Route path="/academy" element={<ProtectedRoute><Academy /></ProtectedRoute>} />
+          <Route path="/global" element={<ProtectedRoute><Global /></ProtectedRoute>} />
+          <Route path="/academy/course/:courseId" element={<ProtectedRoute><CoursePlayer /></ProtectedRoute>} />
+          
+          {/* Protected Admin Routes */}
+          <Route path="/admin" element={<ProtectedRoute requireAdmin><Admin /></ProtectedRoute>} />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

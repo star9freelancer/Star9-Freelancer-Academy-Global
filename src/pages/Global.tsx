@@ -32,24 +32,10 @@ const Global = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        navigate('/auth');
-      } else {
-        setUser(session.user);
-      }
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) setUser(user);
     });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
-        navigate('/auth');
-      } else {
-        setUser(session.user);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, []);
 
   const toggleSave = (index: number) => {
     setSavedJobs(prev => {

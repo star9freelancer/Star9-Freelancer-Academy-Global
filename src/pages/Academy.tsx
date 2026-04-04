@@ -95,24 +95,20 @@ const Academy = () => {
   useEffect(() => {
     let initialLoadDone = false;
 
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session) {
-        navigate('/auth');
-      } else {
-        setUser(session.user);
+    // Fetch initial profile and courses (user is guaranteed by ProtectedRoute)
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (user) {
+        setUser(user);
         const { data: profileData } = await supabase
-          .from('profiles').select('*').eq('id', session.user.id).single();
+          .from('profiles').select('*').eq('id', user.id).single();
         if (profileData) { setProfile(profileData); setProfileForm(profileData); }
         if (!initialLoadDone) { initialLoadDone = true; fetchCourses(); }
       }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (!session) {
-        navigate('/auth');
-      } else {
+      if (session) {
         setUser(session.user);
-        // Only re-fetch profile on real auth events, not silent token refreshes
         if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
           const { data: profileData } = await supabase
             .from('profiles').select('*').eq('id', session.user.id).single();
@@ -122,7 +118,7 @@ const Academy = () => {
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -134,7 +130,8 @@ const Academy = () => {
     setSaving(true);
     const { error } = await supabase
       .from('profiles')
-      .update({
+      .upsert({
+        id: user.id, // Explicitly include ID for upsert to work correctly
         full_name: profileForm.full_name,
         phone_number: profileForm.phone_number,
         bio: profileForm.bio,
@@ -145,14 +142,12 @@ const Academy = () => {
         linkedin_url: profileForm.linkedin_url,
         portfolio_url: profileForm.portfolio_url,
         skills: profileForm.skills || [],
-      })
-      .eq('id', user.id);
+        email: user.email, // Sync email too
+      }, { onConflict: 'id' });
     setSaving(false);
     if (!error) {
       setProfile({ ...profile, ...profileForm });
       toast.success('Profile saved!', { description: 'Your changes have been applied.' });
-    } else {
-      toast.error('Failed to save', { description: error.message });
     }
   };
 

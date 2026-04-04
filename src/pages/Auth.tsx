@@ -12,6 +12,10 @@ import { Loader2, ArrowLeft } from "lucide-react";
 export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [country, setCountry] = useState("");
+  const [city, setCity] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -21,12 +25,25 @@ export default function Auth() {
       return;
     }
 
+    if (isSignUp && !fullName) {
+      toast.error("Please enter your full name.");
+      return;
+    }
+
     setLoading(true);
     try {
       if (isSignUp) {
         const { error } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            data: {
+              full_name: fullName,
+              phone_number: phone,
+              country: country,
+              city: city,
+            }
+          }
         });
         if (error) throw error;
         toast.success("Account created successfully! Check your email to verify your account or proceed to login.");
@@ -57,7 +74,7 @@ export default function Auth() {
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[100px] animate-pulse pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[100px] animate-pulse pointer-events-none delay-1000" />
       
-      <div className="w-full max-w-md p-4 relative z-10">
+      <div className="w-full max-w-lg p-4 relative z-10">
         <a href="/" className="flex items-center justify-center mb-8">
           <span className="font-mono text-2xl tracking-widest uppercase font-semibold text-foreground">STAR9</span>
         </a>
@@ -118,37 +135,83 @@ export default function Auth() {
                 <CardTitle className="font-mono uppercase tracking-widest">Initialize Account</CardTitle>
                 <CardDescription>Join the Star9 collective and elevate your workflow.</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="reg-email">Email</Label>
-                  <Input 
-                    id="reg-email" 
-                    type="email" 
-                    placeholder="agent@star9.dev" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="bg-background/50 focus:bg-background"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="reg-password">Password</Label>
-                  <Input 
-                    id="reg-password" 
-                    type="password" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="bg-background/50 focus:bg-background"
-                  />
+              <CardContent className="space-y-4 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="reg-email">Email Address</Label>
+                    <Input 
+                      id="reg-email" 
+                      type="email" 
+                      placeholder="agent@star9.dev" 
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="bg-background/50 focus:bg-background"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="reg-password">Security Pin (Password)</Label>
+                    <Input 
+                      id="reg-password" 
+                      type="password" 
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="bg-background/50 focus:bg-background"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="reg-name">Full Personnel Name</Label>
+                    <Input 
+                      id="reg-name" 
+                      type="text" 
+                      placeholder="John Doe" 
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      className="bg-background/50 focus:bg-background"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="reg-phone">Communication Line (Phone)</Label>
+                    <Input 
+                      id="reg-phone" 
+                      type="tel" 
+                      placeholder="+254..." 
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="bg-background/50 focus:bg-background"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="reg-country">Territory (Country)</Label>
+                    <Input 
+                      id="reg-country" 
+                      type="text" 
+                      placeholder="Kenya" 
+                      value={country}
+                      onChange={(e) => setCountry(e.target.value)}
+                      className="bg-background/50 focus:bg-background"
+                    />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="reg-city">Operational City</Label>
+                    <Input 
+                      id="reg-city" 
+                      type="text" 
+                      placeholder="Nairobi" 
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      className="bg-background/50 focus:bg-background"
+                    />
+                  </div>
                 </div>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="pt-4">
                 <Button 
                   className="w-full font-mono uppercase tracking-widest" 
                   disabled={loading}
                   onClick={() => handleAuth(true)}
                 >
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Initialize
+                  Initialize Unit
                 </Button>
               </CardFooter>
             </TabsContent>
