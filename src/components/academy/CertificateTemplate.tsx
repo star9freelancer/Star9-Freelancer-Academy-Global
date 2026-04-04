@@ -1,3 +1,4 @@
+import React from "react";
 import { Award, ShieldCheck, Globe } from "lucide-react";
 import logo from "@/assets/logo_transparent.png";
 import goldSeal from "@/assets/gold_foil_seal.png";
