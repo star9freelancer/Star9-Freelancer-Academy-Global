@@ -2,13 +2,14 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
+import { useAuth } from "@/context/AuthContext";
+import { useAcademyData } from "@/hooks/useAcademyData";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 import CertificateTemplate from "@/components/academy/CertificateTemplate";
 import CommunityChat from "@/components/academy/CommunityChat";
 import CourseCard from "@/components/academy/CourseCard";
-import { supabase } from "@/lib/supabase";
-import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+import JobBoard from "@/components/academy/JobBoard";
 import { 
   Home, BookOpen, Users, Award, Settings, Menu, Bell, Search, 
   ArrowLeft, ArrowRight, Download, Play, Clock, TrendingUp, Sparkles, 
@@ -71,47 +72,38 @@ const AIToolShowcase = ({ tools }: { tools: string[] }) => {
 };
 
 const Academy = () => {
-  const { user, profile, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading, refreshProfile } = useAuth();
+  const { courses, enrollments, certificates, isLoading: loadingCourses, invalidateAll } = useAcademyData();
+  
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarHovered, setSidebarHovered] = useState(false);
   const [activeTab, setActiveTab] = useState("academy");
-  const [courses, setCourses] = useState<any[]>([]);
-  const [loadingCourses, setLoadingCourses] = useState(true);
   const [playingCourse, setPlayingCourse] = useState<any | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const certificateRef = useRef<HTMLDivElement>(null);
   const [activeCert, setActiveCert] = useState<any>(null);
-  const [enrollments, setEnrollments] = useState<Set<string>>(new Set());
   const [enrolling, setEnrolling] = useState<string | null>(null);
+  const [quizScore, setQuizScore] = useState<number | null>(null);
+  const [activeLessonIdx, setActiveLessonIdx] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleDownloadPDF = async (cert: any) => {
     setActiveCert(cert);
     setIsDownloading(true);
-    
-    // Allow state to update and render the hidden template
     setTimeout(async () => {
       if (certificateRef.current) {
         try {
-          const canvas = await html2canvas(certificateRef.current, {
-            scale: 3,
-            useCORS: true,
-            backgroundColor: '#fffdf7',
-            logging: false,
-            removeContainer: true
-          });
-          
+          const canvas = await html2canvas(certificateRef.current, { scale: 3, useCORS: true, backgroundColor: '#fffdf7', logging: false, removeContainer: true });
           const imgData = canvas.toDataURL('image/png');
-          const pdf = new jsPDF({
-            orientation: 'landscape',
-            unit: 'px',
-            format: [1122.5, 793.7]
-          });
-          
+          const pdf = new jsPDF({ orientation: 'landscape', unit: 'px', format: [1122.5, 793.7] });
           pdf.addImage(imgData, 'PNG', 0, 0, 1122.5, 793.7);
           pdf.save(`Star9_Certificate_${cert.credential_id}.pdf`);
           toast.success("Certificate downloaded successfully");
         } catch (err) {
-          console.error("PDF generation error:", err);
           toast.error("Failed to generate PDF. Please try again.");
         } finally {
           setIsDownloading(false);
@@ -120,43 +112,6 @@ const Academy = () => {
       }
     }, 500);
   };
-  const [quizScore, setQuizScore] = useState<number | null>(null);
-  const [certificates, setCertificates] = useState<any[]>([]);
-  const [activeLessonIdx, setActiveLessonIdx] = useState(0);
-
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
-
-  const navigate = useNavigate();
-
-  const loadDashboardData = async () => {
-    if (!user) return;
-    setLoadingCourses(true);
-    
-    try {
-      // Parallelize ALL data fetches in a single network blast
-      const [coursesRes, enrollmentsRes, certificatesRes] = await Promise.all([
-        supabase.from('academy_courses').select('*').order('created_at', { ascending: false }),
-        supabase.from('user_enrollments').select('course_id').eq('user_id', user.id),
-        supabase.from('user_certificates').select('*, academy_courses(title)').eq('user_id', user.id)
-      ]);
-
-      if (coursesRes.data) setCourses(coursesRes.data);
-      if (enrollmentsRes.data) setEnrollments(new Set(enrollmentsRes.data.map(e => e.course_id)));
-      if (certificatesRes.data) setCertificates(certificatesRes.data);
-
-    } catch (err) {
-      console.error("Dashboard Data Fetch Error:", err);
-      toast.error("Failed to synchronize learning tracks.");
-    } finally {
-      setLoadingCourses(false);
-    }
-  };
-
-  useEffect(() => {
-    if (user) loadDashboardData();
-  }, [user]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -185,7 +140,7 @@ const Academy = () => {
       }, { onConflict: 'id' });
     setSaving(false);
     if (!error) {
-      setProfile({ ...profile, ...profileForm });
+      await refreshProfile();
       toast.success('Profile saved!', { description: 'Your changes have been applied.' });
     }
   };
@@ -212,7 +167,7 @@ const Academy = () => {
     
     if (!error) {
       toast.success("Credential Issued", { description: "Your certificate is now stored in the Star9 Ledger." });
-      loadDashboardData();
+      invalidateAll();
     }
   };
 
@@ -270,8 +225,9 @@ const Academy = () => {
             toast.error(`Enrollment failed: ${error.message || 'Please try again.'}`);
          }
       } else {
-         setEnrollments(prev => new Set([...prev, courseId]));
          toast.success("Successfully enrolled in course");
+         // Sync all personnel records
+         invalidateAll();
          // Join chat automatically
          joinCourseChat(courseId);
       }
@@ -284,6 +240,7 @@ const Academy = () => {
     { id: "academy", icon: BookOpen, label: "My Academy" },
     { id: "certificates", icon: Award, label: "My Certificates" },
     { id: "community", icon: Globe, label: "Community" },
+    { id: "careers", icon: Briefcase, label: "Career Board" },
     { id: "settings", icon: Settings, label: "Settings" },
   ];
 
@@ -510,6 +467,85 @@ const Academy = () => {
                   <Button variant="outline" className="border-orange-500/20 text-orange-500 hover:bg-orange-500/10 font-mono text-[10px] uppercase tracking-widest" onClick={() => setActiveTab('settings')}>Review My Profile</Button>
                 </div>
               )}
+
+              {/* AI Operational Summary HUD */}
+              {!loadingCourses && courses.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-top duration-700">
+                  <Card className="glass border-primary/20 bg-primary/5 p-6 relative overflow-hidden group hover:bg-primary/10 transition-colors">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                      <TrendingUp className="size-12" />
+                    </div>
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2">
+                         <div className="size-2 rounded-full bg-primary animate-pulse" />
+                         <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary font-bold">Active Protocol</span>
+                      </div>
+                      <h4 className="text-sm font-semibold tracking-tight">
+                        {enrollments.size > 0 
+                          ? "Educational track active and synchronized." 
+                          : "Awaiting personnel enrollment initialization."}
+                      </h4>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-widest leading-relaxed">
+                        {enrollments.size > 0 
+                          ? `Unit is currently processed in ${enrollments.size} active learning modules.` 
+                          : "Initialize your first masterclass to begin credentials accrual."}
+                      </p>
+                    </div>
+                  </Card>
+
+                  <Card className="glass border-secondary/20 bg-secondary/5 p-6 relative overflow-hidden group hover:bg-secondary/10 transition-colors">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                      <Award className="size-12" />
+                    </div>
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2">
+                         <div className="size-2 rounded-full bg-secondary animate-pulse" />
+                         <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-secondary font-bold">Credential Status</span>
+                      </div>
+                      <h4 className="text-sm font-semibold tracking-tight">
+                        {certificates.length > 0 
+                          ? `${certificates.length} Verified Credentials Issues.` 
+                          : "Ledger status: Pending Verification."}
+                      </h4>
+                      <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden mt-2">
+                        <div 
+                          className="h-full bg-secondary shadow-[0_0_10px_#9333ea] transition-all duration-1000" 
+                          style={{ width: `${Math.min((certificates.length / 5) * 100, 100)}%` }} 
+                        />
+                      </div>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
+                        Clearance level: {certificates.length >= 3 ? "Advanced Practitioner" : "Junior Associate"}
+                      </p>
+                    </div>
+                  </Card>
+
+                  <Card className="glass border-emerald-500/20 bg-emerald-500/5 p-6 relative overflow-hidden group hover:bg-emerald-500/10 transition-colors">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                      <Cpu className="size-12" />
+                    </div>
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2">
+                         <div className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+                         <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-emerald-500 font-bold">Network Intelligence</span>
+                      </div>
+                      <h4 className="text-sm font-semibold tracking-tight">All systems operational.</h4>
+                      <div className="flex flex-col gap-1.5">
+                         <div className="flex items-center justify-between text-[8px] uppercase tracking-[0.2em] font-mono opacity-50">
+                            <span>Local Node</span>
+                            <span className="text-emerald-400">STAR9_NBO_54</span>
+                           </div>
+                           <div className="flex items-center justify-between text-[8px] uppercase tracking-[0.2em] font-mono opacity-50">
+                              <span>Latency</span>
+                              <span className="text-emerald-400">0.02ms</span>
+                           </div>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest leading-relaxed">
+                          Personnel synchronization active across all Star9 infrastructure.
+                        </p>
+                      </div>
+                    </Card>
+                  </div>
+                )}
 
               {loadingCourses ? (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -759,6 +795,12 @@ const Academy = () => {
 
           {activeTab === "community" && (
             <CommunityChat user={user} profile={profile} />
+          )}
+
+          {activeTab === "careers" && (
+            <div className="space-y-6 relative z-10">
+              <JobBoard />
+            </div>
           )}
 
           {activeTab === "settings" && (

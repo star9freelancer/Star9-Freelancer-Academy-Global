@@ -11,12 +11,15 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 import logo from "@/assets/logo_transparent.png";
 
 const CoursePlayer = () => {
   const { courseId } = useParams<{ courseId: string }>();
+  const { user } = useAuth();
   const [course, setCourse] = useState<any>(null);
   const [lessons, setLessons] = useState<any[]>([]);
+  const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
   const [activeLesson, setActiveLesson] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -24,95 +27,94 @@ const CoursePlayer = () => {
 
   useEffect(() => {
     const fetchCourseData = async () => {
+      if (!user || !courseId) return;
       setLoading(true);
       
-      // Fetch course details
-      const { data: courseData } = await supabase
-        .from('academy_courses')
-        .select('*')
-        .eq('id', courseId)
-        .single();
-        
-      if (courseData) {
-        setCourse(courseData);
-        
-        // Fetch lessons for this course
-        const { data: lessonsData } = await supabase
-          .from('academy_lessons')
-          .select('*')
-          .eq('course_id', courseId)
-          .order('order_index', { ascending: true });
+      try {
+        // Fetch course, lessons, and progress in parallel
+        const [courseRes, lessonsRes, progressRes] = await Promise.all([
+          supabase.from('academy_courses').select('*').eq('id', courseId).single(),
+          supabase.from('academy_lessons').select('*').eq('course_id', courseId).order('order_index', { ascending: true }),
+          supabase.from('user_lesson_progress').select('lesson_id').eq('user_id', user.id).eq('course_id', courseId)
+        ]);
           
-        if (lessonsData && lessonsData.length > 0) {
-          setLessons(lessonsData);
-          setActiveLesson(lessonsData[0]);
+        if (courseRes.data) setCourse(courseRes.data);
+        if (lessonsRes.data && lessonsRes.data.length > 0) {
+          setLessons(lessonsRes.data);
+          setActiveLesson(lessonsRes.data[0]);
         }
+        if (progressRes.data) {
+          setCompletedLessons(new Set(progressRes.data.map(p => p.lesson_id)));
+        }
+      } catch (err) {
+        console.error("Error fetching course player data:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
-    if (courseId) {
-      fetchCourseData();
-    }
-  }, [courseId]);
+    fetchCourseData();
+  }, [courseId, user]);
 
   const handleMarkComplete = async () => {
-    // 1. Get current user
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user || !activeLesson || !courseId) return;
 
-    // 2. Fetch profile
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
+    try {
+      // 1. Persist progress in the cloud ledger
+      const { error: progressError } = await supabase
+        .from('user_lesson_progress')
+        .upsert({ 
+          user_id: user.id, 
+          course_id: courseId, 
+          lesson_id: activeLesson.id,
+          completed_at: new Date().toISOString()
+        }, { onConflict: 'user_id,lesson_id' });
 
-    if (!profile) return;
+      if (progressError) throw progressError;
 
-    // 3. Logic to calculate streak
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const lastDate = profile.last_study_date ? new Date(profile.last_study_date) : null;
-    const lastStudyDay = lastDate ? new Date(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate()) : null;
+      // 2. Update local state for instant feedback
+      setCompletedLessons(prev => new Set([...prev, activeLesson.id]));
 
-    let newStreak = profile.current_streak || 0;
+      // 3. Update study streak in profile
+      const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+      if (profile) {
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const lastDate = profile.last_study_date ? new Date(profile.last_study_date) : null;
+        const lastStudyDay = lastDate ? new Date(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate()) : null;
 
-    if (!lastStudyDay) {
-      // First time studying
-      newStreak = 1;
-    } else {
-      const diffTime = today.getTime() - lastStudyDay.getTime();
-      const diffDays = Math.floor(diffTime / (1000 * 3600 * 24));
+        let newStreak = profile.current_streak || 0;
+        if (!lastStudyDay) newStreak = 1;
+        else {
+          const diffDays = Math.floor((today.getTime() - lastStudyDay.getTime()) / (1000 * 3600 * 24));
+          if (diffDays === 1) newStreak += 1;
+          else if (diffDays > 1) newStreak = 1;
+        }
 
-      if (diffDays === 1) {
-        // Studied yesterday, increment streak
-        newStreak += 1;
-      } else if (diffDays > 1) {
-        // Missed a day or more, reset streak
-        newStreak = 1;
+        await supabase.from('profiles').update({
+          current_streak: newStreak,
+          last_study_date: now.toISOString(),
+          longest_streak: Math.max(newStreak, profile.longest_streak || 0)
+        }).eq('id', user.id);
       }
-      // If diffDays === 0, already studied today, streak stays the same
-    }
 
-    // 4. Update Database
-    const { error } = await supabase
-      .from('profiles')
-      .update({
-        current_streak: newStreak,
-        last_study_date: now.toISOString(),
-        longest_streak: Math.max(newStreak, profile.longest_streak || 0)
-      })
-      .eq('id', user.id);
-
-    if (!error) {
-      toast.success("Module Complete!", {
-        description: `Your study streak is now ${newStreak} days! 🔥`,
+      toast.success("Module Synchronized", {
+        description: "Your progress has been recorded in the Star9 Ledger.",
       });
-    } else {
-      toast.error("Failed to update streak");
+
+      // 4. Auto-advance to next lesson if available
+      const currentIdx = lessons.findIndex(l => l.id === activeLesson.id);
+      if (currentIdx < lessons.length - 1) {
+        setTimeout(() => setActiveLesson(lessons[currentIdx + 1]), 1000);
+      }
+    } catch (err: any) {
+      toast.error("Cloud synchronization failed.");
     }
   };
+
+  const progressPercentage = lessons.length > 0 
+    ? Math.round((completedLessons.size / lessons.length) * 100) 
+    : 0;
 
   if (loading) {
     return (
@@ -159,9 +161,12 @@ const CoursePlayer = () => {
           <div className="hidden lg:flex flex-col items-end mr-4">
             <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest mb-1">Overall Progress</span>
             <div className="flex items-center gap-3">
-              <span className="text-xs font-bold font-mono">15%</span>
+              <span className="text-xs font-bold font-mono">{progressPercentage}%</span>
               <div className="w-24 h-1.5 bg-muted rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-primary to-secondary w-[15%]" />
+                <div 
+                  className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-1000" 
+                  style={{ width: `${progressPercentage}%` }} 
+                />
               </div>
             </div>
           </div>
@@ -197,12 +202,14 @@ const CoursePlayer = () => {
                     }`}
                   >
                     <div className="mt-0.5 shrink-0">
-                      {isActive ? (
-                        <div className="size-5 rounded-full bg-secondary/20 flex items-center justify-center">
-                          <PlayCircle className="size-3 text-secondary fill-secondary" />
+                      {completedLessons.has(lesson.id) ? (
+                        <CheckCircle2 className="size-5 text-emerald-500 fill-emerald-500/20" />
+                      ) : isActive ? (
+                        <div className="size-5 rounded-full bg-primary/20 flex items-center justify-center">
+                          <div className="size-2 bg-primary rounded-full animate-pulse" />
                         </div>
                       ) : (
-                        <div className="size-5 rounded-full border-2 border-muted flex items-center justify-center text-[10px] font-bold font-mono">
+                        <div className="size-5 rounded-full border border-muted-foreground/30 flex items-center justify-center text-[9px] font-bold font-mono group-hover:border-primary transition-colors">
                           {idx + 1}
                         </div>
                       )}
