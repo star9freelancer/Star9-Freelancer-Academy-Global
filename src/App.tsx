@@ -13,34 +13,37 @@ import CoursePlayer from "./pages/CoursePlayer.tsx";
 import Verify from "./pages/Verify.tsx";
 
 import ProtectedRoute from "./components/auth/ProtectedRoute.tsx";
+import { AuthProvider } from "./context/AuthContext.tsx";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<Auth />} />
-          
-          {/* Protected Student Routes */}
-          <Route path="/academy" element={<ProtectedRoute><Academy /></ProtectedRoute>} />
-          <Route path="/global" element={<ProtectedRoute><Global /></ProtectedRoute>} />
-          <Route path="/academy/course/:courseId" element={<ProtectedRoute><CoursePlayer /></ProtectedRoute>} />
-          
-          {/* Protected Admin Routes */}
-          <Route path="/admin" element={<ProtectedRoute requireAdmin><Admin /></ProtectedRoute>} />
-          
-          {/* Public Verification Route */}
-          <Route path="/verify/:credentialId" element={<Verify />} />
-          
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            
+            {/* Protected Student Routes */}
+            <Route path="/academy" element={<ProtectedRoute><Academy /></ProtectedRoute>} />
+            <Route path="/global" element={<ProtectedRoute><Global /></ProtectedRoute>} />
+            <Route path="/academy/course/:courseId" element={<ProtectedRoute><CoursePlayer /></ProtectedRoute>} />
+            
+            {/* Protected Admin Routes */}
+            <Route path="/admin" element={<ProtectedRoute requireAdmin><Admin /></ProtectedRoute>} />
+            
+            {/* Public Verification Route */}
+            <Route path="/verify/:credentialId" element={<Verify />} />
+            
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

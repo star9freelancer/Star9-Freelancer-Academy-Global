@@ -7,6 +7,8 @@ import CommunityChat from "@/components/academy/CommunityChat";
 import CourseCard from "@/components/academy/CourseCard";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import { 
   Home, BookOpen, Users, Award, Settings, Menu, Bell, Search, 
   ArrowLeft, ArrowRight, Download, Play, Clock, TrendingUp, Sparkles, 
@@ -69,17 +71,13 @@ const AIToolShowcase = ({ tools }: { tools: string[] }) => {
 };
 
 const Academy = () => {
+  const { user, profile, loading: authLoading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarHovered, setSidebarHovered] = useState(false);
   const [activeTab, setActiveTab] = useState("academy");
-  const [user, setUser] = useState<any>(null);
   const [courses, setCourses] = useState<any[]>([]);
   const [loadingCourses, setLoadingCourses] = useState(true);
-  const [profile, setProfile] = useState<any>(null);
-  const [profileForm, setProfileForm] = useState<any>({});
-  const [saving, setSaving] = useState(false);
-  const [newSkill, setNewSkill] = useState("");
-  const [playingCourse, setPlayingCourse] = useState<any>(null);
+  const [playingCourse, setPlayingCourse] = useState<any | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const certificateRef = useRef<HTMLDivElement>(null);
   const [activeCert, setActiveCert] = useState<any>(null);
@@ -132,77 +130,39 @@ const Academy = () => {
 
   const navigate = useNavigate();
 
-  const fetchCertificates = async (userId: string) => {
-    const { data } = await supabase
-      .from('user_certificates')
-      .select('*, academy_courses(title)')
-      .eq('user_id', userId);
-    if (data) setCertificates(data);
-  };
-
-  const fetchCourses = async (userId?: string) => {
+  const loadDashboardData = async () => {
+    if (!user) return;
     setLoadingCourses(true);
-    const activeUserId = userId || user?.id;
+    
     try {
-      const { data, error } = await supabase
-        .from('academy_courses')
-        .select('*')
-        .eq('status', 'published');
-      if (error) console.error('Error fetching courses:', error.message);
-      setCourses(data || []);
-      
-      // Also fetch enrollments
-      if (activeUserId) {
-        const { data: enrollmentData } = await supabase
-          .from('user_enrollments')
-          .select('course_id')
-          .eq('user_id', activeUserId);
-        
-        if (enrollmentData) {
-          setEnrollments(new Set(enrollmentData.map(e => e.course_id)));
-        }
-      }
+      // Parallelize ALL data fetches in a single network blast
+      const [coursesRes, enrollmentsRes, certificatesRes] = await Promise.all([
+        supabase.from('academy_courses').select('*').order('created_at', { ascending: false }),
+        supabase.from('user_enrollments').select('course_id').eq('user_id', user.id),
+        supabase.from('user_certificates').select('*, academy_courses(title)').eq('user_id', user.id)
+      ]);
+
+      if (coursesRes.data) setCourses(coursesRes.data);
+      if (enrollmentsRes.data) setEnrollments(new Set(enrollmentsRes.data.map(e => e.course_id)));
+      if (certificatesRes.data) setCertificates(certificatesRes.data);
+
+    } catch (err) {
+      console.error("Dashboard Data Fetch Error:", err);
+      toast.error("Failed to synchronize learning tracks.");
     } finally {
       setLoadingCourses(false);
     }
   };
 
   useEffect(() => {
-    let initialLoadDone = false;
-
-    // Fetch initial profile and courses (user is guaranteed by ProtectedRoute)
-    supabase.auth.getUser().then(async ({ data: { user } }) => {
-      if (user) {
-        setUser(user);
-        const { data: profileData } = await supabase
-          .from('profiles').select('*').eq('id', user.id).single();
-        if (profileData) { setProfile(profileData); setProfileForm(profileData); }
-        if (!initialLoadDone) { 
-          initialLoadDone = true; 
-          fetchCourses(user.id); 
-          fetchCertificates(user.id); 
-        }
-      }
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session) {
-        setUser(session.user);
-        if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
-          const { data: profileData } = await supabase
-            .from('profiles').select('*').eq('id', session.user.id).single();
-          if (profileData) { setProfile(profileData); setProfileForm(profileData); }
-        }
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+    if (user) loadDashboardData();
+  }, [user]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate('/auth');
   };
+
 
   const handleSaveProfile = async () => {
     if (!user) return;
@@ -252,7 +212,7 @@ const Academy = () => {
     
     if (!error) {
       toast.success("Credential Issued", { description: "Your certificate is now stored in the Star9 Ledger." });
-      fetchCertificates(user.id);
+      loadDashboardData();
     }
   };
 
@@ -552,8 +512,8 @@ const Academy = () => {
               )}
 
               {loadingCourses ? (
-                <div className="flex justify-center items-center h-48">
-                  <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {[1, 2, 3].map(i => <CourseCardSkeleton key={i} />)}
                 </div>
               ) : (
                 <div className="space-y-12">
@@ -1144,5 +1104,19 @@ const Academy = () => {
     </div>
   );
 };
+
+const CourseCardSkeleton = () => (
+  <Card className="glass border-border/50 overflow-hidden h-full flex flex-col">
+    <div className="h-48 bg-muted animate-pulse" />
+    <CardHeader className="space-y-4">
+      <div className="h-4 w-24 bg-muted rounded animate-pulse" />
+      <div className="h-6 w-full bg-muted rounded animate-pulse" />
+      <div className="h-4 w-full bg-muted rounded animate-pulse opacity-60" />
+    </CardHeader>
+    <CardFooter className="mt-auto px-6 pb-6">
+      <div className="h-10 w-full bg-muted rounded-xl animate-pulse" />
+    </CardFooter>
+  </Card>
+);
 
 export default Academy;

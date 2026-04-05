@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { supabase } from "@/lib/supabase";
-import { Loader2 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { Loader2, ShieldCheck } from "lucide-react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -9,78 +8,34 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps) => {
-  const [loading, setLoading] = useState(true);
-  const [authenticated, setAuthenticated] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { user, loading, isAdmin } = useAuth();
   const location = useLocation();
-
-  useEffect(() => {
-    let mounted = true;
-
-    const checkAuth = async () => {
-      try {
-        // Direct object retrieval is safer than nested destructuring
-        const { data, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError || !data?.session) {
-          if (mounted) {
-            setAuthenticated(false);
-            setLoading(false);
-          }
-          return;
-        }
-
-        if (mounted) setAuthenticated(true);
-
-        if (requireAdmin) {
-          const { data: profile, error: profileError } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', data.session.user.id)
-            .maybeSingle(); // maybeSingle() is safer than single() for non-existent profiles
-          
-          if (mounted) {
-            setIsAdmin(profile?.role === 'admin');
-          }
-        }
-      } catch (error) {
-        console.error("Critical Auth Error:", error);
-        if (mounted) setAuthenticated(false);
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-
-    checkAuth();
-    
-    // Safety timeout: Never hang longer than 10 seconds
-    const timer = setTimeout(() => {
-      if (loading && mounted) {
-        console.warn("Auth check timed out - forcing clearance.");
-        setLoading(false);
-      }
-    }, 10000);
-
-    return () => {
-      mounted = false;
-      clearTimeout(timer);
-    };
-  }, [requireAdmin]);
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-8 h-8 text-primary animate-spin" />
-          <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground animate-pulse">
-            Verifying Credentials...
-          </p>
+      <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
+        {/* Subtle background glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
+        
+        <div className="flex flex-col items-center gap-6 relative z-10 text-center px-4">
+          <div className="relative">
+            <Loader2 className="w-10 h-10 text-primary animate-spin" />
+            <ShieldCheck className="w-4 h-4 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+          </div>
+          <div className="space-y-2">
+            <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-primary font-bold animate-pulse">
+              Personnel Verification
+            </p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-widest opacity-60">
+              Star9 Infrastructure Secure Access
+            </p>
+          </div>
         </div>
       </div>
     );
   }
 
-  if (!authenticated) {
+  if (!user) {
     // Redirect to login but save the current location
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }

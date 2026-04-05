@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2, ArrowLeft, ShieldCheck, Cpu, Database, Globe } from "lucide-react";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -17,6 +17,7 @@ export default function Auth() {
   const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
   const navigate = useNavigate();
 
   const handleAuth = async (isSignUp: boolean) => {
@@ -53,15 +54,78 @@ export default function Auth() {
           password,
         });
         if (error) throw error;
-        toast.success("Logged in successfully!");
-        navigate("/academy");
+        
+        // Start "Security Clearance" transition
+        setIsClearing(true);
+        setTimeout(() => {
+          navigate("/academy");
+        }, 2200); // Mask the dashboard pre-fetch
       }
     } catch (error: any) {
       toast.error(error.message || "An error occurred.");
     } finally {
-      setLoading(false);
+      if (!isClearing) setLoading(false);
     }
   };
+
+  if (isClearing) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-black text-primary overflow-hidden relative">
+        {/* Scanning grid background */}
+        <div className="absolute inset-0 opacity-10 pointer-events-none" 
+             style={{ backgroundImage: 'radial-gradient(circle, #3b82f6 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+        
+        <div className="relative z-10 flex flex-col items-center max-w-sm w-full px-6 text-center space-y-12">
+          {/* Main Scanner Icon */}
+          <div className="relative group">
+            <div className="absolute -inset-4 bg-primary/20 rounded-full blur-2xl animate-pulse" />
+            <div className="relative size-24 rounded-full border-2 border-primary/50 flex items-center justify-center overflow-hidden">
+               <ShieldCheck className="size-10 animate-show-hide" />
+               <div className="absolute inset-0 bg-gradient-to-b from-primary/0 via-primary/40 to-primary/0 h-1/2 w-full animate-scan" />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h2 className="font-mono text-lg uppercase tracking-[0.5em] font-bold animate-pulse">Personnel Identified</h2>
+            <div className="flex flex-col gap-2 font-mono text-[9px] uppercase tracking-widest opacity-60">
+               <div className="flex items-center justify-between gap-8 py-1 border-b border-white/10">
+                  <span className="flex items-center gap-2"><Globe className="size-3" /> NETWORK</span>
+                  <span className="text-secondary font-bold">STAR9_LOCAL_NODE</span>
+               </div>
+               <div className="flex items-center justify-between gap-8 py-1 border-b border-white/10">
+                  <span className="flex items-center gap-2"><Database className="size-3" /> RECORDS</span>
+                  <span className="text-secondary font-bold">SYCHRONIZING...</span>
+               </div>
+               <div className="flex items-center justify-between gap-8 py-1 border-b border-white/10">
+                  <span className="flex items-center gap-2"><Cpu className="size-3" /> STATUS</span>
+                  <span className="text-emerald-400 font-bold">CLEARANCE_GRNTD</span>
+               </div>
+            </div>
+          </div>
+
+          {/* Progress bar */}
+          <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden relative border border-white/5">
+            <div className="absolute top-0 left-0 h-full bg-primary shadow-[0_0_10px_#3b82f6] animate-progress-fast" />
+          </div>
+
+          <p className="font-mono text-[8px] uppercase tracking-[0.3em] opacity-40 animate-pulse">Initializing Virtual Learning Environment...</p>
+        </div>
+
+        <style>{`
+          @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(200%); }
+          }
+          @keyframes progress-fast {
+            0% { width: 0%; }
+            100% { width: 100%; }
+          }
+          .animate-scan { animation: scan 1.5s infinite linear; }
+          .animate-progress-fast { animation: progress-fast 2.2s ease-in-out forwards; }
+        `}</style>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background/95 relative overflow-hidden">
@@ -75,9 +139,10 @@ export default function Auth() {
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[100px] animate-pulse pointer-events-none delay-1000" />
       
       <div className="w-full max-w-lg p-4 relative z-10">
-        <a href="/" className="flex items-center justify-center mb-8">
+        <div className="flex flex-col items-center justify-center mb-8 gap-2">
           <span className="font-mono text-2xl tracking-widest uppercase font-semibold text-foreground">STAR9</span>
-        </a>
+          <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-muted-foreground opacity-50">Personnel Onboarding Portal</span>
+        </div>
 
         <Card className="glass border-border/50 shadow-2xl backdrop-blur-xl">
           <Tabs defaultValue="login" className="w-full">
@@ -91,40 +156,42 @@ export default function Auth() {
             {/* Login Tab */}
             <TabsContent value="login">
               <CardHeader className="pt-0">
-                <CardTitle className="font-mono uppercase tracking-widest">Access Portal</CardTitle>
-                <CardDescription>Enter your credentials to access the Star9 ecosystem.</CardDescription>
+                <CardTitle className="font-mono uppercase tracking-widest text-sm flex items-center gap-2">
+                  <ShieldCheck className="size-4 text-primary" /> Access Portal
+                </CardTitle>
+                <CardDescription className="text-xs">Enter your credentials to access the Star9 ecosystem.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email" className="text-[10px] uppercase tracking-widest ml-1">Email</Label>
                   <Input 
                     id="email" 
                     type="email" 
                     placeholder="agent@star9.dev" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="bg-background/50 focus:bg-background"
+                    className="bg-background/50 focus:bg-background h-11"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password" title="password" className="text-[10px] uppercase tracking-widest ml-1">Password</Label>
                   <Input 
                     id="password" 
                     type="password" 
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="bg-background/50 focus:bg-background"
+                    className="bg-background/50 focus:bg-background h-11"
                   />
                 </div>
               </CardContent>
               <CardFooter>
                 <Button 
-                  className="w-full font-mono uppercase tracking-widest" 
+                  className="w-full font-mono uppercase tracking-widest h-12 gap-3" 
                   disabled={loading}
                   onClick={() => handleAuth(false)}
                 >
-                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Authenticate
+                  {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+                  Identify Personnel
                 </Button>
               </CardFooter>
             </TabsContent>
@@ -132,8 +199,10 @@ export default function Auth() {
             {/* Register Tab */}
             <TabsContent value="register">
               <CardHeader className="pt-0">
-                <CardTitle className="font-mono uppercase tracking-widest">Initialize Account</CardTitle>
-                <CardDescription>Join the Star9 collective and elevate your workflow.</CardDescription>
+                <CardTitle className="font-mono uppercase tracking-widest text-sm flex items-center gap-2">
+                  <Cpu className="size-4 text-primary" /> Initialize Unit
+                </CardTitle>
+                <CardDescription className="text-xs">Join the Star9 collective and elevate your workflow.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -145,7 +214,7 @@ export default function Auth() {
                       placeholder="agent@star9.dev" 
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="bg-background/50 focus:bg-background"
+                      className="bg-background/50 focus:bg-background h-11"
                     />
                   </div>
                   <div className="space-y-2">
@@ -155,7 +224,7 @@ export default function Auth() {
                       type="password" 
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="bg-background/50 focus:bg-background"
+                      className="bg-background/50 focus:bg-background h-11"
                     />
                   </div>
                   <div className="space-y-2">
@@ -166,52 +235,30 @@ export default function Auth() {
                       placeholder="John Doe" 
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      className="bg-background/50 focus:bg-background"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="reg-phone">Communication Line (Phone)</Label>
-                    <Input 
-                      id="reg-phone" 
-                      type="tel" 
-                      placeholder="+254..." 
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="bg-background/50 focus:bg-background"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="reg-country">Territory (Country)</Label>
-                    <Input 
-                      id="reg-country" 
-                      type="text" 
-                      placeholder="Kenya" 
-                      value={country}
-                      onChange={(e) => setCountry(e.target.value)}
-                      className="bg-background/50 focus:bg-background"
+                      className="bg-background/50 focus:bg-background h-11"
                     />
                   </div>
                   <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="reg-city">Operational City</Label>
+                    <Label htmlFor="reg-phone">Operational City</Label>
                     <Input 
                       id="reg-city" 
                       type="text" 
                       placeholder="Nairobi" 
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
-                      className="bg-background/50 focus:bg-background"
+                      className="bg-background/50 focus:bg-background h-11"
                     />
                   </div>
                 </div>
               </CardContent>
               <CardFooter className="pt-4">
                 <Button 
-                  className="w-full font-mono uppercase tracking-widest" 
+                  className="w-full font-mono uppercase tracking-widest h-12 gap-3" 
                   disabled={loading}
                   onClick={() => handleAuth(true)}
                 >
-                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Initialize Unit
+                  {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+                  Register Asset
                 </Button>
               </CardFooter>
             </TabsContent>
