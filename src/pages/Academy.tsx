@@ -126,6 +126,10 @@ const Academy = () => {
   const [certificates, setCertificates] = useState<any[]>([]);
   const [activeLessonIdx, setActiveLessonIdx] = useState(0);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+
   const navigate = useNavigate();
 
   const fetchCertificates = async (userId: string) => {
@@ -423,9 +427,15 @@ const Academy = () => {
             <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg hover:bg-muted">
               <Menu className="size-5" />
             </button>
-            <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-muted rounded-lg">
+            <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-muted rounded-lg border border-border/50 focus-within:border-primary/30 transition-colors">
               <Search className="size-4 text-muted-foreground" />
-              <input type="text" placeholder="Search..." className="bg-transparent text-sm outline-none w-48" />
+              <input 
+                type="text" 
+                placeholder="Search courses..." 
+                className="bg-transparent text-sm outline-none w-48"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
           </div>
           <div className="flex items-center gap-3 shrink-0">
@@ -435,22 +445,78 @@ const Academy = () => {
               <span className="hidden lg:inline text-[10px] font-mono tracking-widest uppercase font-bold text-muted-foreground group-hover:text-secondary transition-colors">Study Streak</span>
             </div>
 
-            <button className="p-2 rounded-lg hover:bg-muted relative ml-2">
+            <button 
+              className={`p-2 rounded-lg hover:bg-muted relative ml-2 transition-colors ${showNotifications ? 'bg-muted' : ''}`}
+              onClick={() => { setShowNotifications(!showNotifications); setShowProfileMenu(false); }}
+            >
               <Bell className="size-5" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-secondary rounded-full" />
             </button>
-            <div className="flex items-center gap-3 pl-4 border-l border-border/50">
-              <div className="w-8 h-8 rounded-full border border-border shrink-0 bg-primary/20 flex items-center justify-center text-primary font-bold uppercase overflow-hidden">
-                {profile?.avatar_url ? (
-                  <img src={profile.avatar_url} alt="avatar" className="w-full h-full object-cover" />
-                ) : (
-                  <span>{profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "U"}</span>
-                )}
+
+            {/* Notifications Popover */}
+            {showNotifications && (
+              <div className="absolute top-full right-16 mt-2 w-80 glass border border-border/50 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="p-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+                  <h4 className="text-xs font-mono uppercase tracking-widest font-bold">Personnel Alerts</h4>
+                  <Badge variant="outline" className="text-[10px] border-primary/20 text-primary">2 NEW</Badge>
+                </div>
+                <div className="max-h-64 overflow-y-auto">
+                  <div className="p-4 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer">
+                    <p className="text-xs font-bold text-primary mb-1 uppercase tracking-tighter">System Access Granted</p>
+                    <p className="text-[10px] text-muted-foreground leading-relaxed">Welcome to the Star9 Academy, Agent {profile?.full_name?.split(' ')[0]}. Your learning tracks are now synchronized.</p>
+                    <p className="text-[9px] font-mono text-zinc-600 mt-2">12M AGO</p>
+                  </div>
+                  <div className="p-4 hover:bg-white/5 transition-colors cursor-pointer opacity-80">
+                    <p className="text-xs font-bold text-zinc-400 mb-1 uppercase tracking-tighter">Credential Stored</p>
+                    <p className="text-[10px] text-muted-foreground leading-relaxed">A new masterclass has been uploaded to the Freelance track.</p>
+                    <p className="text-[9px] font-mono text-zinc-600 mt-2">2H AGO</p>
+                  </div>
+                </div>
+                <div className="p-3 bg-card/50 text-center border-t border-white/5">
+                  <button className="text-[9px] font-mono uppercase tracking-[0.3em] text-muted-foreground hover:text-primary transition-colors">Clear All Clearances</button>
+                </div>
               </div>
-              <span className="hidden sm:inline text-sm font-medium flex items-center gap-1">
-                {profile?.full_name || user?.email?.split('@')[0] || "User"}
-                <VerificationBadge status={profile?.verification_status || 'pending'} />
-              </span>
+            )}
+
+            <div className="flex items-center gap-3 pl-4 border-l border-border/50 relative">
+              <button 
+                onClick={() => { setShowProfileMenu(!showProfileMenu); setShowNotifications(false); }}
+                className={`flex items-center gap-3 p-1 pr-3 rounded-full hover:bg-muted transition-colors ${showProfileMenu ? 'bg-muted' : ''}`}
+              >
+                <div className="w-8 h-8 rounded-full border border-border shrink-0 bg-primary/20 flex items-center justify-center text-primary font-bold uppercase overflow-hidden">
+                  {profile?.avatar_url ? (
+                    <img src={profile.avatar_url} alt="avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    <span>{profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "U"}</span>
+                  )}
+                </div>
+                <span className="hidden sm:inline text-sm font-medium flex items-center gap-1">
+                  {profile?.full_name?.split(' ')[0] || "Personnel"}
+                  <Menu className={`size-3 transition-transform ${showProfileMenu ? 'rotate-180' : ''}`} />
+                </span>
+              </button>
+
+              {/* Profile Shortcut Menu */}
+              {showProfileMenu && (
+                <div className="absolute top-full right-0 mt-2 w-56 glass border border-border/50 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="p-4 border-b border-white/5 bg-white/5 flex flex-col items-center text-center">
+                    <p className="text-sm font-bold truncate w-full">{profile?.full_name}</p>
+                    <p className="text-[10px] font-mono text-muted-foreground uppercase opacity-60">ID: {user?.id?.substring(0, 8)}</p>
+                  </div>
+                  <div className="p-2 space-y-1">
+                    <button onClick={() => { setActiveTab('settings'); setShowProfileMenu(false); }} className="w-full text-left px-3 py-2 rounded-xl text-xs font-medium hover:bg-primary/10 hover:text-primary transition-all flex items-center gap-3 group">
+                      <Settings className="size-4 group-hover:rotate-45 transition-transform" /> Account Protocols
+                    </button>
+                    <button onClick={() => { setActiveTab('certificates'); setShowProfileMenu(false); }} className="w-full text-left px-3 py-2 rounded-xl text-xs font-medium hover:bg-primary/10 hover:text-primary transition-all flex items-center gap-3 group">
+                      <Award className="size-4 group-hover:scale-110 transition-transform" /> Issued Credentials
+                    </button>
+                    <div className="h-px bg-white/5 my-1" />
+                    <button onClick={handleLogout} className="w-full text-left px-3 py-2 rounded-xl text-xs font-medium text-red-400 hover:bg-red-500/10 transition-all flex items-center gap-3">
+                      <ArrowRight className="size-4 rotate-180" /> Terminate Session
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </header>
@@ -492,7 +558,7 @@ const Academy = () => {
               ) : (
                 <div className="space-y-12">
                   {/* My Learning Section */}
-                  {courses.filter(c => enrollments.has(c.id)).length > 0 && (
+                  {courses.filter(c => enrollments.has(c.id) && (c.title.toLowerCase().includes(searchQuery.toLowerCase()) || c.category.toLowerCase().includes(searchQuery.toLowerCase()))).length > 0 && (
                     <div className="space-y-6">
                       <div className="flex items-center gap-3">
                          <div className="h-px flex-1 bg-border/50" />
@@ -500,7 +566,7 @@ const Academy = () => {
                          <div className="h-px flex-1 bg-border/50" />
                       </div>
                       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {courses.filter(c => enrollments.has(c.id)).map((course) => (
+                        {courses.filter(c => enrollments.has(c.id) && (c.title.toLowerCase().includes(searchQuery.toLowerCase()) || c.category.toLowerCase().includes(searchQuery.toLowerCase()))).map((course) => (
                            <CourseCard 
                              key={course.id} 
                              course={course} 
@@ -520,14 +586,14 @@ const Academy = () => {
                        <div className="h-px flex-1 bg-border/50" />
                     </div>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {courses.filter(c => !enrollments.has(c.id)).length === 0 ? (
+                      {courses.filter(c => !enrollments.has(c.id) && (c.title.toLowerCase().includes(searchQuery.toLowerCase()) || c.category.toLowerCase().includes(searchQuery.toLowerCase()))).length === 0 ? (
                         <Card className="glass border-dashed text-center p-12 opacity-80 col-span-full">
-                          <CheckCircle2 className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                          <CardTitle className="mb-2">Advanced Modules Cleared</CardTitle>
-                          <CardDescription>You are enrolled in all currently published academy tracks.</CardDescription>
+                          {searchQuery ? <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" /> : <CheckCircle2 className="w-12 h-12 text-muted-foreground mx-auto mb-4" />}
+                          <CardTitle className="mb-2">{searchQuery ? 'No Results Captured' : 'Advanced Modules Cleared'}</CardTitle>
+                          <CardDescription>{searchQuery ? `Your search for "${searchQuery}" returned no hits in our database.` : 'You are enrolled in all currently published academy tracks.'}</CardDescription>
                         </Card>
                       ) : (
-                        courses.filter(c => !enrollments.has(c.id)).map((course) => (
+                        courses.filter(c => !enrollments.has(c.id) && (c.title.toLowerCase().includes(searchQuery.toLowerCase()) || c.category.toLowerCase().includes(searchQuery.toLowerCase()))).map((course) => (
                           <CourseCard 
                             key={course.id} 
                             course={course} 
