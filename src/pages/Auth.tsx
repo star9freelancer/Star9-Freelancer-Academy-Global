@@ -1,15 +1,18 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Loader2, ArrowLeft, ShieldCheck, Cpu, Database, Globe } from "lucide-react";
+import { Loader2, ArrowLeft, ShieldCheck, Cpu, Database, Globe, Fingerprint } from "lucide-react";
 
 export default function Auth() {
+  const { user, loading: authLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -18,7 +21,18 @@ export default function Auth() {
   const [city, setCity] = useState("");
   const [loading, setLoading] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
+  const [persistSession, setPersistSession] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Personnel Redirect: Instant clearance if already identified
+  useEffect(() => {
+    if (!authLoading && user) {
+      setIsClearing(true);
+      const from = (location.state as any)?.from?.pathname || "/academy";
+      setTimeout(() => navigate(from, { replace: true }), 1500);
+    }
+  }, [user, authLoading, navigate, location]);
 
   const handleAuth = async (isSignUp: boolean) => {
     if (!email || !password) {
@@ -182,6 +196,17 @@ export default function Auth() {
                     onChange={(e) => setPassword(e.target.value)}
                     className="bg-background/50 focus:bg-background h-11"
                   />
+                </div>
+                <div className="flex items-center space-x-2 pt-2 px-1">
+                  <Checkbox 
+                    id="persist" 
+                    checked={persistSession} 
+                    onCheckedChange={(checked) => setPersistSession(!!checked)}
+                    className="border-primary/50 data-[state=checked]:bg-primary"
+                  />
+                  <label htmlFor="persist" className="text-[10px] uppercase tracking-widest text-muted-foreground cursor-pointer flex items-center gap-2">
+                    <Fingerprint className="size-3 text-primary animate-pulse" /> Secure Session Persistence
+                  </label>
                 </div>
               </CardContent>
               <CardFooter>
