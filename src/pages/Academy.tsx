@@ -472,7 +472,7 @@ const Academy = () => {
                          <Card key={cert.id} className="glass overflow-hidden group">
                            <div className="h-40 bg-zinc-900 flex flex-col items-center justify-center p-6 border-b border-white/5 relative">
                              <Award className="w-16 h-16 text-primary/20 mb-2" />
-                             <p className="text-[10px] font-mono tracking-widest text-primary uppercase">Star9 Official Transcript</p>
+                             <p className="text-[10px] font-mono tracking-widest text-primary uppercase">Star9 Certificate</p>
                            </div>
                            <CardHeader className="text-center">
                              <CardTitle className="text-lg">{cert.academy_courses?.title}</CardTitle>
