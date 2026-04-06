@@ -466,7 +466,7 @@ const Academy = () => {
 
                  {activeTab === "certificates" && (
                    <div className="space-y-6 relative z-10">
-                     <h1 className="text-3xl font-bold tracking-tight">Earned Credentials</h1>
+                     <h1 className="text-3xl font-bold tracking-tight">My Certificates</h1>
                      <div className="grid md:grid-cols-2 gap-6">
                        {certificates.map((cert) => (
                          <Card key={cert.id} className="glass overflow-hidden group">
