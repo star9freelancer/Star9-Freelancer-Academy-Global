@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import { useAuth } from "@/context/AuthContext";
@@ -198,20 +199,36 @@ const Academy = () => {
   };
 
   const handleLessonComplete = async (courseId: string, lessonIdx: number) => {
-    if (!user || !playingCourse) return;
+    if (!user || !playingCourse || !profile) return;
     const lessons = playingCourse.academy_lessons || [];
     const newProgress = Math.round(((lessonIdx + 1) / lessons.length) * 100);
-    const { error } = await supabase
+    
+    // 1. Update Lesson Progress
+    const { error: progressError } = await supabase
       .from('user_enrollments')
       .update({ progress: newProgress })
       .match({ user_id: user.id, course_id: courseId });
       
-    if (!error) {
+    if (!progressError) {
+      // 2. Award Merit Points (+10 for lesson, +50 for completion)
+      const pointsToAward = newProgress >= 100 ? 50 : 10;
+      const { error: pointsError } = await supabase
+        .from('profiles')
+        .update({ merit_points: (profile.merit_points || 0) + pointsToAward })
+        .eq('id', user.id);
+
+      if (!pointsError) {
+        toast.success(`+${pointsToAward} Network Merit`, { 
+          description: newProgress >= 100 ? "Curriculum Mastery Achieved!" : "Digital skill synchronized." 
+        });
+        await refreshProfile();
+      }
+
+      // 3. Issue Certificate if completed
       if (newProgress >= 100) {
         const alreadyHasCert = certificates.some(c => c.course_id === courseId);
         if (!alreadyHasCert) {
           await issueCertificate(courseId);
-          toast.success("Curriculum Mastery Achieved!", { description: "Your digital credential has been minted." });
         }
       }
       invalidateAll();
@@ -230,113 +247,151 @@ const Academy = () => {
   ];
 
   return (
-    <div className="min-h-screen flex bg-background relative overflow-hidden">
-      {/* Mobile Overlay */}
-      {sidebarOpen && (
-        <div className="md:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
-      )}
+    <div className="min-h-screen bg-background relative selection:bg-primary/30 selection:text-white">
+      {/* Dynamic Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+        <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-primary/5 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-secondary/5 blur-[120px] rounded-full" />
+      </div>
 
-      {/* Sidebar Rail */}
-      <aside
-        onMouseEnter={() => setSidebarHovered(true)}
-        onMouseLeave={() => setSidebarHovered(false)}
-        className={`fixed z-50 inset-y-0 left-0 flex flex-col border-r border-white/5 bg-background/40 backdrop-blur-2xl transition-all duration-300 ease-in-out ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"} w-[70px] shadow-[4px_0_40px_rgba(0,0,0,0.5)]`}
-      >
-        <div className="h-20 flex items-center px-4 border-b border-white/5 overflow-hidden shrink-0">
-          <Link to="/" className="flex items-center gap-3 min-w-0" onClick={() => setSidebarOpen(false)}>
-            <div className="w-9 h-9 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0 shadow-lg shadow-primary/10">
-              <div className="w-4 h-4 bg-primary rounded-sm" />
-            </div>
+      {/* COMMAND HUB (Floating Nav) */}
+      <div className="fixed top-0 inset-x-0 z-50 flex justify-center p-4 md:p-6 transition-all duration-500">
+        <motion.nav 
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ type: "spring", damping: 20, stiffness: 100 }}
+          className="flex items-center gap-2 md:gap-4 px-4 py-2.5 rounded-full glass border-white/5 shadow-[0_0_40px_rgba(0,0,0,0.5)] max-w-full overflow-x-auto no-scrollbar relative"
+        >
+          {/* Logo / Home */}
+          <Link to="/" className="p-2 rounded-full hover:bg-white/5 transition-colors shrink-0">
+             <div className="size-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                <div className="size-3 bg-primary rounded-sm animate-pulse" />
+             </div>
           </Link>
-        </div>
 
-        <nav className="flex-1 py-3 px-2 space-y-1">
-          {studentLinks.map((l) => {
-            const isActive = activeTab === l.id;
-            return (
-              <TooltipProvider key={l.id} delayDuration={200}>
+          <div className="h-6 w-px bg-white/10 mx-1 shrink-0" />
+
+          {/* Search Integrated */}
+          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-full border border-white/5 focus-within:border-primary/40 focus-within:bg-white/[0.08] transition-all group w-48">
+             <Search className="size-3.5 text-zinc-500 group-focus-within:text-primary transition-colors" />
+             <input 
+               type="text" 
+               placeholder="Protocol Search..." 
+               className="bg-transparent text-[10px] font-bold uppercase tracking-widest outline-none w-full text-zinc-300 placeholder:text-zinc-600"
+               value={searchQuery}
+               onChange={(e) => setSearchQuery(e.target.value)}
+             />
+          </div>
+
+          <div className="hidden lg:block h-6 w-px bg-white/10 mx-1 shrink-0" />
+
+          {/* Navigation Links */}
+          <div className="flex items-center gap-1 shrink-0">
+            {studentLinks.map((l) => {
+              const isActive = activeTab === l.id;
+              return (
+                <button
+                  key={l.id}
+                  onClick={() => setActiveTab(l.id)}
+                  className={`relative flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 group ${isActive ? "text-primary" : "text-zinc-500 hover:text-white"}`}
+                >
+                  {isActive && (
+                    <motion.div 
+                      layoutId="hub-pill"
+                      className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-full shadow-[0_0_20px_rgba(var(--primary),0.1)]" 
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                  <l.icon className={`size-4 shrink-0 transition-transform ${isActive ? "scale-110" : "group-hover:scale-110"}`} />
+                  <span className={`text-[10px] uppercase tracking-widest font-black hidden xl:inline-block relative z-10 transition-all ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100 w-0 group-hover:w-auto"}`}>
+                     {l.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="h-6 w-px bg-white/10 mx-1 shrink-0" />
+
+          {/* Merit & Profile Identity */}
+          <div className="flex items-center gap-2 shrink-0">
+             <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-500/5 border border-amber-500/10 rounded-full group cursor-help hover:bg-amber-500/10 transition-all">
+                <Sparkles className="size-3 text-amber-500" />
+                <span className="text-[10px] font-mono font-black text-amber-500">{profile?.merit_points || 0}</span>
+             </div>
+
+             <TooltipProvider delayDuration={200}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <button
-                      onClick={() => { setActiveTab(l.id); setSidebarOpen(false); }}
-                      className={`relative w-full flex items-center gap-3 px-[14px] py-[11px] rounded-xl transition-all duration-200 group ${isActive ? "bg-primary/15 border border-primary/25" : "border border-transparent hover:bg-white/[0.04]"}`}
+                    <button 
+                      onClick={() => setShowProfileMenu(!showProfileMenu)}
+                      className="size-9 rounded-full border border-white/10 bg-zinc-900 group relative overflow-hidden transition-all hover:border-primary/40"
                     >
-                      {isActive && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-r-full" />}
-                      <l.icon className={`size-[18px] shrink-0 transition-colors duration-200 ${isActive ? "text-primary" : "text-zinc-500 group-hover:text-zinc-300"}`} />
+                      {profile?.avatar_url ? (
+                        <img src={profile.avatar_url} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="font-mono text-xs text-primary font-bold">{profile?.full_name?.charAt(0) || "U"}</span>
+                      )}
                     </button>
                   </TooltipTrigger>
-                  <TooltipContent side="right" sideOffset={8} className="font-mono text-[10px] uppercase tracking-widest">{l.label}</TooltipContent>
+                  <TooltipContent className="bg-zinc-950 border-white/5 text-zinc-300 font-mono text-[9px] uppercase tracking-widest px-3 py-1.5">Identity Verification Required</TooltipContent>
                 </Tooltip>
-              </TooltipProvider>
+             </TooltipProvider>
+
+             <button 
+               onClick={handleLogout}
+               className="p-2 rounded-full text-zinc-600 hover:text-red-400 hover:bg-red-500/10 transition-all"
+             >
+                <ArrowRight className="size-4 rotate-180" />
+             </button>
+          </div>
+        </motion.nav>
+      </div>
+
+      {/* Mobile Nav Overlay (Fallback) */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="md:hidden fixed inset-0 z-[60] bg-zinc-950/80 backdrop-blur-md" 
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* MAIN CONTENT WRAPPER */}
+      <div className="pt-28 md:pt-32 pb-24 lg:pb-0 min-h-screen">
+        <main className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16 space-y-16 relative z-10">
+
+      {/* MOBILE BOTTOM DOCK (Personnel Utility Rail) */}
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-50 p-4 flex justify-center translate-y-[-10px]">
+        <motion.div 
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="flex items-center gap-6 px-8 py-3.5 rounded-full glass border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] backdrop-blur-3xl"
+        >
+          {studentLinks.slice(0, 4).map((l) => {
+            const isActive = activeTab === l.id;
+            return (
+              <button
+                key={l.id}
+                onClick={() => setActiveTab(l.id)}
+                className={`flex flex-col items-center gap-1.5 transition-all ${isActive ? "text-primary scale-110" : "text-zinc-600 hover:text-zinc-300"}`}
+              >
+                <l.icon className="size-5" />
+                <span className="text-[8px] font-black uppercase tracking-[0.2em]">{l.label.split(' ')[0]}</span>
+              </button>
             );
           })}
-        </nav>
-
-        <div className="px-2 pb-3 shrink-0">
-          <TooltipProvider delayDuration={200}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-[14px] py-[11px] rounded-xl border border-transparent text-zinc-600 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-all duration-200 group"
-                >
-                  <ArrowRight className="size-[18px] shrink-0 rotate-180 transition-transform duration-200 group-hover:-translate-x-0.5" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="right" sideOffset={8} className="font-mono text-[10px] uppercase tracking-widest">Log Out</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      </aside>
-
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 md:pl-[70px]">
-        <header className="h-20 border-b bg-card flex items-center justify-between px-4 md:px-6 shrink-0 z-10 relative">
-          <div className="flex items-center gap-3">
-            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg hover:bg-muted md:hidden">
-              <Menu className="size-5" />
-            </button>
-            <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-muted rounded-lg border border-border/50 focus-within:border-primary/30 transition-colors">
-              <Search className="size-4 text-muted-foreground" />
-              <input 
-                type="text" 
-                placeholder="Search resources..." 
-                className="bg-transparent text-sm outline-none w-48"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-full group cursor-help hover:bg-amber-500/20 transition-all">
-              <Sparkles className="size-3 text-amber-500" />
-              <span className="text-xs font-mono font-bold text-amber-500">{profile?.merit_points || 0}</span>
-            </div>
-            <button className="p-2 rounded-lg hover:bg-muted relative">
-              <Bell className="size-5" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-secondary rounded-full" />
-            </button>
-            <div className="flex items-center gap-3 pl-4 border-l border-border/50 relative">
-              <button 
-                onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className={`flex items-center gap-3 p-1 pr-3 rounded-full hover:bg-muted transition-colors ${showProfileMenu ? 'bg-muted' : ''}`}
-              >
-                <div className="w-8 h-8 rounded-full border border-border shrink-0 bg-primary/20 flex items-center justify-center text-primary font-bold uppercase overflow-hidden">
-                  {profile?.avatar_url ? <img src={profile.avatar_url} className="w-full h-full object-cover" /> : <span>{profile?.full_name?.charAt(0) || "U"}</span>}
-                </div>
-              </button>
-            </div>
-          </div>
-        </header>
-
-        <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 w-full bg-background relative">
-          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+        </motion.div>
+      </div>
 
           {selectedProgram ? (
             <ProgramDetailView 
               course={selectedProgram}
-              isEnrolled={enrollments.has(selectedProgram.id)}
+              enrollment={enrollments.get(selectedProgram.id)}
               onBack={() => setSelectedProgram(null)}
               onEnroll={() => handleEnroll(selectedProgram.id)}
               onStart={(idx) => { setPlayingCourse(selectedProgram); setActiveLessonIdx(idx); setSelectedProgram(null); }}
@@ -362,7 +417,7 @@ const Academy = () => {
                     
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {courses.filter(c => enrollments.has(c.id)).map((course) => (
-                         <CourseCard key={course.id} course={course} isEnrolled={true} onOpen={() => { setPlayingCourse(course); setActiveLessonIdx(0); }} />
+                         <CourseCard key={course.id} course={course} enrollment={enrollments.get(course.id)} onOpen={() => { setPlayingCourse(course); setActiveLessonIdx(0); }} />
                       ))}
                       {courses.filter(c => enrollments.has(c.id)).length === 0 && (
                          <Card className="glass border-dashed p-12 text-center col-span-full opacity-60">
@@ -384,7 +439,7 @@ const Academy = () => {
                     </div>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {courses.map((course) => (
-                        <CourseCard key={course.id} course={course} isEnrolled={enrollments.has(course.id)} isEnrolling={enrolling === course.id} onEnroll={() => handleEnroll(course.id)} onViewDetails={() => setSelectedProgram(course)} />
+                        <CourseCard key={course.id} course={course} enrollment={enrollments.get(course.id)} isEnrolling={enrolling === course.id} onEnroll={() => handleEnroll(course.id)} onViewDetails={() => setSelectedProgram(course)} />
                       ))}
                     </div>
                  </div>

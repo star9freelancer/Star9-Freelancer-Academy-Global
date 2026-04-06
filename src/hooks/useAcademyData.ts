@@ -111,7 +111,7 @@ export const useAcademyData = () => {
       if (!user) return [];
       const { data, error } = await supabase
         .from("user_enrollments")
-        .select("course_id")
+        .select("course_id, progress")
         .eq("user_id", user.id);
       if (error) return [];
       return data || [];
@@ -119,7 +119,11 @@ export const useAcademyData = () => {
     enabled: !!user,
   });
 
-  const enrollments = new Set(enrollmentsData.map((e) => e.course_id));
+  const enrollments = React.useMemo(() => {
+    const map = new Map<string, any>();
+    enrollmentsData.forEach((e) => map.set(e.course_id, e));
+    return map;
+  }, [enrollmentsData]);
 
   // 3. Fetch User Certificates
   const { data: certificates = [], isLoading: isLoadingCertificates } = useQuery({
