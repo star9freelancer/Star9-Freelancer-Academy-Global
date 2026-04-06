@@ -47,12 +47,12 @@ export const PersonnelSettings = ({
               <Input 
                 value={profileForm.full_name} 
                 onChange={(e) => setProfileForm({...profileForm, full_name: e.target.value})}
-                placeholder="Star9 Personnel Name"
+                placeholder="Your Name"
                 className="bg-card/50 border-border/50 focus:border-primary/40 rounded-xl py-6"
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Personnel Email</Label>
+              <Label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Email Address</Label>
               <Input 
                 value={user?.email || ""} 
                 disabled
@@ -62,18 +62,18 @@ export const PersonnelSettings = ({
           </div>
 
           <div className="space-y-2">
-            <Label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Professional Intel / Bio</Label>
+            <Label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">About You / Bio</Label>
             <textarea 
               value={profileForm.bio}
               onChange={(e) => setProfileForm({...profileForm, bio: e.target.value})}
-              placeholder="Summarize your professional operational capacity..."
+              placeholder="Tell us about your professional background..."
               className="w-full min-h-[120px] bg-card/50 border border-border/50 focus:border-primary/40 rounded-xl p-4 text-sm outline-none transition-all"
             />
           </div>
 
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Operating City</Label>
+              <Label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">City</Label>
               <Input 
                 value={profileForm.city} 
                 onChange={(e) => setProfileForm({...profileForm, city: e.target.value})}
@@ -81,7 +81,7 @@ export const PersonnelSettings = ({
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Operating Region / Country</Label>
+              <Label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Country</Label>
               <Input 
                 value={profileForm.country} 
                 onChange={(e) => setProfileForm({...profileForm, country: e.target.value})}
@@ -104,7 +104,7 @@ export const PersonnelSettings = ({
               </div>
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Project Ledger / Portfolio</Label>
+              <Label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Portfolio / Website</Label>
               <div className="relative">
                 <Globe className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-secondary" />
                 <Input 
@@ -120,15 +120,15 @@ export const PersonnelSettings = ({
           {/* Proficiency Manager */}
           <div className="space-y-4 pt-4 border-t border-border/50">
             <div className="flex items-center justify-between">
-              <Label className="text-[10px] font-mono uppercase tracking-widest text-primary font-bold">Proficiency Ledger (Skills)</Label>
-              <Badge variant="outline" className="text-[9px] border-primary/20 opacity-60 font-mono">{profileForm.skills?.length || 0} TRACKED ITEM(S)</Badge>
+              <Label className="text-[10px] font-mono uppercase tracking-widest text-primary font-bold">Your Skills</Label>
+              <Badge variant="outline" className="text-[9px] border-primary/20 opacity-60 font-mono">{profileForm.skills?.length || 0} ITEMS</Badge>
             </div>
             <div className="flex gap-2">
               <Input 
                 value={newSkill} 
                 onChange={(e) => setNewSkill(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && addSkill()}
-                placeholder="Tag a new technological skill..."
+                placeholder="Add a new skill..."
                 className="bg-card/50 border-border/50 rounded-xl py-6"
               />
               <button 
@@ -161,14 +161,14 @@ export const PersonnelSettings = ({
               ) : (
                 <Save className="size-4" />
               )}
-              Verify & Synchronize Ledger
+              Save Profile Changes
             </Button>
           </div>
         </div>
 
         {/* --- RIGHT: Digital Identity Preview --- */}
         <div className="w-full lg:w-96 shrink-0 space-y-6">
-          <h3 className="font-mono text-[10px] uppercase tracking-[0.4em] text-muted-foreground pl-2 leading-relaxed text-center lg:text-left">Identity Metadata</h3>
+          <h3 className="font-mono text-[10px] uppercase tracking-[0.4em] text-muted-foreground pl-2 leading-relaxed text-center lg:text-left">Account Info</h3>
           
           {/* Premium ID Card */}
           <div className="relative aspect-[1.6/1] w-full bg-zinc-950 rounded-[2.5rem] border border-white/10 shadow-2xl p-8 overflow-hidden group hover:border-primary/30 transition-all duration-500 mx-auto max-w-sm lg:max-w-none">
@@ -180,7 +180,7 @@ export const PersonnelSettings = ({
               <div className="flex justify-between items-start">
                 <div className="space-y-1">
                   <p className="text-[10px] font-mono uppercase tracking-[0.4em] text-primary/80 font-black">Star9 Academy</p>
-                  <p className="text-[8px] font-mono uppercase tracking-[0.2em] text-zinc-600">Personnel ID: {user?.id?.substring(0, 12)}</p>
+                  <p className="text-[8px] font-mono uppercase tracking-[0.2em] text-zinc-600">ID: {user?.id?.substring(0, 12)}</p>
                 </div>
                 <div className="size-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center backdrop-blur-md">
                   <ShieldCheck className="size-6 text-primary" />
@@ -199,15 +199,15 @@ export const PersonnelSettings = ({
                 </div>
                 <div className="flex-1 space-y-1.5 min-w-0">
                   <p className="text-xl font-black tracking-tighter text-white whitespace-nowrap overflow-hidden text-ellipsis uppercase">
-                    {profileForm.full_name || "UNREGISTERED"}
+                    {profileForm.full_name || "New User"}
                   </p>
                   <div className="flex items-center gap-2">
                     <p className="text-[9px] font-mono text-zinc-500 uppercase tracking-widest truncate">
-                      {profileForm.city || "LE_NODE"}
+                      {profileForm.city || "Online Member"}
                     </p>
                     <div className="size-1 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" />
                   </div>
-                  <Badge className="bg-primary/20 text-primary border-primary/20 text-[8px] h-4 font-mono px-2 rounded-sm mt-1">STAR9_ELITE</Badge>
+                  <Badge className="bg-primary/20 text-primary border-primary/20 text-[8px] h-4 font-mono px-2 rounded-sm mt-1">STAR9_MEMBER</Badge>
                 </div>
               </div>
 
@@ -228,17 +228,17 @@ export const PersonnelSettings = ({
               <div className="flex items-center gap-4">
                 <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/10"><Award className="size-5" /></div>
                 <div>
-                  <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground font-bold">Issued Clearances</p>
-                  <p className="text-sm font-black tracking-tighter font-mono">{certificates.length} TRACKS</p>
+                  <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground font-bold">Certificates</p>
+                  <p className="text-sm font-black tracking-tighter font-mono">{certificates.length} COMPLETED</p>
                 </div>
               </div>
               <ArrowRight className="size-4 opacity-0 group-hover:opacity-100 transition-all text-primary -translate-x-2 group-hover:translate-x-0" />
             </div>
             <div className="p-5 bg-zinc-900/40 border border-white/5 rounded-3xl flex items-center justify-between group hover:border-secondary/40 transition-all cursor-default shadow-sm backdrop-blur-sm">
               <div className="flex items-center gap-4">
-                <div className="size-10 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary border border-secondary/10"><Users className="size-5" /></div>
+                <div className="size-10 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary border border-secondary/10"><Sparkles className="size-5" /></div>
                 <div>
-                  <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground font-bold">Personnel Merits</p>
+                  <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground font-bold">Member Points</p>
                   <p className="text-sm font-black tracking-tighter font-mono">{profile?.merit_points || 0} POINTS</p>
                 </div>
               </div>
@@ -251,7 +251,7 @@ export const PersonnelSettings = ({
             variant="outline"
             className="w-full border-red-500/20 text-red-400 hover:bg-red-500/10 hover:text-red-300 py-8 rounded-2xl font-mono text-[10px] uppercase tracking-widest shadow-lg shadow-red-500/5 active:scale-95 transition-all"
           >
-            Terminate Active Session
+            Log Out of Account
           </Button>
         </div>
       </div>

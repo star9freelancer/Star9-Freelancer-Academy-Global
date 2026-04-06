@@ -171,9 +171,9 @@ export default function Auth() {
             <TabsContent value="login">
               <CardHeader className="pt-0">
                 <CardTitle className="font-mono uppercase tracking-widest text-sm flex items-center gap-2">
-                  <ShieldCheck className="size-4 text-primary" /> Access Portal
+                  <ShieldCheck className="size-4 text-primary" /> Log In
                 </CardTitle>
-                <CardDescription className="text-xs">Enter your credentials to access the Star9 ecosystem.</CardDescription>
+                <CardDescription className="text-xs">Enter your details to access your account.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">

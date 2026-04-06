@@ -67,20 +67,20 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
       >
         <div className="space-y-2">
           <div className="flex items-center gap-3">
-             <Badge className="bg-primary/10 text-primary border-primary/20 font-mono text-[9px] tracking-widest px-2.5">CORE_ACCESS_GRANTED</Badge>
-             <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Protocol Version 4.0.9</span>
+             <Badge className="bg-primary/10 text-primary border-primary/20 font-mono text-[9px] tracking-widest px-2.5">LOGGED_IN</Badge>
+             <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Version 4.0.9</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Intelligence Dashboard</h1>
-          <p className="text-zinc-500 font-medium">Welcome back, {profile?.full_name?.split(' ')[0] || 'Personnel'}. System synchronization is complete.</p>
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Your Home</h1>
+          <p className="text-zinc-500 font-medium">Welcome back, {profile?.full_name?.split(' ')[0] || 'User'}. Your dashboard is ready.</p>
         </div>
         
         <div className="flex items-center gap-4 bg-zinc-900/50 p-2 rounded-2xl border border-white/5 backdrop-blur-xl">
            <div className="px-4 py-2 border-r border-white/5">
-              <p className="text-[9px] font-mono uppercase tracking-widest text-zinc-500">Active Tracks</p>
+              <p className="text-[9px] font-mono uppercase tracking-widest text-zinc-500">My Courses</p>
               <p className="text-xl font-black text-white">{activeEnrolledCourses.length}</p>
            </div>
            <div className="px-4 py-2">
-              <p className="text-[9px] font-mono uppercase tracking-widest text-zinc-500">Network Merit</p>
+              <p className="text-[9px] font-mono uppercase tracking-widest text-zinc-500">Points</p>
               <p className="text-xl font-black text-amber-500">{profile?.merit_points || 0}</p>
            </div>
         </div>
@@ -92,7 +92,7 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
           {/* 2. ACTIVE LEARNING Short-cuts */}
           <section className="space-y-6">
             <div className="flex items-center justify-between">
-               <h3 className="text-sm font-mono uppercase tracking-[0.4em] text-primary font-bold">Active Synchronization</h3>
+               <h3 className="text-sm font-mono uppercase tracking-[0.4em] text-primary font-bold">Your Courses</h3>
                <div className="h-px flex-1 bg-white/5 mx-6" />
             </div>
             
@@ -121,7 +121,7 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
                         </div>
                       </div>
                       <Button onClick={() => setActiveTab('academy')} className="rounded-xl font-mono text-[9px] uppercase tracking-widest bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20">
-                         Resume Track <ArrowRight className="ml-2 size-3" />
+                         Continue <ArrowRight className="ml-2 size-3" />
                       </Button>
                     </motion.div>
                   )
@@ -129,21 +129,21 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
               </div>
             ) : (
               <Card className="rounded-[2.5rem] border-dashed border-white/10 bg-transparent p-12 text-center">
-                 <p className="text-zinc-500 font-mono text-xs uppercase tracking-widest">No active personnel tracks detected.</p>
-                 <Button onClick={() => setActiveTab('catalog')} className="mt-4 bg-primary/20 text-primary hover:bg-primary/30 border-primary/20">Initialize Selection</Button>
+                 <p className="text-zinc-500 font-mono text-xs uppercase tracking-widest">You haven't started any courses yet.</p>
+                 <Button onClick={() => setActiveTab('catalog')} className="mt-4 bg-primary/20 text-primary hover:bg-primary/30 border-primary/20">Pick a Course</Button>
               </Card>
             )}
           </section>
 
           {/* 3. ACADEMY MISSION & ECOSYSTEM */}
           <section className="space-y-6">
-            <h3 className="text-sm font-mono uppercase tracking-[0.4em] text-zinc-500 font-bold">The Star9 Infrastructure</h3>
+            <h3 className="text-sm font-mono uppercase tracking-[0.4em] text-zinc-500 font-bold">About Star9 Academy</h3>
             <div className="grid md:grid-cols-2 gap-6">
                {[
-                 { title: "Immutable Credentials", desc: "Every mastery pulse is recorded on the Star9 digital ledger for civilian verification.", icon: ShieldCheck, color: "text-emerald-500" },
-                 { title: "Personnel Networking", desc: "Direct access to high-tier technical operational units across the global node.", icon: Network, color: "text-blue-500" },
-                 { title: "Infrastructure Mastery", desc: "Curriculum designed for the transition to professional digital infrastructure.", icon: Cpu, color: "text-purple-500" },
-                 { title: "Career Acceleration", desc: "Prioritized access to high-tier personnel opportunities within the Star9 node.", icon: TrendingUp, color: "text-amber-500" }
+                 { title: "Official Certificates", desc: "Every course you complete is recorded with a verified certificate.", icon: ShieldCheck, color: "text-emerald-500" },
+                 { title: "Social Networking", desc: "Connect with other members and experts in our community space.", icon: Network, color: "text-blue-500" },
+                 { title: "Expert Courses", desc: "Learn technical skills designed for modern digital careers.", icon: Cpu, color: "text-purple-500" },
+                 { title: "Career Growth", desc: "Get priority access to job opportunities in the Star9 network.", icon: TrendingUp, color: "text-amber-500" }
                ].map((item, i) => (
                  <Card key={i} className="p-6 glass border-white/5 hover:border-white/10 transition-all rounded-3xl space-y-3">
                     <item.icon className={`size-6 ${item.color}`} />
@@ -158,7 +158,7 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
         {/* 4. ACTIVITY TERMINAL LOG */}
         <aside className="space-y-6">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-mono uppercase tracking-[0.4em] text-zinc-500 font-bold">Pulse Stream</h3>
+            <h3 className="text-sm font-mono uppercase tracking-[0.4em] text-zinc-500 font-bold">Recent Updates</h3>
             <div className="size-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
           </div>
           
@@ -167,18 +167,18 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
             <div className="absolute inset-0 bg-[length:100%_2px] bg-[linear-gradient(to_bottom,transparent_0.5px,rgba(255,255,255,0.02)_0.5px)] pointer-events-none" />
             
             <div className="space-y-4">
-              <p className="text-zinc-600/[0.4]">// STARTING GLOBAL ACTIVITY SCAN...</p>
+              <p className="text-zinc-600/[0.4]">// RECENT ACTIVITY...</p>
               {activities.map((pulse, i) => (
                 <div key={i} className="flex gap-4 group">
                   <span className="text-zinc-700 select-none">[{formatTime(pulse.date)}]</span>
                   <p className="text-zinc-400 group-hover:text-primary transition-colors leading-relaxed">
-                     {pulse.text}
+                     {pulse.text.replace('Personnel', 'User')}
                   </p>
                 </div>
               ))}
               <div className="flex gap-2 items-center text-primary">
                  <span className="animate-pulse">_</span>
-                 <p className="text-zinc-800 italic uppercase spacing-widest">Awaiting further personnel interactions...</p>
+                 <p className="text-zinc-800 italic uppercase spacing-widest">Awaiting user activity...</p>
               </div>
             </div>
           </div>
@@ -186,8 +186,8 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
           <Card className="glass border-primary/20 bg-primary/5 p-8 rounded-[2.5rem] relative overflow-hidden group cursor-pointer" onClick={() => setActiveTab('catalog')}>
              <div className="relative z-10 space-y-4">
                 <Sparkles className="size-8 text-primary animate-float" />
-                <h3 className="text-xl font-bold tracking-tight">Expand Your Personnel Track</h3>
-                <p className="text-xs text-primary/60 leading-relaxed font-medium capitalize">Discover high-readiness operational modules in the global catalog.</p>
+                <h3 className="text-xl font-bold tracking-tight">Explore More Courses</h3>
+                <p className="text-xs text-primary/60 leading-relaxed font-medium capitalize">Find new learning opportunities in the academy catalog.</p>
                 <div className="pt-2 flex items-center text-[10px] font-mono font-bold uppercase tracking-widest text-primary gap-2">
                    Open Catalog <ArrowRight className="size-3" />
                 </div>

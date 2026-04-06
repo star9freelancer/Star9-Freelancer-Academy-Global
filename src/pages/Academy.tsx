@@ -242,8 +242,8 @@ const Academy = () => {
     { id: "certificates", icon: Award, label: "Credentials" },
     { id: "community", icon: Users, label: "Connect" },
     { id: "careers", icon: Briefcase, label: "Career Engine" },
-    { id: "events", icon: Calendar, label: "Personnel Events" },
-    { id: "settings", icon: Settings, label: "Protocols" },
+    { id: "events", icon: Calendar, label: "Member Events" },
+    { id: "settings", icon: Settings, label: "Settings" },
   ];
 
   return (
@@ -276,7 +276,7 @@ const Academy = () => {
              <Search className="size-3.5 text-zinc-500 group-focus-within:text-primary transition-colors" />
              <input 
                type="text" 
-               placeholder="Protocol Search..." 
+               placeholder="Search Dashboard..." 
                className="bg-transparent text-[10px] font-bold uppercase tracking-widest outline-none w-full text-zinc-300 placeholder:text-zinc-600"
                value={searchQuery}
                onChange={(e) => setSearchQuery(e.target.value)}
@@ -317,7 +317,7 @@ const Academy = () => {
           <div className="flex items-center gap-2 shrink-0">
              <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-500/5 border border-amber-500/10 rounded-full group cursor-help hover:bg-amber-500/10 transition-all">
                 <Sparkles className="size-3 text-amber-500" />
-                <span className="text-[10px] font-mono font-black text-amber-500">{profile?.merit_points || 0}</span>
+                <span className="text-[10px] font-mono font-black text-amber-500">{profile?.merit_points || 0} Points</span>
              </div>
 
              <TooltipProvider delayDuration={200}>
@@ -334,13 +334,14 @@ const Academy = () => {
                       )}
                     </button>
                   </TooltipTrigger>
-                  <TooltipContent className="bg-zinc-950 border-white/5 text-zinc-300 font-mono text-[9px] uppercase tracking-widest px-3 py-1.5">Identity Verification Required</TooltipContent>
+                  <TooltipContent className="bg-zinc-950 border-white/5 text-zinc-300 font-mono text-[9px] uppercase tracking-widest px-3 py-1.5">User Settings</TooltipContent>
                 </Tooltip>
              </TooltipProvider>
 
              <button 
                onClick={handleLogout}
                className="p-2 rounded-full text-zinc-600 hover:text-red-400 hover:bg-red-500/10 transition-all"
+               title="Log Out"
              >
                 <ArrowRight className="size-4 rotate-180" />
              </button>
@@ -411,7 +412,7 @@ const Academy = () => {
                  <div className="space-y-8">
                     <div className="flex items-center gap-3">
                        <div className="h-px flex-1 bg-border/50" />
-                       <h3 className="font-mono text-[10px] uppercase tracking-[0.4em] text-primary">Active Learning Tracks</h3>
+                       <h3 className="font-mono text-[10px] uppercase tracking-[0.4em] text-primary">Your Active Learning</h3>
                        <div className="h-px flex-1 bg-border/50" />
                     </div>
                     

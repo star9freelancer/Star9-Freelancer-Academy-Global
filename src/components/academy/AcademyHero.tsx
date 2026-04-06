@@ -23,24 +23,24 @@ const AcademyHero = ({ type, title, subtitle, userName }: AcademyHeroProps) => {
     learning: {
       gradient: "from-emerald-600/30 via-secondary/20 to-transparent",
       icon: BookOpen,
-      defaultTitle: `Continue Your Journey, ${userName || 'Personnel'}`,
-      defaultSubtitle: "Track your progress and mastery across your enrolled skill tracks.",
+      defaultTitle: `Welcome Back, ${userName || 'User'}`,
+      defaultSubtitle: "Track your progress and skills across your enrolled courses.",
       accent: "text-emerald-400",
       image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=2000"
     },
     catalog: {
       gradient: "from-amber-600/30 via-primary/20 to-transparent",
       icon: Globe,
-      defaultTitle: "Unlock Unlimited Learning",
-      defaultSubtitle: "Explore premium digital infrastructure and AI operational Mastery modules.",
+      defaultTitle: "Unlock New Skills",
+      defaultSubtitle: "Explore premium courses on digital infrastructure and AI operations.",
       accent: "text-amber-400",
       image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2000"
     },
     career: {
       gradient: "from-purple-600/30 via-secondary/20 to-transparent",
       icon: TrendingUp,
-      defaultTitle: "Accelerate Your Personnel Track",
-      defaultSubtitle: "Discover high-tier career opportunities for certified Star9 practitioners.",
+      defaultTitle: "Accelerate Your Career",
+      defaultSubtitle: "Discover high-tier job opportunities for certified Star9 members.",
       accent: "text-purple-400",
       image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=2000"
     }
@@ -100,7 +100,7 @@ const AcademyHero = ({ type, title, subtitle, userName }: AcademyHeroProps) => {
           <div className={`p-2.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md ${config.accent} shadow-lg`}>
              <Icon className="size-5" />
           </div>
-          <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-white/50 font-bold">Personnel Intelligence Hub</span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-white/50 font-bold">Member Academy Dashboard</span>
         </motion.div>
         
         <div className="space-y-4">
