@@ -365,7 +365,7 @@ const Academy = () => {
       </AnimatePresence>
 
       {/* MAIN CONTENT WRAPPER */}
-      <div className="pt-28 md:pt-32 pb-72 min-h-screen">
+      <div className="pt-28 md:pt-32 pb-24 min-h-screen">
         <main className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16 space-y-16 relative z-10">
 
       {/* MOBILE BOTTOM DOCK (Mobile Navigation Rail) */}
@@ -408,7 +408,7 @@ const Academy = () => {
                  />
                )}
 
-               <div className="space-y-12 pb-60">
+               <div className="space-y-12 pb-20">
                  {activeTab === "home" && <HomeFeed setActiveTab={setActiveTab} courses={courses} enrollments={enrollments} profile={profile} />}
 
                  {activeTab === "academy" && (
