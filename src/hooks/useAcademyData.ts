@@ -10,7 +10,7 @@ import { useAuth } from "@/context/AuthContext";
  */
 const CURRICULUM_LEDGER = [
   {
-    id: 'ai-for-freelancers',
+    id: '11111111-1111-1111-1111-111111111111',
     title: 'AI for Freelancers',
     category: 'AI & Automation',
     ai_tools_covered: ['ChatGPT', 'Midjourney', 'Zapier', 'Make', 'Claude'],
@@ -37,7 +37,7 @@ const CURRICULUM_LEDGER = [
     ]
   },
   {
-    id: 'freelancing-essentials',
+    id: '22222222-2222-2222-2222-222222222222',
     title: 'Freelancing Essentials',
     category: 'Global Business',
     ai_tools_covered: ['Upwork', 'Fiverr', 'LinkedIn', 'Wise', 'Payoneer'],
@@ -64,7 +64,7 @@ const CURRICULUM_LEDGER = [
     ]
   },
   {
-    id: 'teacher-prep',
+    id: '33333333-3333-3333-3333-333333333333',
     title: 'International Teacher Preparation',
     category: 'Education & Global Mobility',
     ai_tools_covered: ['Google Classroom', 'Canva', 'Canvas', 'J1 Visa Platform'],
