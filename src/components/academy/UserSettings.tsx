@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
   Plus, X as XIcon, Save, ShieldCheck, Award, Users, 
-  Link as LinkIcon, Globe, ArrowRight 
+  Link as LinkIcon, Globe, ArrowRight, Sparkles 
 } from "lucide-react";
 
-interface PersonnelSettingsProps {
+interface UserSettingsProps {
   user: any;
   profile: any;
   profileForm: any;
@@ -22,7 +22,7 @@ interface PersonnelSettingsProps {
   handleLogout: () => void;
 }
 
-export const PersonnelSettings = ({
+export const UserSettings = ({
   user,
   profile,
   profileForm,
@@ -35,7 +35,7 @@ export const PersonnelSettings = ({
   removeSkill,
   certificates,
   handleLogout
-}: PersonnelSettingsProps) => {
+}: UserSettingsProps) => {
   return (
     <div className="space-y-8 max-w-6xl relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20 mx-auto">
       <div className="flex flex-col lg:flex-row gap-8">

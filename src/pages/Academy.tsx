@@ -14,7 +14,7 @@ import JobBoard from "@/components/academy/JobBoard";
 import AcademyHero from "@/components/academy/AcademyHero";
 import ProgramDetailView from "@/components/academy/ProgramDetailView";
 import { HomeFeed } from "@/components/academy/HomeFeed";
-import { PersonnelSettings } from "@/components/academy/PersonnelSettings";
+import { UserSettings } from "@/components/academy/UserSettings";
 import { 
   Home, BookOpen, Users, Award, Settings, Menu, Bell, Search, 
   ArrowLeft, ArrowRight, Download, Play, Clock, TrendingUp, Sparkles, 
@@ -482,7 +482,7 @@ const Academy = () => {
                {activeTab === "careers" && <JobBoard />}
 
                {activeTab === "settings" && (
-                 <PersonnelSettings 
+                 <UserSettings 
                    user={user} profile={profile} profileForm={profileForm} setProfileForm={setProfileForm}
                    saving={saving} handleSaveProfile={handleSaveProfile} newSkill={newSkill} setNewSkill={setNewSkill}
                    addSkill={addSkill} removeSkill={removeSkill} certificates={certificates} handleLogout={handleLogout}
