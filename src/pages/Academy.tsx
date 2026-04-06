@@ -155,7 +155,7 @@ const Academy = () => {
     }]);
     
     if (!error) {
-      toast.success("Credential Issued", { description: "Your certificate is now stored in the Star9 Ledger." });
+      toast.success("Certificate Issued", { description: "Your certificate is ready to download." });
       invalidateAll();
     }
   };
