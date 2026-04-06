@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS user_enrollments (
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   course_id UUID NOT NULL REFERENCES academy_courses(id) ON DELETE CASCADE,
   status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'completed', 'suspended', 'payment_pending')),
+  progress INTEGER DEFAULT 0 CHECK (progress >= 0 AND progress <= 100),
   enrolled_at TIMESTAMPTZ DEFAULT now(),
   UNIQUE(user_id, course_id)
 );
@@ -69,4 +70,11 @@ USING (auth.uid() = user_id);
 CREATE POLICY "Users can enroll themselves" 
 ON user_enrollments FOR INSERT 
 TO authenticated 
+WITH CHECK (auth.uid() = user_id);
+
+-- Students can update their own progress
+CREATE POLICY "Users can update own progress" 
+ON user_enrollments FOR UPDATE 
+TO authenticated 
+USING (auth.uid() = user_id)
 WITH CHECK (auth.uid() = user_id);
