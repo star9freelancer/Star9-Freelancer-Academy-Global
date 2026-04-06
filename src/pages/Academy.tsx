@@ -365,8 +365,8 @@ const Academy = () => {
       </AnimatePresence>
 
       {/* MAIN CONTENT WRAPPER */}
-      <div className="pt-28 md:pt-32 pb-24 min-h-screen">
-        <main className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16 space-y-16 relative z-10">
+      <div className="pt-28 md:pt-32 pb-24 min-h-screen flex flex-col">
+        <main className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16 space-y-16 relative z-10 flex-grow flex flex-col">
 
       {/* MOBILE BOTTOM DOCK (Mobile Navigation Rail) */}
       <div className="lg:hidden fixed bottom-0 inset-x-0 z-50 p-4 flex justify-center translate-y-[-10px]">
@@ -507,11 +507,10 @@ const Academy = () => {
                      addSkill={addSkill} removeSkill={removeSkill} certificates={certificates} handleLogout={handleLogout}
                    />
                  )}
-                 
-                 <AcademyFooter />
                </div>
             </div>
           )}
+          <AcademyFooter />
         </main>
       </div>
 

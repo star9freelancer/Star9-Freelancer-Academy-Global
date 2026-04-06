@@ -3,7 +3,7 @@ import { Shield, Activity, Globe, Zap } from "lucide-react";
 
 export const AcademyFooter = () => {
   return (
-    <footer className="mt-12 pt-12 pb-12 border-t border-white/5 bg-zinc-950/30 backdrop-blur-sm -mx-4 md:-mx-8 px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+    <footer className="w-full mt-auto py-12 border-t border-white/5 bg-zinc-950/30 backdrop-blur-sm px-6 flex flex-col md:flex-row justify-between items-center gap-6">
       <div className="flex items-center gap-2">
         <Shield className="size-4 text-primary" />
         <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-white/80 font-bold">Star9 Academy</span>
