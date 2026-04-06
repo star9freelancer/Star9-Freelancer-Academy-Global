@@ -405,7 +405,7 @@ const Academy = () => {
                  />
                )}
 
-               {activeTab === "home" && <HomeFeed setActiveTab={setActiveTab} />}
+               {activeTab === "home" && <HomeFeed setActiveTab={setActiveTab} courses={courses} enrollments={enrollments} profile={profile} />}
 
                {activeTab === "academy" && (
                  <div className="space-y-8">

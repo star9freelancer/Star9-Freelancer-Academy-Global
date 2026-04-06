@@ -1,71 +1,50 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
-  Bell, Cpu, Users, Database, ArrowRight, TrendingUp 
+  Bell, Cpu, Users, Database, ArrowRight, TrendingUp, 
+  Sparkles, ShieldCheck, Globe, Zap, Network, BookOpen, Clock, Play
 } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface HomeFeedProps {
   setActiveTab: (tab: string) => void;
+  courses: any[];
+  enrollments: Map<string, any>;
+  profile: any;
 }
 
-export const HomeFeed = ({ setActiveTab }: HomeFeedProps) => {
+export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFeedProps) => {
   const [activities, setActivities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Derive "Active Tracks"
+  const activeEnrolledCourses = courses.filter(c => enrollments.has(c.id));
 
   useEffect(() => {
     const fetchActivity = async () => {
       setLoading(true);
       try {
-        // Fetch 3 most recent enrollments
-        const { data: enrollments } = await supabase
+        const { data: pulses } = await supabase
           .from('user_enrollments')
-          .select('enrolled_at, profiles(full_name), academy_courses(title)')
+          .select(`
+            enrolled_at, 
+            profiles(full_name), 
+            academy_courses(title)
+          `)
           .order('enrolled_at', { ascending: false })
-          .limit(3);
+          .limit(6);
 
-        // Fetch 2 most recent certificates
-        const { data: certificates } = await supabase
-          .from('user_certificates')
-          .select('created_at, profiles(full_name), academy_courses(title)')
-          .order('created_at', { ascending: false })
-          .limit(2);
+        const formattedPulses = pulses?.map(p => ({
+          text: `${(p.profiles as any)?.full_name || 'Personnel'} linked to ${(p.academy_courses as any)?.title}`,
+          date: new Date(p.enrolled_at),
+          icon: Zap,
+          color: "text-primary"
+        })) || [];
 
-        // Fetch 2 most recent jobs
-        const { data: jobs } = await supabase
-          .from('academy_jobs')
-          .select('title, company, posted_at')
-          .eq('is_active', true)
-          .order('posted_at', { ascending: false })
-          .limit(2);
-
-        // Aggregate into unified feed pulses
-        const pulses: any[] = [];
-        
-        enrollments?.forEach(e => pulses.push({
-          text: `${(e.profiles as any)?.full_name || 'Personnel'} joined the ${ (e.academy_courses as any)?.title || 'Academy'} mastery track.`,
-          date: new Date(e.enrolled_at),
-          icon: Users,
-          color: "text-blue-500"
-        }));
-
-        certificates?.forEach(c => pulses.push({
-          text: `${(c.profiles as any)?.full_name || 'Personnel'} minted a mastery credential for ${ (c.academy_courses as any)?.title }.`,
-          date: new Date(c.created_at),
-          icon: Database,
-          color: "text-emerald-500"
-        }));
-
-        jobs?.forEach(j => pulses.push({
-          text: `New High-Speed Digital Opportunity: ${j.title} at ${j.company}.`,
-          date: new Date(j.posted_at),
-          icon: Cpu,
-          color: "text-purple-500"
-        }));
-
-        setActivities(pulses.sort((a, b) => b.date - a.date).slice(0, 5));
+        setActivities(formattedPulses);
       } finally {
         setLoading(false);
       }
@@ -74,76 +53,148 @@ export const HomeFeed = ({ setActiveTab }: HomeFeedProps) => {
     fetchActivity();
   }, []);
 
-  const formatDistanceToNow = (date: Date) => {
-    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-    const intervals = { Y: 31536000, M: 2592000, D: 86400, H: 3600, MIN: 60 };
-    for (const [unit, value] of Object.entries(intervals)) {
-      const count = Math.floor(seconds / value);
-      if (count >= 1) return `${count}${unit} AGO`;
-    }
-    return "JUST NOW";
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   };
-  return (
-    <div className="space-y-8 max-w-5xl animate-in fade-in duration-700">
-      <div className="grid md:grid-cols-3 gap-6">
-        <Card className="glass border-border/50 p-6 space-y-4 group">
-          <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-            <Bell className="size-5" />
-          </div>
-          <div className="space-y-1">
-            <h4 className="text-[10px] font-mono uppercase tracking-[0.3em] text-muted-foreground">Network News</h4>
-            <h3 className="font-bold text-sm tracking-tight leading-snug">Welcome to the Star9 eHub community space.</h3>
-          </div>
-          <p className="text-[11px] text-muted-foreground leading-relaxed">Connect with collaborators across the global node to transform your technical career track.</p>
-        </Card>
-        
-        <Card className="md:col-span-2 relative overflow-hidden bg-zinc-900/50 border-white/5 p-8 group">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-50" />
-          <div className="relative z-10 space-y-5">
-            <div className="flex items-center gap-2">
-              <Badge className="bg-primary/20 text-primary border-primary/20 text-[9px] font-mono tracking-widest px-2.5">PRIORITY_ALPHA</Badge>
-              <h4 className="text-[10px] font-mono uppercase tracking-[0.4em] text-white/40">System Notice</h4>
-            </div>
-            <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tighter text-white">New Mastery Modules Available</h2>
-              <p className="text-sm text-zinc-400 max-w-md leading-relaxed">Three new premium training tracks regarding AI Operational Infrastructure have been synchronized in the Program Catalog.</p>
-            </div>
-            <div className="flex gap-4 pt-2">
-              <Button className="bg-white text-black hover:bg-white/90 font-mono text-[10px] uppercase tracking-[0.2em] py-5 px-8" onClick={() => setActiveTab('catalog')}>Explore Catalog</Button>
-              <Button variant="outline" className="font-mono text-[10px] uppercase tracking-[0.2em] py-5 px-8 border-white/10 text-white hover:bg-white/5" onClick={() => setActiveTab('community')}>Join Community</Button>
-            </div>
-          </div>
-          <div className="absolute -bottom-6 -right-6 p-8 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none">
-            <Cpu className="size-56" />
-          </div>
-        </Card>
-      </div>
 
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold tracking-tight">Recent Activity Feed</h3>
-          <button onClick={() => setActiveTab("academy")} className="text-[10px] font-mono uppercase tracking-widest text-primary hover:underline">View History</button>
+  return (
+    <div className="space-y-12 max-w-7xl mx-auto pb-20">
+      {/* 1. WELCOME & SYSTEM STATUS */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col md:flex-row md:items-end justify-between gap-6"
+      >
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+             <Badge className="bg-primary/10 text-primary border-primary/20 font-mono text-[9px] tracking-widest px-2.5">CORE_ACCESS_GRANTED</Badge>
+             <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Protocol Version 4.0.9</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Intelligence Dashboard</h1>
+          <p className="text-zinc-500 font-medium">Welcome back, {profile?.full_name?.split(' ')[0] || 'Personnel'}. System synchronization is complete.</p>
         </div>
-        <div className="grid gap-3">
-          {loading ? (
-            [1, 2, 3].map(i => <div key={i} className="h-16 rounded-2xl bg-white/5 animate-pulse" />)
-          ) : activities.length === 0 ? (
-            <p className="text-xs text-muted-foreground opacity-60 text-center py-8 italic uppercase tracking-widest">Awaiting personnel activity scans...</p>
-          ) : (
-            activities.map((item, i) => (
-              <div key={i} className="group flex items-center gap-4 p-4 rounded-2xl border border-white/5 bg-white/5 hover:bg-white/10 transition-all cursor-default">
-                <div className={`size-10 rounded-xl bg-zinc-900 border border-white/5 flex items-center justify-center shrink-0 ${item.color} group-hover:scale-110 transition-transform shadow-inner`}>
-                  <item.icon className="size-4" />
-                </div>
-                <span className="text-[13px] text-zinc-300 font-medium">{item.text}</span>
-                <div className="ms-auto flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="text-[9px] font-mono text-zinc-600 uppercase">{formatDistanceToNow(item.date)}</span>
-                  <ArrowRight className="size-3 text-zinc-500" />
-                </div>
+        
+        <div className="flex items-center gap-4 bg-zinc-900/50 p-2 rounded-2xl border border-white/5 backdrop-blur-xl">
+           <div className="px-4 py-2 border-r border-white/5">
+              <p className="text-[9px] font-mono uppercase tracking-widest text-zinc-500">Active Tracks</p>
+              <p className="text-xl font-black text-white">{activeEnrolledCourses.length}</p>
+           </div>
+           <div className="px-4 py-2">
+              <p className="text-[9px] font-mono uppercase tracking-widest text-zinc-500">Network Merit</p>
+              <p className="text-xl font-black text-amber-500">{profile?.merit_points || 0}</p>
+           </div>
+        </div>
+      </motion.div>
+
+      <div className="grid lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-12">
+          
+          {/* 2. ACTIVE LEARNING Short-cuts */}
+          <section className="space-y-6">
+            <div className="flex items-center justify-between">
+               <h3 className="text-sm font-mono uppercase tracking-[0.4em] text-primary font-bold">Active Synchronization</h3>
+               <div className="h-px flex-1 bg-white/5 mx-6" />
+            </div>
+            
+            {activeEnrolledCourses.length > 0 ? (
+              <div className="grid gap-4">
+                {activeEnrolledCourses.slice(0, 2).map((course, i) => {
+                  const enrollment = enrollments.get(course.id);
+                  return (
+                    <motion.div 
+                      key={course.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.1 }}
+                      className="group p-6 rounded-[2rem] glass hover:bg-white/[0.04] transition-all flex items-center gap-6 relative overflow-hidden"
+                    >
+                      <div className="size-16 rounded-2xl overflow-hidden shrink-0 border border-white/5">
+                        <img src={course.image_url} className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all" />
+                      </div>
+                      <div className="flex-1 space-y-1">
+                        <h4 className="font-bold text-lg">{course.title}</h4>
+                        <div className="flex items-center gap-3">
+                           <div className="flex-1 h-1 bg-zinc-800 rounded-full overflow-hidden">
+                              <div className="h-full bg-primary" style={{ width: `${enrollment?.progress}%` }} />
+                           </div>
+                           <span className="text-[10px] font-mono text-zinc-500">{enrollment?.progress}%</span>
+                        </div>
+                      </div>
+                      <Button onClick={() => setActiveTab('academy')} className="rounded-xl font-mono text-[9px] uppercase tracking-widest bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20">
+                         Resume Track <ArrowRight className="ml-2 size-3" />
+                      </Button>
+                    </motion.div>
+                  )
+                })}
               </div>
-            ))
-          )}
+            ) : (
+              <Card className="rounded-[2.5rem] border-dashed border-white/10 bg-transparent p-12 text-center">
+                 <p className="text-zinc-500 font-mono text-xs uppercase tracking-widest">No active personnel tracks detected.</p>
+                 <Button onClick={() => setActiveTab('catalog')} className="mt-4 bg-primary/20 text-primary hover:bg-primary/30 border-primary/20">Initialize Selection</Button>
+              </Card>
+            )}
+          </section>
+
+          {/* 3. ACADEMY MISSION & ECOSYSTEM */}
+          <section className="space-y-6">
+            <h3 className="text-sm font-mono uppercase tracking-[0.4em] text-zinc-500 font-bold">The Star9 Infrastructure</h3>
+            <div className="grid md:grid-cols-2 gap-6">
+               {[
+                 { title: "Immutable Credentials", desc: "Every mastery pulse is recorded on the Star9 digital ledger for civilian verification.", icon: ShieldCheck, color: "text-emerald-500" },
+                 { title: "Personnel Networking", desc: "Direct access to high-tier technical operational units across the global node.", icon: Network, color: "text-blue-500" },
+                 { title: "Infrastructure Mastery", desc: "Curriculum designed for the transition to professional digital infrastructure.", icon: Cpu, color: "text-purple-500" },
+                 { title: "Career Acceleration", desc: "Prioritized access to high-tier personnel opportunities within the Star9 node.", icon: TrendingUp, color: "text-amber-500" }
+               ].map((item, i) => (
+                 <Card key={i} className="p-6 glass border-white/5 hover:border-white/10 transition-all rounded-3xl space-y-3">
+                    <item.icon className={`size-6 ${item.color}`} />
+                    <h4 className="font-bold tracking-tight">{item.title}</h4>
+                    <p className="text-[12px] text-zinc-500 leading-relaxed">{item.desc}</p>
+                 </Card>
+               ))}
+            </div>
+          </section>
         </div>
+
+        {/* 4. ACTIVITY TERMINAL LOG */}
+        <aside className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-mono uppercase tracking-[0.4em] text-zinc-500 font-bold">Pulse Stream</h3>
+            <div className="size-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+          </div>
+          
+          <div className="rounded-3xl bg-zinc-950/80 border border-white/5 p-6 font-mono text-[11px] space-y-4 shadow-2xl backdrop-blur-3xl min-h-[500px] relative overflow-hidden">
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] pointer-events-none opacity-20" />
+            <div className="absolute inset-0 bg-[length:100%_2px] bg-[linear-gradient(to_bottom,transparent_0.5px,rgba(255,255,255,0.02)_0.5px)] pointer-events-none" />
+            
+            <div className="space-y-4">
+              <p className="text-zinc-600/[0.4]">// STARTING GLOBAL ACTIVITY SCAN...</p>
+              {activities.map((pulse, i) => (
+                <div key={i} className="flex gap-4 group">
+                  <span className="text-zinc-700 select-none">[{formatTime(pulse.date)}]</span>
+                  <p className="text-zinc-400 group-hover:text-primary transition-colors leading-relaxed">
+                     {pulse.text}
+                  </p>
+                </div>
+              ))}
+              <div className="flex gap-2 items-center text-primary">
+                 <span className="animate-pulse">_</span>
+                 <p className="text-zinc-800 italic uppercase spacing-widest">Awaiting further personnel interactions...</p>
+              </div>
+            </div>
+          </div>
+          
+          <Card className="glass border-primary/20 bg-primary/5 p-8 rounded-[2.5rem] relative overflow-hidden group cursor-pointer" onClick={() => setActiveTab('catalog')}>
+             <div className="relative z-10 space-y-4">
+                <Sparkles className="size-8 text-primary animate-float" />
+                <h3 className="text-xl font-bold tracking-tight">Expand Your Personnel Track</h3>
+                <p className="text-xs text-primary/60 leading-relaxed font-medium capitalize">Discover high-readiness operational modules in the global catalog.</p>
+                <div className="pt-2 flex items-center text-[10px] font-mono font-bold uppercase tracking-widest text-primary gap-2">
+                   Open Catalog <ArrowRight className="size-3" />
+                </div>
+             </div>
+             <div className="absolute -bottom-10 -right-10 size-40 bg-primary/10 rounded-full blur-3xl" />
+          </Card>
+        </aside>
       </div>
     </div>
   );
