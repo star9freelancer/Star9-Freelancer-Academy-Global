@@ -100,7 +100,7 @@ const AcademyHero = ({ type, title, subtitle, userName }: AcademyHeroProps) => {
           <div className={`p-2.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md ${config.accent} shadow-lg`}>
              <Icon className="size-5" />
           </div>
-          <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-white/50 font-bold">Member Academy Dashboard</span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-white/50 font-bold">Academy Home</span>
         </motion.div>
         
         <div className="space-y-4">
@@ -136,16 +136,16 @@ const AcademyHero = ({ type, title, subtitle, userName }: AcademyHeroProps) => {
           {type === 'community' && (
             <>
                <Button className="font-mono text-[10px] uppercase tracking-widest bg-primary hover:bg-primary/90 text-white px-8 py-6 rounded-xl shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95">
-                  Join Network Space
+                  Join Community
                </Button>
                <Button variant="outline" className="font-mono text-[10px] uppercase tracking-widest border-white/10 text-white/80 hover:bg-white/5 px-8 py-6 rounded-xl backdrop-blur-md">
-                  View Network Events
+                  View Events
                </Button>
             </>
           )}
           {type === 'catalog' && (
             <Button className="font-mono text-[10px] uppercase tracking-widest bg-amber-500 hover:bg-amber-600 text-white px-8 py-6 rounded-xl shadow-xl shadow-amber-500/20 transition-all hover:scale-105 active:scale-95">
-               Browse All Tracks
+               Browse Courses
             </Button>
           )}
         </motion.div>

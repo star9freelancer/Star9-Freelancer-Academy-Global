@@ -75,54 +75,73 @@ export default function JobBoard() {
         {filteredJobs.length === 0 ? (
           <Card className="glass border-dashed text-center p-12 opacity-80 col-span-full">
              <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-             <CardTitle className="mb-2 uppercase tracking-tighter">No Hits in Career Ledger</CardTitle>
-             <CardDescription>Adjust your search query to locate relevant personnel tracks.</CardDescription>
+             <CardTitle className="mb-2 uppercase tracking-tighter">No Jobs Found</CardTitle>
+             <CardDescription>Adjust your search filters to find available roles.</CardDescription>
           </Card>
         ) : (
           filteredJobs.map((job) => (
-            <Card key={job.id} className="glass border-white/5 bg-card/40 hover:bg-card/60 transition-all duration-300 group relative flex flex-col">
+            <Card key={job.id} className="glass border-white/5 bg-card/40 hover:bg-card/60 transition-all duration-300 group relative flex flex-col overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              
               <CardHeader className="pb-4">
                  <div className="flex items-start justify-between gap-4 mb-2">
                     <div className="size-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                       <Building2 className="size-5" />
+                       <Briefcase className="size-5" />
                     </div>
-                    <Badge variant="outline" className="font-mono text-[8px] uppercase tracking-widest border-white/10 text-muted-foreground">
-                       {job.type}
-                    </Badge>
+                    <div className="flex flex-col items-end gap-1">
+                       <Badge variant="outline" className="font-mono text-[8px] uppercase tracking-widest border-primary/20 text-primary bg-primary/5">
+                          {job.type}
+                       </Badge>
+                       <div className="flex items-center gap-1.5 mt-1">
+                          <div className="size-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                          <span className="text-[8px] font-mono text-zinc-500 uppercase tracking-widest">Active</span>
+                       </div>
+                    </div>
                  </div>
                  <h3 className="text-lg font-bold tracking-tight group-hover:text-primary transition-colors">{job.title}</h3>
                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-tight">{job.company}</p>
               </CardHeader>
               
-              <CardContent className="space-y-4 flex-1">
-                 <div className="flex flex-wrap gap-3">
-                    <span className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground uppercase">
-                       <MapPin className="size-3 text-secondary" /> {job.location}
-                    </span>
-                    <span className="flex items-center gap-1.5 text-[9px] font-mono text-muted-foreground uppercase">
-                       <DollarSign className="size-3 text-emerald-500" /> {job.salary_range}
-                    </span>
+              <CardContent className="space-y-5 flex-1">
+                 <div className="grid grid-cols-2 gap-3 pb-2 border-b border-white/5">
+                    <div className="space-y-1">
+                       <p className="text-[8px] font-mono uppercase tracking-widest text-zinc-600">Location</p>
+                       <div className="flex items-center gap-1.5 text-[10px] font-bold text-zinc-300 uppercase truncate">
+                          <Globe className="size-3 text-secondary" /> {job.location}
+                       </div>
+                    </div>
+                    <div className="space-y-1">
+                       <p className="text-[8px] font-mono uppercase tracking-widest text-zinc-600">Compensation</p>
+                       <div className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-500 uppercase truncate">
+                          <DollarSign className="size-3" /> {job.salary_range}
+                       </div>
+                    </div>
                  </div>
-                 
-                 <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed">
-                    {job.description}
-                 </p>
-                 
-                 <div className="flex flex-wrap gap-1.5">
-                    {job.requirements?.slice(0, 3).map((req: string, i: number) => (
-                       <span key={i} className="text-[8px] px-1.5 py-0.5 rounded bg-white/5 border border-white/5 uppercase tracking-widest text-zinc-400">
-                          {req}
-                       </span>
-                    ))}
+
+                 <div className="space-y-3">
+                   <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed">
+                      {job.description}
+                   </p>
+                   
+                   <div className="flex flex-wrap gap-1.5">
+                      {job.requirements?.slice(0, 3).map((req: string, i: number) => (
+                         <span key={i} className="text-[8px] px-2 py-0.5 rounded-full bg-white/5 border border-white/10 uppercase tracking-widest text-zinc-400 font-bold">
+                            {req}
+                         </span>
+                      ))}
+                      <span className="text-[8px] px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 uppercase tracking-widest text-primary font-bold">
+                         Level: Intermediate
+                      </span>
+                   </div>
                  </div>
               </CardContent>
               
               <CardFooter className="pt-4 border-t border-white/5">
                  <Button 
-                    className="w-full font-mono text-xs uppercase tracking-widest gap-2 bg-primary/10 hover:bg-primary text-primary hover:text-primary-foreground border border-primary/20 transition-all"
+                    className="w-full font-mono text-xs uppercase tracking-widest gap-2 bg-zinc-900 hover:bg-primary text-white border border-white/10 hover:border-primary transition-all active:scale-95 group/btn py-6 rounded-xl"
                     onClick={() => window.open(job.application_url || '#', '_blank')}
                   >
-                    Apply with Star9 Credentials <ArrowUpRight className="size-3" />
+                    View Role <ArrowUpRight className="size-3 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
                  </Button>
               </CardFooter>
             </Card>

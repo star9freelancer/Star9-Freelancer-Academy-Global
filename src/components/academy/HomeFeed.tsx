@@ -4,8 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
-  Bell, Cpu, Users, Database, ArrowRight, TrendingUp, 
-  Sparkles, ShieldCheck, Globe, Zap, Network, BookOpen, Clock, Play
+  Cpu, Users, Database, ArrowRight, TrendingUp, 
+  Sparkles, ShieldCheck, Globe, Zap, Network, BookOpen, Clock
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -35,10 +35,10 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
             academy_courses(title)
           `)
           .order('enrolled_at', { ascending: false })
-          .limit(6);
+          .limit(8);
 
         const formattedPulses = pulses?.map(p => ({
-          text: `${(p.profiles as any)?.full_name || 'Personnel'} linked to ${(p.academy_courses as any)?.title}`,
+          text: `${(p.profiles as any)?.full_name || 'User'} joined ${(p.academy_courses as any)?.title}`,
           date: new Date(p.enrolled_at),
           icon: Zap,
           color: "text-primary"
@@ -54,37 +54,33 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
   }, []);
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
-    <div className="space-y-12 max-w-7xl mx-auto pb-20">
+    <div className="space-y-12 max-w-7xl mx-auto pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* 1. WELCOME & SYSTEM STATUS */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col md:flex-row md:items-end justify-between gap-6"
-      >
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
-             <Badge className="bg-primary/10 text-primary border-primary/20 font-mono text-[9px] tracking-widest px-2.5">LOGGED_IN</Badge>
-             <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Version 4.0.9</span>
+             <Badge className="bg-primary/10 text-primary border-primary/20 font-mono text-[9px] tracking-widest px-2.5">ONLINE</Badge>
+             <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Global Network Active</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Your Home</h1>
-          <p className="text-zinc-500 font-medium">Welcome back, {profile?.full_name?.split(' ')[0] || 'User'}. Your dashboard is ready.</p>
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight uppercase">Dashboard</h1>
+          <p className="text-zinc-500 font-medium">Welcome back, {profile?.full_name?.split(' ')[0] || 'Member'}. Your academy status is up to date.</p>
         </div>
         
         <div className="flex items-center gap-4 bg-zinc-900/50 p-2 rounded-2xl border border-white/5 backdrop-blur-xl">
-           <div className="px-4 py-2 border-r border-white/5">
-              <p className="text-[9px] font-mono uppercase tracking-widest text-zinc-500">My Courses</p>
+           <div className="px-6 py-2 border-r border-white/5">
+              <p className="text-[9px] font-mono uppercase tracking-widest text-zinc-500">Active Courses</p>
               <p className="text-xl font-black text-white">{activeEnrolledCourses.length}</p>
            </div>
-           <div className="px-4 py-2">
-              <p className="text-[9px] font-mono uppercase tracking-widest text-zinc-500">Points</p>
+           <div className="px-6 py-2">
+              <p className="text-[9px] font-mono uppercase tracking-widest text-zinc-500">Merit Points</p>
               <p className="text-xl font-black text-amber-500">{profile?.merit_points || 0}</p>
            </div>
         </div>
-      </motion.div>
+      </div>
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-12">
@@ -92,107 +88,132 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
           {/* 2. ACTIVE LEARNING Short-cuts */}
           <section className="space-y-6">
             <div className="flex items-center justify-between">
-               <h3 className="text-sm font-mono uppercase tracking-[0.4em] text-primary font-bold">Your Courses</h3>
+               <h3 className="text-[10px] font-mono uppercase tracking-[0.4em] text-primary font-bold">Your Learning Tracks</h3>
                <div className="h-px flex-1 bg-white/5 mx-6" />
             </div>
             
             {activeEnrolledCourses.length > 0 ? (
-              <div className="grid gap-4">
-                {activeEnrolledCourses.slice(0, 2).map((course, i) => {
+              <div className="grid sm:grid-cols-2 gap-4">
+                {activeEnrolledCourses.slice(0, 4).map((course, i) => {
                   const enrollment = enrollments.get(course.id);
                   return (
                     <motion.div 
                       key={course.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.1 }}
-                      className="group p-6 rounded-[2rem] glass hover:bg-white/[0.04] transition-all flex items-center gap-6 relative overflow-hidden"
+                      className="group p-6 rounded-[2rem] glass-dark hover:bg-white/[0.04] transition-all flex items-center gap-6 relative overflow-hidden cursor-pointer border border-white/5 hover:border-primary/20"
+                      onClick={() => setActiveTab('academy')}
                     >
-                      <div className="size-16 rounded-2xl overflow-hidden shrink-0 border border-white/5">
-                        <img src={course.image_url} className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all" />
+                      <div className="size-16 rounded-2xl overflow-hidden shrink-0 border border-white/5 grayscale group-hover:grayscale-0 transition-all duration-500">
+                        <img src={course.image_url} className="w-full h-full object-cover" />
                       </div>
-                      <div className="flex-1 space-y-1">
-                        <h4 className="font-bold text-lg">{course.title}</h4>
-                        <div className="flex items-center gap-3">
-                           <div className="flex-1 h-1 bg-zinc-800 rounded-full overflow-hidden">
-                              <div className="h-full bg-primary" style={{ width: `${enrollment?.progress}%` }} />
-                           </div>
-                           <span className="text-[10px] font-mono text-zinc-500">{enrollment?.progress}%</span>
+                      <div className="flex-1 space-y-2">
+                        <h4 className="font-bold text-sm uppercase tracking-tight truncate">{course.title}</h4>
+                        <div className="w-full bg-zinc-800 h-1 rounded-full overflow-hidden">
+                           <div className="h-full bg-primary" style={{ width: `${enrollment?.progress || 0}%` }} />
                         </div>
+                        <p className="text-[9px] font-mono text-primary font-bold">{enrollment?.progress || 0}% COMPLETE</p>
                       </div>
-                      <Button onClick={() => setActiveTab('academy')} className="rounded-xl font-mono text-[9px] uppercase tracking-widest bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20">
-                         Continue <ArrowRight className="ml-2 size-3" />
-                      </Button>
+                      <ArrowRight className="size-4 text-zinc-700 group-hover:text-primary transition-colors" />
                     </motion.div>
-                  )
+                  );
                 })}
               </div>
             ) : (
-              <Card className="rounded-[2.5rem] border-dashed border-white/10 bg-transparent p-12 text-center">
-                 <p className="text-zinc-500 font-mono text-xs uppercase tracking-widest">You haven't started any courses yet.</p>
-                 <Button onClick={() => setActiveTab('catalog')} className="mt-4 bg-primary/20 text-primary hover:bg-primary/30 border-primary/20">Pick a Course</Button>
-              </Card>
+              <div className="rounded-[2.5rem] border border-dashed border-white/10 bg-zinc-950/20 p-12 text-center space-y-4">
+                 <BookOpen className="size-8 text-zinc-700 mx-auto" />
+                 <p className="text-zinc-500 font-mono text-[10px] uppercase tracking-widest">No active learning tracks detected.</p>
+                 <Button onClick={() => setActiveTab('catalog')} className="bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 rounded-xl font-mono text-[9px] uppercase tracking-widest">Browse Programs</Button>
+              </div>
             )}
           </section>
 
           {/* 3. ACADEMY MISSION & ECOSYSTEM */}
           <section className="space-y-6">
-            <h3 className="text-sm font-mono uppercase tracking-[0.4em] text-zinc-500 font-bold">About Star9 Academy</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-[10px] font-mono uppercase tracking-[0.4em] text-zinc-500 font-bold">Academy Ecosystem</h3>
+              <div className="h-px flex-1 bg-white/5 mx-6" />
+            </div>
             <div className="grid md:grid-cols-2 gap-6">
                {[
-                 { title: "Official Certificates", desc: "Every course you complete is recorded with a verified certificate.", icon: ShieldCheck, color: "text-emerald-500" },
-                 { title: "Social Networking", desc: "Connect with other members and experts in our community space.", icon: Network, color: "text-blue-500" },
-                 { title: "Expert Courses", desc: "Learn technical skills designed for modern digital careers.", icon: Cpu, color: "text-purple-500" },
-                 { title: "Career Growth", desc: "Get priority access to job opportunities in the Star9 network.", icon: TrendingUp, color: "text-amber-500" }
+                 { title: "Verified Certificates", desc: "Gain industry-standard credentials upon course completion.", icon: ShieldCheck, color: "text-emerald-500" },
+                 { title: "Global Community", desc: "Connect with skilled professionals across the global network.", icon: Users, color: "text-blue-500" },
+                 { title: "Premium Training", desc: "Access high-tier instructional content for digital careers.", icon: Cpu, color: "text-purple-500" },
+                 { title: "Career Engine", desc: "Unlock exclusive opportunities within our partner network.", icon: TrendingUp, color: "text-amber-500" }
                ].map((item, i) => (
-                 <Card key={i} className="p-6 glass border-white/5 hover:border-white/10 transition-all rounded-3xl space-y-3">
-                    <item.icon className={`size-6 ${item.color}`} />
-                    <h4 className="font-bold tracking-tight">{item.title}</h4>
-                    <p className="text-[12px] text-zinc-500 leading-relaxed">{item.desc}</p>
-                 </Card>
+                 <motion.div 
+                   key={i} 
+                   whileHover={{ scale: 1.02 }}
+                   className="p-8 rounded-[2rem] glass border border-white/5 space-y-4 hover:border-white/10 transition-all"
+                 >
+                    <div className={`p-3 rounded-xl bg-white/5 w-fit ${item.color}`}>
+                       <item.icon className="size-6" />
+                    </div>
+                    <div className="space-y-1">
+                       <h4 className="font-bold tracking-tight text-white uppercase">{item.title}</h4>
+                       <p className="text-sm text-zinc-500 leading-relaxed">{item.desc}</p>
+                    </div>
+                 </motion.div>
                ))}
             </div>
           </section>
         </div>
 
-        {/* 4. ACTIVITY TERMINAL LOG */}
+        {/* 4. ACTIVITY LOG (Pulse Stream) */}
         <aside className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-mono uppercase tracking-[0.4em] text-zinc-500 font-bold">Recent Updates</h3>
-            <div className="size-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+          <div className="flex items-center justify-between px-2">
+            <h3 className="text-[10px] font-mono uppercase tracking-[0.4em] text-zinc-500 font-bold">Recent Updates</h3>
+            <div className="size-2 bg-emerald-500 rounded-full animate-pulse ring-4 ring-emerald-500/20" />
           </div>
           
-          <div className="rounded-3xl bg-zinc-950/80 border border-white/5 p-6 font-mono text-[11px] space-y-4 shadow-2xl backdrop-blur-3xl min-h-[500px] relative overflow-hidden">
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] pointer-events-none opacity-20" />
-            <div className="absolute inset-0 bg-[length:100%_2px] bg-[linear-gradient(to_bottom,transparent_0.5px,rgba(255,255,255,0.02)_0.5px)] pointer-events-none" />
-            
-            <div className="space-y-4">
-              <p className="text-zinc-600/[0.4]">// RECENT ACTIVITY...</p>
-              {activities.map((pulse, i) => (
-                <div key={i} className="flex gap-4 group">
-                  <span className="text-zinc-700 select-none">[{formatTime(pulse.date)}]</span>
-                  <p className="text-zinc-400 group-hover:text-primary transition-colors leading-relaxed">
-                     {pulse.text.replace('Personnel', 'User')}
-                  </p>
+          <div className="rounded-[2.5rem] bg-zinc-950 border border-white/5 p-8 shadow-2xl relative overflow-hidden min-h-[500px]">
+             <div className="absolute top-0 right-0 p-8 opacity-5">
+                <Globe className="size-40" />
+             </div>
+             
+             <div className="relative z-10 space-y-6">
+                <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                   <p className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Live Stream</p>
+                   <p className="text-[10px] font-mono uppercase tracking-widest text-primary font-bold">SECURED</p>
                 </div>
-              ))}
-              <div className="flex gap-2 items-center text-primary">
-                 <span className="animate-pulse">_</span>
-                 <p className="text-zinc-800 italic uppercase spacing-widest">Awaiting user activity...</p>
-              </div>
-            </div>
+                
+                <div className="space-y-6">
+                  {activities.map((pulse, i) => (
+                    <div key={i} className="flex gap-4 group">
+                      <div className="p-2 rounded-lg bg-white/5 border border-white/10 text-primary group-hover:scale-110 transition-transform flex-shrink-0">
+                         <pulse.icon className="size-3" />
+                      </div>
+                      <div className="space-y-1 pr-4">
+                         <p className="text-[10px] items-center gap-2 flex">
+                            <span className="text-zinc-600 font-mono">[{formatTime(pulse.date)}]</span>
+                            <span className="font-mono uppercase tracking-widest text-white/80">{pulse.text}</span>
+                         </p>
+                      </div>
+                    </div>
+                  ))}
+                  {activities.length === 0 && !loading && (
+                    <p className="text-center text-zinc-700 font-mono text-[9px] uppercase tracking-widest py-10 italic">Awaiting network activity...</p>
+                  )}
+                  {loading && (
+                    <div className="space-y-6">
+                       {[1,2,3].map(i => <div key={i} className="h-8 w-full bg-white/5 rounded-lg animate-pulse" />)}
+                    </div>
+                  )}
+                </div>
+             </div>
           </div>
           
           <Card className="glass border-primary/20 bg-primary/5 p-8 rounded-[2.5rem] relative overflow-hidden group cursor-pointer" onClick={() => setActiveTab('catalog')}>
              <div className="relative z-10 space-y-4">
-                <Sparkles className="size-8 text-primary animate-float" />
-                <h3 className="text-xl font-bold tracking-tight">Explore More Courses</h3>
-                <p className="text-xs text-primary/60 leading-relaxed font-medium capitalize">Find new learning opportunities in the academy catalog.</p>
-                <div className="pt-2 flex items-center text-[10px] font-mono font-bold uppercase tracking-widest text-primary gap-2">
+                <Sparkles className="size-8 text-primary" />
+                <h3 className="text-xl font-bold tracking-tight uppercase">Expand Skills</h3>
+                <p className="text-sm text-primary/60 leading-relaxed font-medium">Browse the full catalog and start a new learning track today.</p>
+                <div className="pt-4 flex items-center text-[10px] font-mono font-black uppercase tracking-[0.3em] text-primary gap-2">
                    Open Catalog <ArrowRight className="size-3" />
                 </div>
              </div>
-             <div className="absolute -bottom-10 -right-10 size-40 bg-primary/10 rounded-full blur-3xl" />
+             <div className="absolute -bottom-10 -right-10 size-40 bg-primary/10 rounded-full blur-3xl opacity-50" />
           </Card>
         </aside>
       </div>

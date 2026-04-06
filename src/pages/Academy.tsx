@@ -44,7 +44,6 @@ const Academy = () => {
   const [enrolling, setEnrolling] = useState<string | null>(null);
   const [activeLessonIdx, setActiveLessonIdx] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [selectedProgram, setSelectedProgram] = useState<any | null>(null);
   const [saving, setSaving] = useState(false);
@@ -160,21 +159,6 @@ const Academy = () => {
     }
   };
 
-  const generateLinkedInUrl = (cert: any) => {
-    const courseTitle = cert.academy_courses?.title || "Star9 Professional Certification";
-    const baseUrl = "https://www.linkedin.com/profile/add";
-    const params = new URLSearchParams({
-      startTask: "CERTIFICATION_NAME",
-      name: courseTitle,
-      organizationName: "Star9 Infrastructure",
-      issueYear: new Date(cert.created_at).getFullYear().toString(),
-      issueMonth: (new Date(cert.created_at).getMonth() + 1).toString(),
-      certId: cert.credential_id,
-      certUrl: `${window.location.origin}/verify/${cert.credential_id}`
-    });
-    return `${baseUrl}?${params.toString()}`;
-  };
-
   const handleEnroll = async (courseId: string) => {
     if (!user) return;
     setEnrolling(courseId);
@@ -218,8 +202,8 @@ const Academy = () => {
         .eq('id', user.id);
 
       if (!pointsError) {
-        toast.success(`+${pointsToAward} Network Merit`, { 
-          description: newProgress >= 100 ? "Curriculum Mastery Achieved!" : "Digital skill synchronized." 
+        toast.success(`+${pointsToAward} Merit Points`, { 
+          description: newProgress >= 100 ? "Course Completed!" : "Lesson finished." 
         });
         await refreshProfile();
       }
@@ -412,19 +396,27 @@ const Academy = () => {
                  <div className="space-y-8">
                     <div className="flex items-center gap-3">
                        <div className="h-px flex-1 bg-border/50" />
-                       <h3 className="font-mono text-[10px] uppercase tracking-[0.4em] text-primary">Your Active Learning</h3>
+                       <h3 className="font-mono text-[10px] uppercase tracking-[0.4em] text-primary">Your Learning Progress</h3>
                        <div className="h-px flex-1 bg-border/50" />
                     </div>
                     
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {courses.filter(c => enrollments.has(c.id)).map((course) => (
-                         <CourseCard key={course.id} course={course} enrollment={enrollments.get(course.id)} onOpen={() => { setPlayingCourse(course); setActiveLessonIdx(0); }} />
-                      ))}
+                      {courses
+                        .filter(c => enrollments.has(c.id))
+                        .filter(c => 
+                          searchQuery === "" || 
+                          c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          c.category.toLowerCase().includes(searchQuery.toLowerCase())
+                        )
+                        .map((course) => (
+                          <CourseCard key={course.id} course={course} enrollment={enrollments.get(course.id)} onOpen={() => { setPlayingCourse(course); setActiveLessonIdx(0); }} />
+                        ))
+                      }
                       {courses.filter(c => enrollments.has(c.id)).length === 0 && (
                          <Card className="glass border-dashed p-12 text-center col-span-full opacity-60">
                             <BookOpen className="size-12 mx-auto mb-4 text-muted-foreground" />
-                            <h3 className="font-bold">No Active Paths Detected</h3>
-                            <Button className="mt-6 font-mono text-[10px] bg-primary/20 text-primary border-primary/20" variant="outline" onClick={() => setActiveTab('catalog')}>Open Catalog</Button>
+                            <h3 className="font-bold">No Active Courses Detected</h3>
+                            <Button className="mt-6 font-mono text-[10px] bg-primary/20 text-primary border-primary/20" variant="outline" onClick={() => setActiveTab('catalog')}>Browse Catalog</Button>
                          </Card>
                       )}
                     </div>
@@ -435,13 +427,20 @@ const Academy = () => {
                  <div className="space-y-8">
                     <div className="flex items-center gap-3">
                        <div className="h-px flex-1 bg-border/50" />
-                       <h3 className="font-mono text-[10px] uppercase tracking-[0.4em] text-muted-foreground">Global Program Catalog</h3>
+                       <h3 className="font-mono text-[10px] uppercase tracking-[0.4em] text-muted-foreground">Full Course Catalog</h3>
                        <div className="h-px flex-1 bg-border/50" />
                     </div>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {courses.map((course) => (
-                        <CourseCard key={course.id} course={course} enrollment={enrollments.get(course.id)} isEnrolling={enrolling === course.id} onEnroll={() => handleEnroll(course.id)} onViewDetails={() => setSelectedProgram(course)} />
-                      ))}
+                      {courses
+                        .filter(c => 
+                          searchQuery === "" || 
+                          c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          c.category.toLowerCase().includes(searchQuery.toLowerCase())
+                        )
+                        .map((course) => (
+                          <CourseCard key={course.id} course={course} enrollment={enrollments.get(course.id)} isEnrolling={enrolling === course.id} onEnroll={() => handleEnroll(course.id)} onViewDetails={() => setSelectedProgram(course)} />
+                        ))
+                      }
                     </div>
                  </div>
                )}
