@@ -553,7 +553,7 @@ const Academy = () => {
                       <Button variant="ghost" className="text-zinc-400" disabled={activeLessonIdx === 0} onClick={() => setActiveLessonIdx(v => v - 1)}><ArrowLeft className="size-5" /></Button>
                       <Button variant="ghost" className="text-zinc-400" disabled={activeLessonIdx === (playingCourse.academy_lessons?.length || 1) - 1} onClick={() => setActiveLessonIdx(v => v + 1)}><ArrowRight className="size-5" /></Button>
                    </div>
-                   <Button className="bg-primary/20 text-primary border-primary/20 font-mono text-[10px] uppercase" variant="outline" onClick={() => handleLessonComplete(playingCourse.id, activeLessonIdx)}>Mark Mastered</Button>
+                   <Button className="bg-primary/20 text-primary border-primary/20 text-xs" variant="outline" onClick={() => handleLessonComplete(playingCourse.id, activeLessonIdx)}>Mark Complete</Button>
                 </div>
               </div>
               <div className="w-full lg:w-90 border-l border-white/5 p-4 overflow-y-auto space-y-2 bg-zinc-900/30 shrink-0">
