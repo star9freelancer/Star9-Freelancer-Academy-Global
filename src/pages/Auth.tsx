@@ -25,7 +25,7 @@ export default function Auth() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Personnel Redirect: Instant clearance if already identified
+  // Redirect: Instant clearance if already authenticated
   useEffect(() => {
     if (!authLoading && user) {
       setIsClearing(true);
@@ -100,7 +100,7 @@ export default function Auth() {
           </div>
 
           <div className="space-y-4">
-            <h2 className="font-mono text-lg uppercase tracking-[0.5em] font-bold animate-pulse">Personnel Identified</h2>
+            <h2 className="font-mono text-lg uppercase tracking-[0.5em] font-bold animate-pulse">Credentials Verified</h2>
             <div className="flex flex-col gap-2 font-mono text-[9px] uppercase tracking-widest opacity-60">
                <div className="flex items-center justify-between gap-8 py-1 border-b border-white/10">
                   <span className="flex items-center gap-2"><Globe className="size-3" /> NETWORK</span>
@@ -155,7 +155,7 @@ export default function Auth() {
       <div className="w-full max-w-lg p-4 relative z-10">
         <div className="flex flex-col items-center justify-center mb-8 gap-2">
           <span className="font-mono text-2xl tracking-widest uppercase font-semibold text-foreground">STAR9</span>
-          <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-muted-foreground opacity-50">Personnel Onboarding Portal</span>
+          <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-muted-foreground opacity-50">Member Onboarding Portal</span>
         </div>
 
         <Card className="glass border-border/50 shadow-2xl backdrop-blur-xl">
@@ -216,7 +216,7 @@ export default function Auth() {
                   onClick={() => handleAuth(false)}
                 >
                   {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Identify Personnel
+                  Verify Identity
                 </Button>
               </CardFooter>
             </TabsContent>
@@ -253,7 +253,7 @@ export default function Auth() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="reg-name">Full Personnel Name</Label>
+                    <Label htmlFor="reg-name">Full Legal Name</Label>
                     <Input 
                       id="reg-name" 
                       type="text" 
@@ -283,7 +283,7 @@ export default function Auth() {
                   onClick={() => handleAuth(true)}
                 >
                   {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Register Asset
+                  Complete Registration
                 </Button>
               </CardFooter>
             </TabsContent>

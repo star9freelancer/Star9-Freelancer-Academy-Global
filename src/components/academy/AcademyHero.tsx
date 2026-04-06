@@ -50,7 +50,7 @@ const AcademyHero = ({ type, title, subtitle, userName }: AcademyHeroProps) => {
   const Icon = config.icon;
 
   return (
-    <div className="relative w-full rounded-[2rem] overflow-hidden mb-12 group border border-white/5 shadow-2xl">
+    <div className="relative w-full rounded-[2rem] overflow-hidden mb-8 group border border-white/5 shadow-2xl">
       {/* Background Image / Overlay */}
       <div className="absolute inset-0 z-0">
         <motion.img 
@@ -90,7 +90,7 @@ const AcademyHero = ({ type, title, subtitle, userName }: AcademyHeroProps) => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 p-10 md:p-16 space-y-6 max-w-4xl">
+      <div className="relative z-10 p-8 md:p-12 space-y-4 max-w-4xl">
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -109,7 +109,7 @@ const AcademyHero = ({ type, title, subtitle, userName }: AcademyHeroProps) => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
-            className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.05]"
+            className="text-3xl md:text-5xl lg:text-5xl font-bold tracking-tight text-white leading-[1.1]"
           >
             {title || config.defaultTitle.split(' ').map((word, i) => (
               <span key={i} className={i === 0 ? "text-primary" : ""}>{word} </span>
@@ -121,7 +121,7 @@ const AcademyHero = ({ type, title, subtitle, userName }: AcademyHeroProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.4 }}
-            className="text-sm md:text-xl text-white/50 font-medium max-w-2xl leading-relaxed"
+            className="text-xs md:text-base text-white/50 font-medium max-w-2xl leading-relaxed"
           >
             {subtitle || config.defaultSubtitle}
           </motion.p>
@@ -135,10 +135,10 @@ const AcademyHero = ({ type, title, subtitle, userName }: AcademyHeroProps) => {
         >
           {type === 'community' && (
             <>
-               <Button className="font-mono text-[10px] uppercase tracking-widest bg-primary hover:bg-primary/90 text-white px-8 py-6 rounded-xl shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95">
+               <Button className="font-mono text-[9px] uppercase tracking-widest bg-primary hover:bg-primary/90 text-white px-6 py-4 rounded-xl shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95">
                   Join Community
                </Button>
-               <Button variant="outline" className="font-mono text-[10px] uppercase tracking-widest border-white/10 text-white/80 hover:bg-white/5 px-8 py-6 rounded-xl backdrop-blur-md">
+               <Button variant="outline" className="font-mono text-[9px] uppercase tracking-widest border-white/10 text-white/80 hover:bg-white/5 px-6 py-4 rounded-xl backdrop-blur-md">
                   View Events
                </Button>
             </>

@@ -178,9 +178,13 @@ export const UserSettings = ({
             
             <div className="relative z-10 flex flex-col h-full justify-between">
               <div className="flex justify-between items-start">
-                <div className="space-y-1">
+                <div className="space-y-2">
                   <p className="text-[10px] font-mono uppercase tracking-[0.4em] text-primary/80 font-black">Star9 Academy</p>
-                  <p className="text-[8px] font-mono uppercase tracking-[0.2em] text-zinc-600">ID: {user?.id?.substring(0, 12)}</p>
+                  <div className="flex items-center gap-1">
+                    {user?.id?.substring(0, 12).match(/.{1,4}/g)?.map((seg: string, i: number) => (
+                      <span key={i} className="px-1.5 py-0.5 rounded bg-white/5 border border-white/5 text-[8px] font-mono text-zinc-500 uppercase tracking-widest">{seg}</span>
+                    ))}
+                  </div>
                 </div>
                 <div className="size-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center backdrop-blur-md">
                   <ShieldCheck className="size-6 text-primary" />

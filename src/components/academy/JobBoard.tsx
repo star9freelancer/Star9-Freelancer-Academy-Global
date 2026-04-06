@@ -57,7 +57,7 @@ export default function JobBoard() {
       <div className="flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="space-y-1">
           <h2 className="text-3xl font-bold tracking-tight uppercase leading-none">Career Engine</h2>
-          <p className="text-muted-foreground font-mono text-[10px] uppercase tracking-[0.3em]">Premium Personnel Opportunities</p>
+          <p className="text-muted-foreground font-mono text-[10px] uppercase tracking-[0.3em]">Premium Professional Opportunities</p>
         </div>
         
         <div className="relative w-full md:w-80 group">
@@ -158,7 +158,7 @@ export default function JobBoard() {
                <Sparkles className="size-4 text-secondary" />
                <span className="font-mono text-[10px] uppercase tracking-widest text-secondary font-bold">Personal Career Advisory</span>
             </div>
-            <h3 className="text-2xl font-bold tracking-tight">Expand your global personnel footprint.</h3>
+            <h3 className="text-2xl font-bold tracking-tight">Expand your global career footprint.</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
                As a Star9 practitioner, your verified credentials provide instant clearance for high-speed digital delivery roles across the network. Optimize your profile to increase your visibility to top-tier enterprise partners.
             </p>

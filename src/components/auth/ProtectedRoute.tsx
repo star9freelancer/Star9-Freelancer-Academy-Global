@@ -23,9 +23,7 @@ const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps)
             <ShieldCheck className="w-3 h-3 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
           </div>
           <div className="space-y-2">
-            <p className="font-mono text-[8px] uppercase tracking-[0.4em] text-primary/80 font-bold animate-pulse">
-              Personnel Verification
-            </p>
+
             <p className="text-[8px] text-muted-foreground uppercase tracking-widest opacity-40">
               Star9 Infrastructure Fast-Track
             </p>

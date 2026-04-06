@@ -94,9 +94,9 @@ const Admin = () => {
       const { data: courseData } = await supabase.from('academy_courses').select('*').order('created_at', { ascending: false });
       if (courseData) setCourses(courseData);
 
-      // 3. Fetch Opportunities
-      const { data: oppData } = await supabase.from('global_opportunities').select('*').order('created_at', { ascending: false });
-      if (oppData) setOpportunities(oppData);
+      // 3. Fetch Jobs (Unified)
+      const { data: jobData } = await supabase.from('academy_jobs').select('*').order('posted_at', { ascending: false });
+      if (jobData) setOpportunities(jobData);
 
       // 4. Fetch Invoices
       const { data: invData } = await supabase.from('invoices').select('*').order('created_at', { ascending: false });
@@ -158,7 +158,7 @@ const Admin = () => {
 
   const handleDeleteOpportunity = async (id: string) => {
     if (!confirm("Are you sure you want to remove this opportunity?")) return;
-    const { error } = await supabase.from('global_opportunities').delete().eq('id', id);
+    const { error } = await supabase.from('academy_jobs').delete().eq('id', id);
     if (!error) {
       toast.success("Opportunity de-listed");
       fetchAllData();
@@ -169,14 +169,26 @@ const Admin = () => {
     if (!editingCourse.title) return toast.error("Course title required");
     
     setLoadingCourses(true);
-    const { error } = await supabase
+    const { data: upsertData, error } = await supabase
       .from('academy_courses')
       .upsert({
         ...editingCourse,
         updated_at: new Date().toISOString()
-      });
+      })
+      .select('id, title')
+      .single();
       
-    if (!error) {
+    if (!error && upsertData) {
+      // Create a chat group for the course if it doesn't exist
+      const { data: existingGroup } = await supabase.from('chat_groups').select('id').eq('course_id', upsertData.id).single();
+      if (!existingGroup) {
+        await supabase.from('chat_groups').insert({ 
+          name: upsertData.title, 
+          type: 'course', 
+          course_id: upsertData.id
+        });
+      }
+      
       toast.success("Academy Module Synchronized");
       setEditingCourse(null);
       fetchAllData();
@@ -199,13 +211,17 @@ const Admin = () => {
   };
 
   const handleCreateOpportunity = async () => {
-    const employer = prompt("Enter Employer Name:");
-    if (!employer) return;
-    const { error } = await supabase.from('global_opportunities').insert([{ 
-      employer_name: employer, 
-      opportunity_category: 'Remote Work', 
-      application_link: 'https://',
-      status: 'open' 
+    const title = prompt("Enter Job Title:");
+    if (!title) return;
+    const company = prompt("Enter Company Name:");
+    if (!company) return;
+    
+    const { error } = await supabase.from('academy_jobs').insert([{ 
+      title: title,
+      company: company, 
+      type: 'Remote Work', 
+      application_url: 'https://',
+      is_active: true 
     }]);
     if (!error) {
       toast.success("New Opportunity Ingested");
@@ -328,7 +344,7 @@ const Admin = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center gap-2 text-xs text-green-500 font-mono">
-                      <Users className="size-3" /> Total Personnel
+                      <Users className="size-3" /> Total Members
                     </div>
                   </CardContent>
                 </Card>
@@ -388,9 +404,9 @@ const Admin = () => {
             <div className="space-y-8 max-w-6xl mx-auto relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                  <Badge className="mb-2 bg-primary/10 text-primary border-primary/20 py-1 font-mono text-[10px] tracking-widest uppercase">Personnel Access</Badge>
+                  <Badge className="mb-2 bg-primary/10 text-primary border-primary/20 py-1 font-mono text-[10px] tracking-widest uppercase">User Access</Badge>
                   <h1 className="text-4xl font-bold tracking-tighter uppercase leading-none">User Authorization</h1>
-                  <p className="text-muted-foreground mt-2 font-medium">Verify credentials and manage personnel roles across the global infrastructure.</p>
+                  <p className="text-muted-foreground mt-2 font-medium">Verify credentials and manage member roles across the global infrastructure.</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <Button variant="outline" className="font-mono text-[10px] uppercase tracking-widest" onClick={fetchAllData}>Resync Network</Button>
@@ -400,7 +416,7 @@ const Admin = () => {
               <div className="grid md:grid-cols-3 gap-6">
                 <Card className="glass border-border/50 bg-gradient-to-br from-card to-zinc-900/50">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground">Total Personnel</CardTitle>
+                    <CardTitle className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground">Total Members</CardTitle>
                     <h3 className="text-4xl font-bold">{students.length}</h3>
                   </CardHeader>
                   <CardContent>
@@ -438,7 +454,7 @@ const Admin = () => {
                   <table className="w-full text-sm text-left">
                     <thead className="bg-zinc-900/80 border-b border-border/50 text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
                       <tr>
-                        <th className="px-6 py-5">Personnel ID</th>
+                        <th className="px-6 py-5">Member ID</th>
                         <th className="px-6 py-5">Role</th>
                         <th className="px-6 py-5">Study Streak</th>
                         <th className="px-6 py-5">Auth Status</th>
@@ -449,7 +465,7 @@ const Admin = () => {
                       {loadingStudents ? (
                         <tr><td colSpan={5} className="px-6 py-12 text-center animate-pulse font-mono text-xs uppercase tracking-widest">Scanning Network Ingress...</td></tr>
                       ) : students.length === 0 ? (
-                        <tr><td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">No personnel detected in the local network.</td></tr>
+                        <tr><td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">No members detected in the local network.</td></tr>
                       ) : students.map((std) => (
                         <tr key={std.id} className="hover:bg-zinc-800/20 transition-all duration-300 group">
                           <td className="px-6 py-5 font-mono text-[10px]">
@@ -461,7 +477,7 @@ const Admin = () => {
                                 {std.email?.charAt(0).toUpperCase()}
                               </div>
                               <div className="space-y-0.5">
-                                <p className="font-bold uppercase tracking-tight group-hover:text-primary transition-colors">{std.full_name || "UNNAMED AGENT"}</p>
+                                <p className="font-bold uppercase tracking-tight group-hover:text-primary transition-colors">{std.full_name || "UNNAMED USER"}</p>
                                 <div className="flex items-center gap-2">
                                   <Mail className="size-3 text-muted-foreground" />
                                   <p className="text-[10px] text-muted-foreground font-mono">{std.email}</p>
@@ -498,8 +514,8 @@ const Admin = () => {
                                 </SheetTrigger>
                                 <SheetContent className="glass-deep border-l border-primary/20 w-[400px] sm:w-[540px]">
                                   <SheetHeader className="pb-8 border-b border-border/20">
-                                    <Badge className="w-fit mb-4 bg-primary/10 text-primary border-primary/20">Personnel Dossier</Badge>
-                                    <SheetTitle className="text-3xl font-bold tracking-tighter uppercase">{std.full_name || "Unnamed Agent"}</SheetTitle>
+                                    <Badge className="w-fit mb-4 bg-primary/10 text-primary border-primary/20">Member Profile</Badge>
+                                    <SheetTitle className="text-3xl font-bold tracking-tighter uppercase">{std.full_name || "Unnamed Member"}</SheetTitle>
                                     <SheetDescription className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                                       Registered: {new Date(std.created_at).toLocaleDateString()}
                                     </SheetDescription>
@@ -519,7 +535,7 @@ const Admin = () => {
                                     
                                     <div className="space-y-2">
                                       <p className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground">Personal Bio</p>
-                                      <p className="text-sm text-muted-foreground leading-relaxed italic">"{std.bio || "No biography established in personal archives."}"</p>
+                                      <p className="text-sm text-muted-foreground leading-relaxed italic">"{std.bio || "No biography established in member archives."}"</p>
                                     </div>
 
                                     <div className="space-y-3">
@@ -577,7 +593,7 @@ const Admin = () => {
               {editingCourse ? (
                 <Card className="glass border-primary/20 p-8 space-y-8 animate-in slide-in-from-right-4 duration-500">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-2xl font-bold uppercase tracking-tight">Dossier: {editingCourse.title || "New Module"}</h2>
+                    <h2 className="text-2xl font-bold uppercase tracking-tight">Profile: {editingCourse.title || "New Module"}</h2>
                     <div className="flex gap-2">
                        <Button variant="ghost" className="font-mono text-[10px] uppercase tracking-widest" onClick={() => setEditingCourse(null)}>Discard</Button>
                        <Button className="font-mono text-[10px] uppercase tracking-widest px-8" onClick={handleSaveCourse}>Commit Assets</Button>
@@ -796,7 +812,7 @@ const Admin = () => {
                        ) : invoices.map((inv) => (
                          <tr key={inv.id} className="hover:bg-zinc-800/20 transition-all duration-300">
                            <td className="px-6 py-5 font-mono text-[10px] uppercase">{inv.id.substring(0, 8)}</td>
-                           <td className="px-6 py-5 font-bold uppercase tracking-tight">Personnel_UID_{inv.user_id.substring(0,4)}</td>
+                           <td className="px-6 py-5 font-bold uppercase tracking-tight">USER_UID_{inv.user_id.substring(0,4)}</td>
                            <td className="px-6 py-5 font-black text-emerald-500">${inv.amount}</td>
                            <td className="px-6 py-5">
                               <Badge className={`px-2 py-0.5 font-mono text-[9px] rounded-full uppercase tracking-widest ${inv.status === 'paid' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-orange-500/10 text-orange-500'}`}>{inv.status}</Badge>

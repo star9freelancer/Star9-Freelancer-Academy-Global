@@ -5,7 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 
 /**
  * PRODUCTION-READY CURRICULUM LEDGER (Star9 Exclusive)
- * This ledger contains the only three courses visible to personnel.
+ * This ledger contains the only three courses visible to members.
  * Each module is mapped to a relevant instructional video for an immersive experience.
  */
 const CURRICULUM_LEDGER = [

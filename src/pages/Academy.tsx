@@ -163,20 +163,37 @@ const Academy = () => {
     if (!user) return;
     setEnrolling(courseId);
     try {
-      const { error } = await supabase
+      // 1. Course Enrollment
+      const { error: enrollError } = await supabase
         .from('user_enrollments')
         .insert({ user_id: user.id, course_id: courseId, progress: 0 });
       
-      if (error) {
-         if (error.code === '23505') {
+      if (enrollError) {
+         if (enrollError.code === '23505') {
             toast.error("Already enrolled in this course");
          } else {
-            toast.error(`Enrollment failed: ${error.message || 'Please try again.'}`);
+            toast.error(`Enrollment failed: ${enrollError.message || 'Please try again.'}`);
          }
-      } else {
-         toast.success("Successfully enrolled in course");
-         invalidateAll();
+         return;
       }
+
+      // 2. Automatic Community Integration
+      // A. Join General Lounge (if not member)
+      const { data: generalGroup } = await supabase.from('chat_groups').select('id').eq('type', 'general').single();
+      if (generalGroup) {
+        await supabase.from('chat_members').upsert({ group_id: generalGroup.id, user_id: user.id }, { onConflict: 'group_id,user_id' });
+      }
+
+      // B. Join Course Community
+      const { data: courseGroup } = await supabase.from('chat_groups').select('id').eq('course_id', courseId).single();
+      if (courseGroup) {
+        await supabase.from('chat_members').upsert({ group_id: courseGroup.id, user_id: user.id }, { onConflict: 'group_id,user_id' });
+      }
+      
+      toast.success("Successfully enrolled", { description: "You've been added to the course and its community group." });
+      invalidateAll();
+    } catch (err) {
+      toast.error("Enrollment sequence interrupted");
     } finally {
       setEnrolling(null);
     }
@@ -350,7 +367,7 @@ const Academy = () => {
       <div className="pt-28 md:pt-32 pb-24 lg:pb-0 min-h-screen">
         <main className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16 space-y-16 relative z-10">
 
-      {/* MOBILE BOTTOM DOCK (Personnel Utility Rail) */}
+      {/* MOBILE BOTTOM DOCK (Mobile Navigation Rail) */}
       <div className="lg:hidden fixed bottom-0 inset-x-0 z-50 p-4 flex justify-center translate-y-[-10px]">
         <motion.div 
           initial={{ y: 50, opacity: 0 }}
@@ -498,7 +515,7 @@ const Academy = () => {
         {activeCert && (
           <div ref={certificateRef}>
              <CertificateTemplate 
-                studentName={profile?.full_name || "Personnel"} 
+                studentName={profile?.full_name || "Member"} 
                 courseName={activeCert.academy_courses?.title || "Star9 Mastery Class"}
                 date={new Date(activeCert.created_at).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}
                 credentialId={activeCert.credential_id}
