@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ExternalLink, Moon, Sun, Menu, X, LayoutDashboard } from "lucide-react";
+import { Moon, Sun, Menu, X, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo_transparent.png";
 import { supabase } from "@/lib/supabase";
@@ -19,7 +19,6 @@ const Header = () => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
 
-    // Auth check
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
     });
@@ -40,8 +39,8 @@ const Header = () => {
   }, [dark]);
 
   const navLinks = [
-    { label: "Ecosystem", href: "#about" },
-    { label: "Capabilities", href: "#features" },
+    { label: "About", href: "#about" },
+    { label: "Features", href: "#features" },
     { label: "Academy", href: "/academy" },
     { label: "Global", href: "/global" },
   ];
@@ -54,13 +53,12 @@ const Header = () => {
     >
       <div className="container flex items-center justify-between h-20">
         <Link to="/" className="flex items-center gap-2 z-50">
-          <img src={logo} alt="Star9" className="h-10 md:h-[48px] w-auto object-contain shrink-0" />
+          <img src={logo} alt="Star9" className="h-10 md:h-12 w-auto object-contain shrink-0" />
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-2">
+        <nav className="hidden md:flex items-center gap-1">
           {navLinks.map((l) => (
-            <Button key={l.label} variant="ghost-nav" size="sm" className="font-mono uppercase tracking-widest text-[11px]" asChild>
+            <Button key={l.label} variant="ghost" size="sm" className="text-sm font-medium" asChild>
               {l.href.startsWith("#") ? (
                 <a href={l.href}>{l.label}</a>
               ) : (
@@ -70,7 +68,7 @@ const Header = () => {
           ))}
         </nav>
 
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-3">
           <button
             onClick={() => setDark(!dark)}
             className="p-2 rounded-lg hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
@@ -78,41 +76,39 @@ const Header = () => {
           >
             {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
           </button>
-          <div className="flex items-center gap-2 border-l border-border/50 pl-4">
+          <div className="flex items-center gap-2 border-l border-border/50 pl-3">
             {user ? (
-              <Button variant="default" size="sm" className="font-mono uppercase tracking-widest text-[11px] rounded-none gap-2" asChild>
+              <Button size="sm" className="gap-2" asChild>
                 <Link to="/academy">
-                  <LayoutDashboard className="size-3" />
+                  <LayoutDashboard className="size-3.5" />
                   My Academy
                 </Link>
               </Button>
             ) : (
               <>
-                <Button variant="ghost" size="sm" className="font-mono uppercase tracking-widest text-[11px]" asChild>
-                  <Link to="/auth">Portal Login</Link>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link to="/auth">Log In</Link>
                 </Button>
-                <Button variant="default" size="sm" className="font-mono uppercase tracking-widest text-[11px] rounded-none" asChild>
-                  <Link to="/auth">Initialize</Link>
+                <Button size="sm" asChild>
+                  <Link to="/auth">Sign Up</Link>
                 </Button>
               </>
             )}
           </div>
         </div>
 
-        {/* Mobile toggle */}
         <button className="md:hidden p-2" onClick={() => setMobileOpen(!mobileOpen)}>
           {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
       </div>
 
-      {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden glass border-t p-4 space-y-2">
+        <div className="md:hidden bg-background border-t border-border p-4 space-y-2">
           {navLinks.map((l) => (
             <Link
               key={l.label}
               to={l.href.startsWith("#") ? "/" : l.href}
-              className="block px-4 py-2 rounded-lg hover:bg-accent transition-colors"
+              className="block px-4 py-2.5 rounded-lg hover:bg-accent transition-colors text-sm font-medium"
               onClick={() => setMobileOpen(false)}
             >
               {l.label}
@@ -120,25 +116,22 @@ const Header = () => {
           ))}
           <div className="flex items-center justify-between px-4 py-2">
             <span className="text-sm text-muted-foreground">Dark Mode</span>
-            <button
-              onClick={() => setDark(!dark)}
-              className="p-2 rounded-lg hover:bg-accent transition-colors"
-            >
+            <button onClick={() => setDark(!dark)} className="p-2 rounded-lg hover:bg-accent transition-colors">
               {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
             </button>
           </div>
           <div className="flex gap-2 pt-2">
             {user ? (
-              <Button variant="hero" size="sm" className="flex-1" asChild>
+              <Button size="sm" className="flex-1" asChild>
                 <Link to="/academy" onClick={() => setMobileOpen(false)}>My Academy</Link>
               </Button>
             ) : (
               <>
-                <Button variant="ghost-nav" size="sm" className="flex-1" asChild>
+                <Button variant="ghost" size="sm" className="flex-1" asChild>
                   <Link to="/auth" onClick={() => setMobileOpen(false)}>Log In</Link>
                 </Button>
-                <Button variant="hero" size="sm" className="flex-1" asChild>
-                  <Link to="/auth" onClick={() => setMobileOpen(false)}>Get Started</Link>
+                <Button size="sm" className="flex-1" asChild>
+                  <Link to="/auth" onClick={() => setMobileOpen(false)}>Sign Up</Link>
                 </Button>
               </>
             )}

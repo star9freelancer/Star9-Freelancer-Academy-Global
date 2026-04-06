@@ -110,7 +110,7 @@ const Admin = () => {
       setStats({
         totalUsers: userData?.length || 0,
         totalCourses: courseData?.length || 0,
-        totalOpportunities: oppData?.length || 0,
+        totalOpportunities: jobData?.length || 0,
         pendingVerifications: userData?.filter(u => u.verification_status === 'pending').length || 0,
         highestStreak: maxStreak,
         recordHolderName: recordHolder?.full_name || recordHolder?.email?.split('@')[0] || "None"

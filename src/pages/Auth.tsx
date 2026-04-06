@@ -9,7 +9,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Loader2, ArrowLeft, ShieldCheck, Cpu, Database, Globe, Fingerprint } from "lucide-react";
+import { Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
+import logo from "@/assets/logo_transparent.png";
 
 export default function Auth() {
   const { user, loading: authLoading } = useAuth();
@@ -25,12 +26,11 @@ export default function Auth() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Redirect: Instant clearance if already authenticated
   useEffect(() => {
     if (!authLoading && user) {
       setIsClearing(true);
       const from = (location.state as any)?.from?.pathname || "/academy";
-      setTimeout(() => navigate(from, { replace: true }), 1500);
+      setTimeout(() => navigate(from, { replace: true }), 1800);
     }
   }, [user, authLoading, navigate, location]);
 
@@ -61,7 +61,7 @@ export default function Auth() {
           }
         });
         if (error) throw error;
-        toast.success("Account created successfully! Check your email to verify your account or proceed to login.");
+        toast.success("Account created! Check your email to verify, or log in now.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -69,11 +69,10 @@ export default function Auth() {
         });
         if (error) throw error;
         
-        // Start "Security Clearance" transition
         setIsClearing(true);
         setTimeout(() => {
           navigate("/academy");
-        }, 2200); // Mask the dashboard pre-fetch
+        }, 1800);
       }
     } catch (error: any) {
       toast.error(error.message || "An error occurred.");
@@ -84,206 +83,130 @@ export default function Auth() {
 
   if (isClearing) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-black text-primary overflow-hidden relative">
-        {/* Scanning grid background */}
-        <div className="absolute inset-0 opacity-10 pointer-events-none" 
-             style={{ backgroundImage: 'radial-gradient(circle, #3b82f6 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background overflow-hidden relative">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
         
-        <div className="relative z-10 flex flex-col items-center max-w-sm w-full px-6 text-center space-y-12">
-          {/* Main Scanner Icon */}
-          <div className="relative group">
+        <div className="relative z-10 flex flex-col items-center max-w-sm w-full px-6 text-center space-y-8">
+          <div className="relative">
             <div className="absolute -inset-4 bg-primary/20 rounded-full blur-2xl animate-pulse" />
-            <div className="relative size-24 rounded-full border-2 border-primary/50 flex items-center justify-center overflow-hidden">
-               <ShieldCheck className="size-10 animate-show-hide" />
-               <div className="absolute inset-0 bg-gradient-to-b from-primary/0 via-primary/40 to-primary/0 h-1/2 w-full animate-scan" />
+            <div className="relative size-20 rounded-full bg-primary/10 border-2 border-primary/30 flex items-center justify-center">
+               <CheckCircle2 className="size-10 text-primary" />
             </div>
           </div>
 
-          <div className="space-y-4">
-            <h2 className="font-mono text-lg uppercase tracking-[0.5em] font-bold animate-pulse">Credentials Verified</h2>
-            <div className="flex flex-col gap-2 font-mono text-[9px] uppercase tracking-widest opacity-60">
-               <div className="flex items-center justify-between gap-8 py-1 border-b border-white/10">
-                  <span className="flex items-center gap-2"><Globe className="size-3" /> NETWORK</span>
-                  <span className="text-secondary font-bold">STAR9_LOCAL_NODE</span>
-               </div>
-               <div className="flex items-center justify-between gap-8 py-1 border-b border-white/10">
-                  <span className="flex items-center gap-2"><Database className="size-3" /> RECORDS</span>
-                  <span className="text-secondary font-bold">SYCHRONIZING...</span>
-               </div>
-               <div className="flex items-center justify-between gap-8 py-1 border-b border-white/10">
-                  <span className="flex items-center gap-2"><Cpu className="size-3" /> STATUS</span>
-                  <span className="text-emerald-400 font-bold">CLEARANCE_GRNTD</span>
-               </div>
-            </div>
+          <div className="space-y-3">
+            <h2 className="text-xl font-semibold tracking-tight text-foreground">Welcome back!</h2>
+            <p className="text-sm text-muted-foreground">Taking you to your dashboard...</p>
           </div>
 
-          {/* Progress bar */}
-          <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden relative border border-white/5">
-            <div className="absolute top-0 left-0 h-full bg-primary shadow-[0_0_10px_#3b82f6] animate-progress-fast" />
+          <div className="w-full h-1 bg-muted rounded-full overflow-hidden">
+            <div className="h-full bg-primary rounded-full animate-progress-fast" />
           </div>
-
-          <p className="font-mono text-[8px] uppercase tracking-[0.3em] opacity-40 animate-pulse">Initializing Virtual Learning Environment...</p>
         </div>
 
         <style>{`
-          @keyframes scan {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(200%); }
-          }
           @keyframes progress-fast {
             0% { width: 0%; }
             100% { width: 100%; }
           }
-          .animate-scan { animation: scan 1.5s infinite linear; }
-          .animate-progress-fast { animation: progress-fast 2.2s ease-in-out forwards; }
+          .animate-progress-fast { animation: progress-fast 1.8s ease-in-out forwards; }
         `}</style>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background/95 relative overflow-hidden">
-      {/* Back to Home Button */}
-      <Link to="/" className="absolute top-6 left-6 md:top-8 md:left-8 flex items-center gap-2 text-muted-foreground hover:text-foreground font-mono uppercase tracking-widest text-xs transition-colors z-20">
-        <ArrowLeft className="w-4 h-4" /> Return to Star9
+    <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
+      <Link to="/" className="absolute top-6 left-6 md:top-8 md:left-8 flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm transition-colors z-20">
+        <ArrowLeft className="w-4 h-4" /> Back to Home
       </Link>
 
-      {/* Dynamic background effects */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[100px] animate-pulse pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[100px] animate-pulse pointer-events-none delay-1000" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[100px] animate-pulse pointer-events-none" />
       
       <div className="w-full max-w-lg p-4 relative z-10">
-        <div className="flex flex-col items-center justify-center mb-8 gap-2">
-          <span className="font-mono text-2xl tracking-widest uppercase font-semibold text-foreground">STAR9</span>
-          <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-muted-foreground opacity-50">Member Onboarding Portal</span>
+        <div className="flex flex-col items-center justify-center mb-8 gap-3">
+          <img src={logo} alt="Star9" className="h-12 w-auto object-contain" />
+          <p className="text-sm text-muted-foreground">Sign in to access your account</p>
         </div>
 
-        <Card className="glass border-border/50 shadow-2xl backdrop-blur-xl">
+        <Card className="border-border/50 shadow-xl">
           <Tabs defaultValue="login" className="w-full">
             <CardHeader>
-              <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="login" className="font-mono uppercase tracking-widest text-xs">Login</TabsTrigger>
-                <TabsTrigger value="register" className="font-mono uppercase tracking-widest text-xs">Register</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 mb-2">
+                <TabsTrigger value="login" className="text-sm">Log In</TabsTrigger>
+                <TabsTrigger value="register" className="text-sm">Sign Up</TabsTrigger>
               </TabsList>
             </CardHeader>
 
-            {/* Login Tab */}
             <TabsContent value="login">
               <CardHeader className="pt-0">
-                <CardTitle className="font-mono uppercase tracking-widest text-sm flex items-center gap-2">
-                  <ShieldCheck className="size-4 text-primary" /> Log In
-                </CardTitle>
-                <CardDescription className="text-xs">Enter your details to access your account.</CardDescription>
+                <CardTitle className="text-lg">Welcome back</CardTitle>
+                <CardDescription>Enter your credentials to continue.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-[10px] uppercase tracking-widest ml-1">Email</Label>
+                  <Label htmlFor="email">Email</Label>
                   <Input 
-                    id="email" 
-                    type="email" 
-                    placeholder="agent@star9.dev" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="bg-background/50 focus:bg-background h-11"
+                    id="email" type="email" placeholder="you@example.com" 
+                    value={email} onChange={(e) => setEmail(e.target.value)}
+                    className="h-11"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password" title="password" className="text-[10px] uppercase tracking-widest ml-1">Password</Label>
+                  <Label htmlFor="password">Password</Label>
                   <Input 
-                    id="password" 
-                    type="password" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="bg-background/50 focus:bg-background h-11"
+                    id="password" type="password" 
+                    value={password} onChange={(e) => setPassword(e.target.value)}
+                    className="h-11"
                   />
                 </div>
-                <div className="flex items-center space-x-2 pt-2 px-1">
+                <div className="flex items-center space-x-2 pt-1">
                   <Checkbox 
-                    id="persist" 
-                    checked={persistSession} 
+                    id="persist" checked={persistSession} 
                     onCheckedChange={(checked) => setPersistSession(!!checked)}
-                    className="border-primary/50 data-[state=checked]:bg-primary"
                   />
-                  <label htmlFor="persist" className="text-[10px] uppercase tracking-widest text-muted-foreground cursor-pointer flex items-center gap-2">
-                    <Fingerprint className="size-3 text-primary animate-pulse" /> Secure Session Persistence
+                  <label htmlFor="persist" className="text-sm text-muted-foreground cursor-pointer">
+                    Remember me
                   </label>
                 </div>
               </CardContent>
               <CardFooter>
-                <Button 
-                  className="w-full font-mono uppercase tracking-widest h-12 gap-3" 
-                  disabled={loading}
-                  onClick={() => handleAuth(false)}
-                >
-                  {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Verify Identity
+                <Button className="w-full h-12" disabled={loading} onClick={() => handleAuth(false)}>
+                  {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                  Log In
                 </Button>
               </CardFooter>
             </TabsContent>
 
-            {/* Register Tab */}
             <TabsContent value="register">
               <CardHeader className="pt-0">
-                <CardTitle className="font-mono uppercase tracking-widest text-sm flex items-center gap-2">
-                  <Cpu className="size-4 text-primary" /> Initialize Unit
-                </CardTitle>
-                <CardDescription className="text-xs">Join the Star9 collective and elevate your workflow.</CardDescription>
+                <CardTitle className="text-lg">Create your account</CardTitle>
+                <CardDescription>Join Star9 and start building your career.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2 md:col-span-2">
                     <Label htmlFor="reg-email">Email Address</Label>
-                    <Input 
-                      id="reg-email" 
-                      type="email" 
-                      placeholder="agent@star9.dev" 
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="bg-background/50 focus:bg-background h-11"
-                    />
+                    <Input id="reg-email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} className="h-11" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="reg-password">Security Pin (Password)</Label>
-                    <Input 
-                      id="reg-password" 
-                      type="password" 
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="bg-background/50 focus:bg-background h-11"
-                    />
+                    <Label htmlFor="reg-password">Password</Label>
+                    <Input id="reg-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-11" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="reg-name">Full Legal Name</Label>
-                    <Input 
-                      id="reg-name" 
-                      type="text" 
-                      placeholder="John Doe" 
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      className="bg-background/50 focus:bg-background h-11"
-                    />
+                    <Label htmlFor="reg-name">Full Name</Label>
+                    <Input id="reg-name" type="text" placeholder="John Doe" value={fullName} onChange={(e) => setFullName(e.target.value)} className="h-11" />
                   </div>
                   <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="reg-phone">Operational City</Label>
-                    <Input 
-                      id="reg-city" 
-                      type="text" 
-                      placeholder="Nairobi" 
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                      className="bg-background/50 focus:bg-background h-11"
-                    />
+                    <Label htmlFor="reg-city">City</Label>
+                    <Input id="reg-city" type="text" placeholder="Nairobi" value={city} onChange={(e) => setCity(e.target.value)} className="h-11" />
                   </div>
                 </div>
               </CardContent>
               <CardFooter className="pt-4">
-                <Button 
-                  className="w-full font-mono uppercase tracking-widest h-12 gap-3" 
-                  disabled={loading}
-                  onClick={() => handleAuth(true)}
-                >
-                  {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Complete Registration
+                <Button className="w-full h-12" disabled={loading} onClick={() => handleAuth(true)}>
+                  {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                  Create Account
                 </Button>
               </CardFooter>
             </TabsContent>
