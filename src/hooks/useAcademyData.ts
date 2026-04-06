@@ -53,7 +53,7 @@ const CURRICULUM_LEDGER = [
     commitment: '10-15 hrs/week',
     price: 0,
     status: 'published',
-    image_url: 'https://images.unsplash.com/photo-1454165833767-027ff339908a?auto=format&fit=crop&q=80&w=800',
+    image_url: '/freelancing_essentials.png',
     academy_lessons: [
       { id: 'f1', title: 'Module 1: Introduction to the Global Freelancing Landscape', duration_minutes: 40, type: 'video', video_url: 'https://www.youtube.com/embed/mGjA4f8mHkc' },
       { id: 'f2', title: 'Module 2: Setting up High-Converting Profiles (Upwork, Fiverr, LinkedIn)', duration_minutes: 90, type: 'video', video_url: 'https://www.youtube.com/embed/8oR_8pWfE2E' },
