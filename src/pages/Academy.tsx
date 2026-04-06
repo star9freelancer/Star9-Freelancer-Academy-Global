@@ -238,13 +238,13 @@ const Academy = () => {
   };
 
   const studentLinks = [
-    { id: "home", icon: Home, label: "Home Feed" },
-    { id: "academy", icon: BookOpen, label: "Learning Path" },
-    { id: "catalog", icon: Globe, label: "Program Catalog" },
-    { id: "certificates", icon: Award, label: "Credentials" },
-    { id: "community", icon: Users, label: "Connect" },
-    { id: "careers", icon: Briefcase, label: "Career Engine" },
-    { id: "events", icon: Calendar, label: "Member Events" },
+    { id: "home", icon: Home, label: "Home" },
+    { id: "academy", icon: BookOpen, label: "My Courses" },
+    { id: "catalog", icon: Globe, label: "Browse" },
+    { id: "certificates", icon: Award, label: "Certificates" },
+    { id: "community", icon: Users, label: "Community" },
+    { id: "careers", icon: Briefcase, label: "Jobs" },
+    { id: "events", icon: Calendar, label: "Events" },
     { id: "settings", icon: Settings, label: "Settings" },
   ];
 
