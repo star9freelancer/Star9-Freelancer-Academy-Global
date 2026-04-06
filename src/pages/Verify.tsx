@@ -132,17 +132,17 @@ const Verify = () => {
 
           <CardFooter className="bg-zinc-900/50 p-8 flex flex-col md:flex-row items-center justify-between gap-6 border-t border-primary/10">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full overflow-hidden border border-primary/20 bg-primary/10 flex items-center justify-center font-bold text-primary">
+               <div className="w-10 h-10 rounded-full overflow-hidden border border-primary/20 bg-primary/10 flex items-center justify-center font-bold text-primary">
                  {cert.profiles?.avatar_url ? (
-                   <img src={cert.profiles.avatar_url} alt="Personnel" className="w-full h-full object-cover" />
+                   <img src={cert.profiles.avatar_url} alt="User" className="w-full h-full object-cover" />
                  ) : (
-                   cert.profiles?.full_name?.charAt(0) || "P"
+                   cert.profiles?.full_name?.charAt(0) || "U"
                  )}
-              </div>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-tight">{cert.profiles?.full_name}</p>
-                <p className="text-[10px] font-mono text-muted-foreground">Verified Star9 Personnel</p>
-              </div>
+               </div>
+               <div>
+                 <p className="text-xs font-bold uppercase tracking-tight">{cert.profiles?.full_name}</p>
+                 <p className="text-[10px] font-mono text-muted-foreground">Verified Star9 Member</p>
+               </div>
             </div>
             <div className="flex gap-4">
               <Button asChild variant="outline" className="font-mono text-[10px] uppercase tracking-widest">
