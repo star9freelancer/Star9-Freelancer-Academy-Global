@@ -15,6 +15,7 @@ import AcademyHero from "@/components/academy/AcademyHero";
 import ProgramDetailView from "@/components/academy/ProgramDetailView";
 import { HomeFeed } from "@/components/academy/HomeFeed";
 import { UserSettings } from "@/components/academy/UserSettings";
+import { AcademyFooter } from "@/components/academy/AcademyFooter";
 import { 
   Home, BookOpen, Users, Award, Settings, Menu, Bell, Search, 
   ArrowLeft, ArrowRight, Download, Play, Clock, TrendingUp, Sparkles, 
@@ -364,7 +365,7 @@ const Academy = () => {
       </AnimatePresence>
 
       {/* MAIN CONTENT WRAPPER */}
-      <div className="pt-28 md:pt-32 pb-24 lg:pb-0 min-h-screen">
+      <div className="pt-28 md:pt-32 pb-72 min-h-screen">
         <main className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16 space-y-16 relative z-10">
 
       {/* MOBILE BOTTOM DOCK (Mobile Navigation Rail) */}
@@ -400,111 +401,115 @@ const Academy = () => {
             />
           ) : (
             <div className="space-y-8 animate-in fade-in duration-500">
-               {["home", "academy", "catalog", "community", "careers", "events"].includes(activeTab) && (
+               {['learning', 'catalog'].includes(activeTab) && (
                  <AcademyHero 
-                   type={activeTab === 'careers' ? 'career' : activeTab === 'catalog' ? 'catalog' : activeTab === 'academy' ? 'learning' : 'community'}
+                   type={activeTab === 'catalog' ? 'catalog' : 'learning'}
                    userName={profile?.full_name?.split(' ')[0]}
                  />
                )}
 
-               {activeTab === "home" && <HomeFeed setActiveTab={setActiveTab} courses={courses} enrollments={enrollments} profile={profile} />}
+               <div className="space-y-12 pb-60">
+                 {activeTab === "home" && <HomeFeed setActiveTab={setActiveTab} courses={courses} enrollments={enrollments} profile={profile} />}
 
-               {activeTab === "academy" && (
-                 <div className="space-y-8">
-                    <div className="flex items-center gap-3">
-                       <div className="h-px flex-1 bg-border/50" />
-                       <h3 className="font-mono text-[10px] uppercase tracking-[0.4em] text-primary">Your Learning Progress</h3>
-                       <div className="h-px flex-1 bg-border/50" />
-                    </div>
-                    
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {courses
-                        .filter(c => enrollments.has(c.id))
-                        .filter(c => 
-                          searchQuery === "" || 
-                          c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          c.category.toLowerCase().includes(searchQuery.toLowerCase())
-                        )
-                        .map((course) => (
-                          <CourseCard key={course.id} course={course} enrollment={enrollments.get(course.id)} onOpen={() => { setPlayingCourse(course); setActiveLessonIdx(0); }} />
-                        ))
-                      }
-                      {courses.filter(c => enrollments.has(c.id)).length === 0 && (
-                         <Card className="glass border-dashed p-12 text-center col-span-full opacity-60">
-                            <BookOpen className="size-12 mx-auto mb-4 text-muted-foreground" />
-                            <h3 className="font-bold">No Active Courses Detected</h3>
-                            <Button className="mt-6 font-mono text-[10px] bg-primary/20 text-primary border-primary/20" variant="outline" onClick={() => setActiveTab('catalog')}>Browse Catalog</Button>
-                         </Card>
-                      )}
-                    </div>
-                 </div>
-               )}
-
-               {activeTab === "catalog" && (
-                 <div className="space-y-8">
-                    <div className="flex items-center gap-3">
-                       <div className="h-px flex-1 bg-border/50" />
-                       <h3 className="font-mono text-[10px] uppercase tracking-[0.4em] text-muted-foreground">Full Course Catalog</h3>
-                       <div className="h-px flex-1 bg-border/50" />
-                    </div>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {courses
-                        .filter(c => 
-                          searchQuery === "" || 
-                          c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          c.category.toLowerCase().includes(searchQuery.toLowerCase())
-                        )
-                        .map((course) => (
-                          <CourseCard key={course.id} course={course} enrollment={enrollments.get(course.id)} isEnrolling={enrolling === course.id} onEnroll={() => handleEnroll(course.id)} onViewDetails={() => setSelectedProgram(course)} />
-                        ))
-                      }
-                    </div>
-                 </div>
-               )}
-
-               {activeTab === "certificates" && (
-                 <div className="space-y-6 relative z-10">
-                   <h1 className="text-3xl font-bold tracking-tight">Earned Credentials</h1>
-                   <div className="grid md:grid-cols-2 gap-6">
-                     {certificates.map((cert) => (
-                       <Card key={cert.id} className="glass overflow-hidden group">
-                         <div className="h-40 bg-zinc-900 flex flex-col items-center justify-center p-6 border-b border-white/5 relative">
-                           <Award className="w-16 h-16 text-primary/20 mb-2" />
-                           <p className="text-[10px] font-mono tracking-widest text-primary uppercase">Star9 Official Transcript</p>
-                         </div>
-                         <CardHeader className="text-center">
-                           <CardTitle className="text-lg">{cert.academy_courses?.title}</CardTitle>
-                           <CardDescription className="font-mono text-[10px] uppercase tracking-widest">ID: {cert.credential_id}</CardDescription>
-                         </CardHeader>
-                         <CardFooter className="flex gap-2">
-                           <Button className="flex-1 bg-primary/10 text-primary border-primary/20" variant="outline" onClick={() => handleDownloadPDF(cert)}>Download PDF</Button>
-                         </CardFooter>
-                       </Card>
-                     ))}
+                 {activeTab === "academy" && (
+                   <div className="space-y-8">
+                      <div className="flex items-center gap-3">
+                         <div className="h-px flex-1 bg-border/50" />
+                         <h3 className="font-mono text-[10px] uppercase tracking-[0.4em] text-primary">Your Learning Progress</h3>
+                         <div className="h-px flex-1 bg-border/50" />
+                      </div>
+                      
+                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {courses
+                          .filter(c => enrollments.has(c.id))
+                          .filter(c => 
+                            searchQuery === "" || 
+                            c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            c.category.toLowerCase().includes(searchQuery.toLowerCase())
+                          )
+                          .map((course) => (
+                            <CourseCard key={course.id} course={course} enrollment={enrollments.get(course.id)} onOpen={() => { setPlayingCourse(course); setActiveLessonIdx(0); }} />
+                          ))
+                        }
+                        {courses.filter(c => enrollments.has(c.id)).length === 0 && (
+                           <Card className="glass border-dashed p-12 text-center col-span-full opacity-60">
+                              <BookOpen className="size-12 mx-auto mb-4 text-muted-foreground" />
+                              <h3 className="font-bold">No Active Courses Detected</h3>
+                              <Button className="mt-6 font-mono text-[10px] bg-primary/20 text-primary border-primary/20" variant="outline" onClick={() => setActiveTab('catalog')}>Browse Catalog</Button>
+                           </Card>
+                        )}
+                      </div>
                    </div>
-                 </div>
-               )}
+                 )}
 
-               {activeTab === "community" && <CommunityChat user={user} profile={profile} />}
+                 {activeTab === "catalog" && (
+                   <div className="space-y-8">
+                      <div className="flex items-center gap-3">
+                         <div className="h-px flex-1 bg-border/50" />
+                         <h3 className="font-mono text-[10px] uppercase tracking-[0.4em] text-muted-foreground">Full Course Catalog</h3>
+                         <div className="h-px flex-1 bg-border/50" />
+                      </div>
+                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {courses
+                          .filter(c => 
+                            searchQuery === "" || 
+                            c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            c.category.toLowerCase().includes(searchQuery.toLowerCase())
+                          )
+                          .map((course) => (
+                            <CourseCard key={course.id} course={course} enrollment={enrollments.get(course.id)} isEnrolling={enrolling === course.id} onEnroll={() => handleEnroll(course.id)} onViewDetails={() => setSelectedProgram(course)} />
+                          ))
+                        }
+                      </div>
+                   </div>
+                 )}
 
-               {activeTab === "events" && (
-                 <div className="space-y-6">
-                    <div className="flex items-center gap-3 text-center opacity-70 p-16">
-                       <Calendar className="size-16 mx-auto mb-6 text-muted-foreground" />
-                       <h2 className="text-2xl font-bold">No Events Scheduled</h2>
-                    </div>
-                 </div>
-               )}
+                 {activeTab === "certificates" && (
+                   <div className="space-y-6 relative z-10">
+                     <h1 className="text-3xl font-bold tracking-tight">Earned Credentials</h1>
+                     <div className="grid md:grid-cols-2 gap-6">
+                       {certificates.map((cert) => (
+                         <Card key={cert.id} className="glass overflow-hidden group">
+                           <div className="h-40 bg-zinc-900 flex flex-col items-center justify-center p-6 border-b border-white/5 relative">
+                             <Award className="w-16 h-16 text-primary/20 mb-2" />
+                             <p className="text-[10px] font-mono tracking-widest text-primary uppercase">Star9 Official Transcript</p>
+                           </div>
+                           <CardHeader className="text-center">
+                             <CardTitle className="text-lg">{cert.academy_courses?.title}</CardTitle>
+                             <CardDescription className="font-mono text-[10px] uppercase tracking-widest">ID: {cert.credential_id}</CardDescription>
+                           </CardHeader>
+                           <CardFooter className="flex gap-2">
+                             <Button className="flex-1 bg-primary/10 text-primary border-primary/20" variant="outline" onClick={() => handleDownloadPDF(cert)}>Download PDF</Button>
+                           </CardFooter>
+                         </Card>
+                       ))}
+                     </div>
+                   </div>
+                 )}
 
-               {activeTab === "careers" && <JobBoard />}
+                 {activeTab === "community" && <CommunityChat user={user} profile={profile} />}
 
-               {activeTab === "settings" && (
-                 <UserSettings 
-                   user={user} profile={profile} profileForm={profileForm} setProfileForm={setProfileForm}
-                   saving={saving} handleSaveProfile={handleSaveProfile} newSkill={newSkill} setNewSkill={setNewSkill}
-                   addSkill={addSkill} removeSkill={removeSkill} certificates={certificates} handleLogout={handleLogout}
-                 />
-               )}
+                 {activeTab === "events" && (
+                   <div className="space-y-6">
+                      <div className="flex items-center gap-3 text-center opacity-70 p-16">
+                         <Calendar className="size-16 mx-auto mb-6 text-muted-foreground" />
+                         <h2 className="text-2xl font-bold">No Events Scheduled</h2>
+                      </div>
+                   </div>
+                 )}
+
+                 {activeTab === "careers" && <JobBoard />}
+
+                 {activeTab === "settings" && (
+                   <UserSettings 
+                     user={user} profile={profile} profileForm={profileForm} setProfileForm={setProfileForm}
+                     saving={saving} handleSaveProfile={handleSaveProfile} newSkill={newSkill} setNewSkill={setNewSkill}
+                     addSkill={addSkill} removeSkill={removeSkill} certificates={certificates} handleLogout={handleLogout}
+                   />
+                 )}
+                 
+                 <AcademyFooter />
+               </div>
             </div>
           )}
         </main>
@@ -516,8 +521,8 @@ const Academy = () => {
           <div ref={certificateRef}>
              <CertificateTemplate 
                 studentName={profile?.full_name || "Member"} 
-                courseName={activeCert.academy_courses?.title || "Star9 Mastery Class"}
-                date={new Date(activeCert.created_at).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}
+                courseTitle={activeCert.academy_courses?.title || "Star9 Mastery Class"}
+                issueDate={new Date(activeCert.created_at).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}
                 credentialId={activeCert.credential_id}
              />
           </div>

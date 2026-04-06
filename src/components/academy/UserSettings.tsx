@@ -170,58 +170,73 @@ export const UserSettings = ({
         <div className="w-full lg:w-96 shrink-0 space-y-6">
           <h3 className="font-mono text-[10px] uppercase tracking-[0.4em] text-muted-foreground pl-2 leading-relaxed text-center lg:text-left">Account Info</h3>
           
-          {/* Premium ID Card */}
-          <div className="relative aspect-[1.6/1] w-full bg-zinc-950 rounded-[2.5rem] border border-white/10 shadow-2xl p-8 overflow-hidden group hover:border-primary/30 transition-all duration-500 mx-auto max-w-sm lg:max-w-none">
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
-            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-[60px] animate-pulse pointer-events-none" />
-            <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-secondary/10 blur-[60px] pointer-events-none" />
+          {/* Premium Glass-Pass ID Card */}
+          <div className="relative aspect-[16/10] w-full bg-zinc-900/40 rounded-[2.5rem] border border-white/5 shadow-2xl p-8 overflow-hidden group hover:border-primary/20 transition-all duration-700 mx-auto max-w-sm lg:max-w-none backdrop-blur-3xl">
+            {/* Holographic Accents */}
+            <div className="absolute top-0 right-0 w-48 h-48 bg-primary/10 blur-[100px] animate-pulse pointer-events-none group-hover:bg-primary/20 transition-colors" />
+            <div className="absolute -bottom-20 -left-20 w-48 h-48 bg-secondary/5 blur-[100px] pointer-events-none" />
             
             <div className="relative z-10 flex flex-col h-full justify-between">
+              {/* Card Header: Network Identity */}
               <div className="flex justify-between items-start">
-                <div className="space-y-2">
-                  <p className="text-[10px] font-mono uppercase tracking-[0.4em] text-primary/80 font-black">Star9 Academy</p>
-                  <div className="flex items-center gap-1">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className="size-2 rounded-full bg-primary animate-ping" />
+                    <p className="text-[10px] font-mono uppercase tracking-[0.5em] text-white/90 font-black">STAR9 ACADEMY</p>
+                  </div>
+                  <div className="flex gap-1.5 translate-x-1">
                     {user?.id?.substring(0, 12).match(/.{1,4}/g)?.map((seg: string, i: number) => (
-                      <span key={i} className="px-1.5 py-0.5 rounded bg-white/5 border border-white/5 text-[8px] font-mono text-zinc-500 uppercase tracking-widest">{seg}</span>
+                      <div key={i} className="px-2 py-1 rounded-md bg-white/[0.03] border border-white/5 shadow-inner">
+                        <span className="text-[9px] font-mono text-zinc-500 font-bold tracking-widest">{seg}</span>
+                      </div>
                     ))}
                   </div>
                 </div>
-                <div className="size-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center backdrop-blur-md">
-                  <ShieldCheck className="size-6 text-primary" />
+                <div className="size-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center backdrop-blur-xl group-hover:border-primary/40 transition-all duration-500 shadow-xl">
+                  <ShieldCheck className="size-7 text-primary/80 group-hover:text-primary transition-colors" />
                 </div>
               </div>
 
-              <div className="mt-6 flex items-end gap-6">
-                <div className="w-16 h-20 bg-zinc-900 rounded-xl border border-white/10 overflow-hidden shrink-0 shadow-inner group-hover:border-primary/50 transition-all duration-500 grayscale group-hover:grayscale-0">
+              {/* Card Body: Member Identification */}
+              <div className="mt-8 flex items-center gap-6">
+                <div className="w-20 h-20 bg-zinc-950 rounded-2xl border border-white/10 overflow-hidden shrink-0 shadow-2xl group-hover:border-primary/30 transition-all duration-700 relative">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent pointer-events-none" />
                   {profile?.avatar_url ? (
-                    <img src={profile.avatar_url} className="w-full h-full object-cover brightness-110" />
+                    <img src={profile.avatar_url} className="w-full h-full object-cover brightness-110 contrast-125" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-zinc-700 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-800 to-black font-black text-2xl uppercase">
+                    <div className="w-full h-full flex items-center justify-center text-zinc-800 bg-zinc-900 font-black text-3xl">
                       {profileForm.full_name?.charAt(0) || "U"}
                     </div>
                   )}
                 </div>
-                <div className="flex-1 space-y-1.5 min-w-0">
-                  <p className="text-xl font-black tracking-tighter text-white whitespace-nowrap overflow-hidden text-ellipsis uppercase">
-                    {profileForm.full_name || "New User"}
-                  </p>
+                <div className="flex-1 min-w-0 space-y-1">
                   <div className="flex items-center gap-2">
-                    <p className="text-[9px] font-mono text-zinc-500 uppercase tracking-widest truncate">
-                      {profileForm.city || "Online Member"}
-                    </p>
-                    <div className="size-1 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" />
+                    <h4 className="text-2xl font-black tracking-tighter text-white uppercase truncate leading-none">
+                      {profileForm.full_name || "Member"}
+                    </h4>
+                    <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[7px] font-mono h-4 px-1.5 rounded-full animate-pulse">ACTIVE</Badge>
                   </div>
-                  <Badge className="bg-primary/20 text-primary border-primary/20 text-[8px] h-4 font-mono px-2 rounded-sm mt-1">STAR9_MEMBER</Badge>
+                  <div className="flex items-center gap-2">
+                    <p className="text-[9px] font-mono text-zinc-500 uppercase tracking-[0.2em] font-bold">
+                       {profileForm.city || "Remote Node"} // {profileForm.country || "Global"}
+                    </p>
+                  </div>
+                  <div className="mt-2 inline-flex items-center px-2 py-0.5 rounded bg-primary/10 border border-primary/20">
+                     <span className="text-[8px] font-mono text-primary font-bold uppercase tracking-widest">S9-VERIFIED_PRACTITIONER</span>
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-8 pt-4 border-t border-white/5 flex justify-between items-center bg-zinc-900/40 -mx-8 -mb-8 px-8 py-5 backdrop-blur-md border-t border-white/10">
-                <div className="flex gap-2">
-                  <div className="size-4 rounded-sm bg-zinc-800 border border-white/5" />
-                  <div className="size-4 rounded-sm bg-zinc-800 border border-white/5" />
-                  <div className="size-4 rounded-sm bg-zinc-800 border border-white/5" />
+              {/* Card Footer: Metadata */}
+              <div className="mt-auto pt-6 flex justify-between items-end">
+                <div className="flex gap-1.5">
+                   {[...Array(3)].map((_, i) => (
+                     <div key={i} className="w-6 h-1 rounded-full bg-white/5 border border-white/5" />
+                   ))}
                 </div>
-                <p className="text-[9px] font-mono tracking-tighter text-zinc-600 font-bold uppercase">SECURED @ BY_STAR9</p>
+                <div className="text-right">
+                  <p className="text-[8px] font-mono text-zinc-600 font-black uppercase tracking-[0.3em]">SECURED BY STAR9 INFRASTRUCTURE</p>
+                </div>
               </div>
             </div>
           </div>

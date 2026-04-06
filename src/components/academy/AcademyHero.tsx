@@ -90,7 +90,7 @@ const AcademyHero = ({ type, title, subtitle, userName }: AcademyHeroProps) => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 p-8 md:p-12 space-y-4 max-w-4xl">
+      <div className="relative z-10 p-6 md:p-8 space-y-3 max-w-4xl">
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -109,7 +109,7 @@ const AcademyHero = ({ type, title, subtitle, userName }: AcademyHeroProps) => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
-            className="text-3xl md:text-5xl lg:text-5xl font-bold tracking-tight text-white leading-[1.1]"
+            className="text-2xl md:text-4xl lg:text-4xl font-bold tracking-tight text-white leading-tight"
           >
             {title || config.defaultTitle.split(' ').map((word, i) => (
               <span key={i} className={i === 0 ? "text-primary" : ""}>{word} </span>
