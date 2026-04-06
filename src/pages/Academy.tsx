@@ -155,7 +155,7 @@ const Academy = () => {
     }]);
     
     if (!error) {
-      toast.success("Credential Issued", { description: "Your certificate is now stored in the Star9 Ledger." });
+      toast.success("Certificate Issued", { description: "Your certificate is ready to download." });
       invalidateAll();
     }
   };
@@ -238,13 +238,13 @@ const Academy = () => {
   };
 
   const studentLinks = [
-    { id: "home", icon: Home, label: "Home Feed" },
-    { id: "academy", icon: BookOpen, label: "Learning Path" },
-    { id: "catalog", icon: Globe, label: "Program Catalog" },
-    { id: "certificates", icon: Award, label: "Credentials" },
-    { id: "community", icon: Users, label: "Connect" },
-    { id: "careers", icon: Briefcase, label: "Career Engine" },
-    { id: "events", icon: Calendar, label: "Member Events" },
+    { id: "home", icon: Home, label: "Home" },
+    { id: "academy", icon: BookOpen, label: "My Courses" },
+    { id: "catalog", icon: Globe, label: "Browse" },
+    { id: "certificates", icon: Award, label: "Certificates" },
+    { id: "community", icon: Users, label: "Community" },
+    { id: "careers", icon: Briefcase, label: "Jobs" },
+    { id: "events", icon: Calendar, label: "Events" },
     { id: "settings", icon: Settings, label: "Settings" },
   ];
 
@@ -466,13 +466,13 @@ const Academy = () => {
 
                  {activeTab === "certificates" && (
                    <div className="space-y-6 relative z-10">
-                     <h1 className="text-3xl font-bold tracking-tight">Earned Credentials</h1>
+                     <h1 className="text-3xl font-bold tracking-tight">My Certificates</h1>
                      <div className="grid md:grid-cols-2 gap-6">
                        {certificates.map((cert) => (
                          <Card key={cert.id} className="glass overflow-hidden group">
                            <div className="h-40 bg-zinc-900 flex flex-col items-center justify-center p-6 border-b border-white/5 relative">
                              <Award className="w-16 h-16 text-primary/20 mb-2" />
-                             <p className="text-[10px] font-mono tracking-widest text-primary uppercase">Star9 Official Transcript</p>
+                             <p className="text-[10px] font-mono tracking-widest text-primary uppercase">Star9 Certificate</p>
                            </div>
                            <CardHeader className="text-center">
                              <CardTitle className="text-lg">{cert.academy_courses?.title}</CardTitle>
@@ -553,7 +553,7 @@ const Academy = () => {
                       <Button variant="ghost" className="text-zinc-400" disabled={activeLessonIdx === 0} onClick={() => setActiveLessonIdx(v => v - 1)}><ArrowLeft className="size-5" /></Button>
                       <Button variant="ghost" className="text-zinc-400" disabled={activeLessonIdx === (playingCourse.academy_lessons?.length || 1) - 1} onClick={() => setActiveLessonIdx(v => v + 1)}><ArrowRight className="size-5" /></Button>
                    </div>
-                   <Button className="bg-primary/20 text-primary border-primary/20 font-mono text-[10px] uppercase" variant="outline" onClick={() => handleLessonComplete(playingCourse.id, activeLessonIdx)}>Mark Mastered</Button>
+                   <Button className="bg-primary/20 text-primary border-primary/20 text-xs" variant="outline" onClick={() => handleLessonComplete(playingCourse.id, activeLessonIdx)}>Mark Complete</Button>
                 </div>
               </div>
               <div className="w-full lg:w-90 border-l border-white/5 p-4 overflow-y-auto space-y-2 bg-zinc-900/30 shrink-0">
