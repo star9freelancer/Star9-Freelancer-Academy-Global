@@ -362,7 +362,7 @@ const Academy = () => {
 
       {/* MAIN CONTENT WRAPPER */}
       <div className="pt-20 md:pt-32 pb-16 md:pb-24 min-h-screen flex flex-col">
-        <main className="max-w-7xl mx-auto px-4 md:px-10 lg:px-16 space-y-8 md:space-y-16 relative z-10 flex-grow flex flex-col">
+        <main className="max-w-full mx-auto px-4 md:px-10 lg:px-12 xl:px-20 space-y-8 md:space-y-16 relative z-10 flex-grow flex flex-col w-full">
 
       {/* MOBILE BOTTOM DOCK */}
       <div className="md:hidden fixed bottom-0 inset-x-0 z-50 p-3 flex justify-center">

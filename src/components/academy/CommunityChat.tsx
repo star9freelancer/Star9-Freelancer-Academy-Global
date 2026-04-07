@@ -235,7 +235,7 @@ const CommunityChat = ({ user, profile }: CommunityChatProps) => {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl relative z-10">
+    <div className="space-y-6 max-w-full relative z-10 shrink-0">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Community</h1>
         <p className="text-muted-foreground">

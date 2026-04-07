@@ -35,6 +35,14 @@ const CoursePlayer = () => {
   const [quizScore, setQuizScore] = useState<number | null>(null);
   const [quizResults, setQuizResults] = useState<any>(null);
   const [ytPlayer, setYtPlayer] = useState<any>(null);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [course, setCourse] = useState<any | null>(null);
+  const [lessons, setLessons] = useState<any[]>([]);
+  const [activeLesson, setActiveLesson] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const fetchCourseData = async () => {

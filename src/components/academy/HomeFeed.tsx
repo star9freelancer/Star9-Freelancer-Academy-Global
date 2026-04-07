@@ -60,7 +60,7 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
   };
 
   return (
-    <div className="space-y-6 md:space-y-10 max-w-7xl mx-auto pb-10 md:pb-20 animate-in fade-in duration-500">
+    <div className="space-y-6 md:space-y-10 max-w-full mx-auto pb-10 md:pb-20 px-0 lg:px-4 animate-in fade-in duration-500">
       
       {/* Welcome Banner */}
       <div className="relative rounded-2xl bg-card border border-border overflow-hidden p-8 md:p-10">

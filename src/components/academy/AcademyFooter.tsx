@@ -4,7 +4,7 @@ import logo from "@/assets/logo_transparent.png";
 export const AcademyFooter = () => {
   return (
     <footer className="w-full mt-auto pt-10 pb-20 md:pb-8 border-t border-border px-6">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+      <div className="max-w-full mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
         <div className="flex items-center gap-3">
           <img src={logo} alt="Star9" className="h-6 w-auto opacity-60" />
           <span className="text-xs text-muted-foreground font-medium">Star9 Academy</span>
