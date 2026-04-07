@@ -49,7 +49,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <p className="font-medium text-foreground">Location</p>
-                    <p className="text-sm text-muted-foreground">United Kingdom</p>
+                    <p className="text-sm text-muted-foreground">Kenya</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -58,7 +58,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <p className="font-medium text-foreground">Website</p>
-                    <a href="https://star9.lovable.app" className="text-sm text-muted-foreground hover:text-primary transition-colors">star9.lovable.app</a>
+                    <a href="https://star9freelancer.com" className="text-sm text-muted-foreground hover:text-primary transition-colors">star9freelancer.com</a>
                   </div>
                 </div>
               </div>

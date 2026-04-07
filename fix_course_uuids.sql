@@ -13,6 +13,7 @@ ALTER TABLE academy_courses ADD COLUMN IF NOT EXISTS duration text DEFAULT '10 W
 ALTER TABLE academy_courses ADD COLUMN IF NOT EXISTS commitment text DEFAULT '30-40 hrs/week';
 ALTER TABLE academy_courses ADD COLUMN IF NOT EXISTS price numeric DEFAULT 0;
 ALTER TABLE academy_courses ADD COLUMN IF NOT EXISTS image_url text;
+ALTER TABLE academy_courses ADD COLUMN IF NOT EXISTS slug text;
 
 ALTER TABLE academy_lessons ADD COLUMN IF NOT EXISTS type text DEFAULT 'video';
 ALTER TABLE academy_lessons ADD COLUMN IF NOT EXISTS video_url text;
@@ -37,10 +38,11 @@ END $$;
 DELETE FROM academy_courses;
 
 -- 3. Insert Production Courses with FIXED UUIDs and Professional Categories
-INSERT INTO academy_courses (id, title, category, ai_tools_covered, overview, learning_outcomes, assessment_details, duration, commitment, price, status, image_url)
+INSERT INTO academy_courses (id, slug, title, category, ai_tools_covered, overview, learning_outcomes, assessment_details, duration, commitment, price, status, image_url)
 VALUES 
   (
     '11111111-1111-1111-1111-111111111111',
+    'ai-for-freelancers',
     'AI for Freelancers', 
     'AI & Automation', 
     '{"ChatGPT", "Midjourney", "Zapier", "Make", "Claude"}', 
@@ -55,6 +57,7 @@ VALUES
   ),
   (
     '22222222-2222-2222-2222-222222222222',
+    'freelancing-essentials',
     'Freelancing Essentials', 
     'Global Business', 
     '{"Upwork", "Fiverr", "LinkedIn", "Wise", "Payoneer"}', 
@@ -69,6 +72,7 @@ VALUES
   ),
   (
     '33333333-3333-3333-3333-333333333333',
+    'teacher-prep',
     'International Teacher Preparation', 
     'Education & Global Mobility', 
     '{"Google Classroom", "Canva", "Canvas", "J1 Visa Platform"}', 

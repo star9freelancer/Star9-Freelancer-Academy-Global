@@ -8,15 +8,21 @@ ALTER TABLE academy_courses ADD COLUMN IF NOT EXISTS duration text DEFAULT '10 W
 ALTER TABLE academy_courses ADD COLUMN IF NOT EXISTS commitment text DEFAULT '30-40 hrs/week';
 ALTER TABLE academy_courses ADD COLUMN IF NOT EXISTS price numeric DEFAULT 0;
 ALTER TABLE academy_courses ADD COLUMN IF NOT EXISTS image_url text;
+ALTER TABLE academy_courses ADD COLUMN IF NOT EXISTS slug text;
+
+-- Lesson Enhancements
+ALTER TABLE academy_lessons ADD COLUMN IF NOT EXISTS content text;
+ALTER TABLE academy_lessons ADD COLUMN IF NOT EXISTS quiz_data jsonb;
 
 -- 2. Clean out old sample data for a fresh production sync
 DELETE FROM academy_lessons;
 DELETE FROM academy_courses;
 
--- 3. Insert Production Courses
-INSERT INTO academy_courses (id, title, category, ai_tools_covered, overview, learning_outcomes, assessment_details, duration, commitment, price, status, image_url)
+-- 3. Insert Production Courses with FIXED UUIDs and Slugs
+INSERT INTO academy_courses (id, slug, title, category, ai_tools_covered, overview, learning_outcomes, assessment_details, duration, commitment, price, status, image_url)
 VALUES 
   (
+    '11111111-1111-1111-1111-111111111111',
     'ai-for-freelancers',
     'AI for Freelancers', 
     'AI & Automation', 
@@ -31,6 +37,7 @@ VALUES
     'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800'
   ),
   (
+    '22222222-2222-2222-2222-222222222222',
     'freelancing-essentials',
     'Freelancing Essentials', 
     'Global Business', 
@@ -45,6 +52,7 @@ VALUES
     'https://images.unsplash.com/photo-1454165833767-027ff339908a?auto=format&fit=crop&q=80&w=800'
   ),
   (
+    '33333333-3333-3333-3333-333333333333',
     'teacher-prep',
     'International Teacher Preparation', 
     'Education & Global Mobility', 
@@ -59,33 +67,68 @@ VALUES
     'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800'
   );
 
--- 4. Insert Production Modules (Lessons)
--- Course 1: AI for Freelancers
-INSERT INTO academy_lessons (course_id, title, duration_minutes, order_index, type, video_url)
+-- 4. Insert Lessons (referencing the FIXED UUIDs)
+INSERT INTO academy_lessons (course_id, title, duration_minutes, order_index, type, video_url, content, quiz_data)
 VALUES 
-  ('ai-for-freelancers', 'Module 1: Introduction to AI and the Modern Freelance Economy', 45, 1, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('ai-for-freelancers', 'Module 2: AI Tools for Content Creation (Featuring ChatGPT & Midjourney)', 60, 2, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('ai-for-freelancers', 'Module 3: Leveraging AI for Data Analysis and Deep Research', 50, 3, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('ai-for-freelancers', 'Module 4: Workflow Automation Tools (Mastering Zapier & Make)', 75, 4, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('ai-for-freelancers', 'Module 5: Architecting and Selling AI-Powered Services', 60, 5, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('ai-for-freelancers', 'Module 6: Ethics, Integrity, and Responsible AI Application', 40, 6, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ');
+  (
+    '11111111-1111-1111-1111-111111111111', 
+    'Module 1: Introduction to AI and the Modern Freelance Economy', 
+    45, 1, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+    '# Understanding the AI Shift\n\nThe freelance landscape is changing rapidly. Artificial Intelligence is no longer just a futuristic concept; it is a current tool that is redefining how work is delivered.\n\n### Why AI Matters for Freelancers\n- **Efficiency**: Automate repetitive tasks like research and basic drafting.\n- **Scalability**: Handle more clients without increasing hours.\n- **Quality**: Use AI as a high-level creative partner to brainstorm and refine ideas.',
+    '{
+      "questions": [
+        {
+          "id": 1,
+          "question": "What is the primary benefit of AI for modern freelancers?",
+          "options": ["Complete removal of human creativity", "Instant multiplication of productivity", "Elimination of client communication", "Automatic high-paying job assignments"],
+          "correctAnswer": 1
+        },
+        {
+          "id": 2,
+          "question": "Which tool is best for automating cross-platform workflows?",
+          "options": ["Midjourney", "ChatGPT", "Zapier", "Wise"],
+          "correctAnswer": 2
+        }
+      ]
+    }'
+  ),
+  (
+    '11111111-1111-1111-1111-111111111111', 
+    'Module 2: AI Tools for Content Creation (Featuring ChatGPT & Midjourney)', 
+    60, 2, 'video', 'https://www.youtube.com/embed/In8AnzQv6-k',
+    '# Mastering Content AI\n\nIn this module, we dive deep into the two titans of creative AI: ChatGPT for text and Midjourney for visual storytelling.\n\n### Key Concepts\n- **Prompt Engineering**: How to talk to AI to get the best results.\n- **Iterative Design**: Refining AI outputs for professional-grade quality.\n- **Visual Brand Synthesis**: Creating a consistent visual language with Midjourney.',
+    '{
+      "questions": [
+        {
+          "id": 1,
+          "question": "What is Prompt Engineering?",
+          "options": ["A way to fix broken computers", "The art of crafting precise instructions for AI", "A programming language used for web design", "A method for physical server maintenance"],
+          "correctAnswer": 1
+        }
+      ]
+    }'
+  ),
+  ('11111111-1111-1111-1111-111111111111', 'Module 3: Leveraging AI for Data Analysis and Deep Research', 50, 3, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ', '# Data Intelligence\n\nLearn how to use AI to process large datasets and uncover insights that were previously hidden.', null),
+  ('11111111-1111-1111-1111-111111111111', 'Module 4: Workflow Automation Tools (Mastering Zapier & Make)', 75, 4, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ', '# Automating Success\n\nConnect your tools together to create a seamless, hands-free business environment.', null),
+  ('11111111-1111-1111-1111-111111111111', 'Module 5: Architecting and Selling AI-Powered Services', 60, 5, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ', '# Selling the Future\n\nPackage your new skills into high-value services that clients are eager to pay for.', null),
+  ('11111111-1111-1111-1111-111111111111', 'Module 6: Ethics, Integrity, and Responsible AI Application', 40, 6, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ', '# Ethical AI\n\nMaintaining human integrity in an automated world.', null);
 
 -- Course 2: Freelancing Essentials
 INSERT INTO academy_lessons (course_id, title, duration_minutes, order_index, type, video_url)
 VALUES 
-  ('freelancing-essentials', 'Module 1: Introduction to the Global Freelancing Landscape', 40, 1, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('freelancing-essentials', 'Module 2: Setting up High-Converting Profiles (Upwork, Fiverr, LinkedIn)', 90, 2, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('freelancing-essentials', 'Module 3: The Art of Proposal Writing and Client Acquisition', 60, 3, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('freelancing-essentials', 'Module 4: Strategic Pricing and Confident Negotiation', 50, 4, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('freelancing-essentials', 'Module 5: Mastering Client Communication and Retention', 45, 5, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('freelancing-essentials', 'Module 6: The Blueprint for Scaling Your Freelance Business', 55, 6, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ');
+  ('22222222-2222-2222-2222-222222222222', 'Module 1: Introduction to the Global Freelancing Landscape', 40, 1, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
+  ('22222222-2222-2222-2222-222222222222', 'Module 2: Setting up High-Converting Profiles (Upwork, Fiverr, LinkedIn)', 90, 2, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
+  ('22222222-2222-2222-2222-222222222222', 'Module 3: The Art of Proposal Writing and Client Acquisition', 60, 3, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
+  ('22222222-2222-2222-2222-222222222222', 'Module 4: Strategic Pricing and Confident Negotiation', 50, 4, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
+  ('22222222-2222-2222-2222-222222222222', 'Module 5: Mastering Client Communication and Retention', 45, 5, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
+  ('22222222-2222-2222-2222-222222222222', 'Module 6: The Blueprint for Scaling Your Freelance Business', 55, 6, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ');
 
 -- Course 3: International Teacher Preparation
 INSERT INTO academy_lessons (course_id, title, duration_minutes, order_index, type, video_url)
 VALUES 
-  ('teacher-prep', 'Module 1: Comprehensive Overview of the US Education System', 60, 1, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('teacher-prep', 'Module 2: Advanced Curriculum Planning and Modern Lesson Delivery', 75, 2, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('teacher-prep', 'Module 3: Elite Classroom Management Strategies', 60, 3, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('teacher-prep', 'Module 4: Intensive Interview Preparation (J1 Visa Focus)', 90, 4, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('teacher-prep', 'Module 5: Professional Documentation (Resumes & Cover Letters)', 50, 5, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('teacher-prep', 'Module 6: Cultural Adaptation and Global Teaching Ethics', 45, 6, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ');
+  ('33333333-3333-3333-3333-333333333333', 'Module 1: Comprehensive Overview of the US Education System', 60, 1, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
+  ('33333333-3333-3333-3333-333333333333', 'Module 2: Advanced Curriculum Planning and Modern Lesson Delivery', 75, 2, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
+  ('33333333-3333-3333-3333-333333333333', 'Module 3: Elite Classroom Management Strategies', 60, 3, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
+  ('33333333-3333-3333-3333-333333333333', 'Module 4: Intensive Interview Preparation (J1 Visa Focus)', 90, 4, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
+  ('33333333-3333-3333-3333-333333333333', 'Module 5: Professional Documentation (Resumes & Cover Letters)', 50, 5, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
+  ('33333333-3333-3333-3333-333333333333', 'Module 6: Cultural Adaptation and Global Teaching Ethics', 45, 6, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ');

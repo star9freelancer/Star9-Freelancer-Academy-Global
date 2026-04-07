@@ -38,7 +38,6 @@ const Academy = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarHovered, setSidebarHovered] = useState(false);
   const [activeTab, setActiveTab] = useState("home");
-  const [playingCourse, setPlayingCourse] = useState<any | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const certificateRef = useRef<HTMLDivElement>(null);
   const [activeCert, setActiveCert] = useState<any>(null);
@@ -200,10 +199,9 @@ const Academy = () => {
     }
   };
 
-  const handleLessonComplete = async (courseId: string, lessonIdx: number) => {
-    if (!user || !playingCourse || !profile) return;
-    const lessons = playingCourse.academy_lessons || [];
-    const newProgress = Math.round(((lessonIdx + 1) / lessons.length) * 100);
+  const handleLessonComplete = async (courseId: string, lessonIdx: number, lessonsCount: number) => {
+    if (!user || !profile) return;
+    const newProgress = Math.round(((lessonIdx + 1) / lessonsCount) * 100);
     
     // 1. Update Lesson Progress
     const { error: progressError } = await supabase
@@ -363,8 +361,8 @@ const Academy = () => {
       </AnimatePresence>
 
       {/* MAIN CONTENT WRAPPER */}
-      <div className="pt-6 md:pt-32 pb-24 min-h-screen flex flex-col">
-        <main className="max-w-7xl mx-auto px-4 md:px-10 lg:px-16 space-y-16 relative z-10 flex-grow flex flex-col">
+      <div className="pt-20 md:pt-32 pb-16 md:pb-24 min-h-screen flex flex-col">
+        <main className="max-w-7xl mx-auto px-4 md:px-10 lg:px-16 space-y-8 md:space-y-16 relative z-10 flex-grow flex flex-col">
 
       {/* MOBILE BOTTOM DOCK */}
       <div className="md:hidden fixed bottom-0 inset-x-0 z-50 p-3 flex justify-center">
@@ -395,7 +393,7 @@ const Academy = () => {
               enrollment={enrollments.get(selectedProgram.id)}
               onBack={() => setSelectedProgram(null)}
               onEnroll={() => handleEnroll(selectedProgram.id)}
-              onStart={(idx) => { setPlayingCourse(selectedProgram); setActiveLessonIdx(idx); setSelectedProgram(null); }}
+              onStart={(idx) => { navigate(`/academy/course/${selectedProgram.slug || selectedProgram.id}`); setSelectedProgram(null); }}
             />
           ) : (
             <div className="space-y-8 animate-in fade-in duration-500">
@@ -426,7 +424,7 @@ const Academy = () => {
                             c.category.toLowerCase().includes(searchQuery.toLowerCase())
                           )
                           .map((course) => (
-                            <CourseCard key={course.id} course={course} enrollment={enrollments.get(course.id)} onOpen={() => { setPlayingCourse(course); setActiveLessonIdx(0); }} />
+                            <CourseCard key={course.id} course={course} enrollment={enrollments.get(course.id)} onOpen={() => navigate(`/academy/course/${course.slug || course.id}`)} />
                           ))
                         }
                         {courses.filter(c => enrollments.has(c.id)).length === 0 && (
@@ -526,44 +524,6 @@ const Academy = () => {
         )}
       </div>
 
-      {/* Video Player Overlay */}
-      {playingCourse && (
-        <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex flex-col animate-in fade-in duration-500">
-           <header className="h-16 border-b border-white/5 flex items-center justify-between px-8 shrink-0">
-              <div className="flex items-center gap-4">
-                 <img src={logo} alt="Star9" className="h-6 brightness-200" />
-                 <div className="h-4 w-px bg-white/10" />
-                 <div><h2 className="text-sm font-bold tracking-tight text-white">{playingCourse.title}</h2></div>
-              </div>
-              <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-red-400" onClick={() => setPlayingCourse(null)}><XIcon className="size-5" /></Button>
-           </header>
-           <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-              <div className="flex-1 bg-black relative flex flex-col">
-                <div className="flex-1 relative bg-black flex items-center justify-center overflow-hidden">
-                  {playingCourse.academy_lessons?.[activeLessonIdx]?.video_url ? (
-                    <iframe src={`${playingCourse.academy_lessons[activeLessonIdx].video_url}?autoplay=0&rel=0&modestbranding=1`} className="absolute inset-0 w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen />
-                  ) : (
-                    <div className="text-muted-foreground text-sm">No video available</div>
-                  )}
-                </div>
-                <div className="h-20 border-t border-white/5 flex items-center justify-between px-8 bg-zinc-900/50">
-                   <div className="flex gap-4">
-                      <Button variant="ghost" className="text-zinc-400" disabled={activeLessonIdx === 0} onClick={() => setActiveLessonIdx(v => v - 1)}><ArrowLeft className="size-5" /></Button>
-                      <Button variant="ghost" className="text-zinc-400" disabled={activeLessonIdx === (playingCourse.academy_lessons?.length || 1) - 1} onClick={() => setActiveLessonIdx(v => v + 1)}><ArrowRight className="size-5" /></Button>
-                   </div>
-                   <Button className="bg-primary/20 text-primary border-primary/20 text-xs" variant="outline" onClick={() => handleLessonComplete(playingCourse.id, activeLessonIdx)}>Mark Complete</Button>
-                </div>
-              </div>
-              <div className="w-full lg:w-90 border-l border-white/5 p-4 overflow-y-auto space-y-2 bg-zinc-900/30 shrink-0">
-                 {playingCourse.academy_lessons?.map((lesson: any, i: number) => (
-                    <button key={lesson.id} onClick={() => setActiveLessonIdx(i)} className={`w-full text-left p-4 rounded-xl border transition-all ${activeLessonIdx === i ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-white/5 border-transparent text-zinc-400'}`}>
-                       <p className="text-xs font-bold">{lesson.title}</p>
-                    </button>
-                 ))}
-              </div>
-           </div>
-        </div>
-      )}
     </div>
   );
 };
