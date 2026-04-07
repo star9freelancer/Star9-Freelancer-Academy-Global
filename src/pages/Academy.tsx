@@ -432,8 +432,8 @@ const Academy = () => {
                         {courses.filter(c => enrollments.has(c.id)).length === 0 && (
                            <Card className="glass border-dashed p-12 text-center col-span-full opacity-60">
                               <BookOpen className="size-12 mx-auto mb-4 text-muted-foreground" />
-                              <h3 className="font-bold">No Active Courses Detected</h3>
-                              <Button className="mt-6 font-mono text-[10px] bg-primary/20 text-primary border-primary/20" variant="outline" onClick={() => setActiveTab('catalog')}>Browse Catalog</Button>
+                               <h3 className="font-bold">No courses yet</h3>
+                               <Button className="mt-6" variant="outline" onClick={() => setActiveTab('catalog')}>Browse Courses</Button>
                            </Card>
                         )}
                       </div>
