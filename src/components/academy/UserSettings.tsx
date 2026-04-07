@@ -2,9 +2,10 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
-  Plus, X as XIcon, Save, ShieldCheck, Award, Users, 
-  Link as LinkIcon, Globe, ArrowRight, Sparkles 
+  Plus, X as XIcon, Save, Award, Star,
+  Link as LinkIcon, Globe, LogOut, User, MapPin
 } from "lucide-react";
 
 interface UserSettingsProps {
@@ -37,240 +38,199 @@ export const UserSettings = ({
   handleLogout
 }: UserSettingsProps) => {
   return (
-    <div className="space-y-8 max-w-6xl relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20 mx-auto">
+    <div className="space-y-8 max-w-4xl mx-auto animate-in fade-in duration-500 pb-20">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">Settings</h1>
+        <p className="text-muted-foreground mt-1">Manage your profile and account preferences.</p>
+      </div>
+
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* --- LEFT: Identity Form --- */}
+        {/* Profile Form */}
         <div className="flex-1 space-y-6">
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Full Name</Label>
-              <Input 
-                value={profileForm.full_name} 
-                onChange={(e) => setProfileForm({...profileForm, full_name: e.target.value})}
-                placeholder="Your Name"
-                className="bg-card/50 border-border/50 focus:border-primary/40 rounded-xl py-6"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Email Address</Label>
-              <Input 
-                value={user?.email || ""} 
-                disabled
-                className="bg-muted/30 border-border/20 text-muted-foreground rounded-xl py-6 opacity-60 cursor-not-allowed"
-              />
-            </div>
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Personal Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Full Name</Label>
+                  <Input 
+                    value={profileForm.full_name} 
+                    onChange={(e) => setProfileForm({...profileForm, full_name: e.target.value})}
+                    placeholder="Your Name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Email Address</Label>
+                  <Input 
+                    value={user?.email || ""} 
+                    disabled
+                    className="opacity-60 cursor-not-allowed"
+                  />
+                </div>
+              </div>
 
-          <div className="space-y-2">
-            <Label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">About You / Bio</Label>
-            <textarea 
-              value={profileForm.bio}
-              onChange={(e) => setProfileForm({...profileForm, bio: e.target.value})}
-              placeholder="Tell us about your professional background..."
-              className="w-full min-h-[120px] bg-card/50 border border-border/50 focus:border-primary/40 rounded-xl p-4 text-sm outline-none transition-all"
-            />
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">City</Label>
-              <Input 
-                value={profileForm.city} 
-                onChange={(e) => setProfileForm({...profileForm, city: e.target.value})}
-                className="bg-card/50 border-border/50 rounded-xl py-6"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Country</Label>
-              <Input 
-                value={profileForm.country} 
-                onChange={(e) => setProfileForm({...profileForm, country: e.target.value})}
-                className="bg-card/50 border-border/50 rounded-xl py-6"
-              />
-            </div>
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">LinkedIn URL</Label>
-              <div className="relative">
-                <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-blue-500" />
-                <Input 
-                  value={profileForm.linkedin_url} 
-                  onChange={(e) => setProfileForm({...profileForm, linkedin_url: e.target.value})}
-                  className="pl-9 bg-card/50 border-border/50 rounded-xl py-6"
-                  placeholder="linkedin.com/in/..."
+              <div className="space-y-2">
+                <Label>Bio</Label>
+                <textarea 
+                  value={profileForm.bio}
+                  onChange={(e) => setProfileForm({...profileForm, bio: e.target.value})}
+                  placeholder="Tell us about your professional background..."
+                  className="w-full min-h-[100px] bg-background border border-input rounded-md p-3 text-sm outline-none focus:border-primary transition-colors resize-none"
                 />
               </div>
-            </div>
-            <div className="space-y-2">
-              <Label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Portfolio / Website</Label>
-              <div className="relative">
-                <Globe className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-secondary" />
-                <Input 
-                  value={profileForm.portfolio_url} 
-                  onChange={(e) => setProfileForm({...profileForm, portfolio_url: e.target.value})}
-                  className="pl-9 bg-card/50 border-border/50 rounded-xl py-6"
-                  placeholder="your-portfolio.com"
-                />
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>City</Label>
+                  <Input 
+                    value={profileForm.city} 
+                    onChange={(e) => setProfileForm({...profileForm, city: e.target.value})}
+                    placeholder="e.g. Nairobi"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Country</Label>
+                  <Input 
+                    value={profileForm.country} 
+                    onChange={(e) => setProfileForm({...profileForm, country: e.target.value})}
+                    placeholder="e.g. Kenya"
+                  />
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* Proficiency Manager */}
-          <div className="space-y-4 pt-4 border-t border-border/50">
-            <div className="flex items-center justify-between">
-              <Label className="text-[10px] font-mono uppercase tracking-widest text-primary font-bold">Your Skills</Label>
-              <Badge variant="outline" className="text-[9px] border-primary/20 opacity-60 font-mono">{profileForm.skills?.length || 0} ITEMS</Badge>
-            </div>
-            <div className="flex gap-2">
-              <Input 
-                value={newSkill} 
-                onChange={(e) => setNewSkill(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && addSkill()}
-                placeholder="Add a new skill..."
-                className="bg-card/50 border-border/50 rounded-xl py-6"
-              />
-              <button 
-                onClick={addSkill} 
-                className="shrink-0 h-[52px] w-[52px] bg-primary/20 text-primary hover:bg-primary/30 rounded-xl border border-primary/20 transition-all flex items-center justify-center"
-              >
-                <Plus className="size-5" />
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {profileForm.skills?.map((skill: string) => (
-                <Badge key={skill} variant="secondary" className="px-4 py-2 rounded-xl bg-zinc-950 border border-white/5 flex items-center gap-2 group transition-all hover:border-red-500/30">
-                  <span className="text-[10px] font-mono tracking-tight uppercase tracking-widest font-bold">{skill}</span>
-                  <button onClick={() => removeSkill(skill)} className="hover:text-red-400 opacity-40 group-hover:opacity-100 transition-opacity">
-                    <XIcon className="size-3" />
-                  </button>
-                </Badge>
-              ))}
-            </div>
-          </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>LinkedIn</Label>
+                  <div className="relative">
+                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                    <Input 
+                      value={profileForm.linkedin_url} 
+                      onChange={(e) => setProfileForm({...profileForm, linkedin_url: e.target.value})}
+                      className="pl-9"
+                      placeholder="linkedin.com/in/..."
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Portfolio / Website</Label>
+                  <div className="relative">
+                    <Globe className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                    <Input 
+                      value={profileForm.portfolio_url} 
+                      onChange={(e) => setProfileForm({...profileForm, portfolio_url: e.target.value})}
+                      className="pl-9"
+                      placeholder="your-portfolio.com"
+                    />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-          <div className="pt-6">
-            <Button 
-              onClick={handleSaveProfile} 
-              disabled={saving}
-              className="w-full bg-primary hover:bg-primary/90 text-white py-8 rounded-2xl font-mono text-[11px] uppercase tracking-[0.3em] shadow-xl shadow-primary/20 flex items-center justify-center gap-3 transition-all active:scale-95"
-            >
-              {saving ? (
-                <div className="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                <Save className="size-4" />
-              )}
-              Save Profile Changes
-            </Button>
-          </div>
+          {/* Skills */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base">Skills</CardTitle>
+                <span className="text-xs text-muted-foreground">{profileForm.skills?.length || 0} added</span>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-2">
+                <Input 
+                  value={newSkill} 
+                  onChange={(e) => setNewSkill(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && addSkill()}
+                  placeholder="Add a skill..."
+                />
+                <Button variant="outline" size="icon" onClick={addSkill}>
+                  <Plus className="size-4" />
+                </Button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {profileForm.skills?.map((skill: string) => (
+                  <Badge key={skill} variant="secondary" className="px-3 py-1.5 flex items-center gap-1.5">
+                    {skill}
+                    <button onClick={() => removeSkill(skill)} className="hover:text-destructive transition-colors">
+                      <XIcon className="size-3" />
+                    </button>
+                  </Badge>
+                ))}
+                {(!profileForm.skills || profileForm.skills.length === 0) && (
+                  <p className="text-sm text-muted-foreground">No skills added yet</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Button 
+            onClick={handleSaveProfile} 
+            disabled={saving}
+            className="w-full h-12 gap-2"
+          >
+            {saving ? (
+              <div className="size-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+            ) : (
+              <Save className="size-4" />
+            )}
+            Save Changes
+          </Button>
         </div>
 
-        {/* --- RIGHT: Digital Identity Preview --- */}
-        <div className="w-full lg:w-96 shrink-0 space-y-6">
-          <h3 className="font-mono text-[10px] uppercase tracking-[0.4em] text-muted-foreground pl-2 leading-relaxed text-center lg:text-left">Account Info</h3>
-          
-          {/* Premium Glass-Pass ID Card */}
-          <div className="relative aspect-[16/10] w-full bg-zinc-900/40 rounded-[2.5rem] border border-white/5 shadow-2xl p-8 overflow-hidden group hover:border-primary/20 transition-all duration-700 mx-auto max-w-sm lg:max-w-none backdrop-blur-3xl">
-            {/* Holographic Accents */}
-            <div className="absolute top-0 right-0 w-48 h-48 bg-primary/10 blur-[100px] animate-pulse pointer-events-none group-hover:bg-primary/20 transition-colors" />
-            <div className="absolute -bottom-20 -left-20 w-48 h-48 bg-secondary/5 blur-[100px] pointer-events-none" />
-            
-            <div className="relative z-10 flex flex-col h-full justify-between">
-              {/* Card Header: Network Identity */}
-              <div className="flex justify-between items-start">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <div className="size-2 rounded-full bg-primary animate-ping" />
-                    <p className="text-[10px] font-mono uppercase tracking-[0.5em] text-white/90 font-black">STAR9 ACADEMY</p>
+        {/* Sidebar */}
+        <div className="w-full lg:w-80 shrink-0 space-y-4">
+          {/* Profile Card */}
+          <Card>
+            <CardContent className="p-6 text-center space-y-4">
+              <div className="w-20 h-20 rounded-full bg-muted border border-border overflow-hidden mx-auto">
+                {profile?.avatar_url ? (
+                  <img src={profile.avatar_url} className="w-full h-full object-cover" alt="Profile" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-muted-foreground">
+                    {profileForm.full_name?.charAt(0) || "U"}
                   </div>
-                  <div className="flex gap-1.5 translate-x-1">
-                    {user?.id?.substring(0, 12).match(/.{1,4}/g)?.map((seg: string, i: number) => (
-                      <div key={i} className="px-2 py-1 rounded-md bg-white/[0.03] border border-white/5 shadow-inner">
-                        <span className="text-[9px] font-mono text-zinc-500 font-bold tracking-widest">{seg}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="size-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center backdrop-blur-xl group-hover:border-primary/40 transition-all duration-500 shadow-xl">
-                  <ShieldCheck className="size-7 text-primary/80 group-hover:text-primary transition-colors" />
-                </div>
+                )}
               </div>
+              <div>
+                <h4 className="font-semibold text-foreground text-lg">{profileForm.full_name || "Member"}</h4>
+                <p className="text-sm text-muted-foreground flex items-center justify-center gap-1 mt-0.5">
+                  <MapPin className="size-3" />
+                  {profileForm.city || "Remote"}{profileForm.country ? `, ${profileForm.country}` : ""}
+                </p>
+              </div>
+              <Badge className="bg-primary/10 text-primary border-primary/20">Star9 Member</Badge>
+            </CardContent>
+          </Card>
 
-              {/* Card Body: Member Identification */}
-              <div className="mt-8 flex items-center gap-6">
-                <div className="w-20 h-20 bg-zinc-950 rounded-2xl border border-white/10 overflow-hidden shrink-0 shadow-2xl group-hover:border-primary/30 transition-all duration-700 relative">
-                  <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent pointer-events-none" />
-                  {profile?.avatar_url ? (
-                    <img src={profile.avatar_url} className="w-full h-full object-cover brightness-110 contrast-125" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-zinc-800 bg-zinc-900 font-black text-3xl">
-                      {profileForm.full_name?.charAt(0) || "U"}
-                    </div>
-                  )}
+          {/* Stats */}
+          <Card>
+            <CardContent className="p-4 space-y-3">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                <div className="flex items-center gap-3">
+                  <Award className="size-5 text-primary" />
+                  <span className="text-sm text-foreground">Certificates</span>
                 </div>
-                <div className="flex-1 min-w-0 space-y-1">
-                  <div className="flex items-center gap-2">
-                    <h4 className="text-2xl font-black tracking-tighter text-white uppercase truncate leading-none">
-                      {profileForm.full_name || "Member"}
-                    </h4>
-                    <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[7px] font-mono h-4 px-1.5 rounded-full animate-pulse">ACTIVE</Badge>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <p className="text-[9px] font-mono text-zinc-500 uppercase tracking-[0.2em] font-bold">
-                       {profileForm.city || "Remote Node"} // {profileForm.country || "Global"}
-                    </p>
-                  </div>
-                  <div className="mt-2 inline-flex items-center px-2 py-0.5 rounded bg-primary/10 border border-primary/20">
-                     <span className="text-[8px] font-mono text-primary font-bold uppercase tracking-widest">S9-VERIFIED_PRACTITIONER</span>
-                  </div>
-                </div>
+                <span className="font-semibold text-foreground">{certificates.length}</span>
               </div>
-
-              {/* Card Footer: Metadata */}
-              <div className="mt-auto pt-6 flex justify-between items-end">
-                <div className="flex gap-1.5">
-                   {[...Array(3)].map((_, i) => (
-                     <div key={i} className="w-6 h-1 rounded-full bg-white/5 border border-white/5" />
-                   ))}
+              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                <div className="flex items-center gap-3">
+                  <Star className="size-5 text-amber-500" />
+                  <span className="text-sm text-foreground">Points</span>
                 </div>
-                <div className="text-right">
-                  <p className="text-[8px] font-mono text-zinc-600 font-black uppercase tracking-[0.3em]">SECURED BY STAR9 INFRASTRUCTURE</p>
-                </div>
+                <span className="font-semibold text-foreground">{profile?.merit_points || 0}</span>
               </div>
-            </div>
-          </div>
-
-          {/* Quick Stats Sidebar */}
-          <div className="grid gap-3 pt-6">
-            <div className="p-5 bg-zinc-900/40 border border-white/5 rounded-3xl flex items-center justify-between group hover:border-primary/40 transition-all cursor-default shadow-sm backdrop-blur-sm">
-              <div className="flex items-center gap-4">
-                <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/10"><Award className="size-5" /></div>
-                <div>
-                  <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground font-bold">Certificates</p>
-                  <p className="text-sm font-black tracking-tighter font-mono">{certificates.length} COMPLETED</p>
-                </div>
-              </div>
-              <ArrowRight className="size-4 opacity-0 group-hover:opacity-100 transition-all text-primary -translate-x-2 group-hover:translate-x-0" />
-            </div>
-            <div className="p-5 bg-zinc-900/40 border border-white/5 rounded-3xl flex items-center justify-between group hover:border-secondary/40 transition-all cursor-default shadow-sm backdrop-blur-sm">
-              <div className="flex items-center gap-4">
-                <div className="size-10 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary border border-secondary/10"><Sparkles className="size-5" /></div>
-                <div>
-                  <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground font-bold">Member Points</p>
-                  <p className="text-sm font-black tracking-tighter font-mono">{profile?.merit_points || 0} POINTS</p>
-                </div>
-              </div>
-              <ArrowRight className="size-4 opacity-0 group-hover:opacity-100 transition-all text-secondary -translate-x-2 group-hover:translate-x-0" />
-            </div>
-          </div>
+            </CardContent>
+          </Card>
           
           <Button 
             onClick={handleLogout} 
             variant="outline"
-            className="w-full border-red-500/20 text-red-400 hover:bg-red-500/10 hover:text-red-300 py-8 rounded-2xl font-mono text-[10px] uppercase tracking-widest shadow-lg shadow-red-500/5 active:scale-95 transition-all"
+            className="w-full border-destructive/30 text-destructive hover:bg-destructive/10 gap-2"
           >
-            Log Out of Account
+            <LogOut className="size-4" />
+            Log Out
           </Button>
         </div>
       </div>

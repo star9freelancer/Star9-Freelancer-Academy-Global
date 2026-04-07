@@ -256,36 +256,34 @@ const Academy = () => {
         <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-secondary/5 blur-[120px] rounded-full" />
       </div>
 
-      {/* COMMAND HUB (Floating Nav) */}
-      <div className="fixed top-0 inset-x-0 z-50 flex justify-center p-4 md:p-6 transition-all duration-500">
+      {/* Top Navigation - hidden on mobile */}
+      <div className="hidden md:flex fixed top-0 inset-x-0 z-50 justify-center p-4 md:p-6 transition-all duration-500">
         <motion.nav 
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ type: "spring", damping: 20, stiffness: 100 }}
-          className="flex items-center gap-2 md:gap-4 px-4 py-2.5 rounded-full glass border-white/5 shadow-[0_0_40px_rgba(0,0,0,0.5)] max-w-full overflow-x-auto no-scrollbar relative"
+          className="flex items-center gap-2 md:gap-3 px-4 py-2.5 rounded-full bg-card/80 backdrop-blur-xl border border-border shadow-lg max-w-full overflow-x-auto no-scrollbar"
         >
-          {/* Logo / Home */}
-          <Link to="/" className="p-2 rounded-full hover:bg-white/5 transition-colors shrink-0">
-             <div className="size-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                <div className="size-3 bg-primary rounded-sm animate-pulse" />
-             </div>
+          {/* Logo */}
+          <Link to="/" className="p-2 rounded-full hover:bg-muted transition-colors shrink-0">
+            <img src={logo} alt="Star9" className="h-7 w-auto" />
           </Link>
 
-          <div className="h-6 w-px bg-white/10 mx-1 shrink-0" />
+          <div className="h-6 w-px bg-border mx-1 shrink-0" />
 
-          {/* Search Integrated */}
-          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-full border border-white/5 focus-within:border-primary/40 focus-within:bg-white/[0.08] transition-all group w-48">
-             <Search className="size-3.5 text-zinc-500 group-focus-within:text-primary transition-colors" />
-             <input 
-               type="text" 
-               placeholder="Search Dashboard..." 
-               className="bg-transparent text-[10px] font-bold uppercase tracking-widest outline-none w-full text-zinc-300 placeholder:text-zinc-600"
-               value={searchQuery}
-               onChange={(e) => setSearchQuery(e.target.value)}
-             />
+          {/* Search */}
+          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-full border border-border focus-within:border-primary/40 transition-all group w-48">
+            <Search className="size-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <input 
+              type="text" 
+              placeholder="Search..."
+              className="bg-transparent text-sm outline-none w-full text-foreground placeholder:text-muted-foreground"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
 
-          <div className="hidden lg:block h-6 w-px bg-white/10 mx-1 shrink-0" />
+          <div className="hidden lg:block h-6 w-px bg-border mx-1 shrink-0" />
 
           {/* Navigation Links */}
           <div className="flex items-center gap-1 shrink-0">
@@ -295,58 +293,58 @@ const Academy = () => {
                 <button
                   key={l.id}
                   onClick={() => setActiveTab(l.id)}
-                  className={`relative flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 group ${isActive ? "text-primary" : "text-zinc-500 hover:text-white"}`}
+                  className={`relative flex items-center gap-2 px-3 py-2 rounded-full transition-all text-sm ${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
                 >
                   {isActive && (
                     <motion.div 
                       layoutId="hub-pill"
-                      className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-full shadow-[0_0_20px_rgba(var(--primary),0.1)]" 
+                      className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-full" 
                       transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
-                  <l.icon className={`size-4 shrink-0 transition-transform ${isActive ? "scale-110" : "group-hover:scale-110"}`} />
-                  <span className={`text-[10px] uppercase tracking-widest font-black hidden xl:inline-block relative z-10 transition-all ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100 w-0 group-hover:w-auto"}`}>
-                     {l.label}
+                  <l.icon className="size-4 shrink-0 relative z-10" />
+                  <span className={`text-xs font-medium hidden xl:inline-block relative z-10 ${isActive ? "opacity-100" : ""}`}>
+                    {l.label}
                   </span>
                 </button>
               );
             })}
           </div>
 
-          <div className="h-6 w-px bg-white/10 mx-1 shrink-0" />
+          <div className="h-6 w-px bg-border mx-1 shrink-0" />
 
-          {/* Merit & Profile Identity */}
+          {/* Points & Profile */}
           <div className="flex items-center gap-2 shrink-0">
-             <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-500/5 border border-amber-500/10 rounded-full group cursor-help hover:bg-amber-500/10 transition-all">
-                <Sparkles className="size-3 text-amber-500" />
-                <span className="text-[10px] font-mono font-black text-amber-500">{profile?.merit_points || 0} Points</span>
-             </div>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 rounded-full">
+              <Sparkles className="size-3 text-amber-500" />
+              <span className="text-xs font-semibold text-amber-500">{profile?.merit_points || 0}</span>
+            </div>
 
-             <TooltipProvider delayDuration={200}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button 
-                      onClick={() => setShowProfileMenu(!showProfileMenu)}
-                      className="size-9 rounded-full border border-white/10 bg-zinc-900 group relative overflow-hidden transition-all hover:border-primary/40"
-                    >
-                      {profile?.avatar_url ? (
-                        <img src={profile.avatar_url} className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="font-mono text-xs text-primary font-bold">{profile?.full_name?.charAt(0) || "U"}</span>
-                      )}
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent className="bg-zinc-950 border-white/5 text-zinc-300 font-mono text-[9px] uppercase tracking-widest px-3 py-1.5">User Settings</TooltipContent>
-                </Tooltip>
-             </TooltipProvider>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button 
+                    onClick={() => setActiveTab('settings')}
+                    className="size-8 rounded-full border border-border bg-muted overflow-hidden transition-all hover:border-primary/40"
+                  >
+                    {profile?.avatar_url ? (
+                      <img src={profile.avatar_url} className="w-full h-full object-cover" alt="Profile" />
+                    ) : (
+                      <span className="text-xs font-semibold text-muted-foreground">{profile?.full_name?.charAt(0) || "U"}</span>
+                    )}
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>Settings</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
-             <button 
-               onClick={handleLogout}
-               className="p-2 rounded-full text-zinc-600 hover:text-red-400 hover:bg-red-500/10 transition-all"
-               title="Log Out"
-             >
-                <ArrowRight className="size-4 rotate-180" />
-             </button>
+            <button 
+              onClick={handleLogout}
+              className="p-2 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
+              title="Log Out"
+            >
+              <ArrowRight className="size-4 rotate-180" />
+            </button>
           </div>
         </motion.nav>
       </div>
@@ -365,26 +363,26 @@ const Academy = () => {
       </AnimatePresence>
 
       {/* MAIN CONTENT WRAPPER */}
-      <div className="pt-28 md:pt-32 pb-24 min-h-screen flex flex-col">
-        <main className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16 space-y-16 relative z-10 flex-grow flex flex-col">
+      <div className="pt-6 md:pt-32 pb-24 min-h-screen flex flex-col">
+        <main className="max-w-7xl mx-auto px-4 md:px-10 lg:px-16 space-y-16 relative z-10 flex-grow flex flex-col">
 
-      {/* MOBILE BOTTOM DOCK (Mobile Navigation Rail) */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 z-50 p-4 flex justify-center translate-y-[-10px]">
+      {/* MOBILE BOTTOM DOCK */}
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-50 p-3 flex justify-center">
         <motion.div 
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="flex items-center gap-6 px-8 py-3.5 rounded-full glass border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] backdrop-blur-3xl"
+          className="flex items-center gap-4 px-6 py-3 rounded-full bg-card/90 backdrop-blur-xl border border-border shadow-lg"
         >
-          {studentLinks.slice(0, 4).map((l) => {
+          {studentLinks.slice(0, 5).map((l) => {
             const isActive = activeTab === l.id;
             return (
               <button
                 key={l.id}
                 onClick={() => setActiveTab(l.id)}
-                className={`flex flex-col items-center gap-1.5 transition-all ${isActive ? "text-primary scale-110" : "text-zinc-600 hover:text-zinc-300"}`}
+                className={`flex flex-col items-center gap-1 transition-all ${isActive ? "text-primary" : "text-muted-foreground"}`}
               >
                 <l.icon className="size-5" />
-                <span className="text-[8px] font-black uppercase tracking-[0.2em]">{l.label.split(' ')[0]}</span>
+                <span className="text-[9px] font-medium">{l.label.split(' ')[0]}</span>
               </button>
             );
           })}
@@ -415,7 +413,7 @@ const Academy = () => {
                    <div className="space-y-8">
                       <div className="flex items-center gap-3">
                          <div className="h-px flex-1 bg-border/50" />
-                         <h3 className="font-mono text-[10px] uppercase tracking-[0.4em] text-primary">Your Learning Progress</h3>
+                          <h3 className="text-sm font-medium text-primary">Your Learning Progress</h3>
                          <div className="h-px flex-1 bg-border/50" />
                       </div>
                       
@@ -434,8 +432,8 @@ const Academy = () => {
                         {courses.filter(c => enrollments.has(c.id)).length === 0 && (
                            <Card className="glass border-dashed p-12 text-center col-span-full opacity-60">
                               <BookOpen className="size-12 mx-auto mb-4 text-muted-foreground" />
-                              <h3 className="font-bold">No Active Courses Detected</h3>
-                              <Button className="mt-6 font-mono text-[10px] bg-primary/20 text-primary border-primary/20" variant="outline" onClick={() => setActiveTab('catalog')}>Browse Catalog</Button>
+                               <h3 className="font-bold">No courses yet</h3>
+                               <Button className="mt-6" variant="outline" onClick={() => setActiveTab('catalog')}>Browse Courses</Button>
                            </Card>
                         )}
                       </div>
@@ -446,7 +444,7 @@ const Academy = () => {
                    <div className="space-y-8">
                       <div className="flex items-center gap-3">
                          <div className="h-px flex-1 bg-border/50" />
-                         <h3 className="font-mono text-[10px] uppercase tracking-[0.4em] text-muted-foreground">Full Course Catalog</h3>
+                         <h3 className="text-sm font-medium text-muted-foreground">All Courses</h3>
                          <div className="h-px flex-1 bg-border/50" />
                       </div>
                       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -545,7 +543,7 @@ const Academy = () => {
                   {playingCourse.academy_lessons?.[activeLessonIdx]?.video_url ? (
                     <iframe src={`${playingCourse.academy_lessons[activeLessonIdx].video_url}?autoplay=0&rel=0&modestbranding=1`} className="absolute inset-0 w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen />
                   ) : (
-                    <div className="text-zinc-500 font-mono text-[10px] uppercase">Standby...</div>
+                    <div className="text-muted-foreground text-sm">No video available</div>
                   )}
                 </div>
                 <div className="h-20 border-t border-white/5 flex items-center justify-between px-8 bg-zinc-900/50">

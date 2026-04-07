@@ -13,27 +13,27 @@ const Footer = () => (
       </div>
 
       <div className="space-y-4">
-        <h4 className="text-sm font-semibold">Platform</h4>
+        <h4 className="text-sm font-semibold text-foreground">Platform</h4>
         <div className="flex flex-col gap-3 text-sm text-muted-foreground">
           <Link to="/academy" className="hover:text-primary transition-colors">Academy</Link>
-          <Link to="/global" className="hover:text-secondary transition-colors">Global</Link>
-          <a href="#features" className="hover:text-foreground transition-colors">Features</a>
-          <a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a>
+          <Link to="/global" className="hover:text-primary transition-colors">Global</Link>
+          <a href="/#features" className="hover:text-primary transition-colors">Features</a>
+          <a href="/#pricing" className="hover:text-primary transition-colors">Pricing</a>
         </div>
       </div>
 
       <div className="space-y-4">
-        <h4 className="text-sm font-semibold">Company</h4>
+        <h4 className="text-sm font-semibold text-foreground">Company</h4>
         <div className="flex flex-col gap-3 text-sm text-muted-foreground">
-          <a href="#about" className="hover:text-foreground transition-colors">About Us</a>
-          <a href="#" className="hover:text-foreground transition-colors">Terms of Service</a>
-          <a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a>
-          <a href="#" className="hover:text-foreground transition-colors">Contact</a>
+          <Link to="/about" className="hover:text-primary transition-colors">About Us</Link>
+          <Link to="/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
+          <Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+          <Link to="/contact" className="hover:text-primary transition-colors">Contact</Link>
         </div>
       </div>
 
       <div className="space-y-4">
-        <h4 className="text-sm font-semibold">Stay Updated</h4>
+        <h4 className="text-sm font-semibold text-foreground">Stay Updated</h4>
         <p className="text-sm text-muted-foreground">Get the latest courses and job openings.</p>
         <div className="flex gap-2">
           <input
