@@ -543,7 +543,7 @@ const Academy = () => {
                   {playingCourse.academy_lessons?.[activeLessonIdx]?.video_url ? (
                     <iframe src={`${playingCourse.academy_lessons[activeLessonIdx].video_url}?autoplay=0&rel=0&modestbranding=1`} className="absolute inset-0 w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen />
                   ) : (
-                    <div className="text-zinc-500 font-mono text-[10px] uppercase">Standby...</div>
+                    <div className="text-muted-foreground text-sm">No video available</div>
                   )}
                 </div>
                 <div className="h-20 border-t border-white/5 flex items-center justify-between px-8 bg-zinc-900/50">
