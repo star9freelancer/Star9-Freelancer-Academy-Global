@@ -413,7 +413,7 @@ const Academy = () => {
                    <div className="space-y-8">
                       <div className="flex items-center gap-3">
                          <div className="h-px flex-1 bg-border/50" />
-                         <h3 className="font-mono text-[10px] uppercase tracking-[0.4em] text-primary">Your Learning Progress</h3>
+                          <h3 className="text-sm font-medium text-primary">Your Learning Progress</h3>
                          <div className="h-px flex-1 bg-border/50" />
                       </div>
                       
