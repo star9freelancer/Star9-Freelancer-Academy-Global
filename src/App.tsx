@@ -11,6 +11,10 @@ import Auth from "./pages/Auth.tsx";
 import Admin from "./pages/Admin.tsx";
 import CoursePlayer from "./pages/CoursePlayer.tsx";
 import Verify from "./pages/Verify.tsx";
+import About from "./pages/About.tsx";
+import Terms from "./pages/Terms.tsx";
+import Privacy from "./pages/Privacy.tsx";
+import Contact from "./pages/Contact.tsx";
 
 import ProtectedRoute from "./components/auth/ProtectedRoute.tsx";
 import { AuthProvider } from "./context/AuthContext.tsx";
