@@ -256,36 +256,34 @@ const Academy = () => {
         <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-secondary/5 blur-[120px] rounded-full" />
       </div>
 
-      {/* COMMAND HUB (Floating Nav) */}
-      <div className="fixed top-0 inset-x-0 z-50 flex justify-center p-4 md:p-6 transition-all duration-500">
+      {/* Top Navigation - hidden on mobile */}
+      <div className="hidden md:flex fixed top-0 inset-x-0 z-50 justify-center p-4 md:p-6 transition-all duration-500">
         <motion.nav 
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ type: "spring", damping: 20, stiffness: 100 }}
-          className="flex items-center gap-2 md:gap-4 px-4 py-2.5 rounded-full glass border-white/5 shadow-[0_0_40px_rgba(0,0,0,0.5)] max-w-full overflow-x-auto no-scrollbar relative"
+          className="flex items-center gap-2 md:gap-3 px-4 py-2.5 rounded-full bg-card/80 backdrop-blur-xl border border-border shadow-lg max-w-full overflow-x-auto no-scrollbar"
         >
-          {/* Logo / Home */}
-          <Link to="/" className="p-2 rounded-full hover:bg-white/5 transition-colors shrink-0">
-             <div className="size-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                <div className="size-3 bg-primary rounded-sm animate-pulse" />
-             </div>
+          {/* Logo */}
+          <Link to="/" className="p-2 rounded-full hover:bg-muted transition-colors shrink-0">
+            <img src={logo} alt="Star9" className="h-7 w-auto" />
           </Link>
 
-          <div className="h-6 w-px bg-white/10 mx-1 shrink-0" />
+          <div className="h-6 w-px bg-border mx-1 shrink-0" />
 
-          {/* Search Integrated */}
-          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-full border border-white/5 focus-within:border-primary/40 focus-within:bg-white/[0.08] transition-all group w-48">
-             <Search className="size-3.5 text-zinc-500 group-focus-within:text-primary transition-colors" />
-             <input 
-               type="text" 
-               placeholder="Search Dashboard..." 
-               className="bg-transparent text-[10px] font-bold uppercase tracking-widest outline-none w-full text-zinc-300 placeholder:text-zinc-600"
-               value={searchQuery}
-               onChange={(e) => setSearchQuery(e.target.value)}
-             />
+          {/* Search */}
+          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-full border border-border focus-within:border-primary/40 transition-all group w-48">
+            <Search className="size-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <input 
+              type="text" 
+              placeholder="Search..."
+              className="bg-transparent text-sm outline-none w-full text-foreground placeholder:text-muted-foreground"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
 
-          <div className="hidden lg:block h-6 w-px bg-white/10 mx-1 shrink-0" />
+          <div className="hidden lg:block h-6 w-px bg-border mx-1 shrink-0" />
 
           {/* Navigation Links */}
           <div className="flex items-center gap-1 shrink-0">
@@ -295,58 +293,58 @@ const Academy = () => {
                 <button
                   key={l.id}
                   onClick={() => setActiveTab(l.id)}
-                  className={`relative flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 group ${isActive ? "text-primary" : "text-zinc-500 hover:text-white"}`}
+                  className={`relative flex items-center gap-2 px-3 py-2 rounded-full transition-all text-sm ${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
                 >
                   {isActive && (
                     <motion.div 
                       layoutId="hub-pill"
-                      className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-full shadow-[0_0_20px_rgba(var(--primary),0.1)]" 
+                      className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-full" 
                       transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
-                  <l.icon className={`size-4 shrink-0 transition-transform ${isActive ? "scale-110" : "group-hover:scale-110"}`} />
-                  <span className={`text-[10px] uppercase tracking-widest font-black hidden xl:inline-block relative z-10 transition-all ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100 w-0 group-hover:w-auto"}`}>
-                     {l.label}
+                  <l.icon className="size-4 shrink-0 relative z-10" />
+                  <span className={`text-xs font-medium hidden xl:inline-block relative z-10 ${isActive ? "opacity-100" : ""}`}>
+                    {l.label}
                   </span>
                 </button>
               );
             })}
           </div>
 
-          <div className="h-6 w-px bg-white/10 mx-1 shrink-0" />
+          <div className="h-6 w-px bg-border mx-1 shrink-0" />
 
-          {/* Merit & Profile Identity */}
+          {/* Points & Profile */}
           <div className="flex items-center gap-2 shrink-0">
-             <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-500/5 border border-amber-500/10 rounded-full group cursor-help hover:bg-amber-500/10 transition-all">
-                <Sparkles className="size-3 text-amber-500" />
-                <span className="text-[10px] font-mono font-black text-amber-500">{profile?.merit_points || 0} Points</span>
-             </div>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 rounded-full">
+              <Sparkles className="size-3 text-amber-500" />
+              <span className="text-xs font-semibold text-amber-500">{profile?.merit_points || 0}</span>
+            </div>
 
-             <TooltipProvider delayDuration={200}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button 
-                      onClick={() => setShowProfileMenu(!showProfileMenu)}
-                      className="size-9 rounded-full border border-white/10 bg-zinc-900 group relative overflow-hidden transition-all hover:border-primary/40"
-                    >
-                      {profile?.avatar_url ? (
-                        <img src={profile.avatar_url} className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="font-mono text-xs text-primary font-bold">{profile?.full_name?.charAt(0) || "U"}</span>
-                      )}
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent className="bg-zinc-950 border-white/5 text-zinc-300 font-mono text-[9px] uppercase tracking-widest px-3 py-1.5">User Settings</TooltipContent>
-                </Tooltip>
-             </TooltipProvider>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button 
+                    onClick={() => setActiveTab('settings')}
+                    className="size-8 rounded-full border border-border bg-muted overflow-hidden transition-all hover:border-primary/40"
+                  >
+                    {profile?.avatar_url ? (
+                      <img src={profile.avatar_url} className="w-full h-full object-cover" alt="Profile" />
+                    ) : (
+                      <span className="text-xs font-semibold text-muted-foreground">{profile?.full_name?.charAt(0) || "U"}</span>
+                    )}
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>Settings</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
-             <button 
-               onClick={handleLogout}
-               className="p-2 rounded-full text-zinc-600 hover:text-red-400 hover:bg-red-500/10 transition-all"
-               title="Log Out"
-             >
-                <ArrowRight className="size-4 rotate-180" />
-             </button>
+            <button 
+              onClick={handleLogout}
+              className="p-2 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
+              title="Log Out"
+            >
+              <ArrowRight className="size-4 rotate-180" />
+            </button>
           </div>
         </motion.nav>
       </div>
