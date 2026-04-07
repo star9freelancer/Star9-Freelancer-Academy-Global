@@ -366,23 +366,23 @@ const Academy = () => {
       <div className="pt-28 md:pt-32 pb-24 min-h-screen flex flex-col">
         <main className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16 space-y-16 relative z-10 flex-grow flex flex-col">
 
-      {/* MOBILE BOTTOM DOCK (Mobile Navigation Rail) */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 z-50 p-4 flex justify-center translate-y-[-10px]">
+      {/* MOBILE BOTTOM DOCK */}
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-50 p-3 flex justify-center">
         <motion.div 
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="flex items-center gap-6 px-8 py-3.5 rounded-full glass border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] backdrop-blur-3xl"
+          className="flex items-center gap-4 px-6 py-3 rounded-full bg-card/90 backdrop-blur-xl border border-border shadow-lg"
         >
-          {studentLinks.slice(0, 4).map((l) => {
+          {studentLinks.slice(0, 5).map((l) => {
             const isActive = activeTab === l.id;
             return (
               <button
                 key={l.id}
                 onClick={() => setActiveTab(l.id)}
-                className={`flex flex-col items-center gap-1.5 transition-all ${isActive ? "text-primary scale-110" : "text-zinc-600 hover:text-zinc-300"}`}
+                className={`flex flex-col items-center gap-1 transition-all ${isActive ? "text-primary" : "text-muted-foreground"}`}
               >
                 <l.icon className="size-5" />
-                <span className="text-[8px] font-black uppercase tracking-[0.2em]">{l.label.split(' ')[0]}</span>
+                <span className="text-[9px] font-medium">{l.label.split(' ')[0]}</span>
               </button>
             );
           })}
