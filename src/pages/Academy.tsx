@@ -444,7 +444,7 @@ const Academy = () => {
                    <div className="space-y-8">
                       <div className="flex items-center gap-3">
                          <div className="h-px flex-1 bg-border/50" />
-                         <h3 className="font-mono text-[10px] uppercase tracking-[0.4em] text-muted-foreground">Full Course Catalog</h3>
+                         <h3 className="text-sm font-medium text-muted-foreground">All Courses</h3>
                          <div className="h-px flex-1 bg-border/50" />
                       </div>
                       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
