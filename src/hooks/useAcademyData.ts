@@ -25,7 +25,7 @@ const CURRICULUM_LEDGER = [
     academy_lessons: [
       {
         id: 'a1', title: 'Module 1: Introduction to AI and the Modern Freelance Economy', duration_minutes: 45, type: 'video',
-        video_url: 'https://www.youtube.com/embed/AivZ31S1s24',
+        video_url: 'https://www.youtube.com/embed/z-EtmaFJieY',
         content: `# Introduction to AI and the Modern Freelance Economy
 
 ### What You Will Learn
@@ -57,7 +57,7 @@ The freelance economy is worth over $1.5 trillion globally. AI tools are creatin
       },
       {
         id: 'a2', title: 'Module 2: Mastering ChatGPT for Content Creation', duration_minutes: 60, type: 'video',
-        video_url: 'https://www.youtube.com/embed/k_N6Z2Z_L_c',
+        video_url: 'https://www.youtube.com/embed/z-EtmaFJieY',
         content: `# Mastering ChatGPT for Content Creation
 
 ### What You Will Learn
@@ -91,7 +91,7 @@ Write 5 prompts using the framework above for different freelance deliverables: 
       },
       {
         id: 'a3', title: 'Module 3: AI for Research and Data Analysis', duration_minutes: 50, type: 'video',
-        video_url: 'https://www.youtube.com/embed/V2_6mXp9V5s',
+        video_url: 'https://www.youtube.com/embed/z-EtmaFJieY',
         content: `# AI for Research and Data Analysis
 
 ### What You Will Learn
@@ -127,7 +127,7 @@ Learn how to use AI tools to conduct thorough research, analyze data, and delive
       },
       {
         id: 'a4', title: 'Module 4: Workflow Automation with Zapier & Make', duration_minutes: 75, type: 'video',
-        video_url: 'https://www.youtube.com/embed/XqCAsyH06vY',
+        video_url: 'https://www.youtube.com/embed/z-EtmaFJieY',
         content: `# Workflow Automation with Zapier & Make
 
 ### What You Will Learn
@@ -162,7 +162,7 @@ If you spend 5 hours/week on repetitive tasks and automation reduces that to 30 
       },
       {
         id: 'a5', title: 'Module 5: Selling AI-Powered Services', duration_minutes: 60, type: 'video',
-        video_url: 'https://www.youtube.com/embed/7X8mS8K6V6k',
+        video_url: 'https://www.youtube.com/embed/z-EtmaFJieY',
         content: `# Selling AI-Powered Services
 
 ### What You Will Learn
@@ -199,7 +199,7 @@ Transform your AI skills into profitable service offerings. Learn how to package
       },
       {
         id: 'a6', title: 'Module 6: Ethics and Responsible AI Use', duration_minutes: 40, type: 'video',
-        video_url: 'https://www.youtube.com/embed/e6-O66xI5rQ',
+        video_url: 'https://www.youtube.com/embed/z-EtmaFJieY',
         content: `# Ethics and Responsible AI Use
 
 ### What You Will Learn
@@ -254,7 +254,7 @@ Clients who understand your AI process are more likely to become long-term partn
     academy_lessons: [
       {
         id: 'f1', title: 'Module 1: Introduction to Global Freelancing', duration_minutes: 40, type: 'video',
-        video_url: 'https://www.youtube.com/embed/mGjA4f8mHkc',
+        video_url: 'https://www.youtube.com/embed/z-EtmaFJieY',
         content: `# Introduction to Global Freelancing
 
 ### What You Will Learn
@@ -291,7 +291,7 @@ Understand the global freelancing landscape, identify opportunities, and positio
       },
       {
         id: 'f2', title: 'Module 2: Building Your Online Profile', duration_minutes: 90, type: 'video',
-        video_url: 'https://www.youtube.com/embed/8oR_8pWfE2E',
+        video_url: 'https://www.youtube.com/embed/z-EtmaFJieY',
         content: `# Building Your Online Profile
 
 ### What You Will Learn
@@ -330,7 +330,7 @@ Create profiles on Upwork, Fiverr, and LinkedIn that attract high-quality client
       },
       {
         id: 'f3', title: 'Module 3: Proposal Writing and Client Acquisition', duration_minutes: 60, type: 'video',
-        video_url: 'https://www.youtube.com/embed/Yv9mQ8S8K6E',
+        video_url: 'https://www.youtube.com/embed/z-EtmaFJieY',
         content: `# Proposal Writing and Client Acquisition
 
 ### What You Will Learn
@@ -367,7 +367,7 @@ Master the art of writing winning proposals that stand out and convert prospects
       },
       {
         id: 'f4', title: 'Module 4: Pricing and Negotiation', duration_minutes: 50, type: 'video',
-        video_url: 'https://www.youtube.com/embed/5y0iNoeHOnE',
+        video_url: 'https://www.youtube.com/embed/z-EtmaFJieY',
         content: `# Pricing and Negotiation
 
 ### What You Will Learn
@@ -404,7 +404,7 @@ Set profitable rates, negotiate confidently, and understand the psychology of pr
       },
       {
         id: 'f5', title: 'Module 5: Client Communication and Retention', duration_minutes: 45, type: 'video',
-        video_url: 'https://www.youtube.com/embed/fWbb6Yf30vQ',
+        video_url: 'https://www.youtube.com/embed/z-EtmaFJieY',
         content: `# Client Communication and Retention
 
 ### What You Will Learn
@@ -442,7 +442,7 @@ Build lasting client relationships through professional communication, exceeded 
       },
       {
         id: 'f6', title: 'Module 6: Scaling Your Freelance Business', duration_minutes: 55, type: 'video',
-        video_url: 'https://www.youtube.com/embed/m5_TbeG-R7c',
+        video_url: 'https://www.youtube.com/embed/z-EtmaFJieY',
         content: `# Scaling Your Freelance Business
 
 ### What You Will Learn
@@ -500,7 +500,7 @@ Move from solo freelancer to business owner. Learn strategies for scaling revenu
     academy_lessons: [
       {
         id: 't1', title: 'Module 1: Overview of the US Education System', duration_minutes: 60, type: 'video',
-        video_url: 'https://www.youtube.com/embed/v3HwY26_foc',
+        video_url: 'https://www.youtube.com/embed/z-EtmaFJieY',
         content: `# Overview of the US Education System
 
 ### What You Will Learn
@@ -534,7 +534,7 @@ Understanding these differences is the foundation for success. International tea
       },
       {
         id: 't2', title: 'Module 2: Curriculum Planning and Lesson Delivery', duration_minutes: 75, type: 'video',
-        video_url: 'https://www.youtube.com/embed/O_UozI0hV64',
+        video_url: 'https://www.youtube.com/embed/z-EtmaFJieY',
         content: `# Curriculum Planning and Lesson Delivery
 
 ### What You Will Learn
@@ -567,7 +567,7 @@ Design engaging, standards-aligned lesson plans that meet American curriculum re
       },
       {
         id: 't3', title: 'Module 3: Classroom Management Strategies', duration_minutes: 60, type: 'video',
-        video_url: 'https://www.youtube.com/embed/pgk-719mTxM',
+        video_url: 'https://www.youtube.com/embed/z-EtmaFJieY',
         content: `# Classroom Management Strategies
 
 ### What You Will Learn
@@ -602,7 +602,7 @@ Develop effective classroom management techniques that create a positive learnin
       },
       {
         id: 't4', title: 'Module 4: Interview Preparation (J1 Visa Focus)', duration_minutes: 90, type: 'video',
-        video_url: 'https://www.youtube.com/embed/F4Syr5_p-mU',
+        video_url: 'https://www.youtube.com/embed/z-EtmaFJieY',
         content: `# Interview Preparation (J1 Visa Focus)
 
 ### What You Will Learn
@@ -645,7 +645,7 @@ Prepare thoroughly for international teaching interviews, with specific focus on
       },
       {
         id: 't5', title: 'Module 5: Professional Documentation', duration_minutes: 50, type: 'video',
-        video_url: 'https://www.youtube.com/embed/1_S-v_fVfG8',
+        video_url: 'https://www.youtube.com/embed/z-EtmaFJieY',
         content: `# Professional Documentation
 
 ### What You Will Learn
@@ -685,7 +685,7 @@ Create professional-quality resumes, cover letters, and teaching portfolios that
       },
       {
         id: 't6', title: 'Module 6: Cultural Adaptation and Global Teaching Ethics', duration_minutes: 45, type: 'video',
-        video_url: 'https://www.youtube.com/embed/_K-fA1W0M_w',
+        video_url: 'https://www.youtube.com/embed/z-EtmaFJieY',
         content: `# Cultural Adaptation and Global Teaching Ethics
 
 ### What You Will Learn
