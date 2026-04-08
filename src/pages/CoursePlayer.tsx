@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { useAcademyData } from "@/hooks/useAcademyData";
+import { ArticleModule, ToolkitModule, ChecklistModule, SimulatorModule, PlaygroundModule } from "@/components/academy/InteractiveModules";
 import logo from "@/assets/logo_transparent.png";
 
 declare global {
@@ -107,26 +108,13 @@ const CoursePlayer = () => {
 
     const videoId = activeLesson.video_url.includes('embed/')
       ? activeLesson.video_url.split('embed/')[1]?.split('?')[0]
-      : activeLesson.video_url.split('/').pop()?.split('?')[0];
-    if (!videoId) return;
-
-    // Remove old player element
-    const container = document.getElementById('yt-player-container');
-    if (container) {
-      container.innerHTML = '<div id="yt-player"></div>';
-    }
-
-    if (!window.YT) {
-      const tag = document.createElement('script');
-      tag.src = "https://www.youtube.com/iframe_api";
-      const firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-    }
+      : activeLesson.video_url?.split('/').pop()?.split('?')[0];
 
     let interval: any;
 
     const initPlayer = () => {
-      if (!document.getElementById('yt-player')) return;
+      const container = document.getElementById('yt-player');
+      if (!container) return;
       new window.YT.Player('yt-player', {
         height: '100%',
         width: '100%',
@@ -367,10 +355,12 @@ const CoursePlayer = () => {
           <ScrollArea className="flex-1">
             <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8">
               
-              {/* Video */}
-              <div className="aspect-video w-full rounded-xl overflow-hidden bg-black shadow-xl relative" id="yt-player-container">
-                <div id="yt-player" className="absolute inset-0 w-full h-full" />
-              </div>
+              {/* Dynamic Module Area */}
+              {activeLesson?.type === 'video' || !activeLesson?.type ? (
+                <div className="aspect-video w-full rounded-xl overflow-hidden bg-black shadow-xl relative" id="yt-player-container">
+                  <div id="yt-player" className="absolute inset-0 w-full h-full" />
+                </div>
+              ) : null}
 
               {/* Lesson Info */}
               <div className="space-y-6">
@@ -390,12 +380,12 @@ const CoursePlayer = () => {
                     ) : (
                       <Button 
                         size="sm" 
-                        disabled={!videoWatched}
-                        onClick={() => activeLesson?.quiz_data ? setShowQuiz(true) : handleMarkComplete()}
+                        disabled={activeLesson?.type === 'video' && !videoWatched}
+                        onClick={() => (activeLesson?.quiz_data && activeLesson.type === 'video') ? setShowQuiz(true) : handleMarkComplete()}
                       >
-                        {!videoWatched ? (
+                        {(activeLesson?.type === 'video' && !videoWatched) ? (
                           <><Clock className="size-3 mr-2" /> Watch video to continue</>
-                        ) : activeLesson?.quiz_data ? (
+                        ) : (activeLesson?.quiz_data && activeLesson.type === 'video') ? (
                           "Take Quiz"
                         ) : (
                           "Mark Complete"
@@ -405,7 +395,7 @@ const CoursePlayer = () => {
                   </div>
                 </div>
 
-                {/* Quiz or Notes */}
+                {/* Module Body */}
                 {showQuiz ? (
                   <QuizModule 
                     quizData={activeLesson.quiz_data} 
@@ -414,6 +404,16 @@ const CoursePlayer = () => {
                       handleMarkComplete();
                     }} 
                   />
+                ) : activeLesson?.type === 'article' ? (
+                  <ArticleModule content={activeLesson.content} readTime={activeLesson.duration_minutes || 5} />
+                ) : activeLesson?.type === 'toolkit' ? (
+                  <ToolkitModule resources={activeLesson.quiz_data?.resources || []} />
+                ) : activeLesson?.type === 'checklist' ? (
+                  <ChecklistModule tasks={activeLesson.quiz_data?.tasks || []} />
+                ) : activeLesson?.type === 'simulator' ? (
+                  <SimulatorModule scenarios={activeLesson.quiz_data?.scenarios || []} />
+                ) : activeLesson?.type === 'playground' ? (
+                  <PlaygroundModule instructions={activeLesson.content} prompts={activeLesson.quiz_data?.prompts || []} />
                 ) : activeLesson?.content ? (
                   <div className="prose prose-zinc dark:prose-invert max-w-none">
                     {activeLesson.content.split('\n').map((line: string, i: number) => {
@@ -428,7 +428,7 @@ const CoursePlayer = () => {
                 ) : (
                   <div className="py-16 text-center border rounded-xl bg-muted/20 border-dashed">
                     <FileText className="size-10 text-muted-foreground/30 mx-auto mb-4" />
-                    <p className="text-sm text-muted-foreground">No lesson notes available yet.</p>
+                    <p className="text-sm text-muted-foreground">No lesson available yet.</p>
                   </div>
                 )}
                 
