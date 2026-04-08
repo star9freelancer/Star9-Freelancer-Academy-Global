@@ -125,7 +125,7 @@ const CommunityChat = ({ user, profile }: CommunityChatProps) => {
           if (profiles) {
             const newCache = { ...profileCache };
             profiles.forEach((p: any) => {
-              newCache[p.id] = p.full_name || "Anonymous";
+              newCache[p.id] = p.full_name ? p.full_name.split(' ')[0] : "Anonymous";
             });
             setProfileCache(newCache);
           }
@@ -167,7 +167,7 @@ const CommunityChat = ({ user, profile }: CommunityChatProps) => {
             if (senderProfile) {
               setProfileCache((prev) => ({
                 ...prev,
-                [newMsg.user_id]: senderProfile.full_name || "Anonymous",
+                [newMsg.user_id]: senderProfile.full_name ? senderProfile.full_name.split(' ')[0] : "Anonymous",
               }));
             }
           }
@@ -330,7 +330,7 @@ const CommunityChat = ({ user, profile }: CommunityChatProps) => {
                     const isMe = msg.user_id === user.id;
                     const senderName =
                       profileCache[msg.user_id] ||
-                      (isMe ? profile?.full_name : "Loading...");
+                      (isMe ? (profile?.full_name?.split(' ')[0] || "You") : "Loading...");
 
                     return (
                       <div

@@ -9,7 +9,7 @@ const About = () => (
         <div className="space-y-4">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">About Star9</h1>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            Star9 Freelancer Ltd is a UK-registered company empowering African freelancers with the skills, technology, and global connections they need to succeed.
+            Star9 Freelancer ltd is a Kenya-registered company empowering African freelancers with the skills, technology, and global connections they need to succeed.
           </p>
         </div>
 

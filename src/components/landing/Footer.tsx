@@ -19,7 +19,7 @@ const Footer = () => (
       </nav>
 
       <p className="text-xs text-muted-foreground">
-        &copy; {new Date().getFullYear()} Star9 Freelancer Ltd.
+        &copy; {new Date().getFullYear()} Star9 Freelancer ltd.
       </p>
     </div>
   </footer>

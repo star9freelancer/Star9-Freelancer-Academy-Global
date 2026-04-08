@@ -73,7 +73,7 @@ VALUES
   (
     '11111111-1111-1111-1111-111111111111', 
     'Module 1: Introduction to AI and the Modern Freelance Economy', 
-    45, 1, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+    45, 1, 'video', 'https://www.youtube.com/embed/a0_lo_UcwRU',
     '# Understanding the AI Shift\n\nThe freelance landscape is changing rapidly. Artificial Intelligence is no longer just a futuristic concept; it is a current tool that is redefining how work is delivered.\n\n### Why AI Matters for Freelancers\n- **Efficiency**: Automate repetitive tasks like research and basic drafting.\n- **Scalability**: Handle more clients without increasing hours.\n- **Quality**: Use AI as a high-level creative partner to brainstorm and refine ideas.',
     '{
       "questions": [
@@ -108,27 +108,36 @@ VALUES
       ]
     }'
   ),
-  ('11111111-1111-1111-1111-111111111111', 'Module 3: Leveraging AI for Data Analysis and Deep Research', 50, 3, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ', '# Data Intelligence\n\nLearn how to use AI to process large datasets and uncover insights that were previously hidden.', null),
-  ('11111111-1111-1111-1111-111111111111', 'Module 4: Workflow Automation Tools (Mastering Zapier & Make)', 75, 4, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ', '# Automating Success\n\nConnect your tools together to create a seamless, hands-free business environment.', null),
-  ('11111111-1111-1111-1111-111111111111', 'Module 5: Architecting and Selling AI-Powered Services', 60, 5, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ', '# Selling the Future\n\nPackage your new skills into high-value services that clients are eager to pay for.', null),
-  ('11111111-1111-1111-1111-111111111111', 'Module 6: Ethics, Integrity, and Responsible AI Application', 40, 6, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ', '# Ethical AI\n\nMaintaining human integrity in an automated world.', null);
+  ('11111111-1111-1111-1111-111111111111', 'Module 3: Leveraging AI for Data Analysis and Deep Research', 50, 3, 'video', 'https://www.youtube.com/embed/ad79nYk2OUU', '# Data Intelligence\n\nLearn how to use AI to process large datasets and uncover insights that were previously hidden.', null),
+  ('11111111-1111-1111-1111-111111111111', 'Module 4: Workflow Automation Tools (Mastering Zapier & Make)', 75, 4, 'video', 'https://www.youtube.com/embed/H65fINM31I8', '# Automating Success\n\nConnect your tools together to create a seamless, hands-free business environment.', null),
+  ('11111111-1111-1111-1111-111111111111', 'Module 5: Architecting and Selling AI-Powered Services', 60, 5, 'video', 'https://www.youtube.com/embed/yZ2yv_rN0qg', '# Selling the Future\n\nPackage your new skills into high-value services that clients are eager to pay for.', null),
+  ('11111111-1111-1111-1111-111111111111', 'Module 6: Ethics, Integrity, and Responsible AI Application', 40, 6, 'video', 'https://www.youtube.com/embed/2ePf9rue1Ao', '# Ethical AI\n\nMaintaining human integrity in an automated world.', null);
 
 -- Course 2: Freelancing Essentials
 INSERT INTO academy_lessons (course_id, title, duration_minutes, order_index, type, video_url)
 VALUES 
-  ('22222222-2222-2222-2222-222222222222', 'Module 1: Introduction to the Global Freelancing Landscape', 40, 1, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('22222222-2222-2222-2222-222222222222', 'Module 2: Setting up High-Converting Profiles (Upwork, Fiverr, LinkedIn)', 90, 2, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('22222222-2222-2222-2222-222222222222', 'Module 3: The Art of Proposal Writing and Client Acquisition', 60, 3, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('22222222-2222-2222-2222-222222222222', 'Module 4: Strategic Pricing and Confident Negotiation', 50, 4, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('22222222-2222-2222-2222-222222222222', 'Module 5: Mastering Client Communication and Retention', 45, 5, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('22222222-2222-2222-2222-222222222222', 'Module 6: The Blueprint for Scaling Your Freelance Business', 55, 6, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ');
+  ('22222222-2222-2222-2222-222222222222', 'Module 1: Introduction to the Global Freelancing Landscape', 40, 1, 'video', 'https://www.youtube.com/embed/j14bT8jI0cI'),
+  ('22222222-2222-2222-2222-222222222222', 'Module 2: Setting up High-Converting Profiles (Upwork, Fiverr, LinkedIn)', 90, 2, 'video', 'https://www.youtube.com/embed/E-0o4oN3O2M'),
+  ('22222222-2222-2222-2222-222222222222', 'Module 3: The Art of Proposal Writing and Client Acquisition', 60, 3, 'video', 'https://www.youtube.com/embed/u_mC4Zp-4-s'),
+  ('22222222-2222-2222-2222-222222222222', 'Module 4: Strategic Pricing and Confident Negotiation', 50, 4, 'video', 'https://www.youtube.com/embed/5a4n9730e_g'),
+  ('22222222-2222-2222-2222-222222222222', 'Module 5: Mastering Client Communication and Retention', 45, 5, 'video', 'https://www.youtube.com/embed/g2qJ5-d6D0Y'),
+  ('22222222-2222-2222-2222-222222222222', 'Module 6: The Blueprint for Scaling Your Freelance Business', 55, 6, 'video', 'https://www.youtube.com/embed/6iW_iO_sVq0');
 
 -- Course 3: International Teacher Preparation
 INSERT INTO academy_lessons (course_id, title, duration_minutes, order_index, type, video_url)
 VALUES 
-  ('33333333-3333-3333-3333-333333333333', 'Module 1: Comprehensive Overview of the US Education System', 60, 1, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('33333333-3333-3333-3333-333333333333', 'Module 2: Advanced Curriculum Planning and Modern Lesson Delivery', 75, 2, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('33333333-3333-3333-3333-333333333333', 'Module 3: Elite Classroom Management Strategies', 60, 3, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('33333333-3333-3333-3333-333333333333', 'Module 4: Intensive Interview Preparation (J1 Visa Focus)', 90, 4, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('33333333-3333-3333-3333-333333333333', 'Module 5: Professional Documentation (Resumes & Cover Letters)', 50, 5, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
-  ('33333333-3333-3333-3333-333333333333', 'Module 6: Cultural Adaptation and Global Teaching Ethics', 45, 6, 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ');
+  ('33333333-3333-3333-3333-333333333333', 'Module 1: Comprehensive Overview of the US Education System', 60, 1, 'video', 'https://www.youtube.com/embed/0DqVcwv-974'),
+  ('33333333-3333-3333-3333-333333333333', 'Module 2: Advanced Curriculum Planning and Modern Lesson Delivery', 75, 2, 'video', 'https://www.youtube.com/embed/v9S_oR891n0'),
+  ('33333333-3333-3333-3333-333333333333', 'Module 3: Elite Classroom Management Strategies', 60, 3, 'video', 'https://www.youtube.com/embed/Wb199vSrnEE'),
+  ('33333333-3333-3333-3333-333333333333', 'Module 4: Intensive Interview Preparation (J1 Visa Focus)', 90, 4, 'video', 'https://www.youtube.com/embed/U3H12GWeR_U'),
+  ('33333333-3333-3333-3333-333333333333', 'Module 5: Professional Documentation (Resumes & Cover Letters)', 50, 5, 'video', 'https://www.youtube.com/embed/gRsUeI2Tawg'),
+  ('33333333-3333-3333-3333-333333333333', 'Module 6: Cultural Adaptation and Global Teaching Ethics', 45, 6, 'video', 'https://www.youtube.com/embed/d-a3rE6EaTo');
+
+-- 5. Create Core Chat Groups for Courses and General
+INSERT INTO chat_groups (id, name, type, course_id)
+VALUES 
+  ('44444444-4444-4444-4444-444444444444', 'Global Freelancer Lounge', 'general', null),
+  ('55555555-5555-5555-5555-555555555555', 'AI for Freelancers Cohort', 'course', '11111111-1111-1111-1111-111111111111'),
+  ('66666666-6666-6666-6666-666666666666', 'Freelancing Essentials Cohort', 'course', '22222222-2222-2222-2222-222222222222'),
+  ('77777777-7777-7777-7777-777777777777', 'International Teachers Cohort', 'course', '33333333-3333-3333-3333-333333333333')
+ON CONFLICT (id) DO NOTHING;
