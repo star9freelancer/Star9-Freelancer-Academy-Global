@@ -1,11 +1,8 @@
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
-  Users, ArrowRight, TrendingUp, 
-  Star, BookOpen, Clock, Briefcase, Calendar, Settings, Globe
+  ArrowRight, BookOpen, Briefcase, Calendar, Settings, Users, Globe
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -17,50 +14,10 @@ interface HomeFeedProps {
 }
 
 export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFeedProps) => {
-  const [activities, setActivities] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
   const activeEnrolledCourses = courses.filter(c => enrollments.has(c.id));
 
-  useEffect(() => {
-    const fetchActivity = async () => {
-      setLoading(true);
-      try {
-        const { data: pulses } = await supabase
-          .from('user_enrollments')
-          .select(`
-            enrolled_at, 
-            profiles(full_name), 
-            academy_courses(title)
-          `)
-          .order('enrolled_at', { ascending: false })
-          .limit(8);
-
-        const formattedPulses = pulses?.map(p => ({
-          text: `${(p.profiles as any)?.full_name || 'A student'} enrolled in ${(p.academy_courses as any)?.title}`,
-          date: new Date(p.enrolled_at),
-        })) || [];
-
-        setActivities(formattedPulses);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchActivity();
-  }, []);
-
-  const formatTime = (date: Date) => {
-    const now = new Date();
-    const diff = Math.floor((now.getTime() - date.getTime()) / 60000);
-    if (diff < 1) return "Just now";
-    if (diff < 60) return `${diff}m ago`;
-    if (diff < 1440) return `${Math.floor(diff / 60)}h ago`;
-    return date.toLocaleDateString();
-  };
-
   return (
-    <div className="space-y-6 md:space-y-10 max-w-full mx-auto pb-10 md:pb-20 px-0 lg:px-4 animate-in fade-in duration-500">
+    <div className="space-y-6 md:space-y-10 w-full pb-10 md:pb-20 animate-in fade-in duration-500">
       
       {/* Welcome Banner */}
       <div className="relative rounded-2xl bg-card border border-border overflow-hidden p-8 md:p-10">
@@ -150,7 +107,7 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
                 })}
               </div>
             ) : (
-              <div className="rounded-xl border border-dashed border-border bg-muted/20 p-12 text-center space-y-4" onClick={() => setActiveTab('catalog')}>
+              <div className="rounded-xl border border-dashed border-border bg-muted/20 p-12 text-center space-y-4 cursor-pointer" onClick={() => setActiveTab('catalog')}>
                 <BookOpen className="size-10 text-muted-foreground mx-auto" />
                 <div>
                   <p className="font-semibold text-foreground">No courses yet</p>
@@ -166,10 +123,10 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
             <h3 className="text-lg font-semibold text-foreground">Quick Links</h3>
             <div className="grid md:grid-cols-2 gap-4">
               {[
-                { title: "Profile & Settings", desc: "Update your personal information and preferences.", tab: "settings", icon: Settings, color: "text-primary" },
-                { title: "Job Board", desc: "Browse remote jobs and freelance opportunities.", tab: "careers", icon: Briefcase, color: "text-secondary" },
-                { title: "Community", desc: "Connect with fellow students and instructors.", tab: "community", icon: Users, color: "text-green-500" },
-                { title: "Events", desc: "View upcoming workshops and webinars.", tab: "events", icon: Calendar, color: "text-amber-500" }
+                { title: "Profile & Settings", desc: "Update your personal information.", tab: "settings", icon: Settings, color: "text-primary" },
+                { title: "Job Board", desc: "Browse remote jobs and opportunities.", tab: "careers", icon: Briefcase, color: "text-secondary" },
+                { title: "Community", desc: "Connect with fellow students.", tab: "community", icon: Users, color: "text-green-500" },
+                { title: "Events", desc: "Upcoming workshops and webinars.", tab: "events", icon: Calendar, color: "text-amber-500" }
               ].map((item, i) => (
                 <motion.button 
                   key={i} 
@@ -193,41 +150,27 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
 
         {/* Sidebar */}
         <aside className="lg:col-span-4 space-y-6">
-          
-          {/* Recent Activity */}
-          <div className="rounded-xl border border-border bg-card p-5 space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-foreground text-sm">Recent Activity</h3>
-              <div className="size-2 bg-green-500 rounded-full animate-pulse" />
-            </div>
-            
-            <div className="space-y-3">
-              {activities.map((item, i) => (
-                <div key={i} className="flex items-start gap-3 text-sm">
-                  <div className="size-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                  <div className="min-w-0">
-                    <p className="text-foreground/80 text-xs leading-relaxed">{item.text}</p>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">{formatTime(item.date)}</p>
-                  </div>
-                </div>
-              ))}
-              {activities.length === 0 && !loading && (
-                <p className="text-xs text-muted-foreground text-center py-6">No recent activity</p>
-              )}
-              {loading && (
-                <div className="space-y-3">
-                  {[...Array(4)].map((_, i) => <div key={i} className="h-3 bg-muted rounded animate-pulse" />)}
-                </div>
-              )}
-            </div>
-          </div>
-          
           {/* Explore CTA */}
           <div className="rounded-xl bg-gradient-to-br from-primary/10 to-secondary/5 border border-primary/20 p-6 space-y-3 cursor-pointer hover:border-primary/40 transition-all" onClick={() => setActiveTab('catalog')}>
             <Globe className="size-8 text-primary" />
             <h3 className="text-lg font-bold text-foreground">Explore Courses</h3>
             <p className="text-sm text-muted-foreground">Discover new skills and grow your career with our expert-led programs.</p>
             <Button size="sm" className="mt-2">Browse Catalog</Button>
+          </div>
+
+          {/* Stats */}
+          <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+            <h3 className="font-semibold text-foreground text-sm">Your Progress</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center p-3 rounded-lg bg-muted/50">
+                <p className="text-xl font-bold text-foreground">{profile?.current_streak || 0}</p>
+                <p className="text-[11px] text-muted-foreground">Day Streak</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-muted/50">
+                <p className="text-xl font-bold text-foreground">{profile?.longest_streak || 0}</p>
+                <p className="text-[11px] text-muted-foreground">Best Streak</p>
+              </div>
+            </div>
           </div>
         </aside>
       </div>
