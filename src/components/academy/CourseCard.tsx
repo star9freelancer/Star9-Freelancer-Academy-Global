@@ -27,7 +27,7 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
       transition={{ duration: 0.5 }}
       className="h-full"
     >
-      <Card className="glass h-full border-border/50 shadow-2xl hover:shadow-primary/10 transition-all flex flex-col group overflow-hidden bg-card/60 dark:bg-zinc-900/40 backdrop-blur-xl relative">
+      <Card className="h-full border-border/50 shadow-2xl hover:shadow-primary/10 transition-all flex flex-col group overflow-hidden bg-white dark:bg-zinc-900/40 dark:backdrop-blur-xl relative">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
         <div className="absolute -inset-px bg-gradient-to-br from-primary/20 via-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-[inherit] pointer-events-none" />
 
