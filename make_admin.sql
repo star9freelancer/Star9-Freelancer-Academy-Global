@@ -1,4 +1,9 @@
--- Run this in your Supabase SQL Editor to elevate the user to an admin
-UPDATE profiles 
+-- Run this in your Supabase SQL Editor
+UPDATE public.profiles 
 SET role = 'admin' 
-WHERE email = 'umuroyattani14@gmail.com';
+WHERE id = (
+  SELECT id 
+  FROM auth.users 
+  WHERE email = 'umuroyattani14@gmail.com'
+  LIMIT 1
+);
