@@ -365,7 +365,7 @@ const Academy = () => {
         <main className="max-w-full mx-auto px-4 md:px-10 lg:px-12 xl:px-20 space-y-8 md:space-y-16 relative z-10 flex-grow flex flex-col w-full">
 
       {/* MOBILE BOTTOM DOCK */}
-      <div className="md:hidden sticky bottom-4 inset-x-0 z-50 mt-auto flex justify-center pointer-events-none">
+      <div className="md:hidden fixed bottom-6 inset-x-0 z-50 flex justify-center pointer-events-none">
         <div className="pointer-events-auto">
         <motion.div 
           initial={{ y: 50, opacity: 0 }}
@@ -463,8 +463,25 @@ const Academy = () => {
                  )}
 
                  {activeTab === "certificates" && (
-                   <div className="space-y-6 relative z-10">
-                     <h1 className="text-3xl font-bold tracking-tight">My Certificates</h1>
+                   <div className="space-y-8 relative z-10 animate-in fade-in duration-500">
+                     <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 md:p-8 rounded-3xl border border-primary/20 relative overflow-hidden flex flex-col md:flex-row items-center gap-6 shadow-sm">
+                        <div className="size-16 rounded-2xl bg-primary/20 flex items-center justify-center shrink-0">
+                           <Award className="size-8 text-primary" />
+                        </div>
+                        <div className="relative z-10 flex-1 text-center md:text-left">
+                           <h2 className="text-2xl font-bold tracking-tight mb-2">Your Credentials Vault</h2>
+                           <p className="text-muted-foreground text-sm leading-relaxed max-w-xl mx-auto md:mx-0">Every certificate you earn is cryptographically tied to your profile and verifiable globally. Showcasing these on LinkedIn can significantly increase hiring velocity.</p>
+                        </div>
+                        <div className="absolute top-1/2 -translate-y-1/2 -right-8 opacity-[0.04] pointer-events-none">
+                           <Award className="size-64 -rotate-12" />
+                        </div>
+                     </div>
+                     
+                     <div className="flex items-center gap-3">
+                        <div className="h-px flex-1 bg-border/50" />
+                        <h3 className="text-sm font-medium text-muted-foreground">Obtained Certificates</h3>
+                        <div className="h-px flex-1 bg-border/50" />
+                     </div>
                      <div className="grid md:grid-cols-2 gap-6">
                        {certificates.map((cert) => (
                          <Card key={cert.id} className="glass overflow-hidden group">
