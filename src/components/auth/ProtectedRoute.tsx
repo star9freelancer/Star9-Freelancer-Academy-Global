@@ -38,10 +38,7 @@ const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps)
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  if (requireAdmin && !isAdmin) {
-    // Redirect to dashboard if not an admin
-    return <Navigate to="/academy" replace />;
-  }
+
 
   return <>{children}</>;
 };

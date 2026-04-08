@@ -39,12 +39,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     // Initial session fetch
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        // Wait for profile fetch to evaluate admin status
-        await fetchProfile(session.user.id);
+        // Fire and forget profile fetch
+        fetchProfile(session.user.id);
       }
       setLoading(false);
     });
@@ -53,15 +53,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
+      setLoading(false);
       
       if (session?.user) {
-        // Wait for profile fetch
-        await fetchProfile(session.user.id);
+        // Parallel sync
+        fetchProfile(session.user.id);
       } else {
         setProfile(null);
         setIsAdmin(false);
       }
-      setLoading(false);
     });
 
     return () => {
