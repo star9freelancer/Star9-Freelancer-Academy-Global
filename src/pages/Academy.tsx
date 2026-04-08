@@ -361,7 +361,7 @@ const Academy = () => {
       </AnimatePresence>
 
       {/* MAIN CONTENT WRAPPER */}
-      <div className="pt-20 md:pt-32 pb-16 md:pb-24 min-h-screen flex flex-col">
+      <div className="pt-6 md:pt-28 pb-20 md:pb-12 min-h-screen flex flex-col">
         <main className="max-w-full mx-auto px-4 md:px-10 lg:px-12 xl:px-20 space-y-8 md:space-y-16 relative z-10 flex-grow flex flex-col w-full">
 
       {/* MOBILE BOTTOM DOCK */}
@@ -393,7 +393,7 @@ const Academy = () => {
               enrollment={enrollments.get(selectedProgram.id)}
               onBack={() => setSelectedProgram(null)}
               onEnroll={() => handleEnroll(selectedProgram.id)}
-              onStart={(idx) => { navigate(`/academy/course/${selectedProgram.slug || selectedProgram.id}`); setSelectedProgram(null); }}
+              onStart={(idx) => { navigate(`/academy/course/${selectedProgram.id}`); setSelectedProgram(null); }}
             />
           ) : (
             <div className="space-y-8 animate-in fade-in duration-500">
@@ -424,7 +424,7 @@ const Academy = () => {
                             c.category.toLowerCase().includes(searchQuery.toLowerCase())
                           )
                           .map((course) => (
-                            <CourseCard key={course.id} course={course} enrollment={enrollments.get(course.id)} onOpen={() => navigate(`/academy/course/${course.slug || course.id}`)} />
+                            <CourseCard key={course.id} course={course} enrollment={enrollments.get(course.id)} onOpen={() => navigate(`/academy/course/${course.id}`)} />
                           ))
                         }
                         {courses.filter(c => enrollments.has(c.id)).length === 0 && (
