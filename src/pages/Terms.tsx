@@ -19,7 +19,7 @@ const Terms = () => (
 
           <section className="space-y-3">
             <h2 className="text-xl font-semibold text-foreground">2. Description of Services</h2>
-            <p>Star9 Freelancer ltd (a registered company in Kenya) provides an online learning platform (Star9 Academy), a job and study abroad board (Star9 Global), community features, and related freelancer support services.</p>
+            <p>Star9 Freelancer Ltd (a registered company in Kenya) provides an online learning platform (Star9 Academy), a job and study abroad board (Star9 Global), community features, and related freelancer support services.</p>
           </section>
 
           <section className="space-y-3">
@@ -29,7 +29,7 @@ const Terms = () => (
 
           <section className="space-y-3">
             <h2 className="text-xl font-semibold text-foreground">4. Course Enrollment and Certificates</h2>
-            <p>Enrollment in Academy courses grants you personal, non-transferable access to course materials. Certificates are issued upon successful completion and remain the intellectual property of Star9 Freelancer ltd.</p>
+            <p>Enrollment in Academy courses grants you personal, non-transferable access to course materials. Certificates are issued upon successful completion and remain the intellectual property of Star9 Freelancer Ltd.</p>
           </section>
 
           <section className="space-y-3">
@@ -44,12 +44,12 @@ const Terms = () => (
 
           <section className="space-y-3">
             <h2 className="text-xl font-semibold text-foreground">7. Intellectual Property</h2>
-            <p>All content on the Star9 platform, including courses, logos, text, and designs, is owned by Star9 Freelancer ltd and protected by applicable copyright laws.</p>
+            <p>All content on the Star9 platform, including courses, logos, text, and designs, is owned by Star9 Freelancer Ltd and protected by applicable copyright laws.</p>
           </section>
 
           <section className="space-y-3">
             <h2 className="text-xl font-semibold text-foreground">8. Limitation of Liability</h2>
-            <p>Star9 Freelancer ltd shall not be liable for any indirect, incidental, or consequential damages arising from your use of the Services.</p>
+            <p>Star9 Freelancer Ltd shall not be liable for any indirect, incidental, or consequential damages arising from your use of the Services.</p>
           </section>
 
           <section className="space-y-3">
