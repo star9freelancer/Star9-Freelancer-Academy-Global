@@ -8,10 +8,12 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps) => {
-  const { user, loading, isAdmin } = useAuth();
+  const { user, profile, loading, isAdmin } = useAuth();
   const location = useLocation();
 
-  if (loading) {
+  const isProfileLoading = !loading && user && !profile;
+
+  if (loading || isProfileLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
         {/* Subtle background glow */}
@@ -38,7 +40,10 @@ const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps)
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-
+  if (requireAdmin && !isAdmin) {
+    // Redirect to dashboard if not an admin
+    return <Navigate to="/academy" replace />;
+  }
 
   return <>{children}</>;
 };
