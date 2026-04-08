@@ -36,7 +36,7 @@ const CoursePlayer = () => {
   const [lessons, setLessons] = useState<any[]>([]);
   const [activeLesson, setActiveLesson] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024);
   const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
   const [videoWatched, setVideoWatched] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
@@ -278,8 +278,16 @@ const CoursePlayer = () => {
       {/* Main Area */}
       <div className="flex-1 flex overflow-hidden relative">
         
+        {/* Mobile Sidebar Overlay */}
+        {sidebarOpen && (
+          <div 
+            className="lg:hidden absolute inset-0 z-30 bg-background/80 backdrop-blur-sm" 
+            onClick={() => setSidebarOpen(false)} 
+          />
+        )}
+        
         {/* Sidebar */}
-        <aside className={`${sidebarOpen ? "w-80" : "w-0"} bg-card border-r flex flex-col transition-all duration-300 overflow-hidden absolute lg:relative z-40 h-full`}>
+        <aside className={`${sidebarOpen ? "w-80 border-r" : "w-0 border-transparent"} bg-card flex flex-col transition-all duration-300 overflow-hidden absolute lg:relative z-40 h-[calc(100vh-3.5rem)]`}>
           <div className="p-4 border-b shrink-0 flex items-center justify-between">
             <h2 className="text-sm font-semibold text-muted-foreground">Course Modules</h2>
             <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setSidebarOpen(false)}>
@@ -297,7 +305,10 @@ const CoursePlayer = () => {
                   <button
                     key={lesson.id}
                     disabled={isLocked}
-                    onClick={() => setActiveLesson(lesson)}
+                    onClick={() => {
+                      setActiveLesson(lesson);
+                      if (window.innerWidth < 1024) setSidebarOpen(false);
+                    }}
                     className={`w-full flex items-start gap-3 p-3 rounded-lg text-left transition-all ${
                       isActive 
                         ? "bg-primary/10 border border-primary/20" 
@@ -479,7 +490,9 @@ const QuizModule = ({ quizData, onPass }: { quizData: any, onPass: () => void })
   };
 
   const passThreshold = 0.8;
-  const finalScore = (score + (selectedAnswer === questions[currentQuestion]?.correctAnswer ? 1 : 0)) / questions.length;
+  const finalScore = finished 
+    ? score / questions.length
+    : (score + (selectedAnswer === questions[currentQuestion]?.correctAnswer ? 1 : 0)) / questions.length;
   const passed = finalScore >= passThreshold;
 
   if (finished) {
