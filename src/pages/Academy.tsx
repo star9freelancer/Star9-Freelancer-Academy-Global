@@ -365,7 +365,7 @@ const Academy = () => {
         <main className="max-w-full mx-auto px-4 md:px-10 lg:px-12 xl:px-20 space-y-8 md:space-y-16 relative z-10 flex-grow flex flex-col w-full">
 
       {/* MOBILE BOTTOM DOCK */}
-      <div className="md:hidden fixed bottom-0 inset-x-0 z-50 p-3 flex justify-center">
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-50 p-4 pb-8 flex justify-center">
         <motion.div 
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}

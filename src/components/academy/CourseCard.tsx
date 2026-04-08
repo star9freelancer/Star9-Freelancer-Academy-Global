@@ -27,7 +27,7 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
       transition={{ duration: 0.5 }}
       className="h-full"
     >
-      <Card className="glass h-full border-white/5 shadow-2xl hover:shadow-primary/10 transition-all flex flex-col group overflow-hidden bg-zinc-900/40 backdrop-blur-xl relative">
+      <Card className="glass h-full border-border/50 shadow-2xl hover:shadow-primary/10 transition-all flex flex-col group overflow-hidden bg-card/60 dark:bg-zinc-900/40 backdrop-blur-xl relative">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
         <div className="absolute -inset-px bg-gradient-to-br from-primary/20 via-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-[inherit] pointer-events-none" />
 
@@ -52,7 +52,7 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
           </div>
           
           <div className="absolute bottom-4 left-4 right-4 z-10">
-             <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-white/40">
+             <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-white/80">
                 <Clock className="size-3" />
                 <span>Est. {course.duration || "4 Hours"}</span>
              </div>
@@ -66,17 +66,17 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
         </CardHeader>
         
         <CardContent className="flex-1 flex flex-col pt-0 px-6">
-          <p className="text-[13px] text-zinc-400 line-clamp-2 leading-relaxed mb-6">
+          <p className="text-[13px] text-muted-foreground line-clamp-2 leading-relaxed mb-6">
              {course.overview || course.description || "Master new technical skills with Star9 Academy."}
           </p>
 
           {isEnrolled ? (
             <div className="space-y-1 relative z-10">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest font-bold">Progress</span>
+                <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest font-bold">Progress</span>
                 <span className="text-[10px] font-mono text-primary font-black">{progress}%</span>
               </div>
-              <div className="h-1.5 w-full bg-zinc-900 rounded-full overflow-hidden border border-white/5 p-[1px]">
+              <div className="h-1.5 w-full bg-muted dark:bg-zinc-900 rounded-full overflow-hidden border border-border/50 p-[1px]">
                 <motion.div 
                    initial={{ width: 0 }}
                    animate={{ width: `${progress}%` }}
@@ -86,8 +86,8 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
             </div>
           ) : (
             <div className="flex items-center gap-2 relative z-10">
-              <Clock className="size-3 text-zinc-600" />
-              <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">{course.duration || "4 Hours"}</span>
+              <Clock className="size-3 text-muted-foreground" />
+              <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">{course.duration || "4 Hours"}</span>
             </div>
           )}
         </CardContent>
@@ -105,14 +105,14 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
               <Button 
                 onClick={(e) => { e.stopPropagation(); onEnroll?.(); }}
                 disabled={isEnrolling}
-                className="flex-1 bg-white text-black hover:bg-zinc-200 rounded-xl h-11 font-mono text-[10px] uppercase tracking-widest font-bold shadow-lg"
+                className="flex-1 bg-foreground text-background hover:bg-foreground/90 rounded-xl h-11 font-mono text-[10px] uppercase tracking-widest font-bold shadow-lg"
               >
                 {isEnrolling ? "Joining..." : "Join Course"}
               </Button>
               <Button 
                 variant="outline"
                 onClick={(e) => { e.stopPropagation(); onViewDetails?.(); }}
-                className="size-11 rounded-xl border-white/10 text-white hover:bg-white/5 flex items-center justify-center p-0"
+                className="size-11 rounded-xl border-border bg-card text-foreground hover:bg-muted flex items-center justify-center p-0"
               >
                 <ArrowRight className="size-4" />
               </Button>
