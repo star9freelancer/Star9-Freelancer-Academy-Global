@@ -149,6 +149,7 @@ export default function Auth() {
                   <Input 
                     id="email" type="email" placeholder="you@example.com" 
                     value={email} onChange={(e) => setEmail(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleAuth(false) }}
                     className="h-11"
                   />
                 </div>
@@ -157,6 +158,7 @@ export default function Auth() {
                   <Input 
                     id="password" type="password" 
                     value={password} onChange={(e) => setPassword(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleAuth(false) }}
                     className="h-11"
                   />
                 </div>
@@ -187,19 +189,19 @@ export default function Auth() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2 md:col-span-2">
                     <Label htmlFor="reg-email">Email Address</Label>
-                    <Input id="reg-email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} className="h-11" />
+                    <Input id="reg-email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') handleAuth(true) }} className="h-11" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="reg-password">Password</Label>
-                    <Input id="reg-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-11" />
+                    <Input id="reg-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') handleAuth(true) }} className="h-11" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="reg-name">Full Name</Label>
-                    <Input id="reg-name" type="text" placeholder="John Doe" value={fullName} onChange={(e) => setFullName(e.target.value)} className="h-11" />
+                    <Input id="reg-name" type="text" placeholder="John Doe" value={fullName} onChange={(e) => setFullName(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') handleAuth(true) }} className="h-11" />
                   </div>
                   <div className="space-y-2 md:col-span-2">
                     <Label htmlFor="reg-city">City</Label>
-                    <Input id="reg-city" type="text" placeholder="Nairobi" value={city} onChange={(e) => setCity(e.target.value)} className="h-11" />
+                    <Input id="reg-city" type="text" placeholder="Nairobi" value={city} onChange={(e) => setCity(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') handleAuth(true) }} className="h-11" />
                   </div>
                 </div>
               </CardContent>
