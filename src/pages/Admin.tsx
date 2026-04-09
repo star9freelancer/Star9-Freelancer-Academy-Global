@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
-import { 
-  Users, Menu, Bell, Search, ArrowRight, CheckCircle2, 
-  XCircle, CreditCard, Briefcase, Award, 
+import {
+  Users, Menu, Bell, Search, ArrowRight, CheckCircle2,
+  XCircle, CreditCard, Briefcase, Award,
   Trash2, ShieldCheck, Mail, Plus, BookOpen,
   Globe, Play, LayoutGrid
 } from "lucide-react";
@@ -15,8 +15,8 @@ import { Label } from "@/components/ui/label";
 import logo from "@/assets/logo_transparent.png";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { toast } from "sonner";
-import { 
-  Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger 
+import {
+  Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger
 } from "@/components/ui/sheet";
 
 const VerificationBadge = ({ status }: { status: string }) => {
@@ -52,7 +52,7 @@ const Admin = () => {
     totalUsers: 0, totalCourses: 0, totalOpportunities: 0,
     pendingVerifications: 0, highestStreak: 0, recordHolderName: "Loading..."
   });
-  
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -125,7 +125,7 @@ const Admin = () => {
       .from('academy_courses')
       .upsert({ ...editingCourse, updated_at: new Date().toISOString() })
       .select('id, title').single();
-      
+
     if (!error && upsertData) {
       const { data: existingGroup } = await supabase.from('chat_groups').select('id').eq('course_id', upsertData.id).single();
       if (!existingGroup) {
@@ -196,11 +196,10 @@ const Admin = () => {
             <button
               key={l.id}
               onClick={() => setActiveTab(l.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${
-                activeTab === l.id 
-                  ? "bg-primary text-primary-foreground font-semibold shadow-sm" 
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${activeTab === l.id
+                  ? "bg-primary text-primary-foreground font-semibold shadow-sm"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              }`}
+                }`}
             >
               <l.icon className="size-4 shrink-0" />
               {sidebarOpen && <span>{l.label}</span>}
@@ -235,13 +234,13 @@ const Admin = () => {
             </div>
           </div>
           <div className="flex items-center gap-3">
-             <button className="p-2 rounded-lg hover:bg-muted relative transition-all">
-               <Bell className="size-5" />
-               <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full" />
-             </button>
-             <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm">
-               {user?.email?.charAt(0)?.toUpperCase() || "A"}
-             </div>
+            <button className="p-2 rounded-lg hover:bg-muted relative transition-all">
+              <Bell className="size-5" />
+              <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full" />
+            </button>
+            <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm">
+              {user?.email?.charAt(0)?.toUpperCase() || "A"}
+            </div>
           </div>
         </header>
 
@@ -273,11 +272,11 @@ const Admin = () => {
 
               <div className="grid md:grid-cols-3 gap-4">
                 <Card className="md:col-span-2 p-6 flex items-center justify-between">
-                   <div>
-                     <h3 className="text-xl font-bold">All Systems Active</h3>
-                     <p className="text-muted-foreground text-sm mt-1">Platform is running smoothly.</p>
-                   </div>
-                   <CheckCircle2 className="size-10 text-green-500" />
+                  <div>
+                    <h3 className="text-xl font-bold">All Systems Active</h3>
+                    <p className="text-muted-foreground text-sm mt-1">Platform is running smoothly.</p>
+                  </div>
+                  <CheckCircle2 className="size-10 text-green-500" />
                 </Card>
                 <Card className="p-6 space-y-3">
                   <Button className="w-full" onClick={() => setActiveTab('courses')}>Add New Course</Button>
@@ -331,7 +330,7 @@ const Admin = () => {
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                            <select 
+                            <select
                               className="bg-muted border border-border text-xs rounded px-2 py-1.5 outline-none"
                               value={std.role}
                               onChange={(e) => updateRole(std.id, e.target.value)}
@@ -367,7 +366,7 @@ const Admin = () => {
                                       Joined: {new Date(std.created_at).toLocaleDateString()}
                                     </SheetDescription>
                                   </SheetHeader>
-                                  
+
                                   <div className="py-6 space-y-6 overflow-y-auto max-h-[calc(100vh-200px)]">
                                     <div className="grid grid-cols-2 gap-4">
                                       <div>
@@ -379,7 +378,7 @@ const Admin = () => {
                                         <p className="font-medium">{std.phone_number || "Not provided"}</p>
                                       </div>
                                     </div>
-                                    
+
                                     <div>
                                       <p className="text-xs text-muted-foreground mb-1">Bio</p>
                                       <p className="text-sm text-muted-foreground italic">{std.bio || "No bio provided."}</p>
@@ -393,16 +392,16 @@ const Admin = () => {
                                         )) : <p className="text-xs text-muted-foreground">No skills listed.</p>}
                                       </div>
                                     </div>
-                                    
+
                                     <div className="pt-6 border-t space-y-3">
-                                       <p className="text-xs text-muted-foreground">Admin Actions</p>
-                                       <div className="flex gap-3">
-                                         {std.verification_status !== 'verified' ? (
-                                           <Button className="flex-1" onClick={() => setVerification(std.id, 'verified')}>Verify User</Button>
-                                         ) : (
-                                           <Button variant="destructive" className="flex-1" onClick={() => setVerification(std.id, 'pending')}>Revoke Verification</Button>
-                                         )}
-                                       </div>
+                                      <p className="text-xs text-muted-foreground">Admin Actions</p>
+                                      <div className="flex gap-3">
+                                        {std.verification_status !== 'verified' ? (
+                                          <Button className="flex-1" onClick={() => setVerification(std.id, 'verified')}>Verify User</Button>
+                                        ) : (
+                                          <Button variant="destructive" className="flex-1" onClick={() => setVerification(std.id, 'pending')}>Revoke Verification</Button>
+                                        )}
+                                      </div>
                                     </div>
                                   </div>
                                 </SheetContent>
@@ -437,8 +436,8 @@ const Admin = () => {
                   <div className="flex items-center justify-between">
                     <h2 className="text-xl font-bold">{editingCourse.title || "New Course"}</h2>
                     <div className="flex gap-2">
-                       <Button variant="ghost" onClick={() => setEditingCourse(null)}>Cancel</Button>
-                       <Button onClick={handleSaveCourse}>Save Course</Button>
+                      <Button variant="ghost" onClick={() => setEditingCourse(null)}>Cancel</Button>
+                      <Button onClick={handleSaveCourse}>Save Course</Button>
                     </div>
                   </div>
 
@@ -446,12 +445,12 @@ const Admin = () => {
                     <div className="space-y-4">
                       <div className="space-y-2">
                         <Label>Course Title</Label>
-                        <Input placeholder="Course Title" value={editingCourse.title} onChange={e => setEditingCourse({...editingCourse, title: e.target.value})} />
+                        <Input placeholder="Course Title" value={editingCourse.title} onChange={e => setEditingCourse({ ...editingCourse, title: e.target.value })} />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label>Category</Label>
-                          <select className="w-full h-10 px-3 bg-background border border-input rounded-md text-sm" value={editingCourse.category || "AI Skills"} onChange={e => setEditingCourse({...editingCourse, category: e.target.value})}>
+                          <select className="w-full h-10 px-3 bg-background border border-input rounded-md text-sm" value={editingCourse.category || "AI Skills"} onChange={e => setEditingCourse({ ...editingCourse, category: e.target.value })}>
                             <option>AI Skills</option>
                             <option>Freelancing</option>
                             <option>Digital Marketing</option>
@@ -460,7 +459,7 @@ const Admin = () => {
                         </div>
                         <div className="space-y-2">
                           <Label>Status</Label>
-                          <select className="w-full h-10 px-3 bg-background border border-input rounded-md text-sm" value={editingCourse.status} onChange={e => setEditingCourse({...editingCourse, status: e.target.value})}>
+                          <select className="w-full h-10 px-3 bg-background border border-input rounded-md text-sm" value={editingCourse.status} onChange={e => setEditingCourse({ ...editingCourse, status: e.target.value })}>
                             <option value="draft">Draft</option>
                             <option value="published">Published</option>
                           </select>
@@ -469,34 +468,34 @@ const Admin = () => {
                     </div>
 
                     <div className="space-y-4">
-                       <Label>Lessons</Label>
-                       <div className="space-y-2 max-h-[300px] overflow-y-auto p-3 bg-muted/30 border rounded-lg">
-                          {(editingCourse.lessons || []).map((lesson: any, idx: number) => (
-                            <div key={lesson.id} className="flex items-center justify-between p-3 bg-card border rounded-lg">
-                              <div className="flex items-center gap-3">
-                                <span className="text-xs text-muted-foreground">{idx + 1}</span>
-                                {lesson.type === 'video' ? <Play className="size-3 text-primary" /> : <BookOpen className="size-3 text-secondary" />}
-                                <span className="text-sm font-medium">{lesson.title}</span>
-                              </div>
-                              <Button variant="ghost" size="icon" className="size-6 text-muted-foreground hover:text-destructive" onClick={() => removeLesson(lesson.id)}><XCircle className="size-4" /></Button>
+                      <Label>Lessons</Label>
+                      <div className="space-y-2 max-h-[300px] overflow-y-auto p-3 bg-muted/30 border rounded-lg">
+                        {(editingCourse.lessons || []).map((lesson: any, idx: number) => (
+                          <div key={lesson.id} className="flex items-center justify-between p-3 bg-card border rounded-lg">
+                            <div className="flex items-center gap-3">
+                              <span className="text-xs text-muted-foreground">{idx + 1}</span>
+                              {lesson.type === 'video' ? <Play className="size-3 text-primary" /> : <BookOpen className="size-3 text-secondary" />}
+                              <span className="text-sm font-medium">{lesson.title}</span>
                             </div>
-                          ))}
-                          {(!editingCourse.lessons || editingCourse.lessons.length === 0) && (
-                            <p className="text-center py-6 text-sm text-muted-foreground">No lessons added yet</p>
-                          )}
-                       </div>
-
-                       <div className="p-3 border border-dashed rounded-lg space-y-2">
-                          <Input placeholder="Lesson Title" value={newLesson.title} onChange={e => setNewLesson({...newLesson, title: e.target.value})} className="h-9" />
-                          <div className="flex gap-2">
-                            <select className="h-9 px-2 bg-background border border-input rounded text-sm" value={newLesson.type} onChange={e => setNewLesson({...newLesson, type: e.target.value})}>
-                              <option value="video">Video</option>
-                              <option value="quiz">Quiz</option>
-                            </select>
-                            <Input placeholder={newLesson.type === 'video' ? "Video URL" : "Quiz Data"} value={newLesson.url} onChange={e => setNewLesson({...newLesson, url: e.target.value})} className="h-9" />
-                            <Button size="sm" variant="secondary" className="h-9" onClick={addLesson}>Add</Button>
+                            <Button variant="ghost" size="icon" className="size-6 text-muted-foreground hover:text-destructive" onClick={() => removeLesson(lesson.id)}><XCircle className="size-4" /></Button>
                           </div>
-                       </div>
+                        ))}
+                        {(!editingCourse.lessons || editingCourse.lessons.length === 0) && (
+                          <p className="text-center py-6 text-sm text-muted-foreground">No lessons added yet</p>
+                        )}
+                      </div>
+
+                      <div className="p-3 border border-dashed rounded-lg space-y-2">
+                        <Input placeholder="Lesson Title" value={newLesson.title} onChange={e => setNewLesson({ ...newLesson, title: e.target.value })} className="h-9" />
+                        <div className="flex gap-2">
+                          <select className="h-9 px-2 bg-background border border-input rounded text-sm" value={newLesson.type} onChange={e => setNewLesson({ ...newLesson, type: e.target.value })}>
+                            <option value="video">Video</option>
+                            <option value="quiz">Quiz</option>
+                          </select>
+                          <Input placeholder={newLesson.type === 'video' ? "Video URL" : "Quiz Data"} value={newLesson.url} onChange={e => setNewLesson({ ...newLesson, url: e.target.value })} className="h-9" />
+                          <Button size="sm" variant="secondary" className="h-9" onClick={addLesson}>Add</Button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </Card>
@@ -522,9 +521,9 @@ const Admin = () => {
                         <CardDescription>{course.status === 'published' ? '🟢 Published' : '🟡 Draft'}</CardDescription>
                       </CardHeader>
                       <CardContent>
-                         <p className="text-xs text-muted-foreground">
-                           {course.lessons?.length || 0} lessons
-                         </p>
+                        <p className="text-xs text-muted-foreground">
+                          {course.lessons?.length || 0} lessons
+                        </p>
                       </CardContent>
                     </Card>
                   ))}
@@ -575,17 +574,17 @@ const Admin = () => {
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                             <Badge variant="outline" className="text-xs">{opp.opportunity_category || opp.type || "General"}</Badge>
+                            <Badge variant="outline" className="text-xs">{opp.opportunity_category || opp.type || "General"}</Badge>
                           </td>
                           <td className="px-6 py-4">
-                             <Badge className={`text-xs ${opp.status === 'open' || opp.is_active ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
-                               {opp.status || (opp.is_active ? 'Active' : 'Closed')}
-                             </Badge>
+                            <Badge className={`text-xs ${opp.status === 'open' || opp.is_active ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
+                              {opp.status || (opp.is_active ? 'Active' : 'Closed')}
+                            </Badge>
                           </td>
                           <td className="px-6 py-4 text-right">
-                             <Button size="icon" variant="ghost" className="hover:text-destructive" onClick={() => handleDeleteOpportunity(opp.id)}>
-                               <Trash2 className="size-4" />
-                             </Button>
+                            <Button size="icon" variant="ghost" className="hover:text-destructive" onClick={() => handleDeleteOpportunity(opp.id)}>
+                              <Trash2 className="size-4" />
+                            </Button>
                           </td>
                         </tr>
                       ))}
@@ -598,58 +597,58 @@ const Admin = () => {
 
           {activeTab === "financials" && (
             <div className="space-y-6 max-w-6xl mx-auto animate-in fade-in duration-500">
-               <div>
-                 <h1 className="text-3xl font-bold tracking-tight">Finances</h1>
-                 <p className="text-muted-foreground mt-1">Revenue tracking and billing overview.</p>
-               </div>
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight">Finances</h1>
+                <p className="text-muted-foreground mt-1">Revenue tracking and billing overview.</p>
+              </div>
 
-               <div className="grid md:grid-cols-3 gap-4">
-                 <Card className="p-6">
-                   <p className="text-sm text-muted-foreground mb-2">Total Revenue</p>
-                   <h2 className="text-3xl font-bold">${invoices.reduce((acc, inv) => acc + (inv.amount || 0), 0).toLocaleString()}</h2>
-                 </Card>
-                 <Card className="p-6">
-                   <p className="text-sm text-muted-foreground mb-2">Pending Payments</p>
-                   <h2 className="text-3xl font-bold text-amber-500">{invoices.filter(i => i.status === 'pending').length}</h2>
-                 </Card>
-                 <Card className="p-6 flex items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toast.info("Invoice creation coming soon")}>
-                   <div className="text-center">
-                     <Plus className="size-8 text-primary mx-auto mb-2" />
-                     <p className="text-sm font-medium text-primary">New Invoice</p>
-                   </div>
-                 </Card>
-               </div>
+              <div className="grid md:grid-cols-3 gap-4">
+                <Card className="p-6">
+                  <p className="text-sm text-muted-foreground mb-2">Total Revenue</p>
+                  <h2 className="text-3xl font-bold">${invoices.reduce((acc, inv) => acc + (inv.amount || 0), 0).toLocaleString()}</h2>
+                </Card>
+                <Card className="p-6">
+                  <p className="text-sm text-muted-foreground mb-2">Pending Payments</p>
+                  <h2 className="text-3xl font-bold text-amber-500">{invoices.filter(i => i.status === 'pending').length}</h2>
+                </Card>
+                <Card className="p-6 flex items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toast.info("Invoice creation coming soon")}>
+                  <div className="text-center">
+                    <Plus className="size-8 text-primary mx-auto mb-2" />
+                    <p className="text-sm font-medium text-primary">New Invoice</p>
+                  </div>
+                </Card>
+              </div>
 
-               <div className="rounded-xl border bg-card overflow-hidden">
-                 <div className="overflow-x-auto">
-                   <table className="w-full text-sm text-left">
-                     <thead className="bg-muted/50 border-b text-xs text-muted-foreground">
-                       <tr>
-                         <th className="px-6 py-4">ID</th>
-                         <th className="px-6 py-4">User</th>
-                         <th className="px-6 py-4">Amount</th>
-                         <th className="px-6 py-4">Status</th>
-                       </tr>
-                     </thead>
-                     <tbody className="divide-y divide-border">
-                       {loadingInvoices ? (
-                         <tr><td colSpan={4} className="px-6 py-12 text-center text-muted-foreground">Loading...</td></tr>
-                       ) : invoices.length === 0 ? (
-                         <tr><td colSpan={4} className="px-6 py-12 text-center text-muted-foreground">No transactions yet.</td></tr>
-                       ) : invoices.map((inv) => (
-                         <tr key={inv.id} className="hover:bg-muted/30 transition-colors">
-                           <td className="px-6 py-4 text-xs text-muted-foreground">{inv.id.substring(0, 8)}</td>
-                           <td className="px-6 py-4 font-medium">{inv.user_id?.substring(0,8)}</td>
-                           <td className="px-6 py-4 font-bold text-green-500">${inv.amount}</td>
-                           <td className="px-6 py-4">
-                              <Badge className={`text-xs ${inv.status === 'paid' ? 'bg-green-500/10 text-green-500' : 'bg-amber-500/10 text-amber-500'}`}>{inv.status}</Badge>
-                           </td>
-                         </tr>
-                       ))}
-                     </tbody>
-                   </table>
-                 </div>
-               </div>
+              <div className="rounded-xl border bg-card overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-left">
+                    <thead className="bg-muted/50 border-b text-xs text-muted-foreground">
+                      <tr>
+                        <th className="px-6 py-4">ID</th>
+                        <th className="px-6 py-4">User</th>
+                        <th className="px-6 py-4">Amount</th>
+                        <th className="px-6 py-4">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {loadingInvoices ? (
+                        <tr><td colSpan={4} className="px-6 py-12 text-center text-muted-foreground">Loading...</td></tr>
+                      ) : invoices.length === 0 ? (
+                        <tr><td colSpan={4} className="px-6 py-12 text-center text-muted-foreground">No transactions yet.</td></tr>
+                      ) : invoices.map((inv) => (
+                        <tr key={inv.id} className="hover:bg-muted/30 transition-colors">
+                          <td className="px-6 py-4 text-xs text-muted-foreground">{inv.id.substring(0, 8)}</td>
+                          <td className="px-6 py-4 font-medium">{inv.user_id?.substring(0, 8)}</td>
+                          <td className="px-6 py-4 font-bold text-green-500">${inv.amount}</td>
+                          <td className="px-6 py-4">
+                            <Badge className={`text-xs ${inv.status === 'paid' ? 'bg-green-500/10 text-green-500' : 'bg-amber-500/10 text-amber-500'}`}>{inv.status}</Badge>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           )}
         </main>
