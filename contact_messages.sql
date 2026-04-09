@@ -1,7 +1,7 @@
 -- Run this in your Supabase SQL Editor to create the contact_messages table
 
 create table if not exists contact_messages (
-  id uuid default uuid_generate_v4() primary key,
+  id uuid default gen_random_uuid() primary key,
   name text not null,
   email text not null,
   subject text not null,

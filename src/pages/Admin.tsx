@@ -738,10 +738,12 @@ const Admin = () => {
                             variant="ghost"
                             size="icon"
                             className="size-8"
-                            onClick={() => window.open(`mailto:${msg.email}?subject=Re: ${msg.subject}`, '_blank')}
+                            asChild
                             title="Reply via email"
                           >
-                            <Mail className="size-4" />
+                            <a href={`mailto:${msg.email}?subject=${encodeURIComponent(`Re: ${msg.subject}`)}`}>
+                              <Mail className="size-4" />
+                            </a>
                           </Button>
                         </div>
                       </div>
