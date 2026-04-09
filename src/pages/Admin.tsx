@@ -6,8 +6,9 @@ import {
   Users, Menu, Bell, Search, ArrowRight, CheckCircle2,
   XCircle, CreditCard, Briefcase, Award,
   Trash2, ShieldCheck, Mail, Plus, BookOpen,
-  Globe, Play, LayoutGrid, MessageSquare, Eye, EyeOff
+  Globe, Play, LayoutGrid, MessageSquare, Eye, EyeOff, LogOut
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -203,83 +204,121 @@ const Admin = () => {
   ];
 
   return (
-    <div className="min-h-screen flex bg-background relative overflow-hidden">
-      {sidebarOpen && (
-        <div className="md:hidden fixed inset-0 z-40 bg-background/80 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
-      )}
+    <div className="min-h-screen bg-background relative selection:bg-primary/30 selection:text-white pb-32 md:pb-0">
+      {/* Dynamic Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+        <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-primary/5 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-secondary/5 blur-[120px] rounded-full" />
+      </div>
 
-      {/* Sidebar */}
-      <aside className={`${sidebarOpen ? "translate-x-0 w-64" : "-translate-x-full w-64 md:w-20 md:translate-x-0"} absolute md:relative z-50 h-full flex flex-col transition-all duration-500 border-r bg-card shrink-0 overflow-hidden`}>
-        <div className="h-20 px-6 flex items-center justify-center shrink-0 border-b">
-          {sidebarOpen ? (
-            <Link to="/" className="flex flex-col items-center gap-1">
-              <img src={logo} alt="Star9" className="h-7 w-auto object-contain" />
-              <span className="text-[10px] text-muted-foreground font-medium">Admin Panel</span>
-            </Link>
-          ) : (
-            <ShieldCheck className="size-6 text-primary" />
-          )}
-        </div>
-        <nav className="p-3 space-y-1">
-          {adminLinks.map((l) => (
-            <button
-              key={l.id}
-              onClick={() => setActiveTab(l.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${activeTab === l.id
-                  ? "bg-primary text-primary-foreground font-semibold shadow-sm"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                }`}
-            >
-              <l.icon className="size-4 shrink-0" />
-              {sidebarOpen && (
-                <span className="flex items-center gap-2">
-                  {l.label}
-                  {l.id === "messages" && stats.unreadMessages > 0 && (
-                    <span className="text-[10px] bg-destructive text-destructive-foreground px-1.5 py-0.5 rounded-full">{stats.unreadMessages}</span>
+      {/* Top Navigation - hidden on mobile */}
+      <div className="hidden md:flex fixed top-0 inset-x-0 z-50 justify-center p-4 md:p-6 transition-all duration-500 pointer-events-none">
+        <motion.nav 
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ type: "spring", damping: 20, stiffness: 100 }}
+          className="flex items-center gap-2 md:gap-3 px-4 py-2.5 rounded-full bg-card/80 backdrop-blur-xl border border-border shadow-lg max-w-full overflow-x-auto no-scrollbar pointer-events-auto"
+        >
+          {/* Logo */}
+          <Link to="/" className="p-2 rounded-full hover:bg-muted transition-colors shrink-0">
+            <img src={logo} alt="Star9" className="h-7 w-auto" />
+          </Link>
+
+          <div className="h-6 w-px bg-border mx-1 shrink-0" />
+
+          {/* Search */}
+          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-full border border-border focus-within:border-primary/40 transition-all group w-48 shrink-0">
+            <Search className="size-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <input 
+              type="text" 
+              placeholder="Search admin..."
+              className="bg-transparent text-sm outline-none w-full text-foreground placeholder:text-muted-foreground"
+            />
+          </div>
+
+          <div className="hidden lg:block h-6 w-px bg-border mx-1 shrink-0" />
+
+          {/* Navigation Links */}
+          <div className="flex items-center gap-1 shrink-0">
+            {adminLinks.map((l) => {
+              const isActive = activeTab === l.id;
+              return (
+                <button
+                  key={l.id}
+                  onClick={() => setActiveTab(l.id)}
+                  className={`relative flex items-center gap-2 px-3 py-2 rounded-full transition-all text-sm ${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+                >
+                  {isActive && (
+                    <motion.div 
+                      layoutId="admin-pill-bg"
+                      className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-full" 
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
                   )}
-                </span>
-              )}
-            </button>
-          ))}
-        </nav>
+                  <div className="relative z-10 flex items-center gap-2">
+                    <l.icon className="size-4 shrink-0" />
+                    <span className="font-medium whitespace-nowrap">{l.label}</span>
+                    {l.id === "messages" && stats.unreadMessages > 0 && (
+                      <span className="px-1.5 py-0.5 rounded-full bg-destructive text-[10px] text-destructive-foreground">
+                        {stats.unreadMessages}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
 
-        {sidebarOpen && (
-          <div className="mt-auto p-4 space-y-3">
-            <Link to="/academy" className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm bg-muted text-muted-foreground hover:text-foreground transition-all">
-              <Briefcase className="size-4 shrink-0" />
-              <span>Academy View</span>
+          <div className="h-6 w-px bg-border mx-1 shrink-0" />
+          
+          <div className="flex items-center gap-2 shrink-0">
+            <Link to="/academy" title="Back to Academy" className="w-9 h-9 flex items-center justify-center rounded-full bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
+              <ArrowRight className="size-4 rotate-180" />
             </Link>
-            <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm text-muted-foreground hover:bg-muted transition-colors">
-              <ArrowRight className="size-4 shrink-0 rotate-180" />
-              <span>Log Out</span>
+            <button onClick={handleLogout} title="Log Out" className="w-9 h-9 flex items-center justify-center rounded-full bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all">
+              <LogOut className="size-4" />
             </button>
           </div>
-        )}
-      </aside>
+        </motion.nav>
+      </div>
 
-      {/* Main */}
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 border-b bg-card/80 backdrop-blur-md flex items-center justify-between px-6 shrink-0 z-10">
-          <div className="flex items-center gap-4">
-            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg hover:bg-muted transition-all">
-              <Menu className="size-5" />
-            </button>
-            <h2 className="text-sm font-semibold hidden md:block capitalize">{activeTab === "intake" ? "Job Listings" : activeTab}</h2>
-          </div>
-          <div className="flex items-center gap-3">
-            {stats.unreadMessages > 0 && (
-              <button onClick={() => setActiveTab("messages")} className="p-2 rounded-lg hover:bg-muted relative transition-all">
-                <Mail className="size-5" />
-                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-destructive rounded-full" />
+      {/* Mobile Bottom Dock */}
+      <div className="md:hidden fixed bottom-6 inset-x-0 z-50 flex justify-center px-4 pointer-events-none">
+        <div className="flex items-center justify-between gap-1 p-2 rounded-full bg-card/90 backdrop-blur-xl border border-border shadow-2xl overflow-x-auto no-scrollbar pointer-events-auto max-w-full">
+          {adminLinks.map((l) => {
+            const isActive = activeTab === l.id;
+            return (
+              <button
+                key={l.id}
+                onClick={() => setActiveTab(l.id)}
+                className={`relative p-3 rounded-full flex-shrink-0 transition-all ${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                {isActive && (
+                  <motion.div 
+                    layoutId="admin-dock-bg"
+                    className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-full" 
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+                <div className="relative z-10 flex items-center justify-center">
+                  <l.icon className="size-5" />
+                  {l.id === "messages" && stats.unreadMessages > 0 && (
+                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-destructive rounded-full" />
+                  )}
+                </div>
               </button>
-            )}
-            <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm">
-              {authUser?.email?.charAt(0)?.toUpperCase() || "A"}
-            </div>
-          </div>
-        </header>
+            );
+          })}
+          <div className="w-px h-8 bg-border mx-1 flex-shrink-0" />
+          <Link to="/academy" className="p-3 rounded-full text-muted-foreground flex-shrink-0">
+            <ArrowRight className="size-5 rotate-180" />
+          </Link>
+        </div>
+      </div>
 
-        <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 w-full bg-background overflow-x-hidden">
+      {/* Main Content Area */}
+      <div className="pt-6 md:pt-28 pb-20 md:pb-12 min-h-screen flex flex-col w-full">
+        <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 space-y-8 animate-in fade-in duration-500">
 
           {activeTab === "dashboard" && (
             <div className="space-y-8 max-w-6xl mx-auto animate-in fade-in duration-500">
