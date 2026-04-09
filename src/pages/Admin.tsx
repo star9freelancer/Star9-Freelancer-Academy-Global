@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/context/AuthContext";
 import {
   Users, Menu, Bell, Search, ArrowRight, CheckCircle2,
   XCircle, CreditCard, Briefcase, Award,
   Trash2, ShieldCheck, Mail, Plus, BookOpen,
-  Globe, Play, LayoutGrid
+  Globe, Play, LayoutGrid, MessageSquare, Eye, EyeOff
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,7 +26,7 @@ const VerificationBadge = ({ status }: { status: string }) => {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="w-4 h-4 bg-blue-500 rounded-full inline-flex items-center justify-center ml-1 text-[8px] text-white">✓</div>
+          <div className="w-4 h-4 bg-blue-500 rounded-full inline-flex items-center justify-center ml-1 text-[8px] text-white">&#10003;</div>
         </TooltipTrigger>
         <TooltipContent><p>Verified Profile</p></TooltipContent>
       </Tooltip>
@@ -34,9 +35,9 @@ const VerificationBadge = ({ status }: { status: string }) => {
 };
 
 const Admin = () => {
+  const { user: authUser, isAdmin, loading: authLoading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [user, setUser] = useState<any>(null);
   const [students, setStudents] = useState<any[]>([]);
   const [loadingStudents, setLoadingStudents] = useState(true);
   const [courses, setCourses] = useState<any[]>([]);
@@ -45,65 +46,78 @@ const Admin = () => {
   const [loadingOpportunities, setLoadingOpportunities] = useState(false);
   const [invoices, setInvoices] = useState<any[]>([]);
   const [loadingInvoices, setLoadingInvoices] = useState(false);
+  const [contactMessages, setContactMessages] = useState<any[]>([]);
+  const [loadingMessages, setLoadingMessages] = useState(false);
   const [editingCourse, setEditingCourse] = useState<any>(null);
   const [newLesson, setNewLesson] = useState<any>({ title: "", type: "video", url: "", content: "" });
+  const [userSearch, setUserSearch] = useState("");
 
   const [stats, setStats] = useState({
     totalUsers: 0, totalCourses: 0, totalOpportunities: 0,
-    pendingVerifications: 0, highestStreak: 0, recordHolderName: "Loading..."
+    pendingVerifications: 0, unreadMessages: 0, totalRevenue: 0
   });
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) { setUser(user); fetchAllData(); }
-    });
-  }, []);
+    if (!authLoading && authUser) {
+      fetchAllData();
+    }
+  }, [authLoading, authUser]);
 
   const fetchAllData = async () => {
     setLoadingStudents(true); setLoadingCourses(true);
     setLoadingOpportunities(true); setLoadingInvoices(true);
+    setLoadingMessages(true);
 
     try {
-      const { data: userData } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
-      if (userData) setStudents(userData);
+      const [usersRes, coursesRes, jobsRes, invRes, msgRes] = await Promise.all([
+        supabase.from('profiles').select('*').order('created_at', { ascending: false }),
+        supabase.from('academy_courses').select('*').order('created_at', { ascending: false }),
+        supabase.from('academy_jobs').select('*').order('posted_at', { ascending: false }),
+        supabase.from('invoices').select('*').order('created_at', { ascending: false }),
+        supabase.from('contact_messages').select('*').order('created_at', { ascending: false }).limit(50),
+      ]);
 
-      const { data: courseData } = await supabase.from('academy_courses').select('*').order('created_at', { ascending: false });
-      if (courseData) setCourses(courseData);
+      const userData = usersRes.data || [];
+      const courseData = coursesRes.data || [];
+      const jobData = jobsRes.data || [];
+      const invData = invRes.data || [];
+      const msgData = msgRes.data || [];
 
-      const { data: jobData } = await supabase.from('academy_jobs').select('*').order('posted_at', { ascending: false });
-      if (jobData) setOpportunities(jobData);
-
-      const { data: invData } = await supabase.from('invoices').select('*').order('created_at', { ascending: false });
-      if (invData) setInvoices(invData);
-
-      const streaks = userData?.map(u => u.current_streak || 0) || [0];
-      const maxStreak = Math.max(...streaks);
-      const recordHolder = userData?.find(u => (u.current_streak || 0) === maxStreak);
+      setStudents(userData);
+      setCourses(courseData);
+      setOpportunities(jobData);
+      setInvoices(invData);
+      setContactMessages(msgData);
 
       setStats({
-        totalUsers: userData?.length || 0,
-        totalCourses: courseData?.length || 0,
-        totalOpportunities: jobData?.length || 0,
-        pendingVerifications: userData?.filter(u => u.verification_status === 'pending').length || 0,
-        highestStreak: maxStreak,
-        recordHolderName: recordHolder?.full_name || recordHolder?.email?.split('@')[0] || "None"
+        totalUsers: userData.length,
+        totalCourses: courseData.length,
+        totalOpportunities: jobData.length,
+        pendingVerifications: userData.filter(u => u.verification_status === 'pending').length,
+        unreadMessages: msgData.filter((m: any) => !m.is_read).length,
+        totalRevenue: invData.reduce((acc: number, inv: any) => acc + (inv.amount || 0), 0),
       });
+    } catch (err) {
+      console.error("Error fetching admin data:", err);
     } finally {
       setLoadingStudents(false); setLoadingCourses(false);
       setLoadingOpportunities(false); setLoadingInvoices(false);
+      setLoadingMessages(false);
     }
   };
 
   const setVerification = async (studentId: string, status: string) => {
     const { error } = await supabase.from('profiles').update({ verification_status: status }).eq('id', studentId);
     if (!error) { toast.success(`Status updated to ${status}`); fetchAllData(); }
+    else toast.error("Failed to update", { description: error.message });
   };
 
   const updateRole = async (studentId: string, role: string) => {
     const { error } = await supabase.from('profiles').update({ role }).eq('id', studentId);
     if (!error) { toast.success(`Role updated to ${role}`); fetchAllData(); }
+    else toast.error("Failed to update", { description: error.message });
   };
 
   const handleDeleteCourse = async (id: string) => {
@@ -160,16 +174,31 @@ const Admin = () => {
     if (!error) { toast.success("Opportunity added"); fetchAllData(); }
   };
 
+  const markMessageRead = async (id: string, currentStatus: boolean) => {
+    const { error } = await supabase.from('contact_messages').update({ is_read: !currentStatus }).eq('id', id);
+    if (!error) {
+      setContactMessages(prev => prev.map(m => m.id === id ? { ...m, is_read: !currentStatus } : m));
+      setStats(s => ({ ...s, unreadMessages: s.unreadMessages + (currentStatus ? 1 : -1) }));
+    }
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate('/auth');
   };
+
+  const filteredStudents = students.filter(s =>
+    userSearch === "" ||
+    s.full_name?.toLowerCase().includes(userSearch.toLowerCase()) ||
+    s.email?.toLowerCase().includes(userSearch.toLowerCase())
+  );
 
   const adminLinks = [
     { id: "dashboard", icon: LayoutGrid, label: "Dashboard" },
     { id: "users", icon: Users, label: "Users" },
     { id: "courses", icon: BookOpen, label: "Courses" },
     { id: "intake", icon: Briefcase, label: "Jobs" },
+    { id: "messages", icon: MessageSquare, label: "Messages" },
     { id: "financials", icon: CreditCard, label: "Finances" },
   ];
 
@@ -202,7 +231,14 @@ const Admin = () => {
                 }`}
             >
               <l.icon className="size-4 shrink-0" />
-              {sidebarOpen && <span>{l.label}</span>}
+              {sidebarOpen && (
+                <span className="flex items-center gap-2">
+                  {l.label}
+                  {l.id === "messages" && stats.unreadMessages > 0 && (
+                    <span className="text-[10px] bg-destructive text-destructive-foreground px-1.5 py-0.5 rounded-full">{stats.unreadMessages}</span>
+                  )}
+                </span>
+              )}
             </button>
           ))}
         </nav>
@@ -228,18 +264,17 @@ const Admin = () => {
             <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg hover:bg-muted transition-all">
               <Menu className="size-5" />
             </button>
-            <div className="hidden lg:flex items-center gap-2 px-3 py-2 bg-muted rounded-lg">
-              <Search className="size-4 text-muted-foreground" />
-              <input type="text" placeholder="Search..." className="bg-transparent text-sm outline-none w-48" />
-            </div>
+            <h2 className="text-sm font-semibold hidden md:block capitalize">{activeTab === "intake" ? "Job Listings" : activeTab}</h2>
           </div>
           <div className="flex items-center gap-3">
-            <button className="p-2 rounded-lg hover:bg-muted relative transition-all">
-              <Bell className="size-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full" />
-            </button>
+            {stats.unreadMessages > 0 && (
+              <button onClick={() => setActiveTab("messages")} className="p-2 rounded-lg hover:bg-muted relative transition-all">
+                <Mail className="size-5" />
+                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-destructive rounded-full" />
+              </button>
+            )}
             <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm">
-              {user?.email?.charAt(0)?.toUpperCase() || "A"}
+              {authUser?.email?.charAt(0)?.toUpperCase() || "A"}
             </div>
           </div>
         </header>
@@ -253,22 +288,48 @@ const Admin = () => {
                 <p className="text-muted-foreground mt-1">Overview of your Star9 platform.</p>
               </div>
 
-              <div className="grid md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 {[
-                  { label: "Total Users", value: stats.totalUsers, icon: Users, color: "text-green-500" },
-                  { label: "Active Courses", value: stats.totalCourses, icon: BookOpen, color: "text-primary" },
-                  { label: "Job Listings", value: stats.totalOpportunities, icon: Briefcase, color: "text-secondary" },
-                  { label: "Pending Verifications", value: stats.pendingVerifications, icon: ShieldCheck, color: "text-amber-500" },
+                  { label: "Users", value: stats.totalUsers, icon: Users, color: "text-green-500", click: () => setActiveTab("users") },
+                  { label: "Courses", value: stats.totalCourses, icon: BookOpen, color: "text-primary", click: () => setActiveTab("courses") },
+                  { label: "Jobs", value: stats.totalOpportunities, icon: Briefcase, color: "text-secondary", click: () => setActiveTab("intake") },
+                  { label: "Pending", value: stats.pendingVerifications, icon: ShieldCheck, color: "text-amber-500", click: () => setActiveTab("users") },
+                  { label: "Messages", value: stats.unreadMessages, icon: MessageSquare, color: "text-blue-500", click: () => setActiveTab("messages") },
+                  { label: "Revenue", value: `$${stats.totalRevenue.toLocaleString()}`, icon: CreditCard, color: "text-emerald-500", click: () => setActiveTab("financials") },
                 ].map((stat, i) => (
-                  <Card key={i} className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-sm text-muted-foreground">{stat.label}</span>
-                      <stat.icon className={`size-5 ${stat.color}`} />
+                  <Card key={i} className="p-4 cursor-pointer hover:border-primary/30 transition-all" onClick={stat.click}>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-xs text-muted-foreground">{stat.label}</span>
+                      <stat.icon className={`size-4 ${stat.color}`} />
                     </div>
-                    <h3 className="text-3xl font-bold">{stat.value}</h3>
+                    <h3 className="text-2xl font-bold">{stat.value}</h3>
                   </Card>
                 ))}
               </div>
+
+              {/* Recent Messages Preview */}
+              {contactMessages.filter(m => !m.is_read).length > 0 && (
+                <Card className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-semibold">Unread Messages</h3>
+                    <Button variant="ghost" size="sm" onClick={() => setActiveTab("messages")}>View All</Button>
+                  </div>
+                  <div className="space-y-3">
+                    {contactMessages.filter(m => !m.is_read).slice(0, 3).map(msg => (
+                      <div key={msg.id} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-semibold shrink-0">
+                          {msg.name?.charAt(0)?.toUpperCase()}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium">{msg.name} - {msg.subject}</p>
+                          <p className="text-xs text-muted-foreground truncate">{msg.message}</p>
+                        </div>
+                        <span className="text-[10px] text-muted-foreground shrink-0">{new Date(msg.created_at).toLocaleDateString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              )}
 
               <div className="grid md:grid-cols-3 gap-4">
                 <Card className="md:col-span-2 p-6 flex items-center justify-between">
@@ -291,9 +352,15 @@ const Admin = () => {
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
                   <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
-                  <p className="text-muted-foreground mt-1">Manage member roles and verification status.</p>
+                  <p className="text-muted-foreground mt-1">{students.length} registered users</p>
                 </div>
-                <Button variant="outline" onClick={fetchAllData}>Refresh</Button>
+                <div className="flex gap-2">
+                  <div className="flex items-center gap-2 px-3 py-2 bg-muted rounded-lg border">
+                    <Search className="size-4 text-muted-foreground" />
+                    <input type="text" placeholder="Search users..." className="bg-transparent text-sm outline-none w-40" value={userSearch} onChange={e => setUserSearch(e.target.value)} />
+                  </div>
+                  <Button variant="outline" onClick={fetchAllData}>Refresh</Button>
+                </div>
               </div>
 
               <div className="rounded-xl border bg-card overflow-hidden">
@@ -303,7 +370,7 @@ const Admin = () => {
                       <tr>
                         <th className="px-6 py-4">User</th>
                         <th className="px-6 py-4">Role</th>
-                        <th className="px-6 py-4">Streak</th>
+                        <th className="px-6 py-4">Points</th>
                         <th className="px-6 py-4">Status</th>
                         <th className="px-6 py-4 text-right">Actions</th>
                       </tr>
@@ -311,10 +378,10 @@ const Admin = () => {
                     <tbody className="divide-y divide-border">
                       {loadingStudents ? (
                         <tr><td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">Loading users...</td></tr>
-                      ) : students.length === 0 ? (
+                      ) : filteredStudents.length === 0 ? (
                         <tr><td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">No users found.</td></tr>
-                      ) : students.map((std) => (
-                        <tr key={std.id} className="hover:bg-muted/30 transition-colors group">
+                      ) : filteredStudents.map((std) => (
+                        <tr key={std.id} className="hover:bg-muted/30 transition-colors">
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
                               <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center font-semibold text-sm">
@@ -342,7 +409,7 @@ const Admin = () => {
                             </select>
                           </td>
                           <td className="px-6 py-4">
-                            <span className="text-sm font-medium">{std.current_streak || 0} days</span>
+                            <span className="text-sm font-medium">{std.merit_points || 0} pts</span>
                           </td>
                           <td className="px-6 py-4">
                             {std.verification_status === 'verified' ? (
@@ -366,24 +433,29 @@ const Admin = () => {
                                       Joined: {new Date(std.created_at).toLocaleDateString()}
                                     </SheetDescription>
                                   </SheetHeader>
-
                                   <div className="py-6 space-y-6 overflow-y-auto max-h-[calc(100vh-200px)]">
                                     <div className="grid grid-cols-2 gap-4">
                                       <div>
-                                        <p className="text-xs text-muted-foreground mb-1">Location</p>
-                                        <p className="font-medium">{std.city}, {std.country}</p>
+                                        <p className="text-xs text-muted-foreground mb-1">Email</p>
+                                        <p className="font-medium text-sm">{std.email}</p>
                                       </div>
                                       <div>
                                         <p className="text-xs text-muted-foreground mb-1">Phone</p>
-                                        <p className="font-medium">{std.phone_number || "Not provided"}</p>
+                                        <p className="font-medium text-sm">{std.phone_number || "Not provided"}</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-xs text-muted-foreground mb-1">Location</p>
+                                        <p className="font-medium text-sm">{[std.city, std.country].filter(Boolean).join(', ') || "Not provided"}</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-xs text-muted-foreground mb-1">Merit Points</p>
+                                        <p className="font-medium text-sm">{std.merit_points || 0}</p>
                                       </div>
                                     </div>
-
                                     <div>
                                       <p className="text-xs text-muted-foreground mb-1">Bio</p>
                                       <p className="text-sm text-muted-foreground italic">{std.bio || "No bio provided."}</p>
                                     </div>
-
                                     <div>
                                       <p className="text-xs text-muted-foreground mb-2">Skills</p>
                                       <div className="flex flex-wrap gap-2">
@@ -392,7 +464,6 @@ const Admin = () => {
                                         )) : <p className="text-xs text-muted-foreground">No skills listed.</p>}
                                       </div>
                                     </div>
-
                                     <div className="pt-6 border-t space-y-3">
                                       <p className="text-xs text-muted-foreground">Admin Actions</p>
                                       <div className="flex gap-3">
@@ -440,7 +511,6 @@ const Admin = () => {
                       <Button onClick={handleSaveCourse}>Save Course</Button>
                     </div>
                   </div>
-
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-4">
                       <div className="space-y-2">
@@ -466,7 +536,6 @@ const Admin = () => {
                         </div>
                       </div>
                     </div>
-
                     <div className="space-y-4">
                       <Label>Lessons</Label>
                       <div className="space-y-2 max-h-[300px] overflow-y-auto p-3 bg-muted/30 border rounded-lg">
@@ -484,15 +553,15 @@ const Admin = () => {
                           <p className="text-center py-6 text-sm text-muted-foreground">No lessons added yet</p>
                         )}
                       </div>
-
                       <div className="p-3 border border-dashed rounded-lg space-y-2">
                         <Input placeholder="Lesson Title" value={newLesson.title} onChange={e => setNewLesson({ ...newLesson, title: e.target.value })} className="h-9" />
                         <div className="flex gap-2">
                           <select className="h-9 px-2 bg-background border border-input rounded text-sm" value={newLesson.type} onChange={e => setNewLesson({ ...newLesson, type: e.target.value })}>
                             <option value="video">Video</option>
+                            <option value="article">Article</option>
                             <option value="quiz">Quiz</option>
                           </select>
-                          <Input placeholder={newLesson.type === 'video' ? "Video URL" : "Quiz Data"} value={newLesson.url} onChange={e => setNewLesson({ ...newLesson, url: e.target.value })} className="h-9" />
+                          <Input placeholder="URL or content" value={newLesson.url} onChange={e => setNewLesson({ ...newLesson, url: e.target.value })} className="h-9" />
                           <Button size="sm" variant="secondary" className="h-9" onClick={addLesson}>Add</Button>
                         </div>
                       </div>
@@ -518,13 +587,8 @@ const Admin = () => {
                           </button>
                         </div>
                         <CardTitle className="mt-2">{course.title}</CardTitle>
-                        <CardDescription>{course.status === 'published' ? '🟢 Published' : '🟡 Draft'}</CardDescription>
+                        <CardDescription>{course.status === 'published' ? 'Published' : 'Draft'}</CardDescription>
                       </CardHeader>
-                      <CardContent>
-                        <p className="text-xs text-muted-foreground">
-                          {course.lessons?.length || 0} lessons
-                        </p>
-                      </CardContent>
                     </Card>
                   ))}
                 </div>
@@ -543,13 +607,12 @@ const Admin = () => {
                   <Plus className="mr-2 size-4" /> Add Job
                 </Button>
               </div>
-
               <div className="rounded-xl border bg-card overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm text-left">
                     <thead className="bg-muted/50 border-b text-xs text-muted-foreground">
                       <tr>
-                        <th className="px-6 py-4">Company</th>
+                        <th className="px-6 py-4">Title / Company</th>
                         <th className="px-6 py-4">Category</th>
                         <th className="px-6 py-4">Status</th>
                         <th className="px-6 py-4 text-right">Actions</th>
@@ -563,15 +626,8 @@ const Admin = () => {
                       ) : opportunities.map((opp) => (
                         <tr key={opp.id} className="hover:bg-muted/30 transition-colors">
                           <td className="px-6 py-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-9 h-9 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary font-semibold">
-                                {opp.employer_name?.charAt(0)?.toUpperCase() || opp.company?.charAt(0)?.toUpperCase() || "?"}
-                              </div>
-                              <div>
-                                <p className="font-medium">{opp.title || opp.employer_name}</p>
-                                <a href={opp.application_link || opp.application_url} target="_blank" className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1"><Globe className="size-3" /> Apply link</a>
-                              </div>
-                            </div>
+                            <p className="font-medium">{opp.title || opp.employer_name}</p>
+                            <p className="text-xs text-muted-foreground">{opp.company || ""}</p>
                           </td>
                           <td className="px-6 py-4">
                             <Badge variant="outline" className="text-xs">{opp.opportunity_category || opp.type || "General"}</Badge>
@@ -595,30 +651,88 @@ const Admin = () => {
             </div>
           )}
 
+          {activeTab === "messages" && (
+            <div className="space-y-6 max-w-4xl mx-auto animate-in fade-in duration-500">
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight">Contact Messages</h1>
+                <p className="text-muted-foreground mt-1">Messages submitted through the contact form.</p>
+              </div>
+              {loadingMessages ? (
+                <div className="text-center py-12 text-muted-foreground">Loading messages...</div>
+              ) : contactMessages.length === 0 ? (
+                <Card className="p-12 text-center border-dashed">
+                  <MessageSquare className="size-12 mx-auto mb-4 text-muted-foreground" />
+                  <CardTitle>No messages yet</CardTitle>
+                  <p className="text-sm text-muted-foreground mt-2">Contact form submissions will appear here.</p>
+                </Card>
+              ) : (
+                <div className="space-y-3">
+                  {contactMessages.map(msg => (
+                    <Card key={msg.id} className={`p-5 transition-all ${!msg.is_read ? "border-primary/30 bg-primary/5" : ""}`}>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex items-start gap-3 min-w-0 flex-1">
+                          <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm shrink-0">
+                            {msg.name?.charAt(0)?.toUpperCase()}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <p className="font-semibold text-sm">{msg.name}</p>
+                              {!msg.is_read && <span className="w-2 h-2 bg-primary rounded-full" />}
+                            </div>
+                            <p className="text-xs text-muted-foreground mb-1">{msg.email}</p>
+                            <p className="text-sm font-medium mb-2">{msg.subject}</p>
+                            <p className="text-sm text-muted-foreground leading-relaxed">{msg.message}</p>
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-2 shrink-0">
+                          <span className="text-[10px] text-muted-foreground">{new Date(msg.created_at).toLocaleDateString()}</span>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8"
+                            onClick={() => markMessageRead(msg.id, msg.is_read)}
+                            title={msg.is_read ? "Mark as unread" : "Mark as read"}
+                          >
+                            {msg.is_read ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8"
+                            onClick={() => window.open(`mailto:${msg.email}?subject=Re: ${msg.subject}`, '_blank')}
+                            title="Reply via email"
+                          >
+                            <Mail className="size-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {activeTab === "financials" && (
             <div className="space-y-6 max-w-6xl mx-auto animate-in fade-in duration-500">
               <div>
                 <h1 className="text-3xl font-bold tracking-tight">Finances</h1>
                 <p className="text-muted-foreground mt-1">Revenue tracking and billing overview.</p>
               </div>
-
               <div className="grid md:grid-cols-3 gap-4">
                 <Card className="p-6">
                   <p className="text-sm text-muted-foreground mb-2">Total Revenue</p>
-                  <h2 className="text-3xl font-bold">${invoices.reduce((acc, inv) => acc + (inv.amount || 0), 0).toLocaleString()}</h2>
+                  <h2 className="text-3xl font-bold">${stats.totalRevenue.toLocaleString()}</h2>
                 </Card>
                 <Card className="p-6">
                   <p className="text-sm text-muted-foreground mb-2">Pending Payments</p>
                   <h2 className="text-3xl font-bold text-amber-500">{invoices.filter(i => i.status === 'pending').length}</h2>
                 </Card>
-                <Card className="p-6 flex items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => toast.info("Invoice creation coming soon")}>
-                  <div className="text-center">
-                    <Plus className="size-8 text-primary mx-auto mb-2" />
-                    <p className="text-sm font-medium text-primary">New Invoice</p>
-                  </div>
+                <Card className="p-6">
+                  <p className="text-sm text-muted-foreground mb-2">Paid Invoices</p>
+                  <h2 className="text-3xl font-bold text-green-500">{invoices.filter(i => i.status === 'paid').length}</h2>
                 </Card>
               </div>
-
               <div className="rounded-xl border bg-card overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm text-left">
