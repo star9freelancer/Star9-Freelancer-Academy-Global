@@ -3,6 +3,7 @@ import HeroSection from "@/components/landing/HeroSection";
 import DualBrandSection from "@/components/landing/DualBrandSection";
 import FeaturesSection from "@/components/landing/FeaturesSection";
 import TestimonialsSection from "@/components/landing/TestimonialsSection";
+import TrustSection from "@/components/landing/TrustSection";
 import PricingSection from "@/components/landing/PricingSection";
 import CTASection from "@/components/landing/CTASection";
 import Footer from "@/components/landing/Footer";
@@ -14,6 +15,7 @@ const Index = () => (
     <DualBrandSection />
     <FeaturesSection />
     <TestimonialsSection />
+    <TrustSection />
     <PricingSection />
     <CTASection />
     <Footer />
