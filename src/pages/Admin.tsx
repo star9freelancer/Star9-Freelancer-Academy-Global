@@ -3,10 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
 import {
-  Users, Menu, Bell, Search, ArrowRight, CheckCircle2,
-  XCircle, CreditCard, Briefcase, Award,
+  Users, Search, ArrowRight, CheckCircle2,
+  XCircle, CreditCard, Briefcase,
   Trash2, ShieldCheck, Mail, Plus, BookOpen,
-  Globe, Play, LayoutGrid, MessageSquare, Eye, EyeOff, LogOut
+  Play, LayoutGrid, MessageSquare, Eye, EyeOff, LogOut,
+  FileText, Download, UserCheck
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
