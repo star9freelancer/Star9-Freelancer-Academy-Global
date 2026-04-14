@@ -1,64 +1,92 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, GraduationCap, Briefcase, MapPin } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRef } from "react";
 
-const stats = [
-  { value: "2,500+", label: "Active Learners" },
-  { value: "30+", label: "Countries Reached" },
-  { value: "92%", label: "Completion Rate" },
+const floatingCards = [
+  { emoji: "🎓", label: "Certified Courses", x: "10%", y: "20%", delay: 0 },
+  { emoji: "💼", label: "Remote Jobs", x: "75%", y: "15%", delay: 0.2 },
+  { emoji: "🌍", label: "30+ Countries", x: "85%", y: "65%", delay: 0.4 },
+  { emoji: "🏆", label: "92% Completion", x: "5%", y: "70%", delay: 0.6 },
 ];
 
 const HeroSection = () => {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const yBg = useTransform(scrollYProgress, [0, 1], [0, 150]);
+
   return (
-    <section className="relative min-h-[90vh] flex items-center pt-28 pb-20 overflow-hidden bg-background">
-      {/* Subtle grid background */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border)/0.3)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border)/0.3)_1px,transparent_1px)] bg-[size:60px_60px]" />
-        <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-background to-transparent z-10" />
-        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-background to-transparent z-10" />
+    <section ref={ref} className="relative min-h-[100vh] flex items-center pt-24 pb-20 overflow-hidden bg-background">
+      {/* Animated gradient orbs */}
+      <motion.div style={{ y: yBg }} className="absolute inset-0 -z-10">
+        <div className="absolute top-[10%] left-[15%] w-[500px] h-[500px] bg-primary/15 rounded-full blur-[100px] animate-pulse" />
+        <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] bg-secondary/15 rounded-full blur-[80px] animate-pulse" style={{ animationDelay: "1s" }} />
+        <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
+      </motion.div>
+
+      {/* Dot pattern */}
+      <div className="absolute inset-0 -z-10 opacity-[0.03]" style={{
+        backgroundImage: "radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)",
+        backgroundSize: "24px 24px"
+      }} />
+
+      {/* Floating cards - hidden on mobile */}
+      <div className="hidden lg:block">
+        {floatingCards.map((card, i) => (
+          <motion.div
+            key={card.label}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1.2 + card.delay, type: "spring", bounce: 0.4 }}
+            className="absolute z-20"
+            style={{ left: card.x, top: card.y }}
+          >
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 3 + i * 0.5, repeat: Infinity, ease: "easeInOut" }}
+              className="px-4 py-2.5 rounded-xl bg-card/90 backdrop-blur-sm border border-border/50 shadow-lg flex items-center gap-2.5"
+            >
+              <span className="text-lg">{card.emoji}</span>
+              <span className="text-xs font-medium text-foreground whitespace-nowrap">{card.label}</span>
+            </motion.div>
+          </motion.div>
+        ))}
       </div>
 
-      {/* Accent blobs */}
-      <div className="absolute top-[20%] right-[10%] w-[500px] h-[500px] bg-primary/8 rounded-full blur-[120px] -z-0" />
-      <div className="absolute bottom-[10%] left-[5%] w-[400px] h-[400px] bg-secondary/8 rounded-full blur-[100px] -z-0" />
-
-      <div className="container relative z-10 max-w-6xl mx-auto">
+      <div className="container relative z-10 max-w-5xl mx-auto">
         <div className="text-center max-w-3xl mx-auto space-y-8">
-          {/* Badge */}
+          {/* Eyebrow */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium"
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-secondary/10 border border-secondary/20 text-secondary text-sm font-semibold"
           >
-            <MapPin className="size-3.5" />
-            Empowering African Talent Worldwide
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary" />
+            </span>
+            Now enrolling for 2026 cohort
           </motion.div>
 
           {/* Main heading */}
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
+            transition={{ duration: 0.7, delay: 0.15 }}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight text-foreground"
           >
-            Freelancing with{" "}
+            Your skills deserve a{" "}
             <span className="relative inline-block">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
-                heart
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-secondary">
+                global stage.
               </span>
-            </span>{" "}
-            and{" "}
-            <span className="relative inline-block">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-secondary to-secondary/70">
-                skill.
-              </span>
-              <motion.span
-                initial={{ width: 0 }}
-                animate={{ width: "100%" }}
-                transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
-                className="absolute bottom-1 md:bottom-2 left-0 h-2 md:h-3 bg-secondary/15 -z-10 rounded-full"
+              <motion.div
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.6, delay: 0.9 }}
+                className="absolute -bottom-1 left-0 right-0 h-3 bg-secondary/15 rounded-full origin-left -z-10"
               />
             </span>
           </motion.h1>
@@ -67,78 +95,86 @@ const HeroSection = () => {
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
+            transition={{ duration: 0.6, delay: 0.35 }}
             className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto"
           >
-            Master in-demand skills at our Academy, land premium remote jobs worldwide, 
-            or explore international study programs. Your global career starts here.
+            Star9 Academy trains African professionals in AI, freelancing, and education
+            with structured courses that lead to real careers and verified certificates.
           </motion.p>
 
-          {/* CTA Buttons */}
+          {/* CTA */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.5 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2"
           >
-            <Button size="lg" className="h-14 px-10 font-semibold text-sm group w-full sm:w-auto" asChild>
+            <Button size="lg" className="h-14 px-10 font-semibold text-sm group w-full sm:w-auto shadow-lg shadow-primary/20" asChild>
               <Link to="/auth" className="gap-3 flex items-center justify-center">
-                Get Started Free
+                Start Learning Free
                 <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
-            <Button variant="outline" size="lg" className="h-14 px-10 font-semibold text-sm group w-full sm:w-auto" asChild>
+            <Button variant="outline" size="lg" className="h-14 px-10 font-semibold text-sm w-full sm:w-auto" asChild>
               <Link to="/academy" className="gap-3 flex items-center justify-center">
-                Browse Courses
+                Explore Courses
               </Link>
             </Button>
           </motion.div>
+
+          {/* Social proof strip */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
+            className="flex items-center justify-center gap-6 pt-6"
+          >
+            <div className="flex -space-x-2">
+              {["A", "D", "G", "K", "M"].map((letter, i) => (
+                <div
+                  key={i}
+                  className="w-9 h-9 rounded-full border-2 border-background flex items-center justify-center text-xs font-bold"
+                  style={{ backgroundColor: `hsl(${213 + i * 30}, 60%, ${45 + i * 5}%)`, color: "white" }}
+                >
+                  {letter}
+                </div>
+              ))}
+            </div>
+            <div className="text-left">
+              <div className="flex items-center gap-1 text-secondary">
+                {[...Array(5)].map((_, i) => (
+                  <svg key={i} className="size-3.5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground">2,500+ learners across Africa</p>
+            </div>
+          </motion.div>
         </div>
 
-        {/* Stats bar */}
+        {/* Stats row */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.7 }}
-          className="mt-20 grid grid-cols-3 max-w-2xl mx-auto"
-        >
-          {stats.map((stat, i) => (
-            <div
-              key={stat.label}
-              className={`text-center py-6 ${i < stats.length - 1 ? "border-r border-border" : ""}`}
-            >
-              <p className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">{stat.value}</p>
-              <p className="text-xs md:text-sm text-muted-foreground mt-1">{stat.label}</p>
-            </div>
-          ))}
-        </motion.div>
-
-        {/* Floating cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.9 }}
-          className="mt-16 grid md:grid-cols-3 gap-4 max-w-4xl mx-auto"
+          transition={{ duration: 0.7, delay: 0.9 }}
+          className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto"
         >
           {[
-            { icon: GraduationCap, title: "Star9 Academy", desc: "Professional courses in AI, freelancing, and education", accent: "primary" },
-            { icon: Briefcase, title: "Star9 Global", desc: "Remote jobs and international study programs", accent: "secondary" },
-            { icon: MapPin, title: "Star9 Foundation", desc: "Social impact and community empowerment", accent: "primary" },
-          ].map((card, i) => (
+            { value: "3", label: "Career Courses", suffix: "" },
+            { value: "60", label: "Expert Modules", suffix: "+" },
+            { value: "30", label: "Countries Reached", suffix: "+" },
+            { value: "92", label: "Completion Rate", suffix: "%" },
+          ].map((stat, i) => (
             <motion.div
-              key={card.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1 + i * 0.15 }}
-              className="group p-6 rounded-xl border border-border/60 bg-card/50 backdrop-blur-sm hover:border-primary/30 hover:shadow-lg transition-all duration-300"
+              key={stat.label}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1 + i * 0.1 }}
+              className="text-center p-5 rounded-xl bg-card/50 border border-border/50"
             >
-              <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${
-                card.accent === "primary" ? "bg-primary/10 text-primary" : "bg-secondary/10 text-secondary"
-              }`}>
-                <card.icon className="size-5" />
-              </div>
-              <h3 className="font-semibold text-sm mb-1">{card.title}</h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">{card.desc}</p>
+              <p className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+                {stat.value}<span className="text-primary">{stat.suffix}</span>
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
             </motion.div>
           ))}
         </motion.div>
