@@ -529,6 +529,145 @@ const Admin = () => {
             </div>
           )}
 
+          {activeTab === "verifications" && (
+            <div className="space-y-6 max-w-6xl mx-auto animate-in fade-in duration-500">
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight">Resume Verification</h1>
+                <p className="text-muted-foreground mt-1">Review uploaded resumes and verify user profiles.</p>
+              </div>
+
+              {(() => {
+                const pendingUsers = students.filter(s => s.resume_url && s.verification_status !== 'verified');
+                const verifiedUsers = students.filter(s => s.verification_status === 'verified');
+
+                return (
+                  <div className="space-y-8">
+                    {/* Pending Reviews */}
+                    <div>
+                      <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <ShieldCheck className="size-5 text-amber-500" />
+                        Pending Reviews ({pendingUsers.length})
+                      </h2>
+                      {pendingUsers.length === 0 ? (
+                        <Card className="p-8 text-center border-dashed">
+                          <CheckCircle2 className="size-10 mx-auto mb-3 text-green-500" />
+                          <p className="text-muted-foreground">No pending reviews. All caught up!</p>
+                        </Card>
+                      ) : (
+                        <div className="grid md:grid-cols-2 gap-4">
+                          {pendingUsers.map(user => (
+                            <Card key={user.id} className="p-5 border-amber-500/20 bg-amber-500/5">
+                              <div className="flex items-start gap-4">
+                                <div className="w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-600 font-bold text-lg shrink-0">
+                                  {user.full_name?.charAt(0)?.toUpperCase() || '?'}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="font-semibold">{user.full_name || 'Unnamed'}</p>
+                                  <p className="text-xs text-muted-foreground">{user.email}</p>
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    {user.city && `${user.city}`} | Joined {new Date(user.created_at).toLocaleDateString()}
+                                  </p>
+                                  
+                                  {user.resume_url && (
+                                    <div className="mt-3 flex items-center gap-2">
+                                      <FileText className="size-4 text-primary" />
+                                      <span className="text-sm text-primary font-medium">Resume uploaded</span>
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="ml-auto text-xs h-7"
+                                        onClick={async () => {
+                                          const { data } = await supabase.storage
+                                            .from('resumes')
+                                            .createSignedUrl(user.resume_url, 300);
+                                          if (data?.signedUrl) {
+                                            window.open(data.signedUrl, '_blank');
+                                          } else {
+                                            toast.error("Could not generate download link.");
+                                          }
+                                        }}
+                                      >
+                                        <Download className="size-3 mr-1" />
+                                        View
+                                      </Button>
+                                    </div>
+                                  )}
+                                  
+                                  <div className="flex gap-2 mt-4">
+                                    <Button size="sm" className="flex-1" onClick={() => setVerification(user.id, 'verified')}>
+                                      <CheckCircle2 className="size-3.5 mr-1.5" />
+                                      Verify
+                                    </Button>
+                                    <Button size="sm" variant="destructive" className="flex-1" onClick={() => setVerification(user.id, 'rejected')}>
+                                      <XCircle className="size-3.5 mr-1.5" />
+                                      Reject
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            </Card>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Recently Verified */}
+                    <div>
+                      <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <CheckCircle2 className="size-5 text-green-500" />
+                        Verified Users ({verifiedUsers.length})
+                      </h2>
+                      {verifiedUsers.length === 0 ? (
+                        <p className="text-sm text-muted-foreground">No verified users yet.</p>
+                      ) : (
+                        <div className="rounded-xl border bg-card overflow-hidden">
+                          <table className="w-full text-sm text-left">
+                            <thead className="bg-muted/50 border-b text-xs text-muted-foreground">
+                              <tr>
+                                <th className="px-6 py-3">User</th>
+                                <th className="px-6 py-3">Resume</th>
+                                <th className="px-6 py-3 text-right">Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-border">
+                              {verifiedUsers.slice(0, 20).map(u => (
+                                <tr key={u.id} className="hover:bg-muted/30">
+                                  <td className="px-6 py-3">
+                                    <div className="flex items-center gap-2">
+                                      <div className="w-7 h-7 rounded-full bg-green-500/20 flex items-center justify-center text-green-600 text-xs font-bold">
+                                        {u.full_name?.charAt(0)?.toUpperCase()}
+                                      </div>
+                                      <div>
+                                        <p className="font-medium text-sm">{u.full_name}</p>
+                                        <p className="text-xs text-muted-foreground">{u.email}</p>
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td className="px-6 py-3">
+                                    {u.resume_url ? (
+                                      <Badge className="bg-primary/10 text-primary border-primary/20 text-xs">Uploaded</Badge>
+                                    ) : (
+                                      <span className="text-xs text-muted-foreground">None</span>
+                                    )}
+                                  </td>
+                                  <td className="px-6 py-3 text-right">
+                                    <Button size="sm" variant="ghost" className="text-xs text-destructive" onClick={() => setVerification(u.id, 'pending')}>
+                                      Revoke
+                                    </Button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
           {activeTab === "courses" && (
             <div className="space-y-6 max-w-6xl mx-auto animate-in fade-in duration-500">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
