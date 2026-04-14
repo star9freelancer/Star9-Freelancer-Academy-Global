@@ -15,11 +15,11 @@ const CTASection = () => {
           viewport={{ once: true }}
           className="text-center space-y-8"
         >
-          <p className="text-sm uppercase tracking-widest text-muted-foreground">Ready to start?</p>
+          <span className="text-4xl">🚀</span>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight">
-            Launch Your{" "}
+            Ready to launch your{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
-              Global Career
+              global career?
             </span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -27,7 +27,7 @@ const CTASection = () => {
             Start free, learn at your pace, and earn certificates that matter.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" className="h-14 px-10 text-sm font-semibold group" asChild>
+            <Button size="lg" className="h-14 px-10 text-sm font-semibold group shadow-lg shadow-primary/20" asChild>
               <Link to="/auth" className="flex items-center gap-3">
                 Get Started Free
                 <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" />

@@ -8,17 +8,17 @@ const tiers = [
     name: "Free",
     price: "$0",
     period: "forever",
-    subtitle: "Start learning with no commitment",
+    subtitle: "Try before you commit",
     features: [
-      "Access to Module 1 of every course",
+      "Module 1 of every course",
       "Community forum access",
       "5 job applications per month",
       "Basic skill assessments",
       "Profile creation",
-      "Weekly career newsletter",
     ],
     buttonText: "Get Started Free",
     buttonVariant: "outline" as const,
+    emoji: "🌱",
   },
   {
     name: "Learner",
@@ -27,17 +27,18 @@ const tiers = [
     localPrice: "~KES 650 / NGN 4,000",
     subtitle: "Full course access with guided pacing",
     features: [
-      "Full access to all course modules",
-      "Weekly module unlocks with quizzes",
+      "Full access to all modules",
+      "Weekly guided progression",
       "Verified certificate on completion",
       "Unlimited job applications",
-      "Community group chat access",
+      "Community group chat",
       "Resume review by mentors",
     ],
     buttonText: "Start Learning",
     buttonVariant: "default" as const,
     highlighted: true,
     badge: "Most Popular",
+    emoji: "🚀",
   },
   {
     name: "Professional",
@@ -55,6 +56,7 @@ const tiers = [
     ],
     buttonText: "Go Professional",
     buttonVariant: "default" as const,
+    emoji: "💎",
   },
 ];
 
@@ -65,11 +67,11 @@ const PricingSection = () => {
         <div className="text-center mb-16 space-y-4">
           <p className="text-sm uppercase tracking-widest text-muted-foreground">Pricing</p>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-            Priced for Africa. Built for the World.
+            Priced for Africa.{" "}
+            <span className="text-muted-foreground">Built for the world.</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            We believe quality education should be accessible. Our pricing is designed for African professionals,
-            with M-Pesa, card, and mobile money support coming soon.
+            Quality education should be accessible. M-Pesa, card, and mobile money support included.
           </p>
         </div>
 
@@ -81,10 +83,10 @@ const PricingSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className={`relative p-8 rounded-xl border flex flex-col ${
+              className={`relative p-8 rounded-2xl border flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${
                 tier.highlighted
                   ? "border-primary/50 bg-primary/5 shadow-lg scale-[1.02]"
-                  : "border-border bg-background"
+                  : "border-border bg-card hover:border-primary/30"
               }`}
             >
               {tier.badge && (
@@ -94,13 +96,16 @@ const PricingSection = () => {
               )}
 
               <div className="mb-6">
-                <p className="text-sm font-semibold text-muted-foreground mb-2">{tier.name}</p>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-2xl">{tier.emoji}</span>
+                  <p className="text-sm font-semibold text-muted-foreground">{tier.name}</p>
+                </div>
                 <div className="flex items-end gap-1">
                   <span className="text-4xl font-bold tracking-tight text-foreground">{tier.price}</span>
                   <span className="text-muted-foreground text-sm pb-1">{tier.period}</span>
                 </div>
                 {tier.localPrice && (
-                  <p className="text-xs text-primary mt-1 font-medium">{tier.localPrice}</p>
+                  <p className="text-xs text-primary mt-1.5 font-medium">{tier.localPrice}</p>
                 )}
                 <p className="text-sm text-muted-foreground mt-2">{tier.subtitle}</p>
               </div>
@@ -134,8 +139,7 @@ const PricingSection = () => {
           viewport={{ once: true }}
           className="text-center text-sm text-muted-foreground mt-10 max-w-lg mx-auto"
         >
-          All plans include a 7-day free trial. Cancel anytime. 
-          We accept Visa, Mastercard, and are working on M-Pesa and mobile money integration.
+          All plans include a 7-day free trial. Cancel anytime.
         </motion.p>
       </div>
     </section>
