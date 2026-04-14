@@ -198,6 +198,7 @@ const Admin = () => {
   const adminLinks = [
     { id: "dashboard", icon: LayoutGrid, label: "Dashboard" },
     { id: "users", icon: Users, label: "Users" },
+    { id: "verifications", icon: UserCheck, label: "Verify" },
     { id: "courses", icon: BookOpen, label: "Courses" },
     { id: "intake", icon: Briefcase, label: "Jobs" },
     { id: "messages", icon: MessageSquare, label: "Messages" },
