@@ -269,7 +269,9 @@ const CommunityChat = ({ user, profile }: CommunityChatProps) => {
                 >
                   <Hash className="size-4 shrink-0 opacity-50" />
                   <div className="min-w-0">
-                    <p className="text-sm font-medium truncate">{group.name}</p>
+                    <p className="text-sm font-medium truncate">
+                      {group.name.replace(' Cohort', '')} {group.type === 'course' ? 'Community' : ''}
+                    </p>
                     <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
                       {group.type === "general" ? "Everyone" : "Course"}
                     </p>
@@ -296,7 +298,9 @@ const CommunityChat = ({ user, profile }: CommunityChatProps) => {
                 <div className="flex items-center gap-3">
                   <Hash className="size-4 text-primary" />
                   <div>
-                    <p className="text-sm font-bold">{activeGroup?.name}</p>
+                    <p className="text-sm font-bold">
+                      {activeGroup?.name.replace(' Cohort', '')} {activeGroup?.type === 'course' ? 'Community' : ''}
+                    </p>
                     <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
                       {activeGroup?.type === "general"
                         ? "Open to all members"

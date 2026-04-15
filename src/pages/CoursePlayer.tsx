@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { 
   ArrowLeft, PlayCircle, FileText, CheckCircle2, 
   ChevronRight, Lock, Clock, Award, Globe, 
-  Menu, X, ChevronLeft, Trophy, AlertTriangle, RefreshCcw
+  Menu, X, ChevronLeft, Trophy, AlertTriangle, RefreshCcw, Video, Link as LinkIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,7 +31,7 @@ const CoursePlayer = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { courses } = useAcademyData();
+  const { courses, enrollments } = useAcademyData();
   
   const [course, setCourse] = useState<any | null>(null);
   const [lessons, setLessons] = useState<any[]>([]);
@@ -232,6 +232,17 @@ const CoursePlayer = () => {
     );
   }
 
+  // Pacing Calculation (2 modules per week starting from enrollment)
+  const enrollment = courseId ? enrollments.get(courseId) : null;
+  const weeksActive = enrollment?.created_at 
+    ? Math.floor((Date.now() - new Date(enrollment.created_at).getTime()) / (1000 * 60 * 60 * 24 * 7)) + 1 
+    : 1; // Default to 1 week if no enrollment date is found
+  const maxAllowedModules = weeksActive * 2;
+
+  // Live Class Check
+  const isAiCourse = course.title?.includes("AI for Freelancers");
+  const isMasteringCourse = course.title?.includes("Mastering Freelancing");
+
   return (
     <div className="min-h-screen flex flex-col bg-background overflow-hidden">
       {/* Top Bar */}
@@ -287,7 +298,11 @@ const CoursePlayer = () => {
               {lessons.map((lesson, idx) => {
                 const isActive = activeLesson?.id === lesson.id;
                 const isCompleted = completedLessons.has(lesson.id);
-                const isLocked = idx > 0 && !completedLessons.has(lessons[idx - 1].id);
+                // Locked by sequence
+                const isLockedBySequence = idx > 0 && !completedLessons.has(lessons[idx - 1].id);
+                // Locked by pace (2 per week)
+                const isLockedByPace = idx >= maxAllowedModules;
+                const isLocked = isLockedBySequence || isLockedByPace;
 
                 return (
                   <button
@@ -329,7 +344,11 @@ const CoursePlayer = () => {
                           <Clock className="size-3" /> {lesson.duration_minutes}m
                         </span>
                         {lesson.quiz_data && <Badge variant="secondary" className="text-[9px] py-0 px-1.5">Quiz</Badge>}
-                        {isLocked && <Badge variant="secondary" className="text-[9px] py-0 px-1.5">Locked</Badge>}
+                        {isLockedByPace ? (
+                           <Badge variant="outline" className="text-[9px] py-0 px-1.5 border-amber-500/30 text-amber-500 bg-amber-500/10">Locked: Week {Math.floor(idx / 2) + 1}</Badge>
+                        ) : isLockedBySequence ? (
+                           <Badge variant="secondary" className="text-[9px] py-0 px-1.5">Locked</Badge>
+                        ) : null}
                       </div>
                     </div>
                   </button>
@@ -352,6 +371,28 @@ const CoursePlayer = () => {
             </Button>
           )}
 
+          {/* Live Class Banner */}
+          {(isAiCourse || isMasteringCourse) && (
+            <div className="bg-primary/10 border-b border-primary/20 px-4 py-3 xl:px-6 flex flex-col sm:flex-row sm:items-center justify-between shrink-0 gap-3">
+              <div className="flex items-center gap-3">
+                <div className="size-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                  <Video className="size-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Live Online Lesson</p>
+                  <p className="text-[11px] md:text-xs text-muted-foreground font-medium">
+                    {isAiCourse && "Every Tuesday via Google Meet"}
+                    {isMasteringCourse && "Every Wednesday via Google Meet"}
+                  </p>
+                </div>
+              </div>
+              <Button size="sm" variant="outline" className="gap-2 border-primary/30 hover:bg-primary/10 text-primary w-full sm:w-auto">
+                <LinkIcon className="size-3" /> Join Google Meet
+              </Button>
+            </div>
+          )}
+
+          {/* Module Content */}
           <ScrollArea className="flex-1">
             <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8">
               
