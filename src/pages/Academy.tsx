@@ -17,11 +17,12 @@ import { HomeFeed } from "@/components/academy/HomeFeed";
 import { UserSettings } from "@/components/academy/UserSettings";
 import { AcademyFooter } from "@/components/academy/AcademyFooter";
 import ReferralDashboard from "@/components/academy/ReferralDashboard";
+import { 
   Home, BookOpen, Users, Award, Settings, Menu, Bell, Search, 
-  ArrowLeft, ArrowRight, Download, Play, Clock, TrendingUp, Sparkles, 
-  CheckCircle2, XCircle, FileText, Globe, Link as LinkIcon, 
-  CreditCard, UploadCloud, BadgeCheck, Briefcase, Cpu, Database,
-  Phone, MapPin, Calendar, Trash2, Plus, X as XIcon, Save, ShieldCheck
+  ArrowLeft, ArrowRight, Download, Play, Clock as ClockIcon, Sparkles, 
+  Globe, Link as LinkIcon, 
+  Briefcase, 
+  Calendar as CalendarIcon, Save
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -152,7 +153,7 @@ const Academy = () => {
         graduation_year: profileForm.graduation_year,
         experience_years: expValue,
         skills: profileForm.skills || [],
-        email: user.email,
+        email: user?.email || '',
       }, { onConflict: 'id' });
     setSaving(false);
     if (!error) {
@@ -176,7 +177,7 @@ const Academy = () => {
     if (!user) return;
     const credId = `ST9-${Math.random().toString(36).substring(2, 6).toUpperCase()}-${new Date().getFullYear()}`;
     const { error } = await supabase.from('user_certificates').insert([{
-      user_id: user.id,
+      user_id: user?.id,
       course_id: courseId,
       credential_id: credId,
     }]);
@@ -200,10 +201,11 @@ const Academy = () => {
     if (courseObj?.title.toLowerCase().includes("mastering")) price = 250;
     if (courseObj?.title.toLowerCase().includes("teacher")) price = 300;
 
+    const paystackKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_placeholder_xyz';
     try {
       if ((window as any).PaystackPop) {
         const handler = (window as any).PaystackPop.setup({
-          key: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_placeholder_xyz',
+          key: paystackKey,
           email: user?.email || "student@star9global.com",
           amount: price * 100, // strictly in cents
           currency: 'USD', // Lock to Equity USD parameters
@@ -286,7 +288,7 @@ const Academy = () => {
     { id: "community",   icon: Users,      label: "Community",   public: false },
     { id: "careers",     icon: Briefcase,  label: "Jobs",        public: true },
     { id: "referral",    icon: LinkIcon,   label: "Referrals",   public: false },
-    { id: "events",      icon: Calendar,   label: "Events",      public: true },
+    { id: "events",      icon: CalendarIcon,   label: "Events",      public: true },
     { id: "settings",    icon: Settings,   label: "Settings",    public: false },
   ];
 
@@ -566,7 +568,7 @@ const Academy = () => {
                  {activeTab === "events" && (
                    <div className="space-y-6">
                       <div className="flex items-center gap-3 text-center opacity-70 p-16">
-                         <Calendar className="size-16 mx-auto mb-6 text-muted-foreground" />
+                         <CalendarIcon className="size-16 mx-auto mb-6 text-muted-foreground" />
                          <h2 className="text-2xl font-bold">No Events Scheduled</h2>
                       </div>
                    </div>

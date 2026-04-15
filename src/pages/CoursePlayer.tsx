@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { 
   ArrowLeft, PlayCircle, FileText, CheckCircle2, 
-  ChevronRight, Lock, Clock, Award, Globe, 
+  ChevronRight, Lock, Clock as ClockIcon, Award, 
   Menu, X, ChevronLeft, Trophy, AlertTriangle, RefreshCcw, Video, Link as LinkIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -341,7 +341,7 @@ const CoursePlayer = () => {
                       </h4>
                       <div className="flex items-center gap-3 mt-1">
                         <span className="text-[11px] text-muted-foreground flex items-center gap-1">
-                          <Clock className="size-3" /> {lesson.duration_minutes}m
+                          <ClockIcon className="size-3" /> {lesson.duration_minutes}m
                         </span>
                         {lesson.quiz_data && <Badge variant="secondary" className="text-[9px] py-0 px-1.5">Quiz</Badge>}
                         {isLockedByPace ? (
@@ -425,7 +425,7 @@ const CoursePlayer = () => {
                         onClick={() => (activeLesson?.quiz_data && activeLesson.type === 'video') ? setShowQuiz(true) : handleMarkComplete()}
                       >
                         {(activeLesson?.type === 'video' && !videoWatched) ? (
-                          <><Clock className="size-3 mr-2" /> Watch video to continue</>
+                          <><ClockIcon className="size-3 mr-2" /> Watch video to continue</>
                         ) : (activeLesson?.quiz_data && activeLesson.type === 'video') ? (
                           "Take Quiz"
                         ) : (

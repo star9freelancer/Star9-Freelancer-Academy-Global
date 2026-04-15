@@ -17,7 +17,7 @@ interface UserSettingsProps {
   profileForm: any;
   setProfileForm: (form: any) => void;
   saving: boolean;
-  handleSaveProfile: () => void;
+  handleSaveProfile: () => Promise<void>;
   newSkill: string;
   setNewSkill: (skill: string) => void;
   addSkill: () => void;
