@@ -73,8 +73,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (user) await fetchProfile(user.id);
   };
 
+  const isOnboardingNeeded = profile && !profile.onboarding_completed;
+
   return (
-    <AuthContext.Provider value={{ user, session, profile, loading, isAdmin, refreshProfile }}>
+    <AuthContext.Provider value={{ user, session, profile, loading, isAdmin, refreshProfile, isOnboardingNeeded }}>
       {children}
     </AuthContext.Provider>
   );

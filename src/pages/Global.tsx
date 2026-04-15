@@ -1,37 +1,45 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "@/lib/supabase";
-import { Search, MapPin, DollarSign, Clock, GraduationCap, Briefcase, ArrowLeft, ArrowRight, HeartPulse, Code, PenTool, Layout, PieChart, ShieldCheck, Video, Presentation } from "lucide-react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Search, MapPin, DollarSign, Clock, GraduationCap, Briefcase, ArrowRight, HeartPulse, Code, PenTool, Layout, PieChart, ShieldCheck, Video, Presentation, Globe, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
-import logo from "@/assets/logo_transparent.png";
 import Header from "@/components/landing/Header";
 
-// --- Section B Data ---
+// ── DATA ─────────────────────────────────────────────────────────────────────
+
 const remoteCategories = [
-  { label: "Programmers", icon: Code, count: "120+ roles" },
-  { label: "Designers", icon: PenTool, count: "80+ roles" },
-  { label: "Website Developers", icon: Layout, count: "150+ roles" },
-  { label: "Data Analysts", icon: PieChart, count: "90+ roles" },
-  { label: "Data Scientists", icon: MapPin, count: "50+ roles" }, // Placeholder icon
-  { label: "Online Tutors/Teachers", icon: Presentation, count: "200+ roles" },
-  { label: "Cybersecurity Experts", icon: ShieldCheck, count: "40+ roles" },
-  { label: "Content Creators", icon: Video, count: "110+ roles" },
+  { label: "Programmers",            icon: Code,         count: "120+ roles", slug: "programmers" },
+  { label: "Designers",              icon: PenTool,      count: "80+ roles",  slug: "designers" },
+  { label: "Website Developers",     icon: Layout,       count: "150+ roles", slug: "web-developers" },
+  { label: "Data Analysts",          icon: PieChart,     count: "90+ roles",  slug: "data-analysts" },
+  { label: "Data Scientists",        icon: Globe,        count: "50+ roles",  slug: "data-scientists" },
+  { label: "Online Tutors/Teachers", icon: Presentation, count: "200+ roles", slug: "tutors" },
+  { label: "Cybersecurity Experts",  icon: ShieldCheck,  count: "40+ roles",  slug: "cybersecurity" },
+  { label: "Content Creators",       icon: Video,        count: "110+ roles", slug: "content-creators" },
 ];
 
 const studyPrograms = [
-  { level: "Bachelor’s Degree", regions: "Global", icon: GraduationCap },
-  { level: "Master’s Degree", regions: "Global", icon: GraduationCap },
-  { level: "PhD Programs", regions: "Global", icon: GraduationCap },
-  { level: "Germany Diploma", regions: "Europe", icon: GraduationCap },
-  { level: "Certificate Programs", regions: "Global", icon: GraduationCap },
-  { level: "Short Courses", regions: "Online", icon: GraduationCap },
+  { level: "Bachelor's Degree", regions: "Global" },
+  { level: "Master's Degree",   regions: "Global" },
+  { level: "PhD Programs",      regions: "Global" },
+  { level: "Germany Diploma",   regions: "Europe" },
+  { level: "Certificate Programs", regions: "Global" },
+  { level: "Short Courses",     regions: "Online" },
 ];
 
+const workAbroadCountries = [
+  { name: "United States", flag: "https://flagcdn.com/w160/us.png", code: "us" },
+  { name: "United Kingdom", flag: "https://flagcdn.com/w160/gb.png", code: "gb" },
+  { name: "Canada",         flag: "https://flagcdn.com/w160/ca.png", code: "ca" },
+  { name: "Germany",        flag: "https://flagcdn.com/w160/de.png", code: "de" },
+  { name: "China",          flag: "https://flagcdn.com/w160/cn.png", code: "cn" },
+];
+
+// ── COMPONENT ─────────────────────────────────────────────────────────────────
+
 const Global = () => {
+  const [categorySearch, setCategorySearch] = useState("");
   const [user, setUser] = useState<any>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -39,48 +47,63 @@ const Global = () => {
     });
   }, []);
 
-  const handleGate = () => {
-    if (!user) {
-      toast.error("Authentication Required", { description: "Please log in or sign up to access this feature." });
-      navigate("/auth");
-      return false;
-    }
-    return true;
-  };
-
-  const attemptAction = (actionName: string) => {
-    if (handleGate()) {
-      toast.success(`${actionName} Initiated!`);
-    }
-  };
+  const filteredCategories = remoteCategories.filter(c =>
+    c.label.toLowerCase().includes(categorySearch.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background Orbs */}
+      {/* Background orbs */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[100px] -z-10" />
       <div className="absolute bottom-[20%] left-[-10%] w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[80px] -z-10" />
 
       <Header />
 
-      <div className="container pt-32 pb-16 space-y-24 max-w-7xl mx-auto">
-        {/* Page Hero */}
+      <div className="container pt-32 pb-16 space-y-24 max-w-7xl mx-auto px-4">
+
+        {/* ── PAGE HERO ──────────────────────────────────────────────────── */}
         <div className="text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-semibold mb-4">
-             Global Marketplace
+          <div className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-semibold">
+            Global Marketplace
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight">
-            Your Pathway to <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Global Success</span>
+            Your Pathway to{" "}
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+              Global Success
+            </span>
           </h1>
           <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto font-medium">
-            Discover elite opportunities in international placement, remote work, and prestigious academic programs.
+            Discover elite opportunities in international placement, remote work, and prestigious academic programmes.
           </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+            <Button size="lg" className="h-12 gap-2" asChild>
+              <Link to={user ? "/academy" : "/auth"}>
+                {user ? "View My Dashboard" : "Create Free Account"} <ArrowRight className="size-4" />
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" className="h-12 gap-2" asChild>
+              <Link to="/academy">Browse Courses</Link>
+            </Button>
+          </div>
         </div>
 
-        {/* Section A: Work Abroad */}
-        <section className="space-y-10">
+        {/* ── SECTION A: WORK ABROAD ─────────────────────────────────────── */}
+        <section className="space-y-10" id="work-abroad">
           <div className="space-y-2">
-            <h2 className="text-3xl font-bold flex items-center gap-3"><Briefcase className="text-primary size-8" /> Work Abroad (International Placements)</h2>
+            <h2 className="text-3xl font-bold flex items-center gap-3">
+              <Briefcase className="text-primary size-8" /> Work Abroad — International Placements
+            </h2>
             <p className="text-muted-foreground">End-to-end placement assistance for high-demand international roles.</p>
+          </div>
+
+          {/* Countries strip */}
+          <div className="flex flex-wrap gap-3">
+            {workAbroadCountries.map(c => (
+              <div key={c.code} className="flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-card text-sm font-medium">
+                <img src={c.flag} className="h-4 w-6 rounded-sm object-cover" alt={c.name} />
+                {c.name}
+              </div>
+            ))}
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
@@ -94,31 +117,28 @@ const Global = () => {
                 <h3 className="text-2xl font-bold mb-2">International Teacher Placement</h3>
                 <p className="text-sm text-muted-foreground">Dedicated placement to the US, UK, Canada, China, and Germany.</p>
               </div>
-              
+
               <div className="space-y-4">
-                <div className="flex gap-4 items-start">
-                  <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center text-secondary font-bold shrink-0">1</div>
-                  <div>
-                    <h4 className="font-semibold text-foreground">Phase 1: Preparation</h4>
-                    <p className="text-xs text-muted-foreground mt-1">Documentation, Resume Tailoring & Certification Review</p>
+                {[
+                  { step: "1", title: "Phase 1: Preparation", desc: "Documentation, Resume Tailoring & Certification Review" },
+                  { step: "2", title: "Phase 2: Audition", desc: "Loom Video Pitch & Live Interview Placements" },
+                  { step: "3", title: "Phase 3: Relocation", desc: "Visa Sponsorship & Travel Logistics Support" },
+                ].map(p => (
+                  <div key={p.step} className="flex gap-4 items-start">
+                    <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center text-secondary font-bold shrink-0">{p.step}</div>
+                    <div>
+                      <h4 className="font-semibold text-foreground">{p.title}</h4>
+                      <p className="text-xs text-muted-foreground mt-1">{p.desc}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex gap-4 items-start">
-                  <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center text-secondary font-bold shrink-0">2</div>
-                  <div>
-                    <h4 className="font-semibold text-foreground">Phase 2: Audition</h4>
-                    <p className="text-xs text-muted-foreground mt-1">Loom Video Pitch & Live Interview Placements</p>
-                  </div>
-                </div>
-                <div className="flex gap-4 items-start">
-                  <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center text-secondary font-bold shrink-0">3</div>
-                  <div>
-                    <h4 className="font-semibold text-foreground">Phase 3: Relocation</h4>
-                    <p className="text-xs text-muted-foreground mt-1">Visa Sponsorship & Travel Logistics Support</p>
-                  </div>
-                </div>
+                ))}
               </div>
-              <Button className="w-full h-12 shadow-md shadow-primary/20 gap-2" onClick={() => attemptAction("Teacher Placement Application")}>Start 3-Phase Process <ArrowRight className="size-4" /></Button>
+
+              <Button className="w-full h-12 shadow-md shadow-primary/20 gap-2" asChild>
+                <Link to={user ? "/academy" : "/auth"}>
+                  {user ? "Continue Application" : "Start 3-Phase Process"} <ArrowRight className="size-4" />
+                </Link>
+              </Button>
             </div>
 
             {/* Caregivers */}
@@ -131,7 +151,7 @@ const Global = () => {
                 <h3 className="text-2xl font-bold mb-2">Caregiver & Healthcare Placements</h3>
                 <p className="text-sm text-muted-foreground">Connecting compassionate professionals with facilities in America and Europe.</p>
               </div>
-              
+
               <div className="grid gap-4 mt-6">
                 <div className="p-4 rounded-2xl bg-card/40 border border-white/5 flex items-center gap-4">
                   <MapPin className="size-6 text-primary" />
@@ -144,74 +164,136 @@ const Global = () => {
                   <Clock className="size-6 text-secondary" />
                   <div>
                     <h4 className="font-semibold">Flexible Models</h4>
-                    <p className="text-xs text-muted-foreground">On-site and Hybrid transition roles</p>
+                    <p className="text-xs text-muted-foreground">On-site and hybrid transition roles</p>
+                  </div>
+                </div>
+                <div className="p-4 rounded-2xl bg-card/40 border border-white/5 flex items-center gap-4">
+                  <DollarSign className="size-6 text-emerald-400" />
+                  <div>
+                    <h4 className="font-semibold">5% Placement Commission</h4>
+                    <p className="text-xs text-muted-foreground">Flat $1,000 for contracts exceeding $10k over 6 months</p>
                   </div>
                 </div>
               </div>
-              <Button variant="secondary" className="w-full h-12 mt-4 gap-2" onClick={() => attemptAction("Caregiver Application")}>Apply as Caregiver <ArrowRight className="size-4" /></Button>
+
+              <Button variant="secondary" className="w-full h-12 gap-2" asChild>
+                <Link to={user ? "/academy" : "/auth"}>
+                  {user ? "Submit Profile" : "Apply as Caregiver"} <ArrowRight className="size-4" />
+                </Link>
+              </Button>
             </div>
           </div>
         </section>
 
-        {/* Section B: Remote Work */}
-        <section className="space-y-10">
+        {/* ── SECTION B: REMOTE WORK ─────────────────────────────────────── */}
+        <section className="space-y-10" id="remote-work">
           <div className="space-y-2 text-center max-w-2xl mx-auto">
-            <h2 className="text-3xl font-bold flex items-center justify-center gap-3">Remote Work Marketplace</h2>
-            <p className="text-muted-foreground">Access verified, high-paying remote roles tailored for 8 core disciplines.</p>
+            <h2 className="text-3xl font-bold">Remote Work Marketplace</h2>
+            <p className="text-muted-foreground">Access verified, high-paying remote roles across 8 core disciplines.</p>
+          </div>
+
+          {/* Search */}
+          <div className="relative max-w-md mx-auto">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <input
+              value={categorySearch}
+              onChange={e => setCategorySearch(e.target.value)}
+              placeholder="Search categories..."
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border bg-card text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {remoteCategories.map((cat, i) => (
-              <div key={i} className="glass p-6 rounded-3xl text-center hover:bg-white/5 transition-all cursor-pointer group shadow-xl" onClick={() => attemptAction(`Browse ${cat.label}`)}>
+            {filteredCategories.map((cat, i) => (
+              <Link
+                key={i}
+                to="/auth"
+                className="glass p-6 rounded-3xl text-center hover:bg-white/5 transition-all cursor-pointer group shadow-xl block"
+              >
                 <div className="w-14 h-14 mx-auto rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
                   <cat.icon className="size-7" />
                 </div>
                 <h3 className="font-bold text-sm md:text-base leading-tight mb-2">{cat.label}</h3>
                 <p className="text-xs font-semibold text-secondary">{cat.count}</p>
-              </div>
+                <p className="text-xs text-muted-foreground mt-2 flex items-center justify-center gap-1">
+                  Browse roles <ArrowRight className="size-3" />
+                </p>
+              </Link>
             ))}
+          </div>
+
+          <div className="text-center pt-4">
+            <p className="text-sm text-muted-foreground mb-4">
+              Access to all job listings requires a free account.
+            </p>
+            <Button className="gap-2" asChild>
+              <Link to="/auth"><Users className="size-4" /> Create Free Account</Link>
+            </Button>
           </div>
         </section>
 
-        {/* Section C: Study Abroad */}
-        <section className="space-y-10">
+        {/* ── SECTION C: STUDY ABROAD ────────────────────────────────────── */}
+        <section className="space-y-10" id="study-abroad">
           <div className="glass rounded-3xl p-8 md:p-12 border-white/10 shadow-2xl relative overflow-hidden text-center md:text-left">
             <div className="absolute right-[-10%] top-[-20%] w-[60%] h-[150%] bg-secondary/5 rounded-full blur-[80px] -z-10" />
-            
+
             <div className="md:flex items-center justify-between gap-12">
               <div className="space-y-6 flex-1">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary/10 text-secondary text-xs font-bold uppercase tracking-wider">
                   Academic Directory
                 </div>
-                <h2 className="text-3xl md:text-4xl font-bold">Study Abroad Programs</h2>
-                <p className="text-muted-foreground text-lg">Secure your future with world-class education. We provide guidance for admissions, scholarships, and visas across multiple disciplines.</p>
-                
+                <h2 className="text-3xl md:text-4xl font-bold">Study Abroad Programmes</h2>
+                <p className="text-muted-foreground text-lg">
+                  Secure your future with world-class education. We provide guidance for admissions, scholarships, and visas across multiple disciplines.
+                </p>
+
                 <div className="grid grid-cols-2 gap-4 pt-4">
                   {studyPrograms.map((prog, i) => (
                     <div key={i} className="flex flex-col gap-1 text-left p-4 rounded-xl hover:bg-card/40 transition-colors border border-transparent hover:border-white/5">
                       <span className="font-semibold text-sm">{prog.level}</span>
-                      <span className="text-xs text-muted-foreground flex items-center gap-1"><MapPin className="size-3" /> {prog.regions}</span>
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <MapPin className="size-3" /> {prog.regions}
+                      </span>
                     </div>
                   ))}
                 </div>
-                
-                <Button size="lg" className="h-14 px-8 w-full md:w-auto shadow-xl" onClick={() => attemptAction("Study Abroad Inquiry")}>
-                  Explore Directory
-                </Button>
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button size="lg" className="h-12 px-8 gap-2 shadow-xl" asChild>
+                    <Link to="/auth">Apply for Guidance <ArrowRight className="size-4" /></Link>
+                  </Button>
+                  <Button size="lg" variant="outline" className="h-12 px-8" asChild>
+                    <Link to="/auth">Explore Directory</Link>
+                  </Button>
+                </div>
               </div>
-              
-              <div className="hidden md:block flex-1 relative">
-                <div className="aspect-square rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 p-8 flex items-center justify-center backdrop-blur-3xl border border-white/10 shadow-2xl relative z-10">
-                   <div className="grid grid-cols-2 gap-4 w-full">
-                     <div className="aspect-square rounded-2xl bg-card border shadow-lg flex items-center justify-center overflow-hidden"><img src="https://flagcdn.com/w160/us.png" className="opacity-80" alt="US" /></div>
-                     <div className="aspect-square rounded-2xl bg-card border shadow-lg flex items-center justify-center overflow-hidden"><img src="https://flagcdn.com/w160/gb.png" className="opacity-80" alt="UK" /></div>
-                     <div className="aspect-square rounded-2xl bg-card border shadow-lg flex items-center justify-center overflow-hidden"><img src="https://flagcdn.com/w160/de.png" className="opacity-80" alt="Germany" /></div>
-                     <div className="aspect-square rounded-2xl bg-card border shadow-lg flex items-center justify-center overflow-hidden"><img src="https://flagcdn.com/w160/ca.png" className="opacity-80" alt="Canada" /></div>
-                   </div>
+
+              <div className="hidden md:block flex-1 relative mt-8 md:mt-0">
+                <div className="aspect-square rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 p-8 flex items-center justify-center backdrop-blur-3xl border border-white/10 shadow-2xl">
+                  <div className="grid grid-cols-2 gap-4 w-full">
+                    {workAbroadCountries.slice(0, 4).map(c => (
+                      <div key={c.code} className="aspect-square rounded-2xl bg-card border shadow-lg flex items-center justify-center overflow-hidden">
+                        <img src={c.flag} className="opacity-80 w-full h-full object-cover" alt={c.name} />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+        </section>
+
+        {/* ── REFERRAL CTA BANNER ────────────────────────────────────────── */}
+        <section className="rounded-3xl p-8 md:p-12 bg-gradient-to-r from-primary/10 via-primary/5 to-secondary/10 border border-primary/20 text-center space-y-6">
+          <h2 className="text-3xl font-bold">Earn by Referring Others</h2>
+          <p className="text-muted-foreground text-lg max-w-xl mx-auto">
+            Share your referral link and earn commissions on every successful enrolment. $10 for AI for Freelancers, $40 for Mastering Freelancing or Teacher Prep.
+          </p>
+          <Button size="lg" className="h-12 px-8 gap-2 shadow-xl" asChild>
+            <Link to={user ? "/academy" : "/auth"}>
+              {user ? "View Referral Stats" : "Get Your Referral Link"} <ArrowRight className="size-4" />
+            </Link>
+          </Button>
         </section>
 
       </div>

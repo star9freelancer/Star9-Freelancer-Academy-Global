@@ -12,12 +12,28 @@ import Admin from "./pages/Admin.tsx";
 import CoursePlayer from "./pages/CoursePlayer.tsx";
 import Verify from "./pages/Verify.tsx";
 import About from "./pages/About.tsx";
+import Onboarding from "./pages/Onboarding.tsx";
 import Terms from "./pages/Terms.tsx";
 import Privacy from "./pages/Privacy.tsx";
 import Contact from "./pages/Contact.tsx";
 
 import ProtectedRoute from "./components/auth/ProtectedRoute.tsx";
-import { AuthProvider } from "./context/AuthContext.tsx";
+import { AuthProvider, useAuth } from "./context/AuthContext.tsx";
+import { Navigate } from "react-router-dom";
+
+// A wrapper to enforce onboarding completion
+const OnboardingGate = ({ children }: { children: React.ReactNode }) => {
+  const { user, profile, loading, isOnboardingNeeded } = useAuth();
+  
+  if (loading) return null;
+  if (!user) return <>{children}</>; // Public access allowed for browse pages
+  
+  if (isOnboardingNeeded) {
+    return <Navigate to="/onboarding" replace />;
+  }
+  
+  return <>{children}</>;
+};
 
 const queryClient = new QueryClient();
 
@@ -32,9 +48,12 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             
-            {/* Protected Student Routes */}
-            <Route path="/academy" element={<ProtectedRoute><Academy /></ProtectedRoute>} />
-            <Route path="/global" element={<ProtectedRoute><Global /></ProtectedRoute>} />
+            {/* Public Browse Routes - Gated by Onboarding for logged in users */}
+            <Route path="/academy" element={<OnboardingGate><Academy /></OnboardingGate>} />
+            <Route path="/global" element={<OnboardingGate><Global /></OnboardingGate>} />
+            <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
+            
+            {/* Protected — requires login */}
             <Route path="/academy/course/:courseId" element={<ProtectedRoute><CoursePlayer /></ProtectedRoute>} />
             
             {/* Protected Admin Routes */}

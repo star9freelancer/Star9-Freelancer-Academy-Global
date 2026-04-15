@@ -20,6 +20,8 @@ export default function Auth() {
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<'student' | 'employer' | 'freelancer'>('student');
+  const [referralCode, setReferralCode] = useState("");
   const [isClearing, setIsClearing] = useState(false);
   const [persistSession, setPersistSession] = useState(true);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -34,6 +36,15 @@ export default function Auth() {
       setTimeout(() => navigate(from, { replace: true }), 1800);
     }
   }, [user, authLoading, navigate, location]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const ref = params.get("ref");
+    if (ref) {
+      setReferralCode(ref);
+      toast.info("Referral code applied!", { description: `You're joining via code: ${ref}` });
+    }
+  }, [location]);
 
   const uploadResume = async (userId: string, file: File) => {
     const ext = file.name.split('.').pop();
@@ -79,6 +90,8 @@ export default function Auth() {
               full_name: fullName,
               phone_number: phone,
               city: city,
+              role: selectedRole,
+              referred_by_code: referralCode
             }
           }
         });
@@ -206,6 +219,32 @@ export default function Auth() {
                 <CardDescription>Join Star9 and start building your career.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
+                {/* Role Selection */}
+                <div className="space-y-3 mb-6">
+                  <Label>I am a...</Label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {[
+                      { id: 'student', label: 'Student', icon: BookOpen },
+                      { id: 'freelancer', label: 'Freelancer', icon: Code },
+                      { id: 'employer', label: 'Employer', icon: Briefcase }
+                    ].map((role) => (
+                      <button
+                        key={role.id}
+                        type="button"
+                        onClick={() => setSelectedRole(role.id as any)}
+                        className={`flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all gap-2 ${
+                          selectedRole === role.id 
+                          ? 'border-primary bg-primary/5 text-primary' 
+                          : 'border-border bg-card text-muted-foreground hover:border-border/80'
+                        }`}
+                      >
+                        <role.icon className="size-5" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider">{role.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2 md:col-span-2">
                     <Label htmlFor="reg-email">Email Address</Label>

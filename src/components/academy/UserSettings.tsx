@@ -139,7 +139,7 @@ export const UserSettings = ({
                 <div className="space-y-2">
                   <Label>LinkedIn</Label>
                   <div className="relative">
-                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                    <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                     <Input 
                       value={profileForm.linkedin_url} 
                       onChange={(e) => setProfileForm({...profileForm, linkedin_url: e.target.value})}
@@ -160,6 +160,77 @@ export const UserSettings = ({
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* Role Specific Fields */}
+              <div className="pt-4 border-t border-border/50 space-y-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Badge variant="outline" className="capitalize text-[10px] font-mono tracking-widest">{profile?.role} Details</Badge>
+                </div>
+
+                {profile?.role === 'employer' && (
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Company Name</Label>
+                      <Input 
+                        value={profileForm.company_name} 
+                        onChange={(e) => setProfileForm({...profileForm, company_name: e.target.value})}
+                        placeholder="e.g. Acme Corp"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Industry</Label>
+                      <Input 
+                        value={profileForm.industry} 
+                        onChange={(e) => setProfileForm({...profileForm, industry: e.target.value})}
+                        placeholder="e.g. Technology"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {profile?.role === 'student' && (
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>University / School</Label>
+                      <Input 
+                        value={profileForm.institution} 
+                        onChange={(e) => setProfileForm({...profileForm, institution: e.target.value})}
+                        placeholder="e.g. City University"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Degree / Program</Label>
+                      <Input 
+                        value={profileForm.degree} 
+                        onChange={(e) => setProfileForm({...profileForm, degree: e.target.value})}
+                        placeholder="e.g. BSc Computer Science"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {profile?.role === 'freelancer' && (
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Professional Title</Label>
+                      <Input 
+                        value={profileForm.job_title} 
+                        onChange={(e) => setProfileForm({...profileForm, job_title: e.target.value})}
+                        placeholder="e.g. Visual Designer"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Years of Experience</Label>
+                      <Input 
+                        type="number"
+                        value={profileForm.experience_years} 
+                        onChange={(e) => setProfileForm({...profileForm, experience_years: e.target.value})}
+                        placeholder="e.g. 3"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

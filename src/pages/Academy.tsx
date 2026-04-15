@@ -16,6 +16,7 @@ import ProgramDetailView from "@/components/academy/ProgramDetailView";
 import { HomeFeed } from "@/components/academy/HomeFeed";
 import { UserSettings } from "@/components/academy/UserSettings";
 import { AcademyFooter } from "@/components/academy/AcademyFooter";
+import ReferralDashboard from "@/components/academy/ReferralDashboard";
 import { 
   Home, BookOpen, Users, Award, Settings, Menu, Bell, Search, 
   ArrowLeft, ArrowRight, Download, Play, Clock, TrendingUp, Sparkles, 
@@ -58,6 +59,13 @@ const Academy = () => {
     gender: 'Other',
     linkedin_url: '',
     portfolio_url: '',
+    company_name: '',
+    industry: '',
+    job_title: '',
+    institution: '',
+    degree: '',
+    graduation_year: '',
+    experience_years: '',
     skills: []
   });
 
@@ -73,6 +81,13 @@ const Academy = () => {
         gender: profile.gender || 'Other',
         linkedin_url: profile.linkedin_url || '',
         portfolio_url: profile.portfolio_url || '',
+        company_name: profile.company_name || '',
+        industry: profile.industry || '',
+        job_title: profile.job_title || '',
+        institution: profile.institution || '',
+        degree: profile.degree || '',
+        graduation_year: profile.graduation_year || '',
+        experience_years: profile.experience_years || '',
         skills: profile.skills || []
       });
     }
@@ -123,6 +138,13 @@ const Academy = () => {
         gender: profileForm.gender,
         linkedin_url: profileForm.linkedin_url,
         portfolio_url: profileForm.portfolio_url,
+        company_name: profileForm.company_name,
+        industry: profileForm.industry,
+        job_title: profileForm.job_title,
+        institution: profileForm.institution,
+        degree: profileForm.degree,
+        graduation_year: profileForm.graduation_year,
+        experience_years: profileForm.experience_years,
         skills: profileForm.skills || [],
         email: user.email,
       }, { onConflict: 'id' });
@@ -160,7 +182,11 @@ const Academy = () => {
   };
 
   const handleEnroll = async (courseId: string) => {
-    if (!user) return;
+    if (!user) {
+      toast.info("Sign in Required", { description: "You need to create a free account to enroll in courses." });
+      navigate("/auth");
+      return;
+    }
     setEnrolling(courseId);
 
     const courseObj = courses.find(c => c.id === courseId);
@@ -247,14 +273,15 @@ const Academy = () => {
   };
 
   const studentLinks = [
-    { id: "home", icon: Home, label: "Home" },
-    { id: "academy", icon: BookOpen, label: "My Courses" },
-    { id: "catalog", icon: Globe, label: "Browse" },
-    { id: "certificates", icon: Award, label: "Certificates" },
-    { id: "community", icon: Users, label: "Community" },
-    { id: "careers", icon: Briefcase, label: "Jobs" },
-    { id: "events", icon: Calendar, label: "Events" },
-    { id: "settings", icon: Settings, label: "Settings" },
+    { id: "home",        icon: Home,       label: "Home" },
+    { id: "academy",     icon: BookOpen,   label: "My Courses" },
+    { id: "catalog",     icon: Globe,      label: "Browse" },
+    { id: "certificates",icon: Award,      label: "Certificates" },
+    { id: "community",   icon: Users,      label: "Community" },
+    { id: "careers",     icon: Briefcase,  label: "Jobs" },
+    { id: "referral",    icon: LinkIcon,   label: "Referrals" },
+    { id: "events",      icon: Calendar,   label: "Events" },
+    { id: "settings",    icon: Settings,   label: "Settings" },
   ];
 
   return (
@@ -523,6 +550,19 @@ const Academy = () => {
                       </div>
                    </div>
                  )}
+
+                  {activeTab === "referral" && (
+                    user
+                      ? <ReferralDashboard user={user} profile={profile} />
+                      : (
+                        <div className="text-center py-24 space-y-4">
+                          <LinkIcon className="size-12 mx-auto text-muted-foreground" />
+                          <h3 className="text-xl font-bold">Sign in to access Referrals</h3>
+                          <p className="text-muted-foreground text-sm max-w-sm mx-auto">Create a free account to get your referral link and start earning commissions.</p>
+                          <Button asChild><Link to="/auth">Sign Up Free</Link></Button>
+                        </div>
+                      )
+                  )}
 
                  {activeTab === "careers" && <JobBoard />}
 
