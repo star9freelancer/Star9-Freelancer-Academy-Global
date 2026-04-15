@@ -39,6 +39,12 @@ const Academy = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarHovered, setSidebarHovered] = useState(false);
   const [activeTab, setActiveTab] = useState("home");
+
+  useEffect(() => {
+    if (!authLoading && !user && activeTab === "home") {
+      setActiveTab("catalog");
+    }
+  }, [user, authLoading, activeTab]);
   const [isDownloading, setIsDownloading] = useState(false);
   const certificateRef = useRef<HTMLDivElement>(null);
   const [activeCert, setActiveCert] = useState<any>(null);
@@ -272,17 +278,19 @@ const Academy = () => {
     }
   };
 
-  const studentLinks = [
-    { id: "home",        icon: Home,       label: "Home" },
-    { id: "academy",     icon: BookOpen,   label: "My Courses" },
-    { id: "catalog",     icon: Globe,      label: "Browse" },
-    { id: "certificates",icon: Award,      label: "Certificates" },
-    { id: "community",   icon: Users,      label: "Community" },
-    { id: "careers",     icon: Briefcase,  label: "Jobs" },
-    { id: "referral",    icon: LinkIcon,   label: "Referrals" },
-    { id: "events",      icon: Calendar,   label: "Events" },
-    { id: "settings",    icon: Settings,   label: "Settings" },
+  const allLinks = [
+    { id: "home",        icon: Home,       label: "Home",        public: true },
+    { id: "academy",     icon: BookOpen,   label: "My Courses",  public: false },
+    { id: "catalog",     icon: Globe,      label: "Browse",      public: true },
+    { id: "certificates",icon: Award,      label: "Certificates",public: false },
+    { id: "community",   icon: Users,      label: "Community",   public: false },
+    { id: "careers",     icon: Briefcase,  label: "Jobs",        public: true },
+    { id: "referral",    icon: LinkIcon,   label: "Referrals",   public: false },
+    { id: "events",      icon: Calendar,   label: "Events",      public: true },
+    { id: "settings",    icon: Settings,   label: "Settings",    public: false },
   ];
+
+  const studentLinks = user ? allLinks : allLinks.filter(l => l.public);
 
   return (
     <div className="min-h-screen bg-background relative selection:bg-primary/30 selection:text-white">
@@ -349,38 +357,51 @@ const Academy = () => {
 
           <div className="h-6 w-px bg-border mx-1 shrink-0" />
 
-          {/* Points & Profile */}
+          {/* Points & Profile / Auth Buttons */}
           <div className="flex items-center gap-2 shrink-0">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 rounded-full">
-              <Sparkles className="size-3 text-amber-500" />
-              <span className="text-xs font-semibold text-amber-500">{profile?.merit_points || 0}</span>
-            </div>
+            {user ? (
+              <>
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 rounded-full">
+                  <Sparkles className="size-3 text-amber-500" />
+                  <span className="text-xs font-semibold text-amber-500">{profile?.merit_points || 0}</span>
+                </div>
 
-            <TooltipProvider delayDuration={200}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button 
-                    onClick={() => setActiveTab('settings')}
-                    className="size-8 rounded-full border border-border bg-muted overflow-hidden transition-all hover:border-primary/40"
-                  >
-                    {profile?.avatar_url ? (
-                      <img src={profile.avatar_url} className="w-full h-full object-cover" alt="Profile" />
-                    ) : (
-                      <span className="text-xs font-semibold text-muted-foreground">{profile?.full_name?.charAt(0) || "U"}</span>
-                    )}
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent>Settings</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button 
+                        onClick={() => setActiveTab('settings')}
+                        className="size-8 rounded-full border border-border bg-muted overflow-hidden transition-all hover:border-primary/40"
+                      >
+                        {profile?.avatar_url ? (
+                          <img src={profile.avatar_url} className="w-full h-full object-cover" alt="Profile" />
+                        ) : (
+                          <span className="text-xs font-semibold text-muted-foreground">{profile?.full_name?.charAt(0) || "U"}</span>
+                        )}
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>Settings</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
 
-            <button 
-              onClick={handleLogout}
-              className="p-2 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
-              title="Log Out"
-            >
-              <ArrowRight className="size-4 rotate-180" />
-            </button>
+                <button 
+                  onClick={handleLogout}
+                  className="p-2 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
+                  title="Log Out"
+                >
+                  <ArrowRight className="size-4 rotate-180" />
+                </button>
+              </>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="sm" className="rounded-full text-xs" asChild>
+                   <Link to="/auth">Log In</Link>
+                </Button>
+                <Button size="sm" className="rounded-full text-xs px-5" asChild>
+                   <Link to="/auth">Sign Up</Link>
+                </Button>
+              </div>
+            )}
           </div>
         </motion.nav>
       </div>
@@ -410,7 +431,7 @@ const Academy = () => {
           animate={{ y: 0, opacity: 1 }}
           className="flex items-center gap-4 px-6 py-3 rounded-full bg-card/90 backdrop-blur-xl border border-border shadow-lg"
         >
-          {studentLinks.slice(0, 5).map((l) => {
+          {studentLinks.slice(0, user ? 5 : 4).map((l) => {
             const isActive = activeTab === l.id;
             return (
               <button
