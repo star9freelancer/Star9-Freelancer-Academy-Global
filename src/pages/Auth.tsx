@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Loader2, ArrowLeft, CheckCircle2, Upload, FileText, X } from "lucide-react";
+import { Loader2, ArrowLeft, CheckCircle2, Upload, FileText, X, BookOpen, Code, Briefcase } from "lucide-react";
 import logo from "@/assets/logo_transparent.png";
 
 export default function Auth() {
