@@ -52,7 +52,7 @@ const HeroSection = () => {
               transition={{ duration: 0.6, delay: 0.25 }}
               className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg"
             >
-              Star9 Academy trains African professionals in AI, freelancing, and education — with structured programmes that lead directly to high-paying global placements.
+              Star9 equips African professionals through three high-impact programmes in AI, freelancing, and International Teacher Placement — with direct access to a curated global job and study network.
             </motion.p>
 
             {/* CTAs */}
@@ -131,9 +131,9 @@ const HeroSection = () => {
                 {/* Track listings */}
                 <div className="p-5 space-y-3">
                   {[
-                    { icon: Star, label: "AI for Freelancers", sub: "8-week programme", progress: 72, color: "text-primary" },
-                    { icon: Briefcase, label: "Mastering Freelancing", sub: "12-week programme", progress: 45, color: "text-secondary" },
-                    { icon: Globe, label: "International Teacher Prep", sub: "Full pipeline", progress: 20, color: "text-emerald-400" },
+                    { icon: Star,     label: "AI for Freelancers",         sub: "8-week programme · $100",    progress: 72, color: "text-primary" },
+                    { icon: Briefcase, label: "Mastering Freelancing",       sub: "12-week · $250 + Global access", progress: 45, color: "text-secondary" },
+                    { icon: Globe,    label: "International Teacher Prep",  sub: "3-Phase pipeline · $300",  progress: 20, color: "text-emerald-400" },
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-3 p-3.5 rounded-xl bg-background/60 border border-border/40 hover:bg-background/90 transition-colors cursor-pointer group">
                       <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -157,9 +157,9 @@ const HeroSection = () => {
                 {/* Stats row */}
                 <div className="px-5 pb-5 grid grid-cols-3 gap-3">
                   {[
-                    { value: "3", label: "Tracks" },
-                    { value: "30+", label: "Countries" },
-                    { value: "5%", label: "Commission" },
+                    { value: "3",   label: "Courses" },
+                    { value: "5",   label: "Countries" },
+                    { value: "5%",  label: "Commission" },
                   ].map((s, i) => (
                     <div key={i} className="text-center p-3 rounded-xl bg-background/40 border border-border/30">
                       <p className="text-lg font-bold text-foreground">{s.value}</p>

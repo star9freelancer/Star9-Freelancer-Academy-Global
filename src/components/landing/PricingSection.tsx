@@ -5,58 +5,60 @@ import { Link } from "react-router-dom";
 
 const tiers = [
   {
-    name: "Free",
-    price: "$0",
-    period: "forever",
-    subtitle: "Try before you commit",
+    name: "AI for Freelancers",
+    price: "$100",
+    period: "one-time",
+    subtitle: "Master AI tools and land your first global client",
+    referral: "Earn $10 per referral",
     features: [
-      "Module 1 of every course",
-      "Community forum access",
-      "5 job applications per month",
-      "Basic skill assessments",
-      "Profile creation",
+      "8-week structured programme",
+      "AI productivity and automation tools",
+      "Prompt engineering fundamentals",
+      "Weekly quizzes and projects",
+      "Verified completion certificate",
+      "Community group access",
     ],
-    buttonText: "Get Started Free",
+    buttonText: "Enroll Now",
     buttonVariant: "outline" as const,
-    emoji: "🌱",
+    emoji: "🤖",
   },
   {
-    name: "Learner",
-    price: "$5",
-    period: "/ month",
-    localPrice: "~KES 650 / NGN 4,000",
-    subtitle: "Full course access with guided pacing",
+    name: "Mastering Freelancing",
+    price: "$250",
+    period: "one-time",
+    subtitle: "The complete pipeline from zero to global freelance income",
+    referral: "Earn $40 per referral",
     features: [
-      "Full access to all modules",
-      "Weekly guided progression",
-      "Verified certificate on completion",
-      "Unlimited job applications",
-      "Community group chat",
-      "Resume review by mentors",
+      "12-week intensive programme",
+      "Everything in AI for Freelancers",
+      "Lifetime Global Job Board access",
+      "1-on-1 mentorship and portfolio review",
+      "Direct employer introductions",
+      "Verified completion certificate",
     ],
-    buttonText: "Start Learning",
+    buttonText: "Enroll Now",
     buttonVariant: "default" as const,
     highlighted: true,
-    badge: "Most Popular",
+    badge: "Best Value",
     emoji: "🚀",
   },
   {
-    name: "Professional",
-    price: "$15",
-    period: "/ month",
-    localPrice: "~KES 1,950 / NGN 12,000",
-    subtitle: "For serious career changers",
+    name: "International Teacher Prep",
+    price: "$300",
+    period: "one-time",
+    subtitle: "3-phase pipeline to a US or EU teaching placement",
+    referral: "Earn $40 per referral",
     features: [
-      "Everything in Learner, plus:",
-      "1-on-1 mentorship sessions",
-      "Priority study abroad support",
-      "Exclusive networking events",
-      "Portfolio review and feedback",
-      "Early access to new courses",
+      "Phase 1: Vetting and resume review",
+      "Phase 2: Loom audition and interview coaching",
+      "Phase 3: Visa and relocation support",
+      "Priority school placement (US / EU)",
+      "Ongoing post-placement check-ins",
+      "Verified programme certificate",
     ],
-    buttonText: "Go Professional",
-    buttonVariant: "default" as const,
-    emoji: "💎",
+    buttonText: "Apply Now",
+    buttonVariant: "outline" as const,
+    emoji: "✈️",
   },
 ];
 
@@ -71,7 +73,7 @@ const PricingSection = () => {
             <span className="text-muted-foreground">Transparent Pricing.</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Quality education should be accessible. M-Pesa, card, and mobile money support included.
+            Pay once. Gain skills and access that pay for themselves. Paystack payment accepted — USD via Equity Bank.
           </p>
         </div>
 
@@ -96,17 +98,15 @@ const PricingSection = () => {
               )}
 
               <div className="mb-6">
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center gap-2 mb-3">
                   <span className="text-2xl">{tier.emoji}</span>
                   <p className="text-sm font-semibold text-muted-foreground">{tier.name}</p>
                 </div>
-                <div className="flex items-end gap-1">
+                <div className="flex items-end gap-1 mb-1">
                   <span className="text-4xl font-bold tracking-tight text-foreground">{tier.price}</span>
                   <span className="text-muted-foreground text-sm pb-1">{tier.period}</span>
                 </div>
-                {tier.localPrice && (
-                  <p className="text-xs text-primary mt-1.5 font-medium">{tier.localPrice}</p>
-                )}
+                <p className="text-xs text-secondary font-medium mt-1">{tier.referral}</p>
                 <p className="text-sm text-muted-foreground mt-2">{tier.subtitle}</p>
               </div>
 
@@ -139,7 +139,7 @@ const PricingSection = () => {
           viewport={{ once: true }}
           className="text-center text-sm text-muted-foreground mt-10 max-w-lg mx-auto"
         >
-          All plans include a 7-day free trial. Cancel anytime.
+          5% commission applies on all remote earnings. Flat $1,000 fee for contracts exceeding $10k over 6 months. Employers are never charged.
         </motion.p>
       </div>
     </section>

@@ -5,24 +5,26 @@ import { ArrowRight } from "lucide-react";
 const cards = [
   {
     title: "Star9 Academy",
-    subtitle: "Learn. Certify. Launch.",
-    description: "Three professional courses in AI for Freelancers, Freelancing Essentials, and International Teacher Preparation. Each runs 8-12 weeks with quizzes, projects, and a verified certificate.",
+    subtitle: "Learn. Certify. Get Placed.",
+    description:
+      "Three high-impact, pay-per-course programmes in AI for Freelancers, Mastering Freelancing, and International Teacher Preparation. Structured 8-12 week curricula with quizzes, projects, and verified certificates.",
     link: "/academy",
     gradient: "from-primary/20 to-primary/5",
     borderHover: "hover:border-primary/40",
     accent: "text-primary",
-    stats: ["3 Courses", "60+ Modules", "Verified Certificates"],
+    stats: ["AI · Freelancing · Teacher Prep", "Pay-per-course access", "Verified Certificates"],
     emoji: "🎓",
   },
   {
     title: "Star9 Global",
     subtitle: "Work. Travel. Grow.",
-    description: "Connecting African professionals to vetted remote jobs worldwide and international study programs. Every listing is manually reviewed by our quality team.",
+    description:
+      "Connecting African professionals to Work Abroad opportunities in the US, UK, Canada, China, and Germany, plus 8 curated Remote Work categories and Study Abroad programme support.",
     link: "/global",
     gradient: "from-secondary/20 to-secondary/5",
     borderHover: "hover:border-secondary/40",
     accent: "text-secondary",
-    stats: ["30+ Countries", "200+ Listings", "Career Support"],
+    stats: ["Work Abroad: 5 Countries", "8 Remote Categories", "Study Abroad Portals"],
     emoji: "🌍",
   },
 ];
@@ -43,7 +45,7 @@ const DualBrandSection = () => {
             <span className="text-muted-foreground">One Vision.</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-            From acquiring skills to landing global opportunities.
+            From acquiring high-income skills to landing global opportunities.
           </p>
         </motion.div>
 
