@@ -136,16 +136,16 @@ const Index = () => {
             <Sparkles className="size-4 text-secondary" /> Now onboarding cohort
           </motion.div>
 
-          <h1 className="text-5xl md:text-7xl lg:text-[7rem] font-extrabold tracking-tighter leading-[1.05] max-w-6xl mx-auto">
+          <h1 className="text-5xl md:text-6xl lg:text-[6.5rem] font-extrabold tracking-tight leading-[1.1] max-w-5xl mx-auto">
             <motion.span 
-              initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1 }}
-              className="block text-foreground"
+              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1 }}
+              className="text-foreground"
             >
-              Elevate your craft.
+              Elevate your craft.{" "}
             </motion.span>
             <motion.span 
-              initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }}
-              className="block mt-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground/90 to-foreground/50"
+              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }}
+              className="text-foreground/80"
             >
               Command the <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">global stage.</span>
             </motion.span>
