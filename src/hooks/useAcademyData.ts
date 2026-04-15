@@ -39,7 +39,7 @@ export interface Course {
 
 export const CURRICULUM_LEDGER: Record<string, Module[]> = {
   // Freelancing Essentials
-  "1": [
+  "22222222-2222-2222-2222-222222222222": [
     {
       id: "m1",
       title: "Introduction to Modern Freelancing",
@@ -64,7 +64,7 @@ export const CURRICULUM_LEDGER: Record<string, Module[]> = {
     }
   ],
   // AI Mastery
-  "2": [
+  "11111111-1111-1111-1111-111111111111": [
     {
       id: "m1",
       title: "AI Fundamentals for Professionals",
@@ -74,8 +74,8 @@ export const CURRICULUM_LEDGER: Record<string, Module[]> = {
       ]
     }
   ],
-  // Digital Marketing
-  "3": [
+  // Digital Marketing / Teacher Prep
+  "33333333-3333-3333-3333-333333333333": [
     {
       id: "m1",
       title: "Content Strategy & Distribution",
