@@ -8,6 +8,7 @@ interface AuthContextType {
   profile: any | null;
   loading: boolean;
   isAdmin: boolean;
+  isOnboardingNeeded: boolean;
   refreshProfile: () => Promise<void>;
 }
 
