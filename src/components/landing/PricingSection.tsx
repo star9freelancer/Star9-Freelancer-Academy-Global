@@ -67,8 +67,8 @@ const PricingSection = () => {
         <div className="text-center mb-16 space-y-4">
           <p className="text-sm uppercase tracking-widest text-muted-foreground">Pricing</p>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-            Priced for Africa.{" "}
-            <span className="text-muted-foreground">Built for the world.</span>
+            Simple.{" "}
+            <span className="text-muted-foreground">Transparent Pricing.</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Quality education should be accessible. M-Pesa, card, and mobile money support included.

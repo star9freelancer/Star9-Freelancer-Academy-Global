@@ -58,8 +58,8 @@ const FeaturesSection = () => {
             viewport={{ once: true }}
             className="text-3xl md:text-5xl font-bold tracking-tight"
           >
-            Everything you need.{" "}
-            <span className="text-muted-foreground">Nothing you don't.</span>
+            Everything You Need{" "}
+            <span className="text-muted-foreground">In One Place</span>
           </motion.h2>
         </div>
 

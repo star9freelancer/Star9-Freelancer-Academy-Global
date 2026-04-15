@@ -39,8 +39,8 @@ const DualBrandSection = () => {
         >
           <p className="text-sm uppercase tracking-widest text-muted-foreground mb-4">Our Ecosystem</p>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
-            Two platforms.{" "}
-            <span className="text-muted-foreground">One mission.</span>
+            Two Platforms.{" "}
+            <span className="text-muted-foreground">One Vision.</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-xl mx-auto">
             From acquiring skills to landing global opportunities.

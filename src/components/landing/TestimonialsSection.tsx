@@ -34,10 +34,9 @@ const TestimonialsSection = () => {
           viewport={{ once: true }}
           className="text-center mb-16 space-y-4"
         >
-          <p className="text-sm uppercase tracking-widest text-muted-foreground">Success Stories</p>
+          <p className="text-sm uppercase tracking-widest text-muted-foreground">Our Members</p>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-            Real people.{" "}
-            <span className="text-muted-foreground">Real results.</span>
+            What Our Members Say
           </h2>
         </motion.div>
 
