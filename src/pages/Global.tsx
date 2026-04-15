@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Search, MapPin, DollarSign, Clock, GraduationCap, Briefcase, ArrowRight, HeartPulse, Code, PenTool, Layout, PieChart, ShieldCheck, Video, Presentation, Globe, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Header from "@/components/landing/Header";
+import { supabase } from "@/lib/supabase";
 
 // ── DATA ─────────────────────────────────────────────────────────────────────
 
