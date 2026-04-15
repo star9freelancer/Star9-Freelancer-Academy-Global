@@ -5,8 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   Plus, X as XIcon, Save, Award, Star,
-  Link as LinkIcon, Globe, LogOut, User, MapPin
+  Link as LinkIcon, Globe, LogOut, User, MapPin, FileUp, FileText
 } from "lucide-react";
+import { useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 interface UserSettingsProps {
   user: any;
@@ -37,6 +40,38 @@ export const UserSettings = ({
   certificates,
   handleLogout
 }: UserSettingsProps) => {
+  const [uploadingDoc, setUploadingDoc] = useState(false);
+
+  const handleUploadResume = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    setUploadingDoc(true);
+    
+    // Upload to bucket
+    const fileExt = file.name.split('.').pop();
+    const filePath = `${user.id}/resume-${Date.now()}.${fileExt}`;
+    const { error: uploadError, data } = await supabase.storage.from('user-documents').upload(filePath, file, { upsert: true });
+    
+    if (uploadError) {
+      toast.error("Upload failed", { description: uploadError.message });
+      setUploadingDoc(false);
+      return;
+    }
+
+    // Insert into documents table
+    const { data: publicUrlData } = supabase.storage.from('user-documents').getPublicUrl(filePath);
+    const { error: dbError } = await supabase.from('documents').insert([
+      { user_id: user.id, document_type: 'resume', file_url: publicUrlData.publicUrl }
+    ]);
+
+    setUploadingDoc(false);
+    if (!dbError) {
+      toast.success("Resume uploaded successfully");
+    } else {
+      toast.error("Failed to link document", { description: dbError.message });
+    }
+  };
+
   return (
     <div className="space-y-8 max-w-4xl mx-auto animate-in fade-in duration-500 pb-20">
       <div>
@@ -163,6 +198,22 @@ export const UserSettings = ({
                 )}
               </div>
             </CardContent>
+          {/* Documents & Resume */}
+          <Card>
+             <CardHeader>
+               <CardTitle className="text-base flex items-center gap-2"><FileText className="size-4 text-primary" /> Documents & Resume</CardTitle>
+             </CardHeader>
+             <CardContent className="space-y-4">
+                <div className="border border-dashed border-border rounded-xl p-6 text-center hover:bg-muted/30 transition-colors">
+                   <FileUp className="size-8 mx-auto mb-3 text-muted-foreground" />
+                   <p className="text-sm font-medium mb-1">Upload your CV / Resume</p>
+                   <p className="text-xs text-muted-foreground mb-4">PDF, DOCX up to 5MB</p>
+                   <Button variant="outline" size="sm" className="relative cursor-pointer" disabled={uploadingDoc}>
+                      {uploadingDoc ? "Uploading..." : "Select File"}
+                      <input type="file" accept=".pdf,.doc,.docx" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleUploadResume} disabled={uploadingDoc} />
+                   </Button>
+                </div>
+             </CardContent>
           </Card>
 
           <Button 

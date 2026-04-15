@@ -1,14 +1,14 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, GraduationCap, Briefcase, Globe2, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
 
 const floatingCards = [
-  { emoji: "🎓", label: "Certified Courses", x: "10%", y: "20%", delay: 0 },
-  { emoji: "💼", label: "Remote Jobs", x: "75%", y: "15%", delay: 0.2 },
-  { emoji: "🌍", label: "30+ Countries", x: "85%", y: "65%", delay: 0.4 },
-  { emoji: "🏆", label: "92% Completion", x: "5%", y: "70%", delay: 0.6 },
+  { icon: GraduationCap, label: "Certified Courses", x: "10%", y: "20%", delay: 0 },
+  { icon: Briefcase, label: "Remote Jobs", x: "75%", y: "15%", delay: 0.2 },
+  { icon: Globe2, label: "30+ Countries", x: "85%", y: "65%", delay: 0.4 },
+  { icon: Award, label: "Top Rated", x: "5%", y: "70%", delay: 0.6 },
 ];
 
 const HeroSection = () => {
@@ -44,11 +44,13 @@ const HeroSection = () => {
           >
             <motion.div
               animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 3 + i * 0.5, repeat: Infinity, ease: "easeInOut" }}
-              className="px-4 py-2.5 rounded-xl bg-card/90 backdrop-blur-sm border border-border/50 shadow-lg flex items-center gap-2.5"
+              transition={{ duration: 4 + i * 0.5, repeat: Infinity, ease: "easeInOut" }}
+              className="px-4 py-3 rounded-2xl bg-background/40 dark:bg-card/30 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] flex items-center gap-3"
             >
-              <span className="text-lg">{card.emoji}</span>
-              <span className="text-xs font-medium text-foreground whitespace-nowrap">{card.label}</span>
+              <div className="bg-primary/10 dark:bg-primary/20 p-2 rounded-xl text-primary">
+                <card.icon className="size-5" />
+              </div>
+              <span className="text-sm font-semibold text-foreground whitespace-nowrap">{card.label}</span>
             </motion.div>
           </motion.div>
         ))}
@@ -96,10 +98,10 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.35 }}
-            className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto"
+            className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto font-medium"
           >
-            Star9 Academy trains African professionals in AI, freelancing, and education
-            with structured courses that lead to real careers and verified certificates.
+            Star9 Academy trains professionals in AI, freelancing, and education
+            with structured workflows leading directly to high-paying global placements.
           </motion.p>
 
           {/* CTA */}
@@ -159,22 +161,22 @@ const HeroSection = () => {
           className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto"
         >
           {[
-            { value: "3", label: "Career Courses", suffix: "" },
-            { value: "60", label: "Expert Modules", suffix: "+" },
+            { value: "3", label: "Premium Tracks", suffix: "" },
+            { value: "60", label: "Strategic Modules", suffix: "+" },
             { value: "30", label: "Countries Reached", suffix: "+" },
-            { value: "92", label: "Completion Rate", suffix: "%" },
+            { value: "5", label: "Commission Fee", suffix: "%" },
           ].map((stat, i) => (
             <motion.div
               key={stat.label}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 1 + i * 0.1 }}
-              className="text-center p-5 rounded-xl bg-card/50 border border-border/50"
+              className="text-center p-6 rounded-3xl bg-background/30 dark:bg-card/20 backdrop-blur-lg border border-white/20 dark:border-white/5 shadow-xl hover:bg-background/50 transition-colors"
             >
-              <p className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+              <p className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight">
                 {stat.value}<span className="text-primary">{stat.suffix}</span>
               </p>
-              <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+              <p className="text-sm font-medium text-muted-foreground mt-2">{stat.label}</p>
             </motion.div>
           ))}
         </motion.div>

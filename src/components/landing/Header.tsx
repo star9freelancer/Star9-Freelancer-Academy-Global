@@ -40,8 +40,7 @@ const Header = () => {
   }, [dark]);
 
   const navLinks = [
-    { label: "About", href: "/about", icon: Users },
-    { label: "Features", href: "#features", icon: Sparkles },
+    { label: "Freelancer", href: "/", icon: Users },
     { label: "Academy", href: "/academy", icon: BookOpen },
     { label: "Global", href: "/global", icon: Globe },
   ];
