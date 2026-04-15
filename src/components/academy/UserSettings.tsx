@@ -198,6 +198,7 @@ export const UserSettings = ({
                 )}
               </div>
             </CardContent>
+          </Card>
           {/* Documents & Resume */}
           <Card>
              <CardHeader>
