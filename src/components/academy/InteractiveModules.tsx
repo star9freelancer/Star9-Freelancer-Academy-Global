@@ -31,6 +31,35 @@ export const ArticleModule = ({ content, readTime }: { content: string, readTime
               <span dangerouslySetInnerHTML={{ __html: line.replace('- ', '').replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground">$1</strong>') }} />
             </li>
           );
+          if (line.startsWith('![')) {
+            const vidMatch = line.match(/^!\[video\]\((.*?)\)$/);
+            if (vidMatch) {
+              return (
+                <div key={i} className="my-10 rounded-2xl overflow-hidden border border-border bg-card shadow-2xl relative aspect-video group cursor-pointer">
+                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-all">
+                    <div className="w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center text-primary-foreground backdrop-blur-md scale-95 group-hover:scale-110 transition-transform shadow-2xl">
+                      <MonitorPlay className="size-8 ml-1" />
+                    </div>
+                  </div>
+                  <img src="https://images.unsplash.com/photo-1616469829581-73993eb86b02?auto=format&fit=crop&q=80&w=1000" alt="Video Thumbnail" className="w-full h-full object-cover opacity-80" />
+                  <div className="absolute top-4 left-4 z-20">
+                    <Badge className="bg-primary hover:bg-primary border-0 shadow-lg px-3 py-1 text-xs">AI Video Overview</Badge>
+                  </div>
+                </div>
+              );
+            }
+
+            const imgMatch = line.match(/^!\[(.*?)\]\((.*?)\)$/);
+            if (imgMatch) {
+              return (
+                <figure key={i} className="my-10 rounded-2xl overflow-hidden border border-border shadow-2xl bg-card">
+                  <img src={imgMatch[2]} alt={imgMatch[1]} className="w-full object-cover max-h-[450px]" />
+                  {imgMatch[1] && <figcaption className="text-center text-xs font-medium tracking-wide uppercase text-muted-foreground py-3 bg-muted/40 border-t border-border/50">{imgMatch[1]}</figcaption>}
+                </figure>
+              );
+            }
+          }
+
           if (line.trim() === '') return <div key={i} className="h-4" />;
           return <p key={i} className="text-muted-foreground leading-relaxed my-5 text-[17px]">{line}</p>;
         })}
