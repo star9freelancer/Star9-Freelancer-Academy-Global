@@ -1,5 +1,13 @@
 import React from "react";
-import { Bell, Award, BookOpen, CheckCircle2, MessageSquare, Clock, X } from "lucide-react";
+import { 
+  Bell as BellIcon, 
+  Award as AwardIcon, 
+  BookOpen as BookOpenIcon, 
+  CheckCircle2 as CheckCircle2Icon, 
+  MessageSquare as MessageSquareIcon, 
+  Clock as ClockIcon, 
+  X as XIcon 
+} from "lucide-react";
 import { motion } from "framer-motion";
 
 interface Notification {
@@ -21,18 +29,18 @@ const NotificationPanel = ({ notifications, onClose }: { notifications: Notifica
     >
       <div className="p-4 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Bell className="size-4 text-primary" />
+          <BellIcon className="size-4 text-primary" />
           <h3 className="text-sm font-semibold text-foreground">Notifications</h3>
         </div>
         <button onClick={onClose} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-          <X className="size-4" />
+          <XIcon className="size-4" />
         </button>
       </div>
 
       <div className="max-h-[400px] overflow-y-auto">
         {notifications.length === 0 ? (
           <div className="p-10 text-center space-y-2">
-            <Bell className="size-8 text-muted-foreground/30 mx-auto" />
+            <BellIcon className="size-8 text-muted-foreground/30 mx-auto" />
             <p className="text-sm text-muted-foreground">No new notifications</p>
           </div>
         ) : (
@@ -51,17 +59,17 @@ const NotificationPanel = ({ notifications, onClose }: { notifications: Notifica
                   n.type === 'course' ? 'bg-green-500/10 text-green-500' :
                   'bg-muted text-muted-foreground'
                 }`}>
-                  {n.type === 'merit' && <Award className="size-4" />}
-                  {n.type === 'system' && <BookOpen className="size-4" />}
-                  {n.type === 'course' && <CheckCircle2 className="size-4" />}
-                  {n.type === 'community' && <MessageSquare className="size-4" />}
+                  {n.type === 'merit' && <AwardIcon className="size-4" />}
+                  {n.type === 'system' && <BookOpenIcon className="size-4" />}
+                  {n.type === 'course' && <CheckCircle2Icon className="size-4" />}
+                  {n.type === 'community' && <MessageSquareIcon className="size-4" />}
                 </div>
                 
                 <div className="space-y-0.5 min-w-0">
                   <p className="text-sm font-medium text-foreground">{n.title}</p>
                   <p className="text-xs text-muted-foreground leading-relaxed">{n.message}</p>
                   <div className="flex items-center gap-1 pt-1">
-                    <Clock className="size-3 text-muted-foreground" />
+                    <ClockIcon className="size-3 text-muted-foreground" />
                     <span className="text-[11px] text-muted-foreground">{n.time}</span>
                   </div>
                 </div>

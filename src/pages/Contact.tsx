@@ -4,7 +4,12 @@ import Footer from "@/components/landing/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Mail, MapPin, Globe, Phone } from "lucide-react";
+import { 
+  Mail as MailIcon, 
+  MapPin as MapPinIcon, 
+  Globe as GlobeIcon, 
+  Phone as PhoneIcon 
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
 
@@ -53,7 +58,7 @@ const Contact = () => {
               <div className="space-y-5">
                 <div className="flex items-start gap-4">
                   <div className="p-2.5 rounded-lg bg-primary/10 text-primary">
-                    <Mail className="size-5" />
+                    <MailIcon className="size-5" />
                   </div>
                   <div>
                     <p className="font-medium text-foreground">Email</p>
@@ -62,7 +67,7 @@ const Contact = () => {
                 </div>
                 <div className="flex items-start gap-4">
                   <div className="p-2.5 rounded-lg bg-primary/10 text-primary">
-                    <Phone className="size-5" />
+                    <PhoneIcon className="size-5" />
                   </div>
                   <div>
                     <p className="font-medium text-foreground">Phone</p>
@@ -71,7 +76,7 @@ const Contact = () => {
                 </div>
                 <div className="flex items-start gap-4">
                   <div className="p-2.5 rounded-lg bg-primary/10 text-primary">
-                    <MapPin className="size-5" />
+                    <MapPinIcon className="size-5" />
                   </div>
                   <div>
                     <p className="font-medium text-foreground">Location</p>
@@ -80,7 +85,7 @@ const Contact = () => {
                 </div>
                 <div className="flex items-start gap-4">
                   <div className="p-2.5 rounded-lg bg-primary/10 text-primary">
-                    <Globe className="size-5" />
+                    <GlobeIcon className="size-5" />
                   </div>
                   <div>
                     <p className="font-medium text-foreground">Website</p>

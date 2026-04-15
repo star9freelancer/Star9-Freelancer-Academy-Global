@@ -111,7 +111,7 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
               </div>
             ) : (
               <div className="rounded-xl border border-dashed border-border bg-muted/20 p-12 text-center space-y-4 cursor-pointer" onClick={() => setActiveTab('catalog')}>
-                <BookOpen className="size-10 text-muted-foreground mx-auto" />
+                <BookOpenIcon className="size-10 text-muted-foreground mx-auto" />
                 <div>
                   <p className="font-semibold text-foreground">No courses yet</p>
                   <p className="text-sm text-muted-foreground mt-1">Browse our catalog to get started</p>

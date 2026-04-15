@@ -13,8 +13,7 @@ import {
   Globe as GlobeIcon, 
   FileUp as FileUpIcon, 
   FileText as FileTextIcon, 
-  Linkedin as LinkedinIcon,
-  MapPin as MapPinIcon,
+  MapPin as MapPinIcon, 
   LogOut as LogOutIcon
 } from "lucide-react";
 import { useState } from "react";
@@ -149,7 +148,7 @@ export const UserSettings = ({
                 <div className="space-y-2">
                   <Label>LinkedIn</Label>
                   <div className="relative">
-                    <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                     <Input 
                       value={profileForm.linkedin_url} 
                       onChange={(e) => setProfileForm({...profileForm, linkedin_url: e.target.value})}
@@ -161,7 +160,7 @@ export const UserSettings = ({
                 <div className="space-y-2">
                   <Label>Portfolio / Website</Label>
                   <div className="relative">
-                    <Globe className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                    <GlobeIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                     <Input 
                       value={profileForm.portfolio_url} 
                       onChange={(e) => setProfileForm({...profileForm, portfolio_url: e.target.value})}
@@ -283,7 +282,7 @@ export const UserSettings = ({
           {/* Documents & Resume */}
           <Card>
              <CardHeader>
-               <CardTitle className="text-base flex items-center gap-2"><FileText className="size-4 text-primary" /> Documents & Resume</CardTitle>
+               <CardTitle className="text-base flex items-center gap-2"><FileTextIcon className="size-4 text-primary" /> Documents & Resume</CardTitle>
              </CardHeader>
              <CardContent className="space-y-4">
                 <div className="border border-dashed border-border rounded-xl p-6 text-center hover:bg-muted/30 transition-colors">
@@ -362,7 +361,7 @@ export const UserSettings = ({
             variant="outline"
             className="w-full border-destructive/30 text-destructive hover:bg-destructive/10 gap-2"
           >
-            <LogOut className="size-4" />
+            <LogOutIcon className="size-4" />
             Log Out
           </Button>
         </div>

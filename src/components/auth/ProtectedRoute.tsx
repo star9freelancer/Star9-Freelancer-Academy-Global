@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { Loader2, ShieldCheck } from "lucide-react";
+import { Loader2 as Loader2Icon, ShieldCheck as ShieldCheckIcon } from "lucide-react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -21,8 +21,8 @@ const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps)
         
         <div className="flex flex-col items-center gap-6 relative z-10 text-center px-4">
           <div className="relative">
-            <Loader2 className="w-8 h-8 text-primary animate-spin" />
-            <ShieldCheck className="w-3 h-3 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+            <Loader2Icon className="w-8 h-8 text-primary animate-spin" />
+            <ShieldCheckIcon className="w-3 h-3 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
           </div>
           <div className="space-y-2">
 

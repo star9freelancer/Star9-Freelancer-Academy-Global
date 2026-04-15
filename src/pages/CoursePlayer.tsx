@@ -604,7 +604,7 @@ const QuizModule = ({ quizData, onPass }: { quizData: any, onPass: () => void })
                   className="flex items-center justify-between p-4 rounded-lg border border-border bg-background hover:bg-muted/50 peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 cursor-pointer transition-all"
                 >
                   <span className="text-sm">{option}</span>
-                  {selectedAnswer === idx && <CheckCircle2 className="size-4 text-primary" />}
+                  {selectedAnswer === idx && <CheckCircle2Icon className="size-4 text-primary" />}
                 </Label>
               </div>
             ))}

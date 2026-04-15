@@ -3,11 +3,27 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
 import {
-  Users, Search, ArrowRight, CheckCircle2,
-  XCircle, CreditCard, Briefcase,
-  Trash2, ShieldCheck, Mail, Plus, BookOpen,
-  Play, LayoutGrid, MessageSquare, Eye, EyeOff, LogOut,
-  FileText, Download, UserCheck
+  Users as UsersIcon, 
+  Search as SearchIcon, 
+  ArrowRight as ArrowRightIcon, 
+  CheckCircle2 as CheckCircle2Icon,
+  XCircle as XCircleIcon, 
+  CreditCard as CreditCardIcon, 
+  Briefcase as BriefcaseIcon,
+  Trash2 as Trash2Icon, 
+  ShieldCheck as ShieldCheckIcon, 
+  Mail as MailIcon, 
+  Plus as PlusIcon, 
+  BookOpen as BookOpenIcon,
+  Play as PlayIcon, 
+  LayoutGrid as LayoutGridIcon, 
+  MessageSquare as MessageSquareIcon, 
+  Eye as EyeIcon, 
+  EyeOff as EyeOffIcon, 
+  LogOut as LogOutIcon,
+  FileText as FileTextIcon, 
+  Download as DownloadIcon, 
+  UserCheck as UserCheckIcon
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -196,13 +212,13 @@ const Admin = () => {
   );
 
   const adminLinks = [
-    { id: "dashboard", icon: LayoutGrid, label: "Dashboard" },
-    { id: "users", icon: Users, label: "Users" },
-    { id: "verifications", icon: UserCheck, label: "Verify" },
-    { id: "courses", icon: BookOpen, label: "Courses" },
-    { id: "intake", icon: Briefcase, label: "Jobs" },
-    { id: "messages", icon: MessageSquare, label: "Messages" },
-    { id: "financials", icon: CreditCard, label: "Finances" },
+    { id: "dashboard", icon: LayoutGridIcon, label: "Dashboard" },
+    { id: "users", icon: UsersIcon, label: "Users" },
+    { id: "verifications", icon: UserCheckIcon, label: "Verify" },
+    { id: "courses", icon: BookOpenIcon, label: "Courses" },
+    { id: "intake", icon: BriefcaseIcon, label: "Jobs" },
+    { id: "messages", icon: MessageSquareIcon, label: "Messages" },
+    { id: "financials", icon: CreditCardIcon, label: "Finances" },
   ];
 
   return (
@@ -230,7 +246,7 @@ const Admin = () => {
 
           {/* Search */}
           <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-full border border-border focus-within:border-primary/40 transition-all group w-48 shrink-0">
-            <Search className="size-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <SearchIcon className="size-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <input 
               type="text" 
               placeholder="Search admin..."
@@ -275,10 +291,10 @@ const Admin = () => {
           
           <div className="flex items-center gap-2 shrink-0">
             <Link to="/academy" title="Back to Academy" className="w-9 h-9 flex items-center justify-center rounded-full bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
-              <ArrowRight className="size-4 rotate-180" />
+              <ArrowRightIcon className="size-4 rotate-180" />
             </Link>
             <button onClick={handleLogout} title="Log Out" className="w-9 h-9 flex items-center justify-center rounded-full bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all">
-              <LogOut className="size-4" />
+              <LogOutIcon className="size-4" />
             </button>
           </div>
         </motion.nav>
@@ -313,7 +329,7 @@ const Admin = () => {
           })}
           <div className="w-px h-8 bg-border mx-1 flex-shrink-0" />
           <Link to="/academy" className="p-3 rounded-full text-muted-foreground flex-shrink-0">
-            <ArrowRight className="size-5 rotate-180" />
+            <ArrowRightIcon className="size-5 rotate-180" />
           </Link>
         </div>
       </div>
@@ -331,12 +347,12 @@ const Admin = () => {
 
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 {[
-                  { label: "Users", value: stats.totalUsers, icon: Users, color: "text-green-500", click: () => setActiveTab("users") },
-                  { label: "Courses", value: stats.totalCourses, icon: BookOpen, color: "text-primary", click: () => setActiveTab("courses") },
-                  { label: "Jobs", value: stats.totalOpportunities, icon: Briefcase, color: "text-secondary", click: () => setActiveTab("intake") },
-                  { label: "Pending", value: stats.pendingVerifications, icon: ShieldCheck, color: "text-amber-500", click: () => setActiveTab("users") },
-                  { label: "Messages", value: stats.unreadMessages, icon: MessageSquare, color: "text-blue-500", click: () => setActiveTab("messages") },
-                  { label: "Revenue", value: `$${stats.totalRevenue.toLocaleString()}`, icon: CreditCard, color: "text-emerald-500", click: () => setActiveTab("financials") },
+                  { label: "Users", value: stats.totalUsers, icon: UsersIcon, color: "text-green-500", click: () => setActiveTab("users") },
+                  { label: "Courses", value: stats.totalCourses, icon: BookOpenIcon, color: "text-primary", click: () => setActiveTab("courses") },
+                  { label: "Jobs", value: stats.totalOpportunities, icon: BriefcaseIcon, color: "text-secondary", click: () => setActiveTab("intake") },
+                  { label: "Pending", value: stats.pendingVerifications, icon: ShieldCheckIcon, color: "text-amber-500", click: () => setActiveTab("users") },
+                  { label: "Messages", value: stats.unreadMessages, icon: MessageSquareIcon, color: "text-blue-500", click: () => setActiveTab("messages") },
+                  { label: "Revenue", value: `$${stats.totalRevenue.toLocaleString()}`, icon: CreditCardIcon, color: "text-emerald-500", click: () => setActiveTab("financials") },
                 ].map((stat, i) => (
                   <Card key={i} className="p-4 cursor-pointer hover:border-primary/30 transition-all" onClick={stat.click}>
                     <div className="flex items-center justify-between mb-3">
@@ -378,7 +394,7 @@ const Admin = () => {
                     <h3 className="text-xl font-bold">All Systems Active</h3>
                     <p className="text-muted-foreground text-sm mt-1">Platform is running smoothly.</p>
                   </div>
-                  <CheckCircle2 className="size-10 text-green-500" />
+                  <CheckCircle2Icon className="size-10 text-green-500" />
                 </Card>
                 <Card className="p-6 space-y-3">
                   <Button className="w-full" onClick={() => setActiveTab('courses')}>Add New Course</Button>
@@ -397,7 +413,7 @@ const Admin = () => {
                 </div>
                 <div className="flex gap-2">
                   <div className="flex items-center gap-2 px-3 py-2 bg-muted rounded-lg border">
-                    <Search className="size-4 text-muted-foreground" />
+                    <SearchIcon className="size-4 text-muted-foreground" />
                     <input type="text" placeholder="Search users..." className="bg-transparent text-sm outline-none w-40" value={userSearch} onChange={e => setUserSearch(e.target.value)} />
                   </div>
                   <Button variant="outline" onClick={fetchAllData}>Refresh</Button>
@@ -545,12 +561,12 @@ const Admin = () => {
                     {/* Pending Reviews */}
                     <div>
                       <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                        <ShieldCheck className="size-5 text-amber-500" />
+                        <ShieldCheckIcon className="size-5 text-amber-500" />
                         Pending Reviews ({pendingUsers.length})
                       </h2>
                       {pendingUsers.length === 0 ? (
                         <Card className="p-8 text-center border-dashed">
-                          <CheckCircle2 className="size-10 mx-auto mb-3 text-green-500" />
+                          <CheckCircle2Icon className="size-10 mx-auto mb-3 text-green-500" />
                           <p className="text-muted-foreground">No pending reviews. All caught up!</p>
                         </Card>
                       ) : (
@@ -570,7 +586,7 @@ const Admin = () => {
                                   
                                   {user.resume_url && (
                                     <div className="mt-3 flex items-center gap-2">
-                                      <FileText className="size-4 text-primary" />
+                                      <FileTextIcon className="size-4 text-primary" />
                                       <span className="text-sm text-primary font-medium">Resume uploaded</span>
                                       <Button
                                         size="sm"
@@ -587,7 +603,7 @@ const Admin = () => {
                                           }
                                         }}
                                       >
-                                        <Download className="size-3 mr-1" />
+                                        <DownloadIcon className="size-3 mr-1" />
                                         View
                                       </Button>
                                     </div>
@@ -595,11 +611,11 @@ const Admin = () => {
                                   
                                   <div className="flex gap-2 mt-4">
                                     <Button size="sm" className="flex-1" onClick={() => setVerification(user.id, 'verified')}>
-                                      <CheckCircle2 className="size-3.5 mr-1.5" />
+                                      <CheckCircle2Icon className="size-3.5 mr-1.5" />
                                       Verify
                                     </Button>
                                     <Button size="sm" variant="destructive" className="flex-1" onClick={() => setVerification(user.id, 'rejected')}>
-                                      <XCircle className="size-3.5 mr-1.5" />
+                                      <XCircleIcon className="size-3.5 mr-1.5" />
                                       Reject
                                     </Button>
                                   </div>
@@ -614,7 +630,7 @@ const Admin = () => {
                     {/* Recently Verified */}
                     <div>
                       <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                        <CheckCircle2 className="size-5 text-green-500" />
+                        <CheckCircle2Icon className="size-5 text-green-500" />
                         Verified Users ({verifiedUsers.length})
                       </h2>
                       {verifiedUsers.length === 0 ? (
@@ -677,7 +693,7 @@ const Admin = () => {
                 </div>
                 {!editingCourse && (
                   <Button onClick={() => setEditingCourse({ title: "", category: "AI Skills", status: "draft", lessons: [], ai_tools_covered: [] })}>
-                    <Plus className="mr-2 size-4" /> New Course
+                    <PlusIcon className="mr-2 size-4" /> New Course
                   </Button>
                 )}
               </div>
@@ -723,10 +739,10 @@ const Admin = () => {
                           <div key={lesson.id} className="flex items-center justify-between p-3 bg-card border rounded-lg">
                             <div className="flex items-center gap-3">
                               <span className="text-xs text-muted-foreground">{idx + 1}</span>
-                              {lesson.type === 'video' ? <Play className="size-3 text-primary" /> : <BookOpen className="size-3 text-secondary" />}
+                              {lesson.type === 'video' ? <PlayIcon className="size-3 text-primary" /> : <BookOpenIcon className="size-3 text-secondary" />}
                               <span className="text-sm font-medium">{lesson.title}</span>
                             </div>
-                            <Button variant="ghost" size="icon" className="size-6 text-muted-foreground hover:text-destructive" onClick={() => removeLesson(lesson.id)}><XCircle className="size-4" /></Button>
+                            <Button variant="ghost" size="icon" className="size-6 text-muted-foreground hover:text-destructive" onClick={() => removeLesson(lesson.id)}><XCircleIcon className="size-4" /></Button>
                           </div>
                         ))}
                         {(!editingCourse.lessons || editingCourse.lessons.length === 0) && (
@@ -754,7 +770,7 @@ const Admin = () => {
                     <div className="col-span-full h-48 flex items-center justify-center text-muted-foreground">Loading courses...</div>
                   ) : courses.length === 0 ? (
                     <Card className="col-span-full border-dashed p-12 text-center">
-                      <BookOpen className="size-12 mx-auto mb-4 text-muted-foreground" />
+                      <BookOpenIcon className="size-12 mx-auto mb-4 text-muted-foreground" />
                       <CardTitle>No Courses Yet</CardTitle>
                     </Card>
                   ) : courses.map((course) => (
@@ -763,7 +779,7 @@ const Admin = () => {
                         <div className="flex justify-between items-start">
                           <Badge variant="outline" className="text-xs">{course.category}</Badge>
                           <button onClick={(e) => { e.stopPropagation(); handleDeleteCourse(course.id); }} className="text-muted-foreground hover:text-destructive p-1">
-                            <Trash2 className="size-4" />
+                            <Trash2Icon className="size-4" />
                           </button>
                         </div>
                         <CardTitle className="mt-2">{course.title}</CardTitle>
@@ -784,7 +800,7 @@ const Admin = () => {
                   <p className="text-muted-foreground mt-1">Manage remote work opportunities for students.</p>
                 </div>
                 <Button onClick={handleCreateOpportunity}>
-                  <Plus className="mr-2 size-4" /> Add Job
+                  <PlusIcon className="mr-2 size-4" /> Add Job
                 </Button>
               </div>
               <div className="rounded-xl border bg-card overflow-hidden">

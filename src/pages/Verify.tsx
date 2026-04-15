@@ -1,7 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
-import { BadgeCheck, ShieldCheck, Award, Globe, ExternalLink, ArrowRight, BookOpen } from "lucide-react";
+import { 
+  BadgeCheck as BadgeCheckIcon, 
+  ShieldCheck as ShieldCheckIcon, 
+  Award as AwardIcon, 
+  Globe as GlobeIcon, 
+  ExternalLink as ExternalLinkIcon, 
+  ArrowRight as ArrowRightIcon, 
+  BookOpen as BookOpenIcon 
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -54,7 +62,7 @@ const Verify = () => {
   if (error || !cert) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-8 text-center max-w-md mx-auto">
-        <ShieldCheck className="w-16 h-16 text-red-500 mb-6 opacity-20" />
+        <ShieldCheckIcon className="w-16 h-16 text-red-500 mb-6 opacity-20" />
         <h1 className="text-2xl font-bold uppercase tracking-tight mb-2">Validation Failure</h1>
         <p className="text-muted-foreground mb-8">{error}</p>
         <Button asChild variant="outline" className="font-mono text-[10px] uppercase tracking-widest">
@@ -75,14 +83,14 @@ const Verify = () => {
           <img src={logo} alt="Star9" className="h-[48px] w-auto brightness-200" />
         </Link>
         <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-widest">
-          <Globe className="size-3" /> Ledger ID: {cert.credential_id}
+          <GlobeIcon className="size-3" /> Ledger ID: {cert.credential_id}
         </div>
       </header>
 
       <main className="container max-w-4xl py-12 md:py-24 space-y-12">
         <div className="text-center space-y-4">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-green-500/20 bg-green-500/5 text-green-500 font-mono text-[10px] uppercase tracking-[0.2em] animate-in zoom-in duration-500">
-            <BadgeCheck className="size-4" /> Authenticated Credential
+            <BadgeCheckIcon className="size-4" /> Authenticated Credential
           </div>
           <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none">Credential Proof</h1>
           <p className="text-muted-foreground text-lg italic">Star9 Infrastructure Academy Validation Portal</p>
@@ -98,7 +106,7 @@ const Verify = () => {
             </div>
             <div className="flex flex-col items-center gap-2">
                <div className="w-16 h-16 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center p-3">
-                  <Award className="w-full h-full text-primary" />
+                  <AwardIcon className="w-full h-full text-primary" />
                </div>
                <p className="text-[10px] font-mono tracking-widest uppercase text-muted-foreground">Certified Curriculum Hub</p>
             </div>
@@ -125,7 +133,7 @@ const Verify = () => {
                </div>
                <div className="space-y-1">
                   <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Status</p>
-                  <p className="font-bold text-green-500 uppercase tracking-widest text-sm flex items-center gap-1.5"><ShieldCheck className="size-4" /> Validated</p>
+                  <p className="font-bold text-green-500 uppercase tracking-widest text-sm flex items-center gap-1.5"><ShieldCheckIcon className="size-4" /> Validated</p>
                </div>
             </div>
           </CardContent>
@@ -146,7 +154,7 @@ const Verify = () => {
             </div>
             <div className="flex gap-4">
               <Button asChild variant="outline" className="font-mono text-[10px] uppercase tracking-widest">
-                <Link to="/academy" className="gap-2">Join Academy <BookOpen className="size-3" /></Link>
+                <Link to="/academy" className="gap-2">Join Academy <BookOpenIcon className="size-3" /></Link>
               </Button>
             </div>
           </CardFooter>
@@ -156,14 +164,14 @@ const Verify = () => {
         <div className="grid md:grid-cols-2 gap-6 pb-24">
            <Card className="p-6 glass border-border/50 space-y-3">
               <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                 <ShieldCheck className="size-4" />
+                 <ShieldCheckIcon className="size-4" />
               </div>
               <h4 className="font-bold uppercase tracking-tight text-xs">Immutable Ledger Protection</h4>
               <p className="text-xs text-muted-foreground leading-relaxed">This credential is locked to the Star9 Infrastructure Ledger and cannot be altered or forged. Every issuance generates a unique cryptographic ID for employer verification.</p>
            </Card>
            <Card className="p-6 glass border-border/50 space-y-3">
               <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                 <Globe className="size-4" />
+                 <GlobeIcon className="size-4" />
               </div>
               <h4 className="font-bold uppercase tracking-tight text-xs">Global Reciprocal Recognition</h4>
               <p className="text-xs text-muted-foreground leading-relaxed">Accepted by our international network of remote partners, this certificate denotes exceptional mastery of technical and operational protocols in the Star9 ecosystem.</p>

@@ -529,14 +529,14 @@ const Academy = () => {
                    <div className="space-y-8 relative z-10 animate-in fade-in duration-500">
                      <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 md:p-8 rounded-3xl border border-primary/20 relative overflow-hidden flex flex-col md:flex-row items-center gap-6 shadow-sm">
                         <div className="size-16 rounded-2xl bg-primary/20 flex items-center justify-center shrink-0">
-                           <Award className="size-8 text-primary" />
+                           <AwardIcon className="size-8 text-primary" />
                         </div>
                         <div className="relative z-10 flex-1 text-center md:text-left">
                            <h2 className="text-2xl font-bold tracking-tight mb-2">Your Credentials Vault</h2>
                            <p className="text-muted-foreground text-sm leading-relaxed max-w-xl mx-auto md:mx-0">Every certificate you earn is cryptographically tied to your profile and verifiable globally. Showcasing these on LinkedIn can significantly increase hiring velocity.</p>
                         </div>
                         <div className="absolute top-1/2 -translate-y-1/2 -right-8 opacity-[0.04] pointer-events-none">
-                           <Award className="size-64 -rotate-12" />
+                           <AwardIcon className="size-64 -rotate-12" />
                         </div>
                      </div>
                      
@@ -549,7 +549,7 @@ const Academy = () => {
                        {certificates.map((cert) => (
                          <Card key={cert.id} className="glass overflow-hidden group">
                            <div className="h-40 bg-zinc-900 flex flex-col items-center justify-center p-6 border-b border-white/5 relative">
-                             <Award className="w-16 h-16 text-primary/20 mb-2" />
+                             <AwardIcon className="w-16 h-16 text-primary/20 mb-2" />
                              <p className="text-[10px] font-mono tracking-widest text-primary uppercase">Star9 Certificate</p>
                            </div>
                            <CardHeader className="text-center">

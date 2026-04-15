@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight as ArrowRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const CTASection = () => {
@@ -30,7 +30,7 @@ const CTASection = () => {
             <Button size="lg" className="h-14 px-10 text-sm font-semibold group shadow-lg shadow-primary/20" asChild>
               <Link to="/auth" className="flex items-center gap-3">
                 Get Started Free
-                <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRightIcon className="size-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
             <Button variant="outline" size="lg" className="h-14 px-10 text-sm font-semibold" asChild>

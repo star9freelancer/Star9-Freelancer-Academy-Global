@@ -3,7 +3,13 @@ import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription }
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
-  X as XIcon, PlayCircle, ShieldCheck, Clock, Database, Sparkles, ArrowLeft 
+  X as XIcon, 
+  PlayCircle as PlayCircleIcon, 
+  ShieldCheck as ShieldCheckIcon, 
+  Clock as ClockIcon, 
+  Database as DatabaseIcon, 
+  Sparkles as SparklesIcon, 
+  ArrowLeft as ArrowLeftIcon 
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -34,7 +40,7 @@ const ProgramDetailView = ({ course, enrollment, onBack, onEnroll, onStart }: Pr
           className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors group"
         >
           <div className="size-8 rounded-full border border-white/5 flex items-center justify-center group-hover:border-primary transition-all">
-            <ArrowLeft className="size-4" />
+            <ArrowLeftIcon className="size-4" />
           </div>
           <span className="font-mono text-[10px] uppercase tracking-widest ont-bold">Back to Courses</span>
         </button>
@@ -57,10 +63,10 @@ const ProgramDetailView = ({ course, enrollment, onBack, onEnroll, onStart }: Pr
 
           <div className="grid grid-cols-2 gap-4">
              {[
-               { label: "Duration", value: course.duration || "4 Hours", icon: Clock },
-               { label: "Lessons", value: lessons.length.toString(), icon: PlayCircle },
-               { label: "Points", value: "500 XP", icon: Sparkles },
-               { label: "Format", value: "Online Video", icon: Database }
+               { label: "Duration", value: course.duration || "4 Hours", icon: ClockIcon },
+               { label: "Lessons", value: lessons.length.toString(), icon: PlayCircleIcon },
+               { label: "Points", value: "500 XP", icon: SparklesIcon },
+               { label: "Format", value: "Online Video", icon: DatabaseIcon }
              ].map((stat, i) => (
                <div key={i} className="p-6 rounded-[2.5rem] bg-zinc-900/50 border border-white/5 space-y-1 group hover:border-primary transition-all">
                   <stat.icon className="size-4 text-zinc-600 mb-2 group-hover:text-primary transition-colors" />
@@ -142,7 +148,7 @@ const ProgramDetailView = ({ course, enrollment, onBack, onEnroll, onStart }: Pr
                          <span className="text-[10px] font-mono font-bold text-zinc-600">{idx + 1}</span>
                          {isCompleted && (
                            <div className="absolute -top-1 -right-1 size-5 bg-emerald-500 rounded-full flex items-center justify-center border-2 border-zinc-950">
-                              <ShieldCheck className="size-3 text-white" />
+                              <ShieldCheckIcon className="size-3 text-white" />
                            </div>
                          )}
                       </div>
@@ -151,7 +157,7 @@ const ProgramDetailView = ({ course, enrollment, onBack, onEnroll, onStart }: Pr
                       </div>
                       {isEnrolled && (
                         <div className="size-10 rounded-full border border-white/5 flex items-center justify-center transition-colors group-hover:bg-primary group-hover:border-primary">
-                           <PlayCircle className="size-5 text-zinc-600 group-hover:text-white" />
+                           <PlayCircleIcon className="size-5 text-zinc-600 group-hover:text-white" />
                         </div>
                       )}
                     </motion.button>

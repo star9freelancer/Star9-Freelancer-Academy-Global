@@ -1,6 +1,17 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Moon, Sun, Menu, X, LayoutDashboard, Home, BookOpen, Globe, Users, Sparkles } from "lucide-react";
+import { 
+  Moon as MoonIcon, 
+  Sun as SunIcon, 
+  Menu as MenuIcon, 
+  X as XIcon, 
+  LayoutDashboard as LayoutDashboardIcon, 
+  Home as HomeIcon, 
+  BookOpen as BookOpenIcon, 
+  Globe as GlobeIcon, 
+  Users as UsersIcon, 
+  Sparkles as SparklesIcon 
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo_transparent.png";
 import { supabase } from "@/lib/supabase";
@@ -40,9 +51,9 @@ const Header = () => {
   }, [dark]);
 
   const navLinks = [
-    { label: "Freelancer", href: "/", icon: Users },
-    { label: "Academy", href: "/academy", icon: BookOpen },
-    { label: "Global", href: "/global", icon: Globe },
+    { label: "Freelancer", href: "/", icon: UsersIcon },
+    { label: "Academy", href: "/academy", icon: BookOpenIcon },
+    { label: "Global", href: "/global", icon: GlobeIcon },
   ];
 
   return (
@@ -92,12 +103,12 @@ const Header = () => {
             className="p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Toggle dark mode"
           >
-            {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
+            {dark ? <SunIcon className="size-4" /> : <MoonIcon className="size-4" />}
           </button>
           {user ? (
             <Button size="sm" className="gap-2 rounded-full" asChild>
               <Link to="/academy">
-                <LayoutDashboard className="size-3.5" />
+                <LayoutDashboardIcon className="size-3.5" />
                 My Academy
               </Link>
             </Button>
@@ -115,7 +126,7 @@ const Header = () => {
 
         {/* Mobile toggle */}
         <button className="md:hidden p-2 rounded-full hover:bg-muted" onClick={() => setMobileOpen(!mobileOpen)}>
-          {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+          {mobileOpen ? <XIcon className="size-5" /> : <MenuIcon className="size-5" />}
         </button>
       </motion.nav>
 
@@ -136,7 +147,7 @@ const Header = () => {
           <div className="flex items-center justify-between px-4 py-2">
             <span className="text-sm text-muted-foreground">Dark Mode</span>
             <button onClick={() => setDark(!dark)} className="p-2 rounded-lg hover:bg-muted transition-colors">
-              {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
+              {dark ? <SunIcon className="size-4" /> : <MoonIcon className="size-4" />}
             </button>
           </div>
           <div className="flex gap-2 pt-2">

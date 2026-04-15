@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Check, ArrowRight } from "lucide-react";
+import { Check as CheckIcon, ArrowRight as ArrowRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -113,7 +113,7 @@ const PricingSection = () => {
               <ul className="space-y-3 mb-8 flex-1">
                 {tier.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-3 text-sm">
-                    <Check className="size-4 text-primary shrink-0 mt-0.5" />
+                    <CheckIcon className="size-4 text-primary shrink-0 mt-0.5" />
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -126,7 +126,7 @@ const PricingSection = () => {
               >
                 <Link to="/auth" className="flex items-center justify-center gap-2">
                   {tier.buttonText}
-                  <ArrowRight className="size-3.5 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRightIcon className="size-3.5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
             </motion.div>

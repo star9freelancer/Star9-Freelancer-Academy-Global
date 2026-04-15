@@ -12,7 +12,6 @@ import {
   CheckCircle2 as CheckCircle2Icon, 
   Loader2 as Loader2Icon,
   Globe as GlobeIcon, 
-  Linkedin as LinkedinIcon, 
   Users as UsersIcon, 
   Target as TargetIcon, 
   Sparkles as SparklesIcon

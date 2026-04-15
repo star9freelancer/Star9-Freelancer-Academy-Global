@@ -297,7 +297,7 @@ export default function Auth() {
                         <p className="text-xs text-muted-foreground">{(resumeFile.size / 1024).toFixed(0)} KB</p>
                       </div>
                       <button onClick={() => setResumeFile(null)} className="p-1 rounded-full hover:bg-muted transition-colors">
-                        <X className="size-4 text-muted-foreground" />
+                        <XIcon className="size-4 text-muted-foreground" />
                       </button>
                     </div>
                   ) : (
@@ -305,7 +305,7 @@ export default function Auth() {
                       onClick={() => fileInputRef.current?.click()}
                       className="w-full p-4 rounded-lg border-2 border-dashed border-border hover:border-primary/40 hover:bg-primary/5 transition-all flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground"
                     >
-                      <Upload className="size-5" />
+                      <UploadIcon className="size-5" />
                       <span className="text-sm font-medium">Click to upload resume</span>
                     </button>
                   )}

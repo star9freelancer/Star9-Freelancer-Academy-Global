@@ -1,7 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
-import { Send, Hash, Users, MessageSquare, Loader2 } from "lucide-react";
+import { 
+  Send as SendIcon, 
+  Hash as HashIcon, 
+  Users as UsersIcon, 
+  MessageSquare as MessageSquareIcon, 
+  Loader2 as Loader2Icon 
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -248,7 +254,7 @@ const CommunityChat = ({ user, profile }: CommunityChatProps) => {
         <Card className="glass border-border/50 overflow-hidden flex flex-col">
           <div className="p-4 border-b border-border/50">
             <h3 className="text-xs font-mono uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-              <Users className="size-3" /> Your Groups
+              <UsersIcon className="size-3" /> Your Groups
             </h3>
           </div>
           <div className="flex-1 overflow-y-auto p-2 space-y-1">
@@ -267,7 +273,7 @@ const CommunityChat = ({ user, profile }: CommunityChatProps) => {
                       : "hover:bg-muted/50 border border-transparent"
                   }`}
                 >
-                  <Hash className="size-4 shrink-0 opacity-50" />
+                  <HashIcon className="size-4 shrink-0 opacity-50" />
                   <div className="min-w-0">
                     <p className="text-sm font-medium truncate">
                       {group.name.replace(' Cohort', '')} {group.type === 'course' ? 'Community' : ''}
@@ -286,7 +292,7 @@ const CommunityChat = ({ user, profile }: CommunityChatProps) => {
         <Card className="glass border-border/50 overflow-hidden flex flex-col">
           {!activeGroupId ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
-              <MessageSquare className="size-12 text-muted-foreground/30 mb-4" />
+              <MessageSquareIcon className="size-12 text-muted-foreground/30 mb-4" />
               <p className="text-muted-foreground text-sm">
                 Select a group to start chatting
               </p>
@@ -296,7 +302,7 @@ const CommunityChat = ({ user, profile }: CommunityChatProps) => {
               {/* Chat Header */}
               <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <Hash className="size-4 text-primary" />
+                  <HashIcon className="size-4 text-primary" />
                   <div>
                     <p className="text-sm font-bold">
                       {activeGroup?.name.replace(' Cohort', '')} {activeGroup?.type === 'course' ? 'Community' : ''}
@@ -320,11 +326,11 @@ const CommunityChat = ({ user, profile }: CommunityChatProps) => {
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {loadingMessages ? (
                   <div className="flex items-center justify-center h-full">
-                    <Loader2 className="size-6 animate-spin text-muted-foreground" />
+                    <Loader2Icon className="size-6 animate-spin text-muted-foreground" />
                   </div>
                 ) : messages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-center">
-                    <MessageSquare className="size-10 text-muted-foreground/20 mb-3" />
+                    <MessageSquareIcon className="size-10 text-muted-foreground/20 mb-3" />
                     <p className="text-sm text-muted-foreground">
                       No messages yet. Be the first to say something!
                     </p>
@@ -409,9 +415,9 @@ const CommunityChat = ({ user, profile }: CommunityChatProps) => {
                     disabled={!newMessage.trim() || sending}
                   >
                     {sending ? (
-                      <Loader2 className="size-4 animate-spin" />
+                      <Loader2Icon className="size-4 animate-spin" />
                     ) : (
-                      <Send className="size-4" />
+                      <SendIcon className="size-4" />
                     )}
                   </Button>
                 </div>

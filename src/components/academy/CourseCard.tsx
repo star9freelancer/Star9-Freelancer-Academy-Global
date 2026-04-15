@@ -2,7 +2,12 @@ import React from "react";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, Clock, ArrowRight, Sparkles } from "lucide-react";
+import { 
+  ShieldCheck as ShieldCheckIcon, 
+  Clock as ClockIcon, 
+  ArrowRight as ArrowRightIcon, 
+  Sparkles as SparklesIcon 
+} from "lucide-react";
 import { motion } from "framer-motion";
 
 interface CourseCardProps {
@@ -46,14 +51,14 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
             </Badge>
             {isEnrolled && (
               <Badge variant="outline" className="font-mono text-[9px] uppercase tracking-widest text-emerald-400 border-emerald-400/30 bg-emerald-400/10 backdrop-blur-xl">
-                <ShieldCheck className="size-2.5 mr-1" /> Joined
+                <ShieldCheckIcon className="size-2.5 mr-1" /> Joined
               </Badge>
             )}
           </div>
           
           <div className="absolute bottom-4 left-4 right-4 z-10">
              <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-white/80">
-                <Clock className="size-3" />
+                <ClockIcon className="size-3" />
                 <span>Est. {course.duration || "4 Hours"}</span>
              </div>
           </div>
@@ -86,7 +91,7 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
             </div>
           ) : (
             <div className="flex items-center gap-2 relative z-10">
-              <Clock className="size-3 text-muted-foreground" />
+              <ClockIcon className="size-3 text-muted-foreground" />
               <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">{course.duration || "4 Hours"}</span>
             </div>
           )}
@@ -114,7 +119,7 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
                 onClick={(e) => { e.stopPropagation(); onViewDetails?.(); }}
                 className="size-11 rounded-xl border-border bg-card text-foreground hover:bg-muted flex items-center justify-center p-0"
               >
-                <ArrowRight className="size-4" />
+                <ArrowRightIcon className="size-4" />
               </Button>
             </>
           )}

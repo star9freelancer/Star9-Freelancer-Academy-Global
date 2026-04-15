@@ -1,6 +1,13 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, BookOpen, Briefcase, Globe, GraduationCap, Star } from "lucide-react";
+import { 
+  ArrowRight as ArrowRightIcon, 
+  BookOpen as BookOpenIcon, 
+  Briefcase as BriefcaseIcon, 
+  Globe as GlobeIcon, 
+  GraduationCap as GraduationCapIcon, 
+  Star as StarIcon 
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const HeroSection = () => {
@@ -65,7 +72,7 @@ const HeroSection = () => {
               <Button size="lg" className="h-12 px-8 font-semibold text-sm group shadow-lg shadow-primary/20" asChild>
                 <Link to="/auth" className="flex items-center gap-2">
                   Start Learning Free
-                  <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRightIcon className="size-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
               <Button variant="outline" size="lg" className="h-12 px-8 font-semibold text-sm" asChild>
@@ -121,7 +128,7 @@ const HeroSection = () => {
                 <div className="px-5 py-4 border-b border-border/50 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="size-6 rounded-md bg-primary/15 flex items-center justify-center">
-                      <GraduationCap className="size-3.5 text-primary" />
+                      <GraduationCapIcon className="size-3.5 text-primary" />
                     </div>
                     <span className="text-sm font-semibold text-foreground">Quick Access</span>
                   </div>
@@ -131,9 +138,9 @@ const HeroSection = () => {
                 {/* Track listings */}
                 <div className="p-5 space-y-3">
                   {[
-                    { icon: Star,     label: "AI for Freelancers",         sub: "8-week programme · $100",    progress: 72, color: "text-primary" },
-                    { icon: Briefcase, label: "Mastering Freelancing",       sub: "12-week · $250 + Global access", progress: 45, color: "text-secondary" },
-                    { icon: Globe,    label: "International Teacher Prep",  sub: "3-Phase pipeline · $300",  progress: 20, color: "text-emerald-400" },
+                    { icon: StarIcon,     label: "AI for Freelancers",         sub: "8-week programme · $100",    progress: 72, color: "text-primary" },
+                    { icon: BriefcaseIcon, label: "Mastering Freelancing",       sub: "12-week · $250 + Global access", progress: 45, color: "text-secondary" },
+                    { icon: GlobeIcon,    label: "International Teacher Prep",  sub: "3-Phase pipeline · $300",  progress: 20, color: "text-emerald-400" },
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-3 p-3.5 rounded-xl bg-background/60 border border-border/40 hover:bg-background/90 transition-colors cursor-pointer group">
                       <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -149,7 +156,7 @@ const HeroSection = () => {
                           />
                         </div>
                       </div>
-                      <ArrowRight className="size-4 text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0" />
+                      <ArrowRightIcon className="size-4 text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0" />
                     </div>
                   ))}
                 </div>
@@ -176,7 +183,7 @@ const HeroSection = () => {
                 className="absolute -bottom-5 -left-6 px-4 py-2.5 rounded-xl bg-card border border-border shadow-xl flex items-center gap-2.5"
               >
                 <div className="size-7 rounded-lg bg-secondary/20 flex items-center justify-center">
-                  <BookOpen className="size-3.5 text-secondary" />
+                  <BookOpenIcon className="size-3.5 text-secondary" />
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-foreground">60+ Modules</p>

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight as ArrowRightIcon } from "lucide-react";
 
 const cards = [
   {
@@ -77,7 +77,7 @@ const DualBrandSection = () => {
 
                 <div className="flex items-center gap-2 text-sm font-semibold group-hover:gap-3 transition-all">
                   <span className={card.accent}>Explore</span>
-                  <ArrowRight className={`size-4 ${card.accent} group-hover:translate-x-1 transition-transform`} />
+                  <ArrowRightIcon className={`size-4 ${card.accent} group-hover:translate-x-1 transition-transform`} />
                 </div>
               </Link>
             </motion.div>

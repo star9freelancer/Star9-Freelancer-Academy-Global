@@ -1,6 +1,24 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Search, MapPin, DollarSign, Clock, GraduationCap, Briefcase, ArrowRight, HeartPulse, Code, PenTool, Layout, PieChart, ShieldCheck, Video, Presentation, Globe, Users } from "lucide-react";
+import { 
+  Search as SearchIcon, 
+  MapPin as MapPinIcon, 
+  DollarSign as DollarSignIcon, 
+  Clock as ClockIcon, 
+  GraduationCap as GraduationCapIcon, 
+  Briefcase as BriefcaseIcon, 
+  ArrowRight as ArrowRightIcon, 
+  HeartPulse as HeartPulseIcon, 
+  Code as CodeIcon, 
+  PenTool as PenToolIcon, 
+  Layout as LayoutIcon, 
+  PieChart as PieChartIcon, 
+  ShieldCheck as ShieldCheckIcon, 
+  Video as VideoIcon, 
+  Presentation as PresentationIcon, 
+  Globe as GlobeIcon, 
+  Users as UsersIcon 
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Header from "@/components/landing/Header";
@@ -9,14 +27,14 @@ import { supabase } from "@/lib/supabase";
 // ── DATA ─────────────────────────────────────────────────────────────────────
 
 const remoteCategories = [
-  { label: "Programmers",            icon: Code,         count: "120+ roles", slug: "programmers" },
-  { label: "Designers",              icon: PenTool,      count: "80+ roles",  slug: "designers" },
-  { label: "Website Developers",     icon: Layout,       count: "150+ roles", slug: "web-developers" },
-  { label: "Data Analysts",          icon: PieChart,     count: "90+ roles",  slug: "data-analysts" },
-  { label: "Data Scientists",        icon: Globe,        count: "50+ roles",  slug: "data-scientists" },
-  { label: "Online Tutors/Teachers", icon: Presentation, count: "200+ roles", slug: "tutors" },
-  { label: "Cybersecurity Experts",  icon: ShieldCheck,  count: "40+ roles",  slug: "cybersecurity" },
-  { label: "Content Creators",       icon: Video,        count: "110+ roles", slug: "content-creators" },
+  { label: "Programmers",            icon: CodeIcon,         count: "120+ roles", slug: "programmers" },
+  { label: "Designers",              icon: PenToolIcon,      count: "80+ roles",  slug: "designers" },
+  { label: "Website Developers",     icon: LayoutIcon,       count: "150+ roles", slug: "web-developers" },
+  { label: "Data Analysts",          icon: PieChartIcon,     count: "90+ roles",  slug: "data-analysts" },
+  { label: "Data Scientists",        icon: GlobeIcon,        count: "50+ roles",  slug: "data-scientists" },
+  { label: "Online Tutors/Teachers", icon: PresentationIcon, count: "200+ roles", slug: "tutors" },
+  { label: "Cybersecurity Experts",  icon: ShieldCheckIcon,  count: "40+ roles",  slug: "cybersecurity" },
+  { label: "Content Creators",       icon: VideoIcon,        count: "110+ roles", slug: "content-creators" },
 ];
 
 const studyPrograms = [
@@ -79,7 +97,7 @@ const Global = () => {
           <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
             <Button size="lg" className="h-12 gap-2" asChild>
               <Link to={user ? "/academy" : "/auth"}>
-                {user ? "View My Dashboard" : "Create Free Account"} <ArrowRight className="size-4" />
+                {user ? "View My Dashboard" : "Create Free Account"} <ArrowRightIcon className="size-4" />
               </Link>
             </Button>
             <Button size="lg" variant="outline" className="h-12 gap-2" asChild>
@@ -92,7 +110,7 @@ const Global = () => {
         <section className="space-y-10" id="work-abroad">
           <div className="space-y-2">
             <h2 className="text-3xl font-bold flex items-center gap-3">
-              <Briefcase className="text-primary size-8" /> Work Abroad — International Placements
+              <BriefcaseIcon className="text-primary size-8" /> Work Abroad — International Placements
             </h2>
             <p className="text-muted-foreground">End-to-end placement assistance for high-demand international roles.</p>
           </div>
@@ -111,7 +129,7 @@ const Global = () => {
             {/* Teacher Placement */}
             <div className="glass p-8 rounded-3xl space-y-6 border-white/10 relative overflow-hidden shadow-2xl">
               <div className="absolute top-0 right-0 p-6 opacity-10">
-                <GraduationCap className="size-32" />
+                <GraduationCapIcon className="size-32" />
               </div>
               <Badge className="bg-primary hover:bg-primary/90 text-white border-0 px-3 py-1">Featured</Badge>
               <div>
@@ -137,7 +155,7 @@ const Global = () => {
 
               <Button className="w-full h-12 shadow-md shadow-primary/20 gap-2" asChild>
                 <Link to={user ? "/academy" : "/auth"}>
-                  {user ? "Continue Application" : "Start 3-Phase Process"} <ArrowRight className="size-4" />
+                  {user ? "Continue Application" : "Start 3-Phase Process"} <ArrowRightIcon className="size-4" />
                 </Link>
               </Button>
             </div>
@@ -145,7 +163,7 @@ const Global = () => {
             {/* Caregivers */}
             <div className="glass p-8 rounded-3xl space-y-6 border-white/10 relative overflow-hidden shadow-2xl">
               <div className="absolute top-0 right-0 p-6 opacity-10">
-                <HeartPulse className="size-32" />
+                <HeartPulseIcon className="size-32" />
               </div>
               <Badge variant="outline" className="px-3 py-1">High Demand</Badge>
               <div>
@@ -155,21 +173,21 @@ const Global = () => {
 
               <div className="grid gap-4 mt-6">
                 <div className="p-4 rounded-2xl bg-card/40 border border-white/5 flex items-center gap-4">
-                  <MapPin className="size-6 text-primary" />
+                  <MapPinIcon className="size-6 text-primary" />
                   <div>
                     <h4 className="font-semibold">America & Europe Hubs</h4>
                     <p className="text-xs text-muted-foreground">Sponsorship options available</p>
                   </div>
                 </div>
                 <div className="p-4 rounded-2xl bg-card/40 border border-white/5 flex items-center gap-4">
-                  <Clock className="size-6 text-secondary" />
+                  <ClockIcon className="size-6 text-secondary" />
                   <div>
                     <h4 className="font-semibold">Flexible Models</h4>
                     <p className="text-xs text-muted-foreground">On-site and hybrid transition roles</p>
                   </div>
                 </div>
                 <div className="p-4 rounded-2xl bg-card/40 border border-white/5 flex items-center gap-4">
-                  <DollarSign className="size-6 text-emerald-400" />
+                  <DollarSignIcon className="size-6 text-emerald-400" />
                   <div>
                     <h4 className="font-semibold">5% Placement Commission</h4>
                     <p className="text-xs text-muted-foreground">Flat $1,000 for contracts exceeding $10k over 6 months</p>
@@ -179,7 +197,7 @@ const Global = () => {
 
               <Button variant="secondary" className="w-full h-12 gap-2" asChild>
                 <Link to={user ? "/academy" : "/auth"}>
-                  {user ? "Submit Profile" : "Apply as Caregiver"} <ArrowRight className="size-4" />
+                  {user ? "Submit Profile" : "Apply as Caregiver"} <ArrowRightIcon className="size-4" />
                 </Link>
               </Button>
             </div>
@@ -195,7 +213,7 @@ const Global = () => {
 
           {/* Search */}
           <div className="relative max-w-md mx-auto">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <input
               value={categorySearch}
               onChange={e => setCategorySearch(e.target.value)}
@@ -217,7 +235,7 @@ const Global = () => {
                 <h3 className="font-bold text-sm md:text-base leading-tight mb-2">{cat.label}</h3>
                 <p className="text-xs font-semibold text-secondary">{cat.count}</p>
                 <p className="text-xs text-muted-foreground mt-2 flex items-center justify-center gap-1">
-                  Browse roles <ArrowRight className="size-3" />
+                  Browse roles <ArrowRightIcon className="size-3" />
                 </p>
               </Link>
             ))}
@@ -228,7 +246,7 @@ const Global = () => {
               Access to all job listings requires a free account.
             </p>
             <Button className="gap-2" asChild>
-              <Link to="/auth"><Users className="size-4" /> Create Free Account</Link>
+              <Link to="/auth"><UsersIcon className="size-4" /> Create Free Account</Link>
             </Button>
           </div>
         </section>
@@ -253,7 +271,7 @@ const Global = () => {
                     <div key={i} className="flex flex-col gap-1 text-left p-4 rounded-xl hover:bg-card/40 transition-colors border border-transparent hover:border-white/5">
                       <span className="font-semibold text-sm">{prog.level}</span>
                       <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        <MapPin className="size-3" /> {prog.regions}
+                        <MapPinIcon className="size-3" /> {prog.regions}
                       </span>
                     </div>
                   ))}
@@ -261,7 +279,7 @@ const Global = () => {
 
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button size="lg" className="h-12 px-8 gap-2 shadow-xl" asChild>
-                    <Link to="/auth">Apply for Guidance <ArrowRight className="size-4" /></Link>
+                    <Link to="/auth">Apply for Guidance <ArrowRightIcon className="size-4" /></Link>
                   </Button>
                   <Button size="lg" variant="outline" className="h-12 px-8" asChild>
                     <Link to="/auth">Explore Directory</Link>
@@ -292,7 +310,7 @@ const Global = () => {
           </p>
           <Button size="lg" className="h-12 px-8 gap-2 shadow-xl" asChild>
             <Link to={user ? "/academy" : "/auth"}>
-              {user ? "View Referral Stats" : "Get Your Referral Link"} <ArrowRight className="size-4" />
+              {user ? "View Referral Stats" : "Get Your Referral Link"} <ArrowRightIcon className="size-4" />
             </Link>
           </Button>
         </section>

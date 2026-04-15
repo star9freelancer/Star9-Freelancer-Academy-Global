@@ -1,5 +1,12 @@
 import React from "react";
-import { Sparkles, Users, BookOpen, Globe, Award, TrendingUp } from "lucide-react";
+import { 
+  Sparkles as SparklesIcon, 
+  Users as UsersIcon, 
+  BookOpen as BookOpenIcon, 
+  Globe as GlobeIcon, 
+  Award as AwardIcon, 
+  TrendingUp as TrendingUpIcon 
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -14,7 +21,7 @@ const AcademyHero = ({ type, title, subtitle, userName }: AcademyHeroProps) => {
   const configs = {
     community: {
       gradient: "from-blue-600/30 via-primary/20 to-transparent",
-      icon: Users,
+      icon: UsersIcon,
       defaultTitle: "Connect With Fellow Learners",
       defaultSubtitle: "Get peer support and build your professional network in the Star9 global community.",
       accent: "text-blue-400",
@@ -22,7 +29,7 @@ const AcademyHero = ({ type, title, subtitle, userName }: AcademyHeroProps) => {
     },
     learning: {
       gradient: "from-emerald-600/30 via-secondary/20 to-transparent",
-      icon: BookOpen,
+      icon: BookOpenIcon,
       defaultTitle: `Welcome Back, ${userName || 'User'}`,
       defaultSubtitle: "Track your progress and skills across your enrolled courses.",
       accent: "text-emerald-400",
@@ -30,7 +37,7 @@ const AcademyHero = ({ type, title, subtitle, userName }: AcademyHeroProps) => {
     },
     catalog: {
       gradient: "from-amber-600/30 via-primary/20 to-transparent",
-      icon: Globe,
+      icon: GlobeIcon,
       defaultTitle: "Unlock New Skills",
       defaultSubtitle: "Explore premium courses on digital infrastructure and AI operations.",
       accent: "text-amber-400",
@@ -38,7 +45,7 @@ const AcademyHero = ({ type, title, subtitle, userName }: AcademyHeroProps) => {
     },
     career: {
       gradient: "from-purple-600/30 via-secondary/20 to-transparent",
-      icon: TrendingUp,
+      icon: TrendingUpIcon,
       defaultTitle: "Accelerate Your Career",
       defaultSubtitle: "Discover high-tier job opportunities for certified Star9 members.",
       accent: "text-purple-400",
