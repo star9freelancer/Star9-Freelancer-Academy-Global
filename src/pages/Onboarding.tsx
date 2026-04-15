@@ -52,10 +52,17 @@ const Onboarding = () => {
     setLoading(true);
     
     try {
+      const payload = { ...formData };
+      if (payload.experience_years === "") {
+        payload.experience_years = null;
+      } else {
+        payload.experience_years = parseInt(payload.experience_years, 10);
+      }
+
       const { error } = await supabase
         .from("profiles")
         .update({
-          ...formData,
+          ...payload,
           onboarding_completed: true,
           updated_at: new Date().toISOString()
         })
