@@ -2,23 +2,23 @@ import { Link } from "react-router-dom";
 import logo from "@/assets/logo_transparent.png";
 
 const Footer = () => (
-  <footer className="border-t py-10 bg-card">
-    <div className="container flex flex-col md:flex-row items-center justify-between gap-6">
+  <footer className="relative border-t border-white/8 py-14 px-6">
+    <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
       <div className="flex items-center gap-3">
-        <img src={logo} alt="Star9" className="h-8 w-auto" />
-        <span className="text-sm text-muted-foreground">Freelancing with heart and skill.</span>
+        <img src={logo} alt="Star9" className="h-7 w-auto opacity-70" />
+        <span className="text-xs text-white/25 tracking-wide">Freelancing with heart and skill.</span>
       </div>
 
-      <nav className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground">
-        <Link to="/about" className="hover:text-primary transition-colors">About</Link>
-        <Link to="/academy" className="hover:text-primary transition-colors">Academy</Link>
-        <Link to="/global" className="hover:text-primary transition-colors">Global</Link>
-        <Link to="/contact" className="hover:text-primary transition-colors">Contact</Link>
-        <Link to="/terms" className="hover:text-primary transition-colors">Terms</Link>
-        <Link to="/privacy" className="hover:text-primary transition-colors">Privacy</Link>
+      <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-white/25">
+        <Link to="/about" className="hover:text-amber-400/70 transition-colors duration-300">About</Link>
+        <Link to="/academy" className="hover:text-amber-400/70 transition-colors duration-300">Academy</Link>
+        <Link to="/global" className="hover:text-amber-400/70 transition-colors duration-300">Global</Link>
+        <Link to="/contact" className="hover:text-amber-400/70 transition-colors duration-300">Contact</Link>
+        <Link to="/terms" className="hover:text-amber-400/70 transition-colors duration-300">Terms</Link>
+        <Link to="/privacy" className="hover:text-amber-400/70 transition-colors duration-300">Privacy</Link>
       </nav>
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-[11px] text-white/15 tracking-wider">
         &copy; {new Date().getFullYear()} Star9 Freelancer Ltd.
       </p>
     </div>
