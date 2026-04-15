@@ -58,11 +58,11 @@ const Header = () => {
         }`}
       >
         {/* Logo */}
-        <Link to="/" className="p-2 rounded-full hover:bg-muted transition-colors shrink-0">
+        <Link to="/" className="p-2 rounded-full hover:bg-white/5 transition-colors shrink-0">
           <img src={logo} alt="Star9" className="h-7 w-auto" />
         </Link>
 
-        <div className="h-6 w-px bg-border mx-1 shrink-0 hidden md:block" />
+        <div className="h-5 w-px bg-white/10 mx-1 shrink-0 hidden md:block" />
 
         {/* Nav Links */}
         <div className="hidden md:flex items-center gap-1">
