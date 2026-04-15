@@ -51,23 +51,23 @@ const Header = () => {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", damping: 20, stiffness: 100 }}
-        className={`flex items-center gap-2 md:gap-3 px-4 py-2.5 rounded-full backdrop-blur-2xl border max-w-full transition-all duration-700 ${
-          scrolled 
-            ? "bg-black/70 border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)]"
-            : "bg-black/20 border-white/6"
+        className={`flex items-center gap-2 md:gap-3 px-4 py-2.5 rounded-full backdrop-blur-xl border shadow-lg max-w-full transition-all duration-300 ${
+          scrolled
+            ? "bg-card/80 border-border"
+            : "bg-card/60 border-border/50"
         }`}
       >
         {/* Logo */}
-        <Link to="/" className="p-2 rounded-full hover:bg-white/5 transition-colors shrink-0">
+        <Link to="/" className="p-2 rounded-full hover:bg-muted transition-colors shrink-0">
           <img src={logo} alt="Star9" className="h-7 w-auto" />
         </Link>
 
-        <div className="h-5 w-px bg-white/10 mx-1 shrink-0 hidden md:block" />
+        <div className="h-6 w-px bg-border mx-1 shrink-0 hidden md:block" />
 
         {/* Nav Links */}
         <div className="hidden md:flex items-center gap-1">
           {navLinks.map((l) => (
-            <Button key={l.label} variant="ghost" size="sm" className="text-sm font-medium rounded-full gap-2 px-4 text-white/50 hover:text-white/90 hover:bg-white/5" asChild>
+            <Button key={l.label} variant="ghost" size="sm" className="text-sm font-medium rounded-full gap-2 px-4" asChild>
               {l.href.startsWith("#") ? (
                 <a href={l.href}>
                   <l.icon className="size-4" />
@@ -89,26 +89,26 @@ const Header = () => {
         <div className="hidden md:flex items-center gap-2">
           <button
             onClick={() => setDark(!dark)}
-            className="p-2 rounded-full hover:bg-white/5 text-white/30 hover:text-white/70 transition-colors"
+            className="p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Toggle dark mode"
           >
             {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
           </button>
           {user ? (
-            <Link to="/academy" className="inline-flex items-center gap-2 text-sm px-4 py-2 rounded-full transition-all duration-500 text-amber-100 hover:text-amber-50"
-              style={{ background: "rgba(180,83,9,0.2)", border: "1px solid rgba(217,119,6,0.3)" }}>
-              <LayoutDashboard className="size-3.5" />
-              My Academy
-            </Link>
+            <Button size="sm" className="gap-2 rounded-full" asChild>
+              <Link to="/academy">
+                <LayoutDashboard className="size-3.5" />
+                My Academy
+              </Link>
+            </Button>
           ) : (
             <>
-              <Link to="/auth" className="text-sm px-4 py-2 rounded-full text-white/40 hover:text-white/70 transition-colors hover:bg-white/5">
-                Log In
-              </Link>
-              <Link to="/auth" className="inline-flex items-center text-sm px-5 py-2 rounded-full font-medium transition-all duration-500 text-amber-100"
-                style={{ background: "rgba(180,83,9,0.25)", border: "1px solid rgba(217,119,6,0.35)" }}>
-                Sign Up
-              </Link>
+              <Button variant="ghost" size="sm" className="rounded-full" asChild>
+                <Link to="/auth">Log In</Link>
+              </Button>
+              <Button size="sm" className="rounded-full" asChild>
+                <Link to="/auth">Sign Up</Link>
+              </Button>
             </>
           )}
         </div>

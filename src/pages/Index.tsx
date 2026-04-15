@@ -1,385 +1,210 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, CheckCircle2, Star, MapPin, TrendingUp, Shield, Globe2, BookOpen, Users, Zap } from "lucide-react";
+import { useRef } from "react";
+import { ArrowRight, GraduationCap, Briefcase, Globe2, Award } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useScroll, useTransform } from "framer-motion";
 import Header from "@/components/landing/Header";
+import DualBrandSection from "@/components/landing/DualBrandSection";
+import FeaturesSection from "@/components/landing/FeaturesSection";
+import TestimonialsSection from "@/components/landing/TestimonialsSection";
+import PricingSection from "@/components/landing/PricingSection";
+import CTASection from "@/components/landing/CTASection";
 import Footer from "@/components/landing/Footer";
 
-// Fade-in utility
-const fade = (delay = 0) => ({
-  initial: { opacity: 0, y: 18 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true },
-  transition: { duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] },
-});
-
-const heroFade = (delay = 0) => ({
-  initial: { opacity: 0, y: 18 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] },
-});
-
-// ── DATA ──────────────────────────────────────────────────────────────────────
-
-const tracks = [
-  {
-    id: "01",
-    name: "AI for Freelancers",
-    price: "$100",
-    summary: "Master high-income AI workflows and land your first international client.",
-    duration: "8 weeks",
-    features: ["AI productivity tools", "Prompt engineering", "Verified certificate"],
-    highlight: false,
-  },
-  {
-    id: "02",
-    name: "Mastering Freelancing",
-    price: "$250",
-    summary: "The complete pipeline from zero to a thriving global freelance business.",
-    duration: "12 weeks",
-    features: ["AI course included", "Global Job Board access", "1-on-1 mentorship"],
-    highlight: true,
-  },
-  {
-    id: "03",
-    name: "International Teacher Prep",
-    price: "$300",
-    summary: "Structured 3-phase programme to place you in a US or EU school.",
-    duration: "Full Programme",
-    features: ["Loom audition coaching", "Visa documentation support", "Priority school placement"],
-    highlight: false,
-  },
-];
-
-const placements = [
-  { name: "Amara T.", role: "Data Analyst", location: "Toronto, CA", salary: "$4,200/mo" },
-  { name: "James O.", role: "UX Writer", location: "London, UK", salary: "$3,800/mo" },
-  { name: "Faith N.", role: "ESL Teacher", location: "Houston, TX", salary: "$3,100/mo" },
-  { name: "Kofi A.", role: "AI Consultant", location: "Berlin, DE", salary: "$5,500/mo" },
-];
-
-const testimonials = [
-  {
-    quote: "Went from $400/mo locally to $3,500/mo working remotely as a data analyst. Star9's structure is unmatched.",
-    name: "David M.",
-    location: "Lagos to Houston, TX",
-    role: "Data Analyst",
-    avatar: "D",
-  },
-  {
-    quote: "The Teacher Prep programme secured my J1 Visa. I am currently teaching in Texas thanks to this platform.",
-    name: "Grace O.",
-    location: "Accra to Dallas, TX",
-    role: "Educator",
-    avatar: "G",
-  },
-  {
-    quote: "Learning to leverage AI tools completely future-proofed my freelance career.",
-    name: "Samuel K.",
-    location: "Nairobi, remote",
-    role: "Copywriter",
-    avatar: "S",
-  },
-];
-
-const pillars = [
-  { icon: BookOpen, title: "Structured Learning", desc: "Mentor-led tracks built around real outcomes, not theory." },
-  { icon: Shield, title: "Verified Credentials", desc: "Blockchain-backed certificates employers trust worldwide." },
-  { icon: Globe2, title: "Global Job Board", desc: "Curated remote roles across North America, Europe and Asia." },
-  { icon: Users, title: "Alumni Network", desc: "2,500+ graduates ready to refer, collaborate and mentor." },
+const floatingCards = [
+  { icon: GraduationCap, label: "Certified Courses", x: "8%",  y: "22%", delay: 0 },
+  { icon: Briefcase,     label: "Remote Jobs",       x: "74%", y: "14%", delay: 0.2 },
+  { icon: Globe2,        label: "30+ Countries",     x: "83%", y: "62%", delay: 0.4 },
+  { icon: Award,         label: "Top Rated",         x: "4%",  y: "68%", delay: 0.6 },
 ];
 
 const stats = [
-  { value: "2,500+", label: "Graduates placed" },
-  { value: "30+", label: "Countries reached" },
-  { value: "$10k+", label: "Avg. remote income" },
-  { value: "92%", label: "Satisfaction rate" },
+  { value: "3",   suffix: "",  label: "Premium Tracks" },
+  { value: "60",  suffix: "+", label: "Strategic Modules" },
+  { value: "30",  suffix: "+", label: "Countries Reached" },
+  { value: "5",   suffix: "%", label: "Commission Fee" },
 ];
 
-// ── PAGE ──────────────────────────────────────────────────────────────────────
-
 const Index = () => {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const yBg = useTransform(scrollYProgress, [0, 1], [0, 140]);
+
   return (
-    <div className="min-h-screen antialiased text-white" style={{ background: "#0a0907" }}>
-
-      {/* Global ambient warm tint -- very subtle, not theatrical */}
-      <div
-        aria-hidden
-        className="pointer-events-none fixed inset-0 -z-10"
-        style={{
-          background:
-            "radial-gradient(ellipse 70% 50% at 60% 0%, rgba(180,83,9,0.07) 0%, transparent 70%), " +
-            "radial-gradient(ellipse 50% 40% at 10% 100%, rgba(120,53,15,0.06) 0%, transparent 60%)",
-        }}
-      />
-
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <Header />
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex flex-col justify-center items-center text-center px-6 pt-28 pb-20">
-        <motion.div {...heroFade(0)} className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full mb-8 text-xs tracking-widest uppercase"
-          style={{ background: "rgba(180,83,9,0.12)", border: "1px solid rgba(217,119,6,0.2)", color: "rgba(253,230,138,0.7)" }}>
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block" />
-          Now enrolling the 2026 cohort
+      <section ref={ref} className="relative min-h-[100vh] flex items-center pt-24 pb-20 overflow-hidden bg-background">
+
+        {/* Parallax gradient orbs */}
+        <motion.div style={{ y: yBg }} className="absolute inset-0 -z-10 pointer-events-none">
+          <div className="absolute top-[8%] left-[12%] w-[520px] h-[520px] bg-primary/12 rounded-full blur-[110px] animate-pulse" />
+          <div className="absolute bottom-[8%] right-[8%] w-[420px] h-[420px] bg-secondary/12 rounded-full blur-[90px] animate-pulse" style={{ animationDelay: "1.2s" }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[640px] h-[640px] bg-primary/4 rounded-full blur-[130px]" />
         </motion.div>
 
-        <motion.h1 {...heroFade(0.1)} className="text-5xl sm:text-6xl md:text-7xl font-semibold leading-[1.05] tracking-tight max-w-4xl">
-          <span className="text-white">Your skills deserve</span>
-          <br />
-          <span style={{ backgroundImage: "linear-gradient(100deg, #fcd34d 0%, #f59e0b 50%, #d97706 100%)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>
-            a global audience.
-          </span>
-        </motion.h1>
+        {/* Dot grid */}
+        <div
+          className="absolute inset-0 -z-10 opacity-[0.025]"
+          style={{
+            backgroundImage: "radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
+          }}
+        />
 
-        <motion.p {...heroFade(0.22)} className="mt-6 text-lg text-white/45 max-w-2xl leading-relaxed font-normal">
-          Star9 trains African professionals in AI, freelancing and education, then connects them directly to verified remote opportunities worldwide.
-        </motion.p>
-
-        <motion.div {...heroFade(0.32)} className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
-          <Link to="/auth"
-            className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-lg text-sm font-semibold transition-all duration-300 group"
-            style={{ background: "linear-gradient(135deg, #d97706, #b45309)", color: "#fff", boxShadow: "0 0 24px rgba(180,83,9,0.35)" }}>
-            Start for free
-            <ArrowRight className="size-4 group-hover:translate-x-0.5 transition-transform" />
-          </Link>
-          <Link to="/global"
-            className="inline-flex items-center justify-center h-12 px-7 rounded-lg text-sm font-medium text-white/50 hover:text-white/80 transition-colors"
-            style={{ border: "1px solid rgba(255,255,255,0.09)", background: "rgba(255,255,255,0.03)" }}>
-            Browse opportunities
-          </Link>
-        </motion.div>
-
-        {/* Social proof */}
-        <motion.div {...heroFade(0.42)} className="mt-14 flex items-center gap-4 justify-center">
-          <div className="flex -space-x-2">
-            {["#92400e", "#a16207", "#b45309", "#c2410c"].map((c, i) => (
-              <div key={i} className="w-7 h-7 rounded-full border-2 flex items-center justify-center text-[10px] font-bold"
-                style={{ backgroundColor: c, borderColor: "#0a0907" }}>
-                {["D", "G", "S", "K"][i]}
-              </div>
-            ))}
-          </div>
-          <div className="flex items-center gap-1">{[...Array(5)].map((_, i) => <Star key={i} className="size-3 fill-amber-400 text-amber-400" />)}</div>
-          <span className="text-xs text-white/30">Trusted by 2,500+ graduates across Africa</span>
-        </motion.div>
-      </section>
-
-      {/* ── STATS BAR ────────────────────────────────────────────────────── */}
-      <section className="py-12" style={{ borderTop: "1px solid rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-        <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
-          {stats.map((s, i) => (
-            <motion.div key={i} {...fade(i * 0.08)} className="text-center">
-              <p className="text-3xl font-semibold tracking-tight" style={{ color: "#fbbf24" }}>{s.value}</p>
-              <p className="text-xs text-white/30 uppercase tracking-widest mt-1.5">{s.label}</p>
+        {/* Floating badges — desktop only */}
+        <div className="hidden lg:block">
+          {floatingCards.map((card, i) => (
+            <motion.div
+              key={card.label}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1.1 + card.delay, type: "spring", bounce: 0.35 }}
+              className="absolute z-20"
+              style={{ left: card.x, top: card.y }}
+            >
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4 + i * 0.6, repeat: Infinity, ease: "easeInOut" }}
+                className="px-4 py-3 rounded-2xl bg-background/50 dark:bg-card/40 backdrop-blur-xl border border-white/15 dark:border-white/8 shadow-xl flex items-center gap-3"
+              >
+                <div className="bg-primary/10 p-2 rounded-xl text-primary">
+                  <card.icon className="size-5" />
+                </div>
+                <span className="text-sm font-semibold text-foreground whitespace-nowrap">{card.label}</span>
+              </motion.div>
             </motion.div>
           ))}
         </div>
-      </section>
 
-      {/* ── PILLARS ──────────────────────────────────────────────────────── */}
-      <section className="py-24 md:py-32 px-6">
-        <div className="max-w-6xl mx-auto">
-          <motion.div {...fade()} className="mb-16">
-            <p className="text-xs text-amber-400/60 uppercase tracking-widest mb-3">Why Star9</p>
-            <h2 className="text-3xl md:text-4xl font-semibold text-white/90 max-w-lg leading-tight">
-              Everything you need to work globally, in one place.
-            </h2>
-          </motion.div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {pillars.map((p, i) => (
-              <motion.div key={i} {...fade(i * 0.1)}
-                className="p-6 rounded-xl group hover:bg-white/[0.03] transition-colors duration-300"
-                style={{ border: "1px solid rgba(255,255,255,0.07)" }}>
-                <div className="size-10 rounded-lg flex items-center justify-center mb-4"
-                  style={{ background: "rgba(180,83,9,0.12)", border: "1px solid rgba(217,119,6,0.15)" }}>
-                  <p.icon className="size-4 text-amber-500/80" />
+        {/* Main hero content */}
+        <div className="container relative z-10 max-w-5xl mx-auto px-6">
+          <div className="text-center max-w-3xl mx-auto space-y-8">
+
+            {/* Eyebrow */}
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-secondary/10 border border-secondary/25 text-secondary text-sm font-semibold"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-secondary" />
+              </span>
+              Now enrolling — 2026 cohort
+            </motion.div>
+
+            {/* Headline */}
+            <motion.h1
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.75, delay: 0.12 }}
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.06] tracking-tight text-foreground"
+            >
+              Your skills deserve a{" "}
+              <span className="relative inline-block">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/85 to-secondary">
+                  global stage.
+                </span>
+                <motion.span
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 0.55, delay: 0.85 }}
+                  className="absolute -bottom-1 left-0 right-0 h-2.5 bg-secondary/15 rounded-full origin-left -z-10"
+                />
+              </span>
+            </motion.h1>
+
+            {/* Subtitle */}
+            <motion.p
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, delay: 0.32 }}
+              className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto"
+            >
+              Star9 Academy trains African professionals in AI, freelancing, and education with structured programmes that lead directly to high-paying global placements.
+            </motion.p>
+
+            {/* CTA buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, delay: 0.48 }}
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2"
+            >
+              <Button size="lg" className="h-13 px-9 font-semibold text-sm group w-full sm:w-auto shadow-lg shadow-primary/20" asChild>
+                <Link to="/auth" className="flex items-center gap-2.5">
+                  Start Learning Free
+                  <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </Button>
+              <Button variant="outline" size="lg" className="h-13 px-9 font-semibold text-sm w-full sm:w-auto" asChild>
+                <Link to="/academy">Explore Courses</Link>
+              </Button>
+            </motion.div>
+
+            {/* Social proof */}
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, delay: 0.66 }}
+              className="flex items-center justify-center gap-6 pt-4"
+            >
+              <div className="flex -space-x-2.5">
+                {["A", "D", "G", "K", "M"].map((l, i) => (
+                  <div
+                    key={i}
+                    className="w-9 h-9 rounded-full border-2 border-background flex items-center justify-center text-xs font-bold text-white"
+                    style={{ backgroundColor: `hsl(${213 + i * 28}, 60%, ${44 + i * 5}%)` }}
+                  >
+                    {l}
+                  </div>
+                ))}
+              </div>
+              <div className="text-left">
+                <div className="flex items-center gap-0.5 text-secondary">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="size-3.5 fill-current" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
                 </div>
-                <h3 className="text-sm font-semibold text-white/85 mb-2">{p.title}</h3>
-                <p className="text-sm text-white/35 leading-relaxed font-normal">{p.desc}</p>
-              </motion.div>
+                <p className="text-xs text-muted-foreground mt-0.5">2,500+ learners across Africa</p>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Stats strip */}
+          <motion.div
+            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto"
+            initial={{ opacity: 0, y: 36 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.88 }}
+          >
+            {stats.map((s, i) => (
+              <div
+                key={s.label}
+                className="text-center p-6 rounded-3xl bg-background/30 dark:bg-card/20 backdrop-blur-lg border border-white/20 dark:border-white/5 shadow-xl hover:bg-background/50 transition-colors"
+              >
+                <p className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight">
+                  {s.value}<span className="text-primary">{s.suffix}</span>
+                </p>
+                <p className="text-sm font-medium text-muted-foreground mt-2">{s.label}</p>
+              </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── LIVE PLACEMENTS ──────────────────────────────────────────────── */}
-      <section className="py-24 md:py-32 px-6" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-          <motion.div {...fade()}>
-            <p className="text-xs text-amber-400/60 uppercase tracking-widest mb-3">Real outcomes</p>
-            <h2 className="text-3xl md:text-4xl font-semibold text-white/90 leading-tight mb-6">
-              From local talent to global income.
-            </h2>
-            <p className="text-white/40 text-base leading-relaxed mb-10">
-              Star9 graduates are currently working remotely at an average of 8x their previous income. The pipeline works.
-            </p>
-            <div className="space-y-4">
-              {[
-                { icon: Zap, text: "92% of graduates placed within 3 months" },
-                { icon: TrendingUp, text: "Average earnings increase of 8x post-graduation" },
-                { icon: Globe2, text: "Active placements across 30+ countries" },
-              ].map((item, i) => (
-                <motion.div key={i} {...fade(i * 0.1)} className="flex items-center gap-3">
-                  <div className="size-8 rounded-md flex items-center justify-center shrink-0"
-                    style={{ background: "rgba(180,83,9,0.1)", border: "1px solid rgba(217,119,6,0.12)" }}>
-                    <item.icon className="size-3.5 text-amber-500/70" />
-                  </div>
-                  <span className="text-sm text-white/50">{item.text}</span>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Placements card */}
-          <motion.div {...fade(0.15)} className="rounded-2xl overflow-hidden" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)" }}>
-            <div className="px-6 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-              <p className="text-xs text-white/30 uppercase tracking-widest">Live placements</p>
-            </div>
-            <div className="divide-y" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
-              {placements.map((p, i) => (
-                <motion.div key={i} {...fade(0.2 + i * 0.08)} className="flex items-center gap-4 px-6 py-4">
-                  <div className="size-8 rounded-full flex items-center justify-center text-xs font-semibold text-white shrink-0"
-                    style={{ background: `hsl(${25 + i * 10}, 55%, ${28 + i * 5}%)` }}>
-                    {p.name[0]}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-white/80">{p.name}</p>
-                    <p className="text-xs text-white/30 mt-0.5 flex items-center gap-1">
-                      <MapPin className="size-3 shrink-0" />{p.location} · {p.role}
-                    </p>
-                  </div>
-                  <p className="text-sm font-semibold shrink-0" style={{ color: "#fbbf24" }}>{p.salary}</p>
-                </motion.div>
-              ))}
-            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* ── PRICING ──────────────────────────────────────────────────────── */}
-      <section className="py-24 md:py-32 px-6" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-        <div className="max-w-6xl mx-auto">
-          <motion.div {...fade()} className="mb-16">
-            <p className="text-xs text-amber-400/60 uppercase tracking-widest mb-3">Programmes</p>
-            <h2 className="text-3xl md:text-4xl font-semibold text-white/90 max-w-lg leading-tight">
-              Invest once. Earn globally.
-            </h2>
-          </motion.div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {tracks.map((t, i) => (
-              <motion.div key={i} {...fade(i * 0.12)}
-                className="relative flex flex-col rounded-2xl p-7 transition-all duration-300"
-                style={{
-                  background: t.highlight ? "rgba(180,83,9,0.07)" : "rgba(255,255,255,0.02)",
-                  border: t.highlight ? "1px solid rgba(217,119,6,0.22)" : "1px solid rgba(255,255,255,0.07)",
-                }}>
-                {/* Highlighted top rule */}
-                {t.highlight && (
-                  <div className="absolute top-0 inset-x-12 h-px rounded-full"
-                    style={{ background: "linear-gradient(90deg, transparent, rgba(245,158,11,0.5), transparent)" }} />
-                )}
-                {t.highlight && (
-                  <span className="absolute -top-3 left-6 text-[10px] uppercase tracking-widest px-2.5 py-0.5 rounded-full font-semibold"
-                    style={{ background: "rgba(180,83,9,0.5)", border: "1px solid rgba(217,119,6,0.3)", color: "#fde68a" }}>
-                    Most popular
-                  </span>
-                )}
-
-                <div className="flex-1">
-                  <p className="text-[11px] text-white/25 font-mono uppercase tracking-widest mb-4">{t.id}</p>
-                  <h3 className="text-lg font-semibold text-white/90 mb-2">{t.name}</h3>
-                  <p className="text-sm text-white/40 leading-relaxed mb-6 font-normal">{t.summary}</p>
-                  <ul className="space-y-2.5">
-                    {t.features.map((f, j) => (
-                      <li key={j} className="flex items-center gap-2.5 text-sm text-white/50">
-                        <CheckCircle2 className={`size-3.5 shrink-0 ${t.highlight ? "text-amber-500/80" : "text-white/20"}`} />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="mt-8 pt-6 flex items-end justify-between" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
-                  <div>
-                    <p className="text-2xl font-semibold text-white/90">{t.price}</p>
-                    <p className="text-xs text-white/25 mt-0.5">{t.duration} · one-time</p>
-                  </div>
-                  <Link to="/auth"
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-lg transition-all duration-300 group"
-                    style={t.highlight
-                      ? { background: "linear-gradient(135deg, #d97706, #b45309)", color: "#fff" }
-                      : { background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.55)" }}>
-                    Enroll now
-                    <ArrowRight className="size-3 group-hover:translate-x-0.5 transition-transform" />
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── TESTIMONIALS ─────────────────────────────────────────────────── */}
-      <section className="py-24 md:py-32 px-6" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-        <div className="max-w-6xl mx-auto">
-          <motion.div {...fade()} className="mb-16">
-            <p className="text-xs text-amber-400/60 uppercase tracking-widest mb-3">Graduate stories</p>
-            <h2 className="text-3xl md:text-4xl font-semibold text-white/90 max-w-lg leading-tight">
-              Life-changing results, not just certificates.
-            </h2>
-          </motion.div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
-              <motion.div key={i} {...fade(i * 0.1)}
-                className="p-7 rounded-2xl flex flex-col"
-                style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                <div className="flex gap-0.5 mb-5">
-                  {[...Array(5)].map((_, j) => <Star key={j} className="size-3 fill-amber-500/60 text-amber-500/60" />)}
-                </div>
-                <p className="text-sm text-white/60 leading-relaxed flex-1 mb-6">"{t.quote}"</p>
-                <div className="flex items-center gap-3 pt-5" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
-                  <div className="size-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-                    style={{ background: `hsl(${25 + i * 9}, 55%, ${28 + i * 5}%)` }}>
-                    {t.avatar}
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-white/80">{t.name}</p>
-                    <p className="text-xs text-white/30 flex items-center gap-1 mt-0.5">
-                      <MapPin className="size-3" />{t.location}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA ──────────────────────────────────────────────────────────── */}
-      <section className="py-32 px-6 text-center" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-        <motion.div {...fade()} className="max-w-2xl mx-auto">
-          <p className="text-xs text-amber-400/60 uppercase tracking-widest mb-5">Get started today</p>
-          <h2 className="text-4xl md:text-5xl font-semibold text-white/90 leading-tight mb-6">
-            Ready to earn on the world stage?
-          </h2>
-          <p className="text-base text-white/40 leading-relaxed mb-10">
-            Join thousands of African professionals already working remotely. Sign up free and pick your track.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link to="/auth"
-              className="inline-flex items-center justify-center gap-2 h-12 px-8 rounded-lg text-sm font-semibold transition-all duration-300 group"
-              style={{ background: "linear-gradient(135deg, #d97706, #b45309)", color: "#fff", boxShadow: "0 0 28px rgba(180,83,9,0.4)" }}>
-              Create a free account
-              <ArrowRight className="size-4 group-hover:translate-x-0.5 transition-transform" />
-            </Link>
-            <Link to="/academy"
-              className="inline-flex items-center justify-center h-12 px-8 rounded-lg text-sm font-medium text-white/50 hover:text-white/75 transition-colors"
-              style={{ border: "1px solid rgba(255,255,255,0.09)", background: "rgba(255,255,255,0.03)" }}>
-              View the curriculum
-            </Link>
-          </div>
-        </motion.div>
-      </section>
-
+      {/* ── SECTIONS ─────────────────────────────────────────────────────── */}
+      <DualBrandSection />
+      <FeaturesSection />
+      <TestimonialsSection />
+      <PricingSection />
+      <CTASection />
       <Footer />
     </div>
   );
