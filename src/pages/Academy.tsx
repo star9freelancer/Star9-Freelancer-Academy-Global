@@ -131,6 +131,10 @@ const Academy = () => {
   const handleSaveProfile = async () => {
     if (!user) return;
     setSaving(true);
+    const expValue = profileForm.experience_years === "" || profileForm.experience_years === null 
+      ? null 
+      : parseInt(profileForm.experience_years.toString(), 10);
+
     const { error } = await supabase
       .from('profiles')
       .upsert({
@@ -150,7 +154,7 @@ const Academy = () => {
         institution: profileForm.institution,
         degree: profileForm.degree,
         graduation_year: profileForm.graduation_year,
-        experience_years: profileForm.experience_years,
+        experience_years: expValue,
         skills: profileForm.skills || [],
         email: user.email,
       }, { onConflict: 'id' });
