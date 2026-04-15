@@ -24,9 +24,10 @@ RETURNS trigger AS $$
 DECLARE
   ref_code TEXT;
   parent_id UUID;
+  new_referral_code TEXT;
 BEGIN
   -- Generate new user's referral code
-  new.referral_code := generate_referral_code();
+  new_referral_code := generate_referral_code();
   
   -- Extract parent referral code from metadata
   ref_code := new.raw_user_meta_data->>'referred_by_code';
@@ -39,7 +40,7 @@ BEGIN
     IF parent_id IS NOT NULL THEN
       -- Insert into profiles during handle_new_user
       INSERT INTO public.profiles (id, full_name, email, referral_code, referred_by_id)
-      VALUES (new.id, new.raw_user_meta_data->>'full_name', new.email, new.referral_code, parent_id);
+      VALUES (new.id, new.raw_user_meta_data->>'full_name', new.email, new_referral_code, parent_id);
       
       -- Also log the relationship in referrals table
       INSERT INTO public.referrals (referrer_id, referee_id, status)
@@ -52,7 +53,7 @@ BEGIN
 
   -- Default insert if no referral or invalid code
   INSERT INTO public.profiles (id, full_name, email, referral_code)
-  VALUES (new.id, new.raw_user_meta_data->>'full_name', new.email, new.referral_code);
+  VALUES (new.id, new.raw_user_meta_data->>'full_name', new.email, new_referral_code);
   
   RETURN new;
 END;
