@@ -17,12 +17,11 @@ import { HomeFeed } from "@/components/academy/HomeFeed";
 import { UserSettings } from "@/components/academy/UserSettings";
 import { AcademyFooter } from "@/components/academy/AcademyFooter";
 import ReferralDashboard from "@/components/academy/ReferralDashboard";
-import { 
   Home, BookOpen, Users, Award, Settings, Menu, Bell, Search, 
   ArrowLeft, ArrowRight, Download, Play, Clock, TrendingUp, Sparkles, 
   CheckCircle2, XCircle, FileText, Globe, Link as LinkIcon, 
   CreditCard, UploadCloud, BadgeCheck, Briefcase, Cpu, Database,
-  Phone, MapPin, User, Calendar, Trash2, Plus, X as XIcon, Save, ShieldCheck
+  Phone, MapPin, Calendar, Trash2, Plus, X as XIcon, Save, ShieldCheck
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -34,7 +33,7 @@ import logo from "@/assets/logo_transparent.png";
 
 const Academy = () => {
   const { user, profile, loading: authLoading, refreshProfile } = useAuth();
-  const { courses, enrollments, certificates, isLoading: loadingCourses, invalidateAll } = useAcademyData();
+  const { courses, enrollments, certificates, isLoading: loadingCourses } = useAcademyData();
   
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarHovered, setSidebarHovered] = useState(false);
@@ -49,7 +48,6 @@ const Academy = () => {
   const certificateRef = useRef<HTMLDivElement>(null);
   const [activeCert, setActiveCert] = useState<any>(null);
   const [enrolling, setEnrolling] = useState<string | null>(null);
-  const [activeLessonIdx, setActiveLessonIdx] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [selectedProgram, setSelectedProgram] = useState<any | null>(null);
@@ -131,9 +129,7 @@ const Academy = () => {
   const handleSaveProfile = async () => {
     if (!user) return;
     setSaving(true);
-    const expValue = profileForm.experience_years === "" || profileForm.experience_years === null 
-      ? null 
-      : parseInt(profileForm.experience_years.toString(), 10);
+    const expValue = !profileForm.experience_years ? null : parseInt(String(profileForm.experience_years), 10);
 
     const { error } = await supabase
       .from('profiles')
@@ -141,9 +137,9 @@ const Academy = () => {
         id: user.id,
         full_name: profileForm.full_name,
         phone_number: profileForm.phone_number,
-        bio: profileForm.bio,
-        country: profileForm.country,
-        city: profileForm.city,
+        bio: profileForm.bio || '',
+        country: profileForm.country || '',
+        city: profileForm.city || '',
         date_of_birth: profileForm.date_of_birth,
         gender: profileForm.gender,
         linkedin_url: profileForm.linkedin_url,

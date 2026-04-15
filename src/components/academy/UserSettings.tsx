@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   Plus, X as XIcon, Save, Award, Star,
-  Link as LinkIcon, Globe, LogOut, User, MapPin, FileUp, FileText, Linkedin
+  Link as LinkIcon, Globe, FileUp, FileText, Linkedin
 } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
