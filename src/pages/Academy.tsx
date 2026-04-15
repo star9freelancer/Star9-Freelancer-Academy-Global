@@ -163,24 +163,34 @@ const Academy = () => {
     if (!user) return;
     setEnrolling(courseId);
 
-    // Determine specific course for price
     const courseObj = courses.find(c => c.id === courseId);
-    let price = 100; // AI / base price
+    let price = 100;
     if (courseObj?.title.toLowerCase().includes("mastering")) price = 250;
     if (courseObj?.title.toLowerCase().includes("teacher")) price = 300;
 
-    // Trigger Paystack Gateway
     try {
       if ((window as any).PaystackPop) {
         const handler = (window as any).PaystackPop.setup({
-          key: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_placeholder_xyz', // Must be replaced in production
+          key: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_placeholder_xyz',
           email: user?.email || "student@star9global.com",
-          amount: price * 100, // in cents
-          currency: 'USD',
+          amount: price * 100, // strictly in cents
+          currency: 'USD', // Lock to Equity USD parameters
           ref: 'ST9_' + Math.floor((Math.random() * 1000000000) + 1),
-          callback: async function(response: any) {
-            toast.success(`Payment verified! Reference: ${response.reference}`);
-            await finalizeEnrollment(courseId, courseObj);
+          // Crucial Metadata payload for Webhooks + DB integration
+          metadata: {
+             custom_fields: [
+                { display_name: "Internal User ID", variable_name: "user_id", value: user.id },
+                { display_name: "Course Lookup Hash", variable_name: "course_id", value: courseId }
+             ]
+          },
+          callback: function(response: any) {
+            toast.success(`Payment verified by processor! Reference: ${response.reference}`);
+            toast.info(`Please allow up to 60 seconds for the Global Cloud Node to authorize your module unlocks.`);
+            setEnrolling(null);
+            // In a production environment, we do NOT spoof the UI success here. 
+            // The Webhook asynchronously writes to the database. 
+            // You may optionally implement an auto-poller here to invalidateAll() when DB reflects change.
+            setTimeout(() => { invalidateAll(); }, 5000); 
           },
           onClose: function() {
             toast.error("Transaction cancelled", { description: "You must complete the payment to access the course." });
@@ -189,54 +199,16 @@ const Academy = () => {
         });
         handler.openIframe();
       } else {
-        toast.error("Payment Gateway unreachable. Skipping for dev mode.");
-        await finalizeEnrollment(courseId, courseObj);
+        toast.error("Payment Gateway unreachable. Try refreshing the page.");
+        setEnrolling(null);
       }
     } catch (e) {
       setEnrolling(null);
     }
   };
 
-  const finalizeEnrollment = async (courseId: string, courseObj?: any) => {
-    try {
-      // 1. Course Enrollment
-      const { error: enrollError } = await supabase
-        .from('user_enrollments')
-        .insert({ user_id: user.id, course_id: courseId, progress: 0 });
-      
-      if (enrollError) {
-         if (enrollError.code === '23505') {
-            toast.error("Already enrolled in this course");
-         } else {
-            toast.error(`Enrollment failed: ${enrollError.message || 'Please try again.'}`);
-         }
-         return;
-      }
-
-      // 2. Automatic Community Integration
-      const { data: generalGroup } = await supabase.from('chat_groups').select('id').eq('type', 'general').single();
-      if (generalGroup) {
-        await supabase.from('chat_members').upsert({ group_id: generalGroup.id, user_id: user.id }, { onConflict: 'group_id,user_id' });
-      }
-
-      const { data: courseGroup } = await supabase.from('chat_groups').select('id').eq('course_id', courseId).single();
-      if (courseGroup) {
-        await supabase.from('chat_members').upsert({ group_id: courseGroup.id, user_id: user.id }, { onConflict: 'group_id,user_id' });
-      }
-
-      if (courseObj?.title.toLowerCase().includes("mastering") || courseObj?.title.toLowerCase().includes("freelance")) {
-        toast.success("Bonus Unlocked!", { description: "You now have free access to the Global Job Board." });
-        await supabase.from('profiles').update({ role: 'freelancer' }).eq('id', user.id);
-      }
-      
-      toast.success("Successfully enrolled", { description: "You've been added to the course and its community group." });
-      invalidateAll();
-    } catch (err) {
-      toast.error("Enrollment sequence interrupted");
-    } finally {
-      setEnrolling(null);
-    }
-  };
+  // finalizeEnrollment function intentionally deleted for security purposes.
+  // Real enrollments are now handled solely via supabase/functions/paystack-webhook
 
   const handleLessonComplete = async (courseId: string, lessonIdx: number, lessonsCount: number) => {
     if (!user || !profile) return;
