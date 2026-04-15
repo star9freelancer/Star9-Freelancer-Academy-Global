@@ -470,13 +470,35 @@ const CoursePlayer = () => {
                   <PlaygroundModule instructions={activeLesson.content} prompts={activeLesson.quiz_data?.prompts || []} />
                 ) : activeLesson?.content ? (
                   <div className="prose prose-zinc dark:prose-invert max-w-none">
-                    {activeLesson.content.split('\n').map((line: string, i: number) => {
-                      if (line.startsWith('# ')) return <h1 key={i} className="text-2xl font-bold mt-8 mb-4 border-b pb-2 text-foreground">{line.replace('# ', '')}</h1>;
-                      if (line.startsWith('### ')) return <h3 key={i} className="text-lg font-bold mt-6 mb-2 text-primary">{line.replace('### ', '')}</h3>;
-                      if (line.startsWith('**')) return <p key={i} className="text-muted-foreground leading-relaxed my-4" dangerouslySetInnerHTML={{ __html: line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground">$1</strong>') }} />;
-                      if (line.startsWith('- ')) return <li key={i} className="text-muted-foreground ml-4 my-1 flex items-start gap-2"><div className="size-1.5 rounded-full bg-primary shrink-0 mt-2" /> {line.replace('- ', '')}</li>;
-                      if (line.trim() === '') return <div key={i} className="h-2" />;
-                      return <p key={i} className="text-muted-foreground leading-relaxed">{line}</p>;
+                    {activeLesson.content
+                      .replace(/\\n/g, '\n') // Handle literal \n sequences from DB
+                      .split('\n')
+                      .map((line: string, i: number) => {
+                        const trimmedLine = line.trim();
+                        if (trimmedLine.startsWith('# ')) {
+                          return <h1 key={i} className="text-2xl font-bold mt-8 mb-4 border-b pb-2 text-foreground font-display">{trimmedLine.replace('# ', '')}</h1>;
+                        }
+                        if (trimmedLine.startsWith('### ')) {
+                          return <h3 key={i} className="text-lg font-bold mt-6 mb-2 text-primary">{trimmedLine.replace('### ', '')}</h3>;
+                        }
+                        if (trimmedLine.startsWith('- ')) {
+                          return (
+                            <li key={i} className="text-muted-foreground ml-4 my-2 flex items-start gap-3 group">
+                              <div className="size-1.5 rounded-full bg-primary/60 shrink-0 mt-2 group-hover:bg-primary transition-colors" /> 
+                              <span dangerouslySetInnerHTML={{ __html: trimmedLine.replace('- ', '').replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground">$1</strong>') }} />
+                            </li>
+                          );
+                        }
+                        if (trimmedLine === '') {
+                          return <div key={i} className="h-4" />;
+                        }
+                        return (
+                          <p 
+                            key={i} 
+                            className="text-muted-foreground leading-relaxed my-4" 
+                            dangerouslySetInnerHTML={{ __html: line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground font-semibold">$1</strong>') }} 
+                          />
+                        );
                     })}
                   </div>
                 ) : (
