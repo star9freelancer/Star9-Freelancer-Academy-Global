@@ -1,6 +1,15 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Copy, Check, Users, DollarSign, TrendingUp, Link as LinkIcon, Share2, ArrowRight, Clock } from "lucide-react";
+import { 
+  Copy as CopyIcon, 
+  Check as CheckIcon, 
+  Users as UsersIcon, 
+  DollarSign as DollarSignIcon, 
+  TrendingUp as TrendingUpIcon, 
+  Link as LinkIcon, 
+  Share2 as Share2Icon, 
+  ArrowRight as ArrowRightIcon, 
+  Clock as ClockIcon 
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -104,7 +113,7 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
     {
       label: "Total Referrals",
       value: stats.total_referrals,
-      icon: Users,
+      icon: UsersIcon,
       color: "text-primary",
       bg: "bg-primary/10",
       suffix: "",
@@ -112,7 +121,7 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
     {
       label: "Pending Earnings",
       value: stats.pending_earnings,
-      icon: Clock,
+      icon: ClockIcon,
       color: "text-secondary",
       bg: "bg-secondary/10",
       prefix: "$",
@@ -120,7 +129,7 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
     {
       label: "Total Paid Out",
       value: stats.paid_earnings,
-      icon: DollarSign,
+      icon: DollarSignIcon,
       color: "text-emerald-400",
       bg: "bg-emerald-500/10",
       prefix: "$",
@@ -128,7 +137,7 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
     {
       label: "Total Earned",
       value: stats.pending_earnings + stats.paid_earnings,
-      icon: TrendingUp,
+      icon: TrendingUpIcon,
       color: "text-violet-400",
       bg: "bg-violet-500/10",
       prefix: "$",
@@ -148,7 +157,7 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
   };
 
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
 
       {/* Header */}
       <div>
@@ -159,11 +168,7 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
       </div>
 
       {/* Your Referral Link */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="p-6 rounded-2xl border border-primary/20 bg-primary/5 space-y-4"
-      >
+      <div className="p-6 rounded-2xl border border-primary/20 bg-primary/5 space-y-4">
         <div className="flex items-center gap-2">
           <LinkIcon className="size-5 text-primary" />
           <h3 className="font-semibold text-foreground">Your Referral Link</h3>
@@ -178,11 +183,11 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
               className="gap-2 shrink-0"
               onClick={copyLink}
             >
-              {copied ? <Check className="size-4 text-emerald-400" /> : <Copy className="size-4" />}
+              {copied ? <CheckIcon className="size-4 text-emerald-400" /> : <CopyIcon className="size-4" />}
               {copied ? "Copied!" : "Copy"}
             </Button>
             <Button className="gap-2 shrink-0" onClick={shareLink}>
-              <Share2 className="size-4" /> Share
+              <Share2Icon className="size-4" /> Share
             </Button>
           </div>
         </div>
@@ -190,16 +195,13 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
           Your referral code: <span className="font-mono font-semibold text-primary">{referralCode}</span>. 
           Commissions are confirmed after the referred student completes payment.
         </p>
-      </motion.div>
+      </div>
 
       {/* Stat Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {statCards.map((s, i) => (
-          <motion.div
+          <div
             key={s.label}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.08 }}
             className="p-5 rounded-2xl border border-border bg-card space-y-3"
           >
             <div className={`size-9 rounded-xl ${s.bg} flex items-center justify-center`}>
@@ -211,7 +213,7 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
               </p>
               <p className="text-xs text-muted-foreground mt-0.5">{s.label}</p>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
@@ -245,13 +247,9 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
         {loading ? (
           <div className="text-center py-12 text-muted-foreground text-sm">Loading...</div>
         ) : stats.referrals.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-16 rounded-2xl border border-border bg-card/40 space-y-4"
-          >
+          <div className="text-center py-16 rounded-2xl border border-border bg-card/40 space-y-4">
             <div className="size-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-              <Users className="size-7 text-primary" />
+              <UsersIcon className="size-7 text-primary" />
             </div>
             <div>
               <p className="font-semibold text-foreground">No referrals yet</p>
@@ -260,9 +258,9 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
               </p>
             </div>
             <Button className="gap-2" onClick={copyLink}>
-              <Copy className="size-4" /> Copy Your Link
+              <CopyIcon className="size-4" /> Copy Your Link
             </Button>
-          </motion.div>
+          </div>
         ) : (
           <div className="rounded-2xl border border-border overflow-hidden">
             <div className="grid grid-cols-4 gap-4 px-5 py-3 bg-muted/40 text-xs font-semibold text-muted-foreground uppercase tracking-wider">

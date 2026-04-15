@@ -2,9 +2,15 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
-  ArrowRight, BookOpen, Briefcase, Calendar, Settings, Users, Globe
+  ArrowRight as ArrowRightIcon, 
+  BookOpen as BookOpenIcon, 
+  Briefcase as BriefcaseIcon, 
+  Calendar as CalendarIcon, 
+  Settings as SettingsIcon, 
+  Users as UsersIcon, 
+  Globe as GlobeIcon
 } from "lucide-react";
-import { motion } from "framer-motion";
+
 
 interface HomeFeedProps {
   setActiveTab: (tab: string) => void;
@@ -54,14 +60,14 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
           <section className="space-y-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <BookOpen className="size-5 text-primary" />
+                <BookOpenIcon className="size-5 text-primary" />
                 <h3 className="text-lg font-semibold text-foreground">My Courses</h3>
               </div>
               <button 
                 onClick={() => setActiveTab('academy')}
                 className="text-sm text-primary hover:underline flex items-center gap-1"
               >
-                View all <ArrowRight className="size-3" />
+                View all <ArrowRightIcon className="size-3" />
               </button>
             </div>
             
@@ -71,11 +77,8 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
                   const enrollment = enrollments.get(course.id);
                   const progress = enrollment?.progress || 0;
                   return (
-                    <motion.div 
+                    <div 
                       key={course.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.1 }}
                       className="group relative rounded-xl bg-card border border-border hover:border-primary/30 p-5 transition-all cursor-pointer overflow-hidden"
                       onClick={() => setActiveTab('academy')}
                     >
@@ -102,7 +105,7 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
                           </div>
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
                   );
                 })}
               </div>
@@ -123,14 +126,13 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
             <h3 className="text-lg font-semibold text-foreground">Quick Links</h3>
             <div className="grid md:grid-cols-2 gap-4">
               {[
-                { title: "Profile & Settings", desc: "Update your personal information.", tab: "settings", icon: Settings, color: "text-primary" },
-                { title: "Job Board", desc: "Browse remote jobs and opportunities.", tab: "careers", icon: Briefcase, color: "text-secondary" },
-                { title: "Community", desc: "Connect with fellow students.", tab: "community", icon: Users, color: "text-green-500" },
-                { title: "Events", desc: "Upcoming workshops and webinars.", tab: "events", icon: Calendar, color: "text-amber-500" }
+                { title: "Profile & Settings", desc: "Update your personal information.", tab: "settings", icon: SettingsIcon, color: "text-primary" },
+                { title: "Job Board", desc: "Browse remote jobs and opportunities.", tab: "careers", icon: BriefcaseIcon, color: "text-secondary" },
+                { title: "Community", desc: "Connect with fellow students.", tab: "community", icon: UsersIcon, color: "text-green-500" },
+                { title: "Events", desc: "Upcoming workshops and webinars.", tab: "events", icon: CalendarIcon, color: "text-amber-500" }
               ].map((item, i) => (
-                <motion.button 
+                <button 
                   key={i} 
-                  whileHover={{ y: -2 }}
                   className="group p-5 rounded-xl bg-card border border-border hover:border-border/80 transition-all text-left flex items-start gap-4"
                   onClick={() => setActiveTab(item.tab)}
                 >
@@ -141,8 +143,8 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
                     <h4 className="font-semibold text-foreground text-sm">{item.title}</h4>
                     <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
                   </div>
-                  <ArrowRight className="size-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity mt-1" />
-                </motion.button>
+                  <ArrowRightIcon className="size-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity mt-1" />
+                </button>
               ))}
             </div>
           </section>
@@ -152,7 +154,7 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
         <aside className="lg:col-span-4 space-y-6">
           {/* Explore CTA */}
           <div className="rounded-xl bg-gradient-to-br from-primary/10 to-secondary/5 border border-primary/20 p-6 space-y-3 cursor-pointer hover:border-primary/40 transition-all" onClick={() => setActiveTab('catalog')}>
-            <Globe className="size-8 text-primary" />
+            <GlobeIcon className="size-8 text-primary" />
             <h3 className="text-lg font-bold text-foreground">Explore Courses</h3>
             <p className="text-sm text-muted-foreground">Discover new skills and grow your career with our expert-led programs.</p>
             <Button size="sm" className="mt-2">Browse Catalog</Button>

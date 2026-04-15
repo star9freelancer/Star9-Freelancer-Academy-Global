@@ -9,7 +9,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Loader2, ArrowLeft, CheckCircle2, Upload, FileText, X, BookOpen, Code, Briefcase } from "lucide-react";
+import { 
+  Loader2 as Loader2Icon, 
+  ArrowLeft as ArrowLeftIcon, 
+  CheckCircle2 as CheckCircle2Icon, 
+  Upload as UploadIcon, 
+  FileText as FileTextIcon, 
+  X as XIcon, 
+  BookOpen as BookOpenIcon, 
+  Code as CodeIcon, 
+  Briefcase as BriefcaseIcon 
+} from "lucide-react";
 import logo from "@/assets/logo_transparent.png";
 
 export default function Auth() {
@@ -144,7 +154,7 @@ export default function Auth() {
           <div className="relative">
             <div className="absolute -inset-4 bg-primary/20 rounded-full blur-2xl animate-pulse" />
             <div className="relative size-20 rounded-full bg-primary/10 border-2 border-primary/30 flex items-center justify-center">
-               <CheckCircle2 className="size-10 text-primary" />
+               <CheckCircle2Icon className="size-10 text-primary" />
             </div>
           </div>
           <div className="space-y-3">
@@ -166,7 +176,7 @@ export default function Auth() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
       <Link to="/" className="absolute top-6 left-6 md:top-8 md:left-8 flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm transition-colors z-20">
-        <ArrowLeft className="w-4 h-4" /> Back to Home
+        <ArrowLeftIcon className="w-4 h-4" /> Back to Home
       </Link>
 
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[100px] animate-pulse pointer-events-none" />
@@ -207,7 +217,7 @@ export default function Auth() {
               </CardContent>
               <CardFooter>
                 <Button className="w-full h-12" disabled={loading} onClick={() => handleAuth(false)}>
-                  {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                  {loading && <Loader2Icon className="h-4 w-4 animate-spin mr-2" />}
                   Log In
                 </Button>
               </CardFooter>
@@ -224,9 +234,9 @@ export default function Auth() {
                   <Label>I am a...</Label>
                   <div className="grid grid-cols-3 gap-3">
                     {[
-                      { id: 'student', label: 'Student', icon: BookOpen },
-                      { id: 'freelancer', label: 'Freelancer', icon: Code },
-                      { id: 'employer', label: 'Employer', icon: Briefcase }
+                      { id: 'student', label: 'Student', icon: BookOpenIcon },
+                      { id: 'freelancer', label: 'Freelancer', icon: CodeIcon },
+                      { id: 'employer', label: 'Employer', icon: BriefcaseIcon }
                     ].map((role) => (
                       <button
                         key={role.id}
@@ -281,7 +291,7 @@ export default function Auth() {
                   />
                   {resumeFile ? (
                     <div className="flex items-center gap-3 p-3 rounded-lg border border-primary/30 bg-primary/5">
-                      <FileText className="size-5 text-primary shrink-0" />
+                      <FileTextIcon className="size-5 text-primary shrink-0" />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{resumeFile.name}</p>
                         <p className="text-xs text-muted-foreground">{(resumeFile.size / 1024).toFixed(0)} KB</p>
@@ -303,7 +313,7 @@ export default function Auth() {
               </CardContent>
               <CardFooter className="pt-4">
                 <Button className="w-full h-12" disabled={loading} onClick={() => handleAuth(true)}>
-                  {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                  {loading && <Loader2Icon className="h-4 w-4 animate-spin mr-2" />}
                   Create Account
                 </Button>
               </CardFooter>

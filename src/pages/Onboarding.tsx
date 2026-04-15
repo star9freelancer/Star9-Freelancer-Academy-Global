@@ -2,11 +2,20 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
-import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Building2, GraduationCap, Briefcase, Rocket, 
-  ArrowRight, ArrowLeft, CheckCircle2, Loader2,
-  Globe, Linkedin, Users, Target, Sparkles
+  Building2 as Building2Icon, 
+  GraduationCap as GraduationCapIcon, 
+  Briefcase as BriefcaseIcon, 
+  Rocket as RocketIcon, 
+  ArrowRight as ArrowRightIcon, 
+  ArrowLeft as ArrowLeftIcon, 
+  CheckCircle2 as CheckCircle2Icon, 
+  Loader2 as Loader2Icon,
+  Globe as GlobeIcon, 
+  Linkedin as LinkedinIcon, 
+  Users as UsersIcon, 
+  Target as TargetIcon, 
+  Sparkles as SparklesIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -88,17 +97,12 @@ const Onboarding = () => {
     switch (step) {
       case 1:
         return (
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="space-y-6"
-          >
+          <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
             <div className="text-center space-y-2 mb-8">
               <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                {role === 'employer' && <Building2 className="size-8 text-primary" />}
-                {role === 'student' && <GraduationCap className="size-8 text-primary" />}
-                {role === 'freelancer' && <Briefcase className="size-8 text-primary" />}
+                {role === 'employer' && <Building2Icon className="size-8 text-primary" />}
+                {role === 'student' && <GraduationCapIcon className="size-8 text-primary" />}
+                {role === 'freelancer' && <BriefcaseIcon className="size-8 text-primary" />}
               </div>
               <h2 className="text-2xl font-bold tracking-tight">Tell us about yourself</h2>
               <p className="text-muted-foreground">We'll customize your experience based on your role as a <span className="text-primary font-semibold capitalize">{role}</span>.</p>
@@ -195,21 +199,16 @@ const Onboarding = () => {
             </div>
 
             <Button className="w-full h-12 gap-2" onClick={() => setStep(2)}>
-              Continue <ArrowRight className="size-4" />
+              Continue <ArrowRightIcon className="size-4" />
             </Button>
-          </motion.div>
+          </div>
         );
       case 2:
         return (
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="space-y-6"
-          >
+          <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
             <div className="text-center space-y-2 mb-8">
               <div className="size-16 rounded-2xl bg-amber-500/10 flex items-center justify-center mx-auto mb-4">
-                <Globe className="size-8 text-amber-500" />
+                <GlobeIcon className="size-8 text-amber-500" />
               </div>
               <h2 className="text-2xl font-bold tracking-tight">Location & Reach</h2>
               <p className="text-muted-foreground">Help us connect you with local and global opportunities.</p>
@@ -238,20 +237,20 @@ const Onboarding = () => {
 
             <div className="space-y-2 pt-2">
                <div className="flex items-center gap-3 p-4 rounded-xl border border-primary/20 bg-primary/5">
-                  <Sparkles className="size-5 text-primary shrink-0" />
+                  <SparklesIcon className="size-5 text-primary shrink-0" />
                   <p className="text-xs text-muted-foreground leading-relaxed">By completing your profile, you unlock access to our verified global job board and premium learning tracks.</p>
                </div>
             </div>
 
             <div className="flex gap-3">
               <Button variant="outline" className="h-12 w-20" onClick={() => setStep(1)}>
-                <ArrowLeft className="size-4" />
+                <ArrowLeftIcon className="size-4" />
               </Button>
               <Button className="flex-1 h-12 gap-2" onClick={handleComplete} disabled={loading}>
-                {loading ? <Loader2 className="size-4 animate-spin" /> : <><Rocket className="size-4" /> Finalize Setup</>}
+                {loading ? <Loader2Icon className="size-4 animate-spin" /> : <><RocketIcon className="size-4" /> Finalize Setup</>}
               </Button>
             </div>
-          </motion.div>
+          </div>
         );
       default:
         return null;
@@ -271,9 +270,7 @@ const Onboarding = () => {
 
         <Card className="border-border/50 shadow-2xl backdrop-blur-xl bg-card/80">
           <CardContent className="pt-10 pb-8 px-8">
-            <AnimatePresence mode="wait">
-              {renderStep()}
-            </AnimatePresence>
+            {renderStep()}
 
             <div className="mt-10 flex justify-center gap-1.5">
               {[1, 2].map((i) => (

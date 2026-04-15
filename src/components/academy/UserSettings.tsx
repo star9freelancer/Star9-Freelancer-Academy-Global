@@ -4,8 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
-  Plus, X as XIcon, Save, Award, Star,
-  Link as LinkIcon, Globe, FileUp, FileText, Linkedin
+  Plus as PlusIcon, 
+  X as XIcon, 
+  Save as SaveIcon, 
+  Award as AwardIcon, 
+  Star as StarIcon,
+  Link as LinkIcon, 
+  Globe as GlobeIcon, 
+  FileUp as FileUpIcon, 
+  FileText as FileTextIcon, 
+  Linkedin as LinkedinIcon,
+  MapPin as MapPinIcon,
+  LogOut as LogOutIcon
 } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -252,7 +262,7 @@ export const UserSettings = ({
                   placeholder="Add a skill..."
                 />
                 <Button variant="outline" size="icon" onClick={addSkill}>
-                  <Plus className="size-4" />
+                  <PlusIcon className="size-4" />
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -277,7 +287,7 @@ export const UserSettings = ({
              </CardHeader>
              <CardContent className="space-y-4">
                 <div className="border border-dashed border-border rounded-xl p-6 text-center hover:bg-muted/30 transition-colors">
-                   <FileUp className="size-8 mx-auto mb-3 text-muted-foreground" />
+                   <FileUpIcon className="size-8 mx-auto mb-3 text-muted-foreground" />
                    <p className="text-sm font-medium mb-1">Upload your CV / Resume</p>
                    <p className="text-xs text-muted-foreground mb-4">PDF, DOCX up to 5MB</p>
                    <Button variant="outline" size="sm" className="relative cursor-pointer" disabled={uploadingDoc}>
@@ -296,7 +306,7 @@ export const UserSettings = ({
             {saving ? (
               <div className="size-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
             ) : (
-              <Save className="size-4" />
+              <SaveIcon className="size-4" />
             )}
             Save Changes
           </Button>
@@ -319,7 +329,7 @@ export const UserSettings = ({
               <div>
                 <h4 className="font-semibold text-foreground text-lg">{profileForm.full_name || "Member"}</h4>
                 <p className="text-sm text-muted-foreground flex items-center justify-center gap-1 mt-0.5">
-                  <MapPin className="size-3" />
+                  <MapPinIcon className="size-3" />
                   {profileForm.city || "Remote"}{profileForm.country ? `, ${profileForm.country}` : ""}
                 </p>
               </div>
@@ -332,14 +342,14 @@ export const UserSettings = ({
             <CardContent className="p-4 space-y-3">
               <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                 <div className="flex items-center gap-3">
-                  <Award className="size-5 text-primary" />
+                  <AwardIcon className="size-5 text-primary" />
                   <span className="text-sm text-foreground">Certificates</span>
                 </div>
                 <span className="font-semibold text-foreground">{certificates.length}</span>
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                 <div className="flex items-center gap-3">
-                  <Star className="size-5 text-amber-500" />
+                  <StarIcon className="size-5 text-amber-500" />
                   <span className="text-sm text-foreground">Points</span>
                 </div>
                 <span className="font-semibold text-foreground">{profile?.merit_points || 0}</span>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import { useAuth } from "@/context/AuthContext";
@@ -18,11 +18,25 @@ import { UserSettings } from "@/components/academy/UserSettings";
 import { AcademyFooter } from "@/components/academy/AcademyFooter";
 import ReferralDashboard from "@/components/academy/ReferralDashboard";
 import { 
-  Home, BookOpen, Users, Award, Settings, Menu, Bell, Search, 
-  ArrowLeft, ArrowRight, Download, Play, Clock as ClockIcon, Sparkles, 
-  Globe, Link as LinkIcon, 
-  Briefcase, 
-  Calendar as CalendarIcon, Save
+  Home as HomeIcon, 
+  BookOpen as BookOpenIcon, 
+  Users as UsersIcon, 
+  Award as AwardIcon, 
+  Settings as SettingsIcon, 
+  Menu as MenuIcon, 
+  Bell as BellIcon, 
+  Search as SearchIcon, 
+  ArrowLeft as ArrowLeftIcon, 
+  ArrowRight as ArrowRightIcon, 
+  Download as DownloadIcon, 
+  Play as PlayIcon, 
+  Clock as ClockIcon, 
+  Sparkles as SparklesIcon, 
+  Globe as GlobeIcon, 
+  Link as LinkIcon, 
+  Briefcase as BriefcaseIcon, 
+  Calendar as CalendarIcon, 
+  Save as SaveIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -34,7 +48,7 @@ import logo from "@/assets/logo_transparent.png";
 
 const Academy = () => {
   const { user, profile, loading: authLoading, refreshProfile } = useAuth();
-  const { courses, enrollments, certificates, isLoading: loadingCourses } = useAcademyData();
+  const { courses, enrollments, certificates, isLoading: loadingCourses, invalidateAll } = useAcademyData();
   
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarHovered, setSidebarHovered] = useState(false);
@@ -281,15 +295,15 @@ const Academy = () => {
   };
 
   const allLinks = [
-    { id: "home",        icon: Home,       label: "Home",        public: true },
-    { id: "academy",     icon: BookOpen,   label: "My Courses",  public: false },
-    { id: "catalog",     icon: Globe,      label: "Browse",      public: true },
-    { id: "certificates",icon: Award,      label: "Certificates",public: false },
-    { id: "community",   icon: Users,      label: "Community",   public: false },
-    { id: "careers",     icon: Briefcase,  label: "Jobs",        public: true },
+    { id: "home",        icon: HomeIcon,       label: "Home",        public: true },
+    { id: "academy",     icon: BookOpenIcon,   label: "My Courses",  public: false },
+    { id: "catalog",     icon: GlobeIcon,      label: "Browse",      public: true },
+    { id: "certificates",icon: AwardIcon,      label: "Certificates",public: false },
+    { id: "community",   icon: UsersIcon,      label: "Community",   public: false },
+    { id: "careers",     icon: BriefcaseIcon,  label: "Jobs",        public: true },
     { id: "referral",    icon: LinkIcon,   label: "Referrals",   public: false },
     { id: "events",      icon: CalendarIcon,   label: "Events",      public: true },
-    { id: "settings",    icon: Settings,   label: "Settings",    public: false },
+    { id: "settings",    icon: SettingsIcon,   label: "Settings",    public: false },
   ];
 
   const studentLinks = user ? allLinks : allLinks.filter(l => l.public);
@@ -304,10 +318,7 @@ const Academy = () => {
 
       {/* Top Navigation - hidden on mobile */}
       <div className="hidden md:flex fixed top-0 inset-x-0 z-50 justify-center p-4 md:p-6 transition-all duration-500">
-        <motion.nav 
-          initial={{ y: -100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ type: "spring", damping: 20, stiffness: 100 }}
+        <nav 
           className="flex items-center gap-2 md:gap-3 px-4 py-2.5 rounded-full bg-card/80 backdrop-blur-xl border border-border shadow-lg max-w-full overflow-x-auto no-scrollbar"
         >
           {/* Logo */}
@@ -319,7 +330,7 @@ const Academy = () => {
 
           {/* Search */}
           <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-full border border-border focus-within:border-primary/40 transition-all group w-48">
-            <Search className="size-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <SearchIcon className="size-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <input 
               type="text" 
               placeholder="Search..."
@@ -342,10 +353,8 @@ const Academy = () => {
                   className={`relative flex items-center gap-2 px-3 py-2 rounded-full transition-all text-sm ${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
                 >
                   {isActive && (
-                    <motion.div 
-                      layoutId="hub-pill"
+                    <div 
                       className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-full" 
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
                   <l.icon className="size-4 shrink-0 relative z-10" />
@@ -364,7 +373,7 @@ const Academy = () => {
             {user ? (
               <>
                 <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 rounded-full">
-                  <Sparkles className="size-3 text-amber-500" />
+                  <SparklesIcon className="size-3 text-amber-500" />
                   <span className="text-xs font-semibold text-amber-500">{profile?.merit_points || 0}</span>
                 </div>
 
@@ -391,7 +400,7 @@ const Academy = () => {
                   className="p-2 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
                   title="Log Out"
                 >
-                  <ArrowRight className="size-4 rotate-180" />
+                  <ArrowRightIcon className="size-4 rotate-180" />
                 </button>
               </>
             ) : (
@@ -405,21 +414,16 @@ const Academy = () => {
               </div>
             )}
           </div>
-        </motion.nav>
+        </nav>
       </div>
 
       {/* Mobile Nav Overlay (Fallback) */}
-      <AnimatePresence>
-        {sidebarOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="md:hidden fixed inset-0 z-[60] bg-zinc-950/80 backdrop-blur-md" 
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-      </AnimatePresence>
+      {sidebarOpen && (
+        <div 
+          className="md:hidden fixed inset-0 z-[60] bg-zinc-950/80 backdrop-blur-md" 
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
       {/* MAIN CONTENT WRAPPER */}
       <div className="pt-6 md:pt-28 pb-20 md:pb-12 min-h-screen flex flex-col">
@@ -428,9 +432,7 @@ const Academy = () => {
       {/* MOBILE BOTTOM DOCK */}
       <div className="md:hidden fixed bottom-6 inset-x-0 z-50 flex justify-center pointer-events-none">
         <div className="pointer-events-auto">
-        <motion.div 
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
+        <div 
           className="flex items-center gap-4 px-6 py-3 rounded-full bg-card/90 backdrop-blur-xl border border-border shadow-lg"
         >
           {studentLinks.slice(0, user ? 5 : 4).map((l) => {
@@ -446,7 +448,7 @@ const Academy = () => {
               </button>
             );
           })}
-        </motion.div>
+        </div>
         </div>
       </div>
 
@@ -492,7 +494,7 @@ const Academy = () => {
                         }
                         {courses.filter(c => enrollments.has(c.id)).length === 0 && (
                            <Card className="glass border-dashed p-12 text-center col-span-full opacity-60">
-                              <BookOpen className="size-12 mx-auto mb-4 text-muted-foreground" />
+                              <BookOpenIcon className="size-12 mx-auto mb-4 text-muted-foreground" />
                                <h3 className="font-bold">No courses yet</h3>
                                <Button className="mt-6" variant="outline" onClick={() => setActiveTab('catalog')}>Browse Courses</Button>
                            </Card>

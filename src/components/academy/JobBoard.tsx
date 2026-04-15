@@ -1,9 +1,20 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { 
-  Briefcase, MapPin, DollarSign, Clock, ExternalLink, 
-  Search, Filter, Globe, Sparkles, Building2, BadgeCheck,
-  Cpu, TrendingUp, ArrowUpRight
+  Briefcase as BriefcaseIcon, 
+  MapPin as MapPinIcon, 
+  DollarSign as DollarSignIcon, 
+  Clock as ClockIcon, 
+  ExternalLink as ExternalLinkIcon, 
+  Search as SearchIcon, 
+  Filter as FilterIcon, 
+  Globe as GlobeIcon, 
+  Sparkles as SparklesIcon, 
+  Building2 as Building2Icon, 
+  BadgeCheck as BadgeCheckIcon,
+  Cpu as CpuIcon, 
+  TrendingUp as TrendingUpIcon, 
+  ArrowUpRight as ArrowUpRightIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
@@ -61,7 +72,7 @@ export default function JobBoard() {
         </div>
         
         <div className="relative w-full md:w-80 group">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
           <Input 
             placeholder="Search roles or companies..." 
             className="pl-10 bg-background/50 border-white/5 focus:border-primary/30 transition-all uppercase font-mono text-[10px] tracking-widest"
@@ -74,7 +85,7 @@ export default function JobBoard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredJobs.length === 0 ? (
           <Card className="glass border-dashed text-center p-12 opacity-80 col-span-full">
-             <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+             <SearchIcon className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
              <CardTitle className="mb-2 uppercase tracking-tighter">No Jobs Found</CardTitle>
              <CardDescription>Adjust your search filters to find available roles.</CardDescription>
           </Card>
@@ -86,7 +97,7 @@ export default function JobBoard() {
               <CardHeader className="pb-4">
                  <div className="flex items-start justify-between gap-4 mb-2">
                     <div className="size-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                       <Briefcase className="size-5" />
+                       <BriefcaseIcon className="size-5" />
                     </div>
                     <div className="flex flex-col items-end gap-1">
                        <Badge variant="outline" className="font-mono text-[8px] uppercase tracking-widest border-primary/20 text-primary bg-primary/5">
@@ -94,7 +105,7 @@ export default function JobBoard() {
                        </Badge>
                        <div className="flex items-center gap-1.5 mt-1">
                           <div className="size-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                          <span className="text-[8px] font-mono text-zinc-500 uppercase tracking-widest">Active</span>
+                           <span className="text-[8px] font-mono text-zinc-500 uppercase tracking-widest">Active</span>
                        </div>
                     </div>
                  </div>
@@ -107,13 +118,13 @@ export default function JobBoard() {
                     <div className="space-y-1">
                        <p className="text-[8px] font-mono uppercase tracking-widest text-zinc-600">Location</p>
                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-zinc-300 uppercase truncate">
-                          <Globe className="size-3 text-secondary" /> {job.location}
+                          <GlobeIcon className="size-3 text-secondary" /> {job.location}
                        </div>
                     </div>
                     <div className="space-y-1">
                        <p className="text-[8px] font-mono uppercase tracking-widest text-zinc-600">Compensation</p>
                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-500 uppercase truncate">
-                          <DollarSign className="size-3" /> {job.salary_range}
+                          <DollarSignIcon className="size-3" /> {job.salary_range}
                        </div>
                     </div>
                  </div>
@@ -141,7 +152,7 @@ export default function JobBoard() {
                     className="w-full font-mono text-xs uppercase tracking-widest gap-2 bg-zinc-900 hover:bg-primary text-white border border-white/10 hover:border-primary transition-all active:scale-95 group/btn py-6 rounded-xl"
                     onClick={() => window.open(job.application_url || '#', '_blank')}
                   >
-                    View Role <ArrowUpRight className="size-3 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
+                    View Role <ArrowUpRightIcon className="size-3 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
                  </Button>
               </CardFooter>
             </Card>
@@ -151,11 +162,11 @@ export default function JobBoard() {
 
       <div className="p-8 rounded-3xl border border-secondary/20 bg-secondary/5 relative overflow-hidden">
          <div className="absolute top-0 right-0 p-8 opacity-10">
-            <TrendingUp className="size-32" />
+            <TrendingUpIcon className="size-32" />
          </div>
          <div className="relative z-10 max-w-2xl space-y-4">
             <div className="flex items-center gap-2">
-               <Sparkles className="size-4 text-secondary" />
+               <SparklesIcon className="size-4 text-secondary" />
                <span className="font-mono text-[10px] uppercase tracking-widest text-secondary font-bold">Personal Career Advisory</span>
             </div>
             <h3 className="text-2xl font-bold tracking-tight">Expand your global career footprint.</h3>

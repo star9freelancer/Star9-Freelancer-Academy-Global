@@ -2,9 +2,22 @@ import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { 
-  ArrowLeft, PlayCircle, FileText, CheckCircle2, 
-  ChevronRight, Lock, Clock as ClockIcon, Award, 
-  Menu, X, ChevronLeft, Trophy, AlertTriangle, RefreshCcw, Video, Link as LinkIcon
+  ArrowLeft as ArrowLeftIcon, 
+  PlayCircle as PlayCircleIcon, 
+  FileText as FileTextIcon, 
+  CheckCircle2 as CheckCircle2Icon, 
+  ChevronRight as ChevronRightIcon, 
+  Lock as LockIcon, 
+  Clock as ClockIcon, 
+  Award as AwardIcon, 
+  Menu as MenuIcon, 
+  X as XIcon, 
+  ChevronLeft as ChevronLeftIcon, 
+  Trophy as TrophyIcon, 
+  AlertTriangle as AlertTriangleIcon, 
+  RefreshCcw as RefreshCcwIcon, 
+  Video as VideoIcon, 
+  Link as LinkIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -249,7 +262,7 @@ const CoursePlayer = () => {
       <header className="h-14 border-b bg-card/80 backdrop-blur-md flex items-center justify-between px-4 md:px-6 z-50 shrink-0 sticky top-0">
         <div className="flex items-center gap-3">
           <Link to="/academy" className="p-2 hover:bg-muted rounded-full transition-colors">
-            <ArrowLeft className="size-4" />
+            <ArrowLeftIcon className="size-4" />
           </Link>
           <div className="hidden md:block">
             <img src={logo} alt="Star9" className="h-7 w-auto cursor-pointer" onClick={() => navigate('/')} />
@@ -290,7 +303,7 @@ const CoursePlayer = () => {
           <div className="p-4 border-b shrink-0 flex items-center justify-between">
             <h2 className="text-sm font-semibold text-muted-foreground">Course Modules</h2>
             <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setSidebarOpen(false)}>
-              <X className="size-4" />
+              <XIcon className="size-4" />
             </Button>
           </div>
           <ScrollArea className="flex-1">
@@ -322,9 +335,9 @@ const CoursePlayer = () => {
                   >
                     <div className="mt-0.5 shrink-0">
                       {isCompleted ? (
-                        <CheckCircle2 className="size-5 text-emerald-500 fill-emerald-500/20" />
+                        <CheckCircle2Icon className="size-5 text-emerald-500 fill-emerald-500/20" />
                       ) : isLocked ? (
-                        <Lock className="size-5 text-muted-foreground" />
+                        <LockIcon className="size-5 text-muted-foreground" />
                       ) : isActive ? (
                         <div className="size-5 rounded-full bg-primary/20 flex items-center justify-center">
                           <div className="size-2 bg-primary rounded-full animate-pulse" />
@@ -367,7 +380,7 @@ const CoursePlayer = () => {
               className="absolute top-4 left-4 z-40 rounded-full shadow-lg"
               onClick={() => setSidebarOpen(true)}
             >
-              <Menu className="size-4" />
+              <MenuIcon className="size-4" />
             </Button>
           )}
 
@@ -376,7 +389,7 @@ const CoursePlayer = () => {
             <div className="bg-primary/10 border-b border-primary/20 px-4 py-3 xl:px-6 flex flex-col sm:flex-row sm:items-center justify-between shrink-0 gap-3">
               <div className="flex items-center gap-3">
                 <div className="size-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                  <Video className="size-4 text-primary" />
+                  <VideoIcon className="size-4 text-primary" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-foreground">Live Online Lesson</p>
@@ -412,7 +425,7 @@ const CoursePlayer = () => {
                   <div className="flex items-center gap-3">
                     {completedLessons.has(activeLesson?.id) ? (
                       <Button size="sm" disabled className="bg-emerald-500/20 text-emerald-500 border-emerald-500/20">
-                        <CheckCircle2 className="size-3 mr-2" /> Completed
+                        <CheckCircle2Icon className="size-3 mr-2" /> Completed
                       </Button>
                     ) : showQuiz ? (
                       <Button variant="outline" size="sm" onClick={() => setShowQuiz(false)}>
@@ -468,7 +481,7 @@ const CoursePlayer = () => {
                   </div>
                 ) : (
                   <div className="py-16 text-center border rounded-xl bg-muted/20 border-dashed">
-                    <FileText className="size-10 text-muted-foreground/30 mx-auto mb-4" />
+                    <FileTextIcon className="size-10 text-muted-foreground/30 mx-auto mb-4" />
                     <p className="text-sm text-muted-foreground">No lesson available yet.</p>
                   </div>
                 )}
@@ -483,7 +496,7 @@ const CoursePlayer = () => {
                       if (idx > 0) setActiveLesson(lessons[idx - 1]);
                     }}
                   >
-                    <ChevronLeft className="size-4" /> Previous
+                    <ChevronLeftIcon className="size-4" /> Previous
                   </Button>
                   <Button 
                     variant="ghost" className="gap-2 group"
@@ -497,7 +510,7 @@ const CoursePlayer = () => {
                       }
                     }}
                   >
-                    Next <ChevronRight className="size-4" />
+                    Next <ChevronRightIcon className="size-4" />
                   </Button>
                 </div>
               </div>
@@ -541,9 +554,9 @@ const QuizModule = ({ quizData, onPass }: { quizData: any, onPass: () => void })
       <div className="space-y-6 animate-in zoom-in duration-500">
         <div className="p-12 text-center rounded-2xl bg-card border border-border space-y-4">
           {passed ? (
-            <Trophy className="size-16 text-amber-500 mx-auto" />
+            <TrophyIcon className="size-16 text-amber-500 mx-auto" />
           ) : (
-            <AlertTriangle className="size-16 text-destructive mx-auto" />
+            <AlertTriangleIcon className="size-16 text-destructive mx-auto" />
           )}
           <h3 className="text-2xl font-bold">
             {passed ? "Quiz Passed!" : "Not quite there yet"}
@@ -558,7 +571,7 @@ const QuizModule = ({ quizData, onPass }: { quizData: any, onPass: () => void })
               </Button>
             ) : (
               <Button onClick={() => { setCurrentQuestion(0); setSelectedAnswer(null); setScore(0); setFinished(false); }} variant="outline">
-                <RefreshCcw className="size-3 mr-2" /> Try Again
+                <RefreshCcwIcon className="size-3 mr-2" /> Try Again
               </Button>
             )}
           </div>
