@@ -151,9 +151,16 @@ const AcademyHero = ({ type, title, subtitle, userName }: AcademyHeroProps) => {
             </>
           )}
           {type === 'catalog' && (
-            <Button className="font-mono text-[10px] uppercase tracking-widest bg-amber-500 hover:bg-amber-600 text-white px-8 py-6 rounded-xl shadow-xl shadow-amber-500/20 transition-all hover:scale-105 active:scale-95">
-               Browse Courses
-            </Button>
+            <div className="flex items-center gap-4">
+               <Button className="font-mono text-[10px] uppercase tracking-widest bg-amber-500 hover:bg-amber-600 text-white px-8 py-6 rounded-xl shadow-xl shadow-amber-500/20 transition-all hover:scale-105 active:scale-95">
+                  Browse Courses
+               </Button>
+               {!userName && (
+                 <Button variant="outline" className="font-mono text-[10px] uppercase tracking-widest border-white/10 text-white/80 hover:bg-white/5 px-8 py-6 rounded-xl backdrop-blur-md" asChild>
+                    <a href="/auth">Sign Up Free</a>
+                 </Button>
+               )}
+            </div>
           )}
         </motion.div>
       </div>

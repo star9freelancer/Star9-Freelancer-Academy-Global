@@ -58,20 +58,20 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
         </div>
 
         {/* Content Section */}
-        <div className="flex-1 flex flex-col p-8 lg:p-10 relative z-10">
+        <div className="flex-1 min-w-0 flex flex-col p-8 lg:p-10 relative z-10">
           <div className="flex-1 space-y-4">
-            <div className="flex items-start justify-between gap-4">
-              <h3 className="text-2xl lg:text-3xl font-bold tracking-tighter italic group-hover:text-primary transition-colors duration-300">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+              <h3 className="text-2xl lg:text-3xl font-bold tracking-tighter italic group-hover:text-primary transition-colors duration-300 leading-tight">
                 {course.title}
               </h3>
               {isEnrolled && (
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 font-mono text-[10px] uppercase tracking-widest shrink-0">
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 font-mono text-[10px] uppercase tracking-widest shrink-0 w-fit">
                    <ShieldCheckIcon className="size-3" /> Enrolled
                 </div>
               )}
             </div>
             
-            <p className="text-sm lg:text-base text-muted-foreground line-clamp-2 leading-relaxed max-w-2xl">
+            <p className="text-sm lg:text-base text-muted-foreground leading-relaxed max-w-2xl line-clamp-3 lg:line-clamp-none">
               {course.overview || course.description || "Master new technical skills with Star9 Academy's flagship professional training programs."}
             </p>
 

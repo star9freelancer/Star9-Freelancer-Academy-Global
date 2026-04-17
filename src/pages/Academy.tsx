@@ -223,6 +223,7 @@ const Academy = () => {
           email: user?.email || "student@star9global.com",
           amount: price * 100, // strictly in cents
           currency: 'USD', // Lock to Equity USD parameters
+          channels: ['card', 'bank', 'ussd', 'qr', 'mobile_money', 'bank_transfer', 'apple_pay', 'google_pay'],
           ref: 'ST9_' + Math.floor((Math.random() * 1000000000) + 1),
           // Crucial Metadata payload for Webhooks + DB integration
           metadata: {
@@ -501,14 +502,40 @@ const Academy = () => {
                    </div>
                  )}
 
-                 {activeTab === "catalog" && (
-                   <div className="space-y-8">
-                      <div className="flex items-center gap-3">
-                         <div className="h-px flex-1 bg-border/50" />
-                         <h3 className="text-sm font-medium text-muted-foreground">All Courses</h3>
-                         <div className="h-px flex-1 bg-border/50" />
-                      </div>
-                      <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
+                  {activeTab === "catalog" && (
+                    <div className="space-y-12 pb-20">
+                       {!user && (
+                         <div className="bg-gradient-to-r from-zinc-900 to-zinc-950 p-8 md:p-12 rounded-[3rem] border border-white/5 relative overflow-hidden group shadow-2xl">
+                            <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                               <SparklesIcon className="size-32 text-primary" />
+                            </div>
+                            <div className="relative z-10 space-y-4 max-w-2xl">
+                               <h2 className="text-3xl md:text-4xl font-bold tracking-tighter italic">Transform Your Business <span className="text-primary">With AI & Global Strategy</span></h2>
+                               <p className="text-zinc-500 text-sm md:text-base leading-relaxed">Join thousands of professionals already mastering the digital economy. Create a free account to track your progress and earn verifiable global credentials.</p>
+                               <div className="flex flex-wrap gap-4 pt-4">
+                                  <Button className="h-12 px-8 rounded-2xl bg-primary text-white hover:bg-primary/90 font-bold tracking-widest text-[10px] uppercase shadow-lg shadow-primary/20" asChild>
+                                     <Link to="/auth">Sign Up Free</Link>
+                                  </Button>
+                                  <p className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-zinc-500">
+                                     <UsersIcon className="size-3" /> Already 520+ Active Students
+                                  </p>
+                               </div>
+                            </div>
+                         </div>
+                       )}
+
+                       <div className="relative pt-8">
+                          <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                            <div className="w-full border-t border-white/5"></div>
+                          </div>
+                          <div className="relative flex justify-center">
+                            <span className="bg-[#09090b] px-6 text-[10px] font-mono font-black uppercase tracking-[0.5em] text-zinc-600">
+                               Available Curriculums
+                            </span>
+                          </div>
+                       </div>
+
+                       <div className="grid grid-cols-1 gap-12 max-w-6xl mx-auto">
                         {courses
                           .filter(c => 
                             searchQuery === "" || 
