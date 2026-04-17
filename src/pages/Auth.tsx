@@ -270,7 +270,7 @@ export default function Auth() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="reg-phone">Phone (optional)</Label>
-                    <Input id="reg-phone" type="tel" placeholder="+254 700 000 000" value={phone} onChange={(e) => setPhone(e.target.value)} className="h-11" />
+                    <Input id="reg-phone" type="tel" placeholder="+254 117 103 483" value={phone} onChange={(e) => setPhone(e.target.value)} className="h-11" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="reg-city">City</Label>

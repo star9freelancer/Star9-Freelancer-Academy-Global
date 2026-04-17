@@ -71,7 +71,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <p className="font-medium text-foreground">Phone</p>
-                    <a href="tel:+254700000000" className="text-sm text-muted-foreground hover:text-primary transition-colors">+254 700 000 000</a>
+                    <a href="tel:+254117103483" className="text-sm text-muted-foreground hover:text-primary transition-colors">+254 117 103 483</a>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
