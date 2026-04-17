@@ -24,7 +24,8 @@ interface ProgramDetailViewProps {
 const ProgramDetailView = ({ course, enrollment, onBack, onEnroll, onStart }: ProgramDetailViewProps) => {
   const isEnrolled = !!enrollment;
   const progress = enrollment?.progress || 0;
-  const lessons = course.academy_lessons || [];
+  // Flatten modules from local curriculum ledger if available
+  const lessons = course.academy_lessons || course.modules?.flatMap((m: any) => m.lessons) || [];
 
   return (
     <motion.div 

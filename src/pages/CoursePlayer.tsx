@@ -60,26 +60,37 @@ const CoursePlayer = () => {
     if (!user || !courseId) return;
     setLoading(true);
 
-    // Find course from local curriculum first
+    // Find course from local curriculum first (Optimization for instant navigation)
     const localCourse = courses.find(c => c.id === courseId);
-    if (localCourse) {
+    if (localCourse && localCourse.modules && localCourse.modules.length > 0) {
       setCourse(localCourse);
-      const courseLessons = localCourse.academy_lessons || [];
-      setLessons(courseLessons);
-      if (courseLessons.length > 0) setActiveLesson(courseLessons[0]);
       
-      // Fetch completed lessons from DB
-      supabase
-        .from('user_lesson_progress')
-        .select('lesson_id')
-        .eq('user_id', user.id)
-        .eq('course_id', courseId)
-        .then(({ data }) => {
-          if (data) setCompletedLessons(new Set(data.map(p => p.lesson_id)));
-        });
-      
-      setLoading(false);
-      return;
+      // Flatten modules and map property names to match DB schema expected by UI
+      const courseLessons = localCourse.modules.flatMap((m: any) => 
+        (m.lessons || []).map((l: any) => ({
+          ...l,
+          duration_minutes: parseInt(l.duration || "0"),
+          video_url: l.videoUrl || l.video_url
+        }))
+      );
+
+      if (courseLessons.length > 0) {
+        setLessons(courseLessons);
+        setActiveLesson(courseLessons[0]);
+        
+        // Fetch completed lessons from DB asynchronously
+        supabase
+          .from('user_lesson_progress')
+          .select('lesson_id')
+          .eq('user_id', user.id)
+          .eq('course_id', courseId)
+          .then(({ data }) => {
+            if (data) setCompletedLessons(new Set(data.map(p => p.lesson_id)));
+          });
+        
+        setLoading(false);
+        return;
+      }
     }
 
     // Fallback: fetch from DB
