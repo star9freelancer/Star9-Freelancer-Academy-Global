@@ -142,7 +142,11 @@ const HeroSection = () => {
                     { icon: BriefcaseIcon, label: "Mastering Freelancing",       sub: "12-week · $250 + Global access", progress: 45, color: "text-secondary" },
                     { icon: GlobeIcon,    label: "International Teacher Prep",  sub: "3-Phase pipeline · $300",  progress: 20, color: "text-emerald-400" },
                   ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-3 p-3.5 rounded-xl bg-background/60 border border-border/40 hover:bg-background/90 transition-colors cursor-pointer group">
+                    <Link 
+                      key={i} 
+                      to="/academy"
+                      className="flex items-center gap-3 p-3.5 rounded-xl bg-background/60 border border-border/40 hover:bg-background/90 transition-colors cursor-pointer group block"
+                    >
                       <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                         <item.icon className={`size-4 ${item.color}`} />
                       </div>
@@ -157,7 +161,7 @@ const HeroSection = () => {
                         </div>
                       </div>
                       <ArrowRightIcon className="size-4 text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0" />
-                    </div>
+                    </Link>
                   ))}
                 </div>
 

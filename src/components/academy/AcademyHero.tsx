@@ -142,22 +142,32 @@ const AcademyHero = ({ type, title, subtitle, userName }: AcademyHeroProps) => {
         >
           {type === 'community' && (
             <>
-               <Button className="font-mono text-[9px] uppercase tracking-widest bg-primary hover:bg-primary/90 text-white px-6 py-4 rounded-xl shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95">
+               <Button 
+                 className="font-mono text-[9px] uppercase tracking-widest bg-primary hover:bg-primary/90 text-white px-6 py-4 rounded-xl shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
+                 onClick={() => onTabChange?.('community')}
+               >
                   Join Community
                </Button>
-               <Button variant="outline" className="font-mono text-[9px] uppercase tracking-widest border-white/10 text-white/80 hover:bg-white/5 px-6 py-4 rounded-xl backdrop-blur-md">
+               <Button 
+                 variant="outline" 
+                 className="font-mono text-[9px] uppercase tracking-widest border-white/10 text-white/80 hover:bg-white/5 px-6 py-4 rounded-xl backdrop-blur-md"
+                 onClick={() => onTabChange?.('events')}
+               >
                   View Events
                </Button>
             </>
           )}
           {type === 'catalog' && (
             <div className="flex items-center gap-4">
-               <Button className="font-mono text-[10px] uppercase tracking-widest bg-amber-500 hover:bg-amber-600 text-white px-8 py-6 rounded-xl shadow-xl shadow-amber-500/20 transition-all hover:scale-105 active:scale-95">
+               <Button 
+                 className="font-mono text-[10px] uppercase tracking-widest bg-amber-500 hover:bg-amber-600 text-white px-8 py-6 rounded-xl shadow-xl shadow-amber-500/20 transition-all hover:scale-105 active:scale-95"
+                 onClick={() => onTabChange?.('catalog')}
+               >
                   Browse Courses
                </Button>
                {!userName && (
                  <Button variant="outline" className="font-mono text-[10px] uppercase tracking-widest border-white/10 text-white/80 hover:bg-white/5 px-8 py-6 rounded-xl backdrop-blur-md" asChild>
-                    <a href="/auth">Sign Up Free</a>
+                    <Link to="/auth">Sign Up Free</Link>
                  </Button>
                )}
             </div>

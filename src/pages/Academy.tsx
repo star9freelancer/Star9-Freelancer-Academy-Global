@@ -465,6 +465,7 @@ const Academy = () => {
                  <AcademyHero 
                    type={activeTab === 'catalog' ? 'catalog' : 'learning'}
                    userName={profile?.full_name?.split(' ')[0]}
+                   onTabChange={setActiveTab}
                  />
                )}
 

@@ -410,8 +410,10 @@ const CoursePlayer = () => {
                   </p>
                 </div>
               </div>
-              <Button size="sm" variant="outline" className="gap-2 border-primary/30 hover:bg-primary/10 text-primary w-full sm:w-auto">
-                <LinkIcon className="size-3" /> Join Google Meet
+              <Button size="sm" variant="outline" className="gap-2 border-primary/30 hover:bg-primary/10 text-primary w-full sm:w-auto" asChild>
+                <Link to="/contact">
+                  <LinkIcon className="size-3" /> Join Google Meet
+                </Link>
               </Button>
             </div>
           )}
