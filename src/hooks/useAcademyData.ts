@@ -42,7 +42,7 @@ export const CURRICULUM_LEDGER: Record<string, Module[]> = {
   "22222222-2222-2222-2222-222222222222": [
     {
       id: "m1",
-      title: "Introduction to Modern Freelancing",
+      title: "Global Landscape",
       lessons: [
         { id: "l1", title: "The Sovereign Professional Mindset", duration: "12:05", isCompleted: false, type: "video", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
         { id: "l2", title: "Market Analysis & Niche Selection", duration: "15:30", isCompleted: false, type: "video", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
@@ -56,7 +56,7 @@ export const CURRICULUM_LEDGER: Record<string, Module[]> = {
     },
     {
       id: "m2",
-      title: "Building a High-Authority Profile",
+      title: "Profile Mastery",
       lessons: [
         { id: "l4", title: "Personal Branding Architecture", duration: "18:45", isCompleted: false, type: "video", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
         { id: "l5", title: "Portfolio Optimization for High-Ticket Clients", duration: "22:10", isCompleted: false, type: "video", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
@@ -67,7 +67,7 @@ export const CURRICULUM_LEDGER: Record<string, Module[]> = {
   "11111111-1111-1111-1111-111111111111": [
     {
       id: "m1",
-      title: "AI Fundamentals for Professionals",
+      title: "AI Foundations",
       lessons: [
         { id: "l1", title: "The LLM Revolution", duration: "14:20", isCompleted: false, type: "video", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
         { id: "l2", title: "Prompt Engineering Mastery", duration: "25:15", isCompleted: false, type: "video", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
@@ -78,7 +78,7 @@ export const CURRICULUM_LEDGER: Record<string, Module[]> = {
   "33333333-3333-3333-3333-333333333333": [
     {
       id: "m1",
-      title: "Content Strategy & Distribution",
+      title: "Content Strategy",
       lessons: [
         { id: "l1", title: "The Attention Economy", duration: "11:40", isCompleted: false, type: "video", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
         { id: "l2", title: "Organic Growth Engines", duration: "20:00", isCompleted: false, type: "video", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" }

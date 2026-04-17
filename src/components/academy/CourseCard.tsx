@@ -28,102 +28,111 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      whileHover={{ y: -5 }}
-      transition={{ duration: 0.5 }}
       className="h-full"
     >
-      <Card className="h-full border-border/50 shadow-2xl hover:shadow-primary/10 transition-all flex flex-col group overflow-hidden bg-white dark:bg-zinc-900/40 dark:backdrop-blur-xl relative">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+      <Card className="h-full border-border/50 shadow-2xl hover:shadow-primary/20 transition-all flex flex-col lg:flex-row group overflow-hidden bg-white dark:bg-zinc-900/40 dark:backdrop-blur-xl relative rounded-[2.5rem]">
+        {/* Glow Effects */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
         <div className="absolute -inset-px bg-gradient-to-br from-primary/20 via-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-[inherit] pointer-events-none" />
 
-        <div className="h-52 relative overflow-hidden shrink-0">
+        {/* Thumbnail Section */}
+        <div className="lg:w-72 xl:w-80 h-64 lg:h-auto relative overflow-hidden shrink-0">
           <motion.img 
             src={course.image_url || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800"} 
             alt={course.title} 
             className="w-full h-full object-cover grayscale-[0.2] contrast-[1.1] group-hover:grayscale-0 transition-all duration-1000"
             whileHover={{ scale: 1.1 }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent opacity-80" />
+          <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-zinc-950 via-zinc-950/20 to-transparent opacity-80" />
           
-          <div className="absolute top-4 left-4 z-10 flex flex-wrap gap-2">
-            <Badge className="bg-zinc-950/60 text-primary border-primary/20 backdrop-blur-xl uppercase font-mono text-[9px] tracking-widest px-2.5 py-1">
+          <div className="absolute top-6 left-6 z-10 flex flex-wrap gap-2">
+            <Badge className="bg-zinc-950/60 text-primary border-primary/20 backdrop-blur-xl uppercase font-mono text-[10px] tracking-widest px-3 py-1">
               {course.category}
             </Badge>
-            {isEnrolled && (
-              <Badge variant="outline" className="font-mono text-[9px] uppercase tracking-widest text-emerald-400 border-emerald-400/30 bg-emerald-400/10 backdrop-blur-xl">
-                <ShieldCheckIcon className="size-2.5 mr-1" /> Joined
-              </Badge>
-            )}
           </div>
           
-          <div className="absolute bottom-4 left-4 right-4 z-10">
-             <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-white/80">
-                <ClockIcon className="size-3" />
-                <span>Est. {course.duration || "4 Hours"}</span>
-             </div>
+          <div className="absolute bottom-6 left-6 z-10 flex items-center gap-3 text-[10px] font-mono uppercase tracking-[0.2em] text-white/90">
+            <ClockIcon className="size-3 text-primary" />
+            <span>{course.duration || "4 Hours"} Course</span>
           </div>
         </div>
 
-        <CardHeader className="pt-6 pb-2 px-6">
-          <CardTitle className="text-xl font-bold tracking-tight line-clamp-1 group-hover:text-primary transition-colors duration-300">
-            {course.title}
-          </CardTitle>
-        </CardHeader>
-        
-        <CardContent className="flex-1 flex flex-col pt-0 px-6">
-          <p className="text-[13px] text-muted-foreground line-clamp-2 leading-relaxed mb-6">
-             {course.overview || course.description || "Master new technical skills with Star9 Academy."}
-          </p>
+        {/* Content Section */}
+        <div className="flex-1 flex flex-col p-8 lg:p-10 relative z-10">
+          <div className="flex-1 space-y-4">
+            <div className="flex items-start justify-between gap-4">
+              <h3 className="text-2xl lg:text-3xl font-bold tracking-tighter italic group-hover:text-primary transition-colors duration-300">
+                {course.title}
+              </h3>
+              {isEnrolled && (
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 font-mono text-[10px] uppercase tracking-widest shrink-0">
+                   <ShieldCheckIcon className="size-3" /> Enrolled
+                </div>
+              )}
+            </div>
+            
+            <p className="text-sm lg:text-base text-muted-foreground line-clamp-2 leading-relaxed max-w-2xl">
+              {course.overview || course.description || "Master new technical skills with Star9 Academy's flagship professional training programs."}
+            </p>
 
-          {isEnrolled ? (
-            <div className="space-y-1 relative z-10">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest font-bold">Progress</span>
-                <span className="text-[10px] font-mono text-primary font-black">{progress}%</span>
-              </div>
-              <div className="h-1.5 w-full bg-muted dark:bg-zinc-900 rounded-full overflow-hidden border border-border/50 p-[1px]">
-                <motion.div 
-                   initial={{ width: 0 }}
-                   animate={{ width: `${progress}%` }}
-                   className="h-full bg-primary rounded-full shadow-[0_0_10px_rgba(var(--primary),0.5)]" 
-                />
-              </div>
+            <div className="flex items-center gap-6 pt-2">
+               <div className="flex flex-col gap-1">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Curriculum</span>
+                  <span className="text-sm font-bold flex items-center gap-2">
+                    <SparklesIcon className="size-3 text-primary" /> 6 Deep Dive Modules
+                  </span>
+               </div>
+               <div className="w-px h-8 bg-border/50" />
+               <div className="flex flex-col gap-1">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Certification</span>
+                  <span className="text-sm font-bold">Global Credential</span>
+               </div>
             </div>
-          ) : (
-            <div className="flex items-center gap-2 relative z-10">
-              <ClockIcon className="size-3 text-muted-foreground" />
-              <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">{course.duration || "4 Hours"}</span>
-            </div>
-          )}
-        </CardContent>
-        
-        <CardFooter className="p-6 pt-0 flex gap-2 relative z-10">
-          {isEnrolled ? (
-            <Button 
-              onClick={(e) => { e.stopPropagation(); onOpen?.(); }}
-              className="flex-1 bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 rounded-xl h-11 font-mono text-[10px] uppercase tracking-widest font-bold"
-            >
-              Resume Course
-            </Button>
-          ) : (
-            <>
-              <Button 
-                onClick={(e) => { e.stopPropagation(); onEnroll?.(); }}
-                disabled={isEnrolling}
-                className="flex-1 bg-foreground text-background hover:bg-foreground/90 rounded-xl h-11 font-mono text-[10px] uppercase tracking-widest font-bold shadow-lg"
-              >
-                {isEnrolling ? "Joining..." : "Join Course"}
-              </Button>
-              <Button 
-                variant="outline"
-                onClick={(e) => { e.stopPropagation(); onViewDetails?.(); }}
-                className="size-11 rounded-xl border-border bg-card text-foreground hover:bg-muted flex items-center justify-center p-0"
-              >
-                <ArrowRightIcon className="size-4" />
-              </Button>
-            </>
-          )}
-        </CardFooter>
+          </div>
+
+          <div className="mt-8 flex flex-col sm:flex-row items-center gap-4">
+            {isEnrolled ? (
+              <>
+                <div className="flex-1 w-full space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest font-bold">Training Progress</span>
+                    <span className="text-[10px] font-mono text-primary font-black">{progress}%</span>
+                  </div>
+                  <div className="h-2 w-full bg-muted dark:bg-zinc-950/80 rounded-full overflow-hidden border border-border/50 p-[1px]">
+                    <motion.div 
+                       initial={{ width: 0 }}
+                       animate={{ width: `${progress}%` }}
+                       className="h-full bg-gradient-to-r from-primary to-emerald-400 rounded-full" 
+                    />
+                  </div>
+                </div>
+                <Button 
+                  onClick={(e) => { e.stopPropagation(); onOpen?.(); }}
+                  className="w-full sm:w-auto px-8 h-12 rounded-2xl bg-primary text-white hover:bg-primary/90 font-bold tracking-widest text-[10px] uppercase shadow-lg shadow-primary/20"
+                >
+                  Continue Journey
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button 
+                  onClick={(e) => { e.stopPropagation(); onEnroll?.(); }}
+                  disabled={isEnrolling}
+                  className="flex-1 w-full sm:w-auto h-12 rounded-2xl bg-white text-black hover:bg-zinc-200 font-bold tracking-widest text-[10px] uppercase shadow-xl"
+                >
+                  {isEnrolling ? "Initializing..." : "Enroll Now"}
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={(e) => { e.stopPropagation(); onViewDetails?.(); }}
+                  className="w-full sm:w-auto px-8 h-12 rounded-2xl border-white/5 bg-zinc-950/20 text-white hover:bg-zinc-900 font-mono text-[10px] uppercase tracking-widest"
+                >
+                  Explore Details
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
       </Card>
     </motion.div>
   );

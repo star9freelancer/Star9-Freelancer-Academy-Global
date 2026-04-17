@@ -508,7 +508,7 @@ const Academy = () => {
                          <h3 className="text-sm font-medium text-muted-foreground">All Courses</h3>
                          <div className="h-px flex-1 bg-border/50" />
                       </div>
-                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
                         {courses
                           .filter(c => 
                             searchQuery === "" || 
