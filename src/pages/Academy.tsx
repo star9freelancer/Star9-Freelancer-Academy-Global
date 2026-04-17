@@ -318,28 +318,28 @@ const Academy = () => {
       {/* Top Navigation - hidden on mobile */}
       <div className="hidden md:flex fixed top-0 inset-x-0 z-50 justify-center p-4 md:p-6 transition-all duration-500">
         <nav 
-          className="flex items-center gap-2 md:gap-3 px-4 py-2.5 rounded-full bg-card/80 backdrop-blur-xl border border-border shadow-lg max-w-full overflow-x-auto no-scrollbar"
+          className="flex items-center gap-2 md:gap-3 px-4 py-2.5 rounded-full bg-zinc-950/80 backdrop-blur-xl border border-white/10 shadow-lg max-w-full overflow-x-auto no-scrollbar"
         >
           {/* Logo */}
-          <Link to="/" className="p-2 rounded-full hover:bg-muted transition-colors shrink-0">
+          <Link to="/" className="p-2 rounded-full hover:bg-white/5 transition-colors shrink-0">
             <img src={logo} alt="Star9" className="h-7 w-auto" />
           </Link>
 
-          <div className="h-6 w-px bg-border mx-1 shrink-0" />
+          <div className="h-6 w-px bg-white/10 mx-1 shrink-0" />
 
           {/* Search */}
-          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-full border border-border focus-within:border-primary/40 transition-all group w-48">
-            <SearchIcon className="size-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-full border border-white/10 focus-within:border-primary/40 transition-all group w-48 transition-all">
+            <SearchIcon className="size-3.5 text-white/30 group-focus-within:text-primary transition-colors" />
             <input 
               type="text" 
               placeholder="Search..."
-              className="bg-transparent text-sm outline-none w-full text-foreground placeholder:text-muted-foreground"
+              className="bg-transparent text-sm outline-none w-full text-white placeholder:text-white/20"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
-          <div className="hidden lg:block h-6 w-px bg-border mx-1 shrink-0" />
+          <div className="hidden lg:block h-6 w-px bg-white/10 mx-1 shrink-0" />
 
           {/* Navigation Links */}
           <div className="flex items-center gap-1 shrink-0">
@@ -365,7 +365,7 @@ const Academy = () => {
             })}
           </div>
 
-          <div className="h-6 w-px bg-border mx-1 shrink-0" />
+          <div className="h-6 w-px bg-white/10 mx-1 shrink-0" />
 
           {/* Points & Profile / Auth Buttons */}
           <div className="flex items-center gap-2 shrink-0">

@@ -23,7 +23,12 @@ import {
   LogOut as LogOutIcon,
   FileText as FileTextIcon, 
   Download as DownloadIcon, 
-  UserCheck as UserCheckIcon
+  UserCheck as UserCheckIcon,
+  MessageSquare,
+  Trash2,
+  Eye,
+  EyeOff,
+  Mail
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -148,6 +153,27 @@ const Admin = () => {
     if (!confirm("Remove this opportunity?")) return;
     const { error } = await supabase.from('academy_jobs').delete().eq('id', id);
     if (!error) { toast.success("Opportunity removed"); fetchAllData(); }
+  };
+
+  const handleDeleteUser = async (id: string) => {
+    if (!confirm("Are you sure? This will permanently remove the user and all their associated data across the global infrastructure.")) return;
+    const { error } = await supabase.from('profiles').delete().eq('id', id);
+    if (!error) {
+      toast.success("User purged successfully");
+      fetchAllData();
+    } else {
+      toast.error("Cleanup failed", { description: error.message });
+    }
+  };
+
+  const handleDeleteMessage = async (id: string) => {
+    if (!confirm("Delete this message?")) return;
+    const { error } = await supabase.from('contact_messages').delete().eq('id', id);
+    if (!error) { 
+      toast.success("Message removed");
+      setContactMessages(prev => prev.filter(m => m.id !== id));
+      fetchAllData();
+    }
   };
 
   const handleSaveCourse = async () => {
@@ -347,19 +373,26 @@ const Admin = () => {
 
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 {[
-                  { label: "Users", value: stats.totalUsers, icon: UsersIcon, color: "text-green-500", click: () => setActiveTab("users") },
-                  { label: "Courses", value: stats.totalCourses, icon: BookOpenIcon, color: "text-primary", click: () => setActiveTab("courses") },
-                  { label: "Jobs", value: stats.totalOpportunities, icon: BriefcaseIcon, color: "text-secondary", click: () => setActiveTab("intake") },
-                  { label: "Pending", value: stats.pendingVerifications, icon: ShieldCheckIcon, color: "text-amber-500", click: () => setActiveTab("users") },
-                  { label: "Messages", value: stats.unreadMessages, icon: MessageSquareIcon, color: "text-blue-500", click: () => setActiveTab("messages") },
-                  { label: "Revenue", value: `$${stats.totalRevenue.toLocaleString()}`, icon: CreditCardIcon, color: "text-emerald-500", click: () => setActiveTab("financials") },
+                  { label: "Total Members", value: stats.totalUsers, icon: UsersIcon, color: "text-blue-400", gradient: "from-blue-500/10 to-transparent", click: () => setActiveTab("users") },
+                  { label: "Active Courses", value: stats.totalCourses, icon: BookOpenIcon, color: "text-emerald-400", gradient: "from-emerald-500/10 to-transparent", click: () => setActiveTab("courses") },
+                  { label: "Job Postings", value: stats.totalOpportunities, icon: BriefcaseIcon, color: "text-purple-400", gradient: "from-purple-500/10 to-transparent", click: () => setActiveTab("intake") },
+                  { label: "Review Queue", value: stats.pendingVerifications, icon: ShieldCheckIcon, color: "text-amber-400", gradient: "from-amber-500/10 to-transparent", click: () => setActiveTab("users") },
+                  { label: "Support Inbox", value: stats.unreadMessages, icon: MessageSquareIcon, color: "text-pink-400", gradient: "from-pink-500/10 to-transparent", click: () => setActiveTab("messages") },
+                  { label: "Total Revenue", value: `$${stats.totalRevenue.toLocaleString()}`, icon: CreditCardIcon, color: "text-primary", gradient: "from-primary/10 to-transparent", click: () => setActiveTab("financials") },
                 ].map((stat, i) => (
-                  <Card key={i} className="p-4 cursor-pointer hover:border-primary/30 transition-all" onClick={stat.click}>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-xs text-muted-foreground">{stat.label}</span>
-                      <stat.icon className={`size-4 ${stat.color}`} />
+                  <Card 
+                    key={i} 
+                    className="p-5 cursor-pointer hover:border-primary/40 transition-all group relative overflow-hidden bg-zinc-900/40 backdrop-blur-xl border-white/5" 
+                    onClick={stat.click}
+                  >
+                    <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-0 group-hover:opacity-100 transition-opacity`} />
+                    <div className="relative z-10">
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-[10px] font-mono text-white/30 tracking-widest uppercase font-bold">{stat.label}</span>
+                        <stat.icon className={`size-4 ${stat.color} group-hover:scale-110 transition-transform`} />
+                      </div>
+                      <h3 className="text-3xl font-bold tracking-tighter text-white">{stat.value}</h3>
                     </div>
-                    <h3 className="text-2xl font-bold">{stat.value}</h3>
                   </Card>
                 ))}
               </div>
@@ -446,7 +479,7 @@ const Admin = () => {
                               </div>
                               <div>
                                 <p className="font-medium flex items-center">
-                                  {std.full_name || "Unnamed"}
+                                  {std.full_name || "Star9 Member"}
                                   <VerificationBadge status={std.verification_status} />
                                 </p>
                                 <p className="text-xs text-muted-foreground">{std.email}</p>
@@ -485,7 +518,7 @@ const Admin = () => {
                                 </SheetTrigger>
                                 <SheetContent className="w-[400px] sm:w-[500px]">
                                   <SheetHeader className="pb-6 border-b">
-                                    <SheetTitle className="text-2xl font-bold">{std.full_name || "Unnamed"}</SheetTitle>
+                                    <SheetTitle className="text-2xl font-bold">{std.full_name || "Star9 Member"}</SheetTitle>
                                     <SheetDescription className="text-sm">
                                       Joined: {new Date(std.created_at).toLocaleDateString()}
                                     </SheetDescription>
@@ -529,6 +562,7 @@ const Admin = () => {
                                         ) : (
                                           <Button variant="destructive" className="flex-1" onClick={() => setVerification(std.id, 'pending')}>Revoke Verification</Button>
                                         )}
+                                        <Button variant="outline" className="text-destructive hover:bg-destructive/10" onClick={() => handleDeleteUser(std.id)}>Purge User</Button>
                                       </div>
                                     </div>
                                   </div>
@@ -901,6 +935,15 @@ const Admin = () => {
                             <a href={`mailto:${msg.email}?subject=${encodeURIComponent(`Re: ${msg.subject}`)}`}>
                               <Mail className="size-4" />
                             </a>
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="size-8 text-muted-foreground hover:text-destructive" 
+                            onClick={() => handleDeleteMessage(msg.id)}
+                            title="Delete message"
+                          >
+                            <Trash2 className="size-4" />
                           </Button>
                         </div>
                       </div>

@@ -54,6 +54,7 @@ const Header = () => {
     { label: "Freelancer", href: "/", icon: UsersIcon },
     { label: "Academy", href: "/academy", icon: BookOpenIcon },
     { label: "Global", href: "/global", icon: GlobeIcon },
+    { label: "Support", href: "/contact", icon: SparklesIcon },
   ];
 
   return (
@@ -64,110 +65,112 @@ const Header = () => {
         transition={{ type: "spring", damping: 20, stiffness: 100 }}
         className={`flex items-center gap-2 md:gap-3 px-4 py-2.5 rounded-full backdrop-blur-xl border shadow-lg max-w-full transition-all duration-300 ${
           scrolled
-            ? "bg-card/80 border-border"
-            : "bg-card/60 border-border/50"
+            ? "bg-zinc-950/80 border-white/10"
+            : "bg-zinc-950/40 border-white/5"
         }`}
       >
         {/* Logo */}
-        <Link to="/" className="p-2 rounded-full hover:bg-muted transition-colors shrink-0">
+        <Link to="/" className="p-2 rounded-full hover:bg-white/5 transition-colors shrink-0">
           <img src={logo} alt="Star9" className="h-7 w-auto" />
         </Link>
 
-        <div className="h-6 w-px bg-border mx-1 shrink-0 hidden md:block" />
+        <div className="h-6 w-px bg-white/10 mx-1 shrink-0 hidden md:block" />
 
         {/* Nav Links */}
         <div className="hidden md:flex items-center gap-1">
           {navLinks.map((l) => (
-            <Button key={l.label} variant="ghost" size="sm" className="text-sm font-medium rounded-full gap-2 px-4" asChild>
-              {l.href.startsWith("#") ? (
-                <a href={l.href}>
-                  <l.icon className="size-4" />
-                  {l.label}
-                </a>
-              ) : (
-                <Link to={l.href}>
-                  <l.icon className="size-4" />
-                  {l.label}
-                </Link>
-              )}
+            <Button key={l.label} variant="ghost" size="sm" className="text-sm font-medium rounded-full gap-2 px-4 text-white/70 hover:text-white hover:bg-white/5 shrink-0" asChild>
+              <Link to={l.href}>
+                <l.icon className="size-4 opacity-50" />
+                {l.label}
+              </Link>
             </Button>
           ))}
         </div>
 
-        <div className="h-6 w-px bg-border mx-1 shrink-0 hidden md:block" />
+        <div className="h-6 w-px bg-white/10 mx-1 shrink-0 hidden md:block" />
 
         {/* Right side */}
         <div className="hidden md:flex items-center gap-2">
-          <button
-            onClick={() => setDark(!dark)}
-            className="p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Toggle dark mode"
-          >
-            {dark ? <SunIcon className="size-4" /> : <MoonIcon className="size-4" />}
-          </button>
           {user ? (
-            <Button size="sm" className="gap-2 rounded-full" asChild>
+            <Button size="sm" className="gap-2 rounded-full bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/20 brightness-110" asChild>
               <Link to="/academy">
                 <LayoutDashboardIcon className="size-3.5" />
-                My Academy
+                Intelligence Hub
               </Link>
             </Button>
           ) : (
             <>
-              <Button variant="ghost" size="sm" className="rounded-full" asChild>
+              <Button variant="ghost" size="sm" className="rounded-full text-white/50 hover:text-white" asChild>
                 <Link to="/auth">Log In</Link>
               </Button>
-              <Button size="sm" className="rounded-full" asChild>
-                <Link to="/auth">Sign Up</Link>
+              <Button size="sm" className="rounded-full bg-white text-black hover:bg-zinc-200" asChild>
+                <Link to="/auth">Start Now</Link>
               </Button>
             </>
           )}
         </div>
 
         {/* Mobile toggle */}
-        <button className="md:hidden p-2 rounded-full hover:bg-muted" onClick={() => setMobileOpen(!mobileOpen)}>
+        <button 
+          className="md:hidden p-2 rounded-full bg-white/5 text-white" 
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label="Toggle menu"
+        >
           {mobileOpen ? <XIcon className="size-5" /> : <MenuIcon className="size-5" />}
         </button>
       </motion.nav>
 
-      {/* Mobile dropdown */}
-      {mobileOpen && (
-        <div className="md:hidden fixed top-20 left-4 right-4 bg-card/95 backdrop-blur-xl border border-border rounded-2xl p-4 space-y-2 shadow-xl z-50">
-          {navLinks.map((l) => (
-            <Link
-              key={l.label}
-              to={l.href.startsWith("#") ? "/" : l.href}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted transition-colors text-sm font-medium"
-              onClick={() => setMobileOpen(false)}
-            >
-              <l.icon className="size-4 text-muted-foreground" />
-              {l.label}
-            </Link>
-          ))}
-          <div className="flex items-center justify-between px-4 py-2">
-            <span className="text-sm text-muted-foreground">Dark Mode</span>
-            <button onClick={() => setDark(!dark)} className="p-2 rounded-lg hover:bg-muted transition-colors">
-              {dark ? <SunIcon className="size-4" /> : <MoonIcon className="size-4" />}
-            </button>
-          </div>
-          <div className="flex gap-2 pt-2">
-            {user ? (
-              <Button size="sm" className="flex-1 rounded-full" asChild>
-                <Link to="/academy" onClick={() => setMobileOpen(false)}>My Academy</Link>
-              </Button>
-            ) : (
-              <>
-                <Button variant="ghost" size="sm" className="flex-1 rounded-full" asChild>
-                  <Link to="/auth" onClick={() => setMobileOpen(false)}>Log In</Link>
-                </Button>
-                <Button size="sm" className="flex-1 rounded-full" asChild>
-                  <Link to="/auth" onClick={() => setMobileOpen(false)}>Sign Up</Link>
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      )}
+      {/* Premium Mobile Overlay */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="md:hidden fixed inset-0 z-[60] bg-zinc-950/98 backdrop-blur-2xl flex flex-col p-8 pt-24"
+          >
+            <div className="space-y-4">
+              <p className="text-[10px] font-mono uppercase tracking-[0.5em] text-white/30 mb-8">Navigation Menu</p>
+              {navLinks.map((l, i) => (
+                <motion.div
+                  key={l.label}
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: i * 0.1 }}
+                >
+                  <Link
+                    to={l.href}
+                    className="flex items-center justify-between py-4 border-b border-white/5 text-2xl font-bold tracking-tighter text-white/90 hover:text-primary transition-colors"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {l.label}
+                    <l.icon className="size-6 text-primary opacity-50" />
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="mt-auto space-y-4">
+               {user ? (
+                 <Button className="w-full h-14 rounded-2xl text-lg font-bold bg-primary text-white" asChild onClick={() => setMobileOpen(false)}>
+                   <Link to="/academy">Go to Dashboard</Link>
+                 </Button>
+               ) : (
+                 <div className="grid grid-cols-2 gap-4">
+                   <Button variant="outline" className="h-14 rounded-2xl border-white/10 text-white" asChild onClick={() => setMobileOpen(false)}>
+                     <Link to="/auth">Log In</Link>
+                   </Button>
+                   <Button className="h-14 rounded-2xl bg-white text-black font-bold" asChild onClick={() => setMobileOpen(false)}>
+                     <Link to="/auth">Join Now</Link>
+                   </Button>
+                 </div>
+               )}
+               <p className="text-center text-[10px] font-mono text-white/20 uppercase tracking-widest pt-4">&copy; {new Date().getFullYear()} Star9 Academy Global</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };
