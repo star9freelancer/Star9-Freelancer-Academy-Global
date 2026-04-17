@@ -16,10 +16,41 @@ serve(async (req: Request) => {
   }
 
   try {
-    const payload = await req.json();
+    const body = await req.text();
+    const signature = req.headers.get('x-paystack-signature');
+    const secret = Deno.env.get('PAYSTACK_SECRET_KEY');
 
-    // In a prod environment, verify req.headers.get('x-paystack-signature') here
-    // using HMAC SHA512 with your SECRET_KEY.
+    if (!signature || !secret) {
+      return new Response('Unauthorized - Missing signal signature', { status: 401 });
+    }
+
+    // Verify HMAC SHA512
+    const encoder = new TextEncoder();
+    const keyData = encoder.encode(secret);
+    const key = await crypto.subtle.importKey(
+      "raw",
+      keyData,
+      { name: "HMAC", hash: "SHA-512" },
+      false,
+      ["verify"]
+    );
+
+    const sigHex = signature;
+    const sigBytes = new Uint8Array(sigHex.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
+    
+    const isValid = await crypto.subtle.verify(
+      "HMAC",
+      key,
+      sigBytes,
+      encoder.encode(body)
+    );
+
+    if (!isValid) {
+      console.error("Invalid Paystack Signature detected.");
+      return new Response('Unauthorized - Invalid Signature', { status: 401 });
+    }
+
+    const payload = JSON.parse(body);
 
     // Listen only for successful charges
     if (payload.event === 'charge.success') {

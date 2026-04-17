@@ -215,7 +215,7 @@ const Academy = () => {
     if (courseObj?.title.toLowerCase().includes("mastering")) price = 250;
     if (courseObj?.title.toLowerCase().includes("teacher")) price = 300;
 
-    const paystackKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_placeholder_xyz';
+    const paystackKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
     try {
       if ((window as any).PaystackPop) {
         const handler = (window as any).PaystackPop.setup({
@@ -235,9 +235,7 @@ const Academy = () => {
             toast.success(`Payment verified by processor! Reference: ${response.reference}`);
             toast.info(`Please allow up to 60 seconds for the Global Cloud Node to authorize your module unlocks.`);
             setEnrolling(null);
-            // In a production environment, we do NOT spoof the UI success here. 
             // The Webhook asynchronously writes to the database. 
-            // You may optionally implement an auto-poller here to invalidateAll() when DB reflects change.
             setTimeout(() => { invalidateAll(); }, 5000); 
           },
           onClose: function() {
