@@ -229,9 +229,9 @@ const Academy = () => {
     if (!courseId) return;
 
     const courseObj = courses.find(c => c.id === courseId);
-    let basePrice = 100;
-    if (courseObj?.title.toLowerCase().includes("mastering")) basePrice = 250;
-    if (courseObj?.title.toLowerCase().includes("teacher")) basePrice = 300;
+    let basePrice = 50; // New default price for AI for Freelancers
+    if (courseObj?.title.toLowerCase().includes("mastering")) basePrice = 100;
+    if (courseObj?.title.toLowerCase().includes("teacher") || courseObj?.title.toLowerCase().includes("preparation")) basePrice = 300;
 
     const amount = currency === 'USD' ? basePrice * 100 : basePrice * exchangeRate * 100;
 
@@ -493,36 +493,56 @@ const Academy = () => {
                <div className="space-y-12 pb-20">
                  {activeTab === "home" && <HomeFeed setActiveTab={setActiveTab} courses={courses} enrollments={enrollments} profile={profile} />}
 
-                 {activeTab === "academy" && (
-                   <div className="space-y-8">
-                      <div className="flex items-center gap-3">
-                         <div className="h-px flex-1 bg-border/50" />
-                          <h3 className="text-sm font-medium text-primary">Your Learning Progress</h3>
-                         <div className="h-px flex-1 bg-border/50" />
-                      </div>
-                      
-                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {courses
-                          .filter(c => enrollments.has(c.id))
-                          .filter(c => 
-                            searchQuery === "" || 
-                            c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            c.category.toLowerCase().includes(searchQuery.toLowerCase())
-                          )
-                          .map((course) => (
-                            <CourseCard key={course.id} course={course} enrollment={enrollments.get(course.id)} onOpen={() => navigate(`/academy/course/${course.id}`)} />
-                          ))
-                        }
-                        {courses.filter(c => enrollments.has(c.id)).length === 0 && (
-                           <Card className="glass border-dashed p-12 text-center col-span-full opacity-60">
-                              <BookOpenIcon className="size-12 mx-auto mb-4 text-muted-foreground" />
-                               <h3 className="font-bold">No courses yet</h3>
-                               <Button className="mt-6" variant="outline" onClick={() => setActiveTab('catalog')}>Browse Courses</Button>
-                           </Card>
-                        )}
-                      </div>
-                   </div>
-                 )}
+                  {activeTab === "academy" && (
+                    <div className="space-y-10">
+                       <div className="relative p-8 rounded-3xl bg-gradient-to-br from-primary/20 via-primary/5 to-transparent border border-white/10 overflow-hidden group">
+                          <div className="absolute top-0 right-0 p-12 opacity-5 -rotate-12 group-hover:rotate-0 transition-transform duration-700">
+                             <AwardIcon className="size-48 text-primary" />
+                          </div>
+                          <div className="relative z-10 max-w-2xl space-y-4">
+                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary text-[10px] font-bold uppercase tracking-widest">
+                                Student Portal active
+                             </div>
+                             <h2 className="text-4xl font-black italic tracking-tight text-white">Your Intelligence <span className="text-primary">Hub</span></h2>
+                             <p className="text-zinc-400 text-lg">Continue building your global borderless career. Access your modules, assignments, and certificates below.</p>
+                          </div>
+                       </div>
+
+                       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                         {courses
+                           .filter(c => enrollments.has(c.id))
+                           .filter(c => !c.title.toLowerCase().includes("teacher")) // Teacher Preparation is now in Global hub
+                           .filter(c => 
+                             searchQuery === "" || 
+                             c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                             c.category.toLowerCase().includes(searchQuery.toLowerCase())
+                           )
+                           .map((course) => (
+                             <div key={course.id} className="group relative">
+                                <div className="absolute -inset-0.5 bg-gradient-to-br from-primary/50 to-violet-500/50 rounded-[2rem] blur opacity-0 group-hover:opacity-20 transition duration-500" />
+                                <CourseCard 
+                                  course={course} 
+                                  enrollment={enrollments.get(course.id)} 
+                                  onOpen={() => navigate(`/academy/course/${course.id}`)} 
+                                />
+                             </div>
+                           ))
+                         }
+                         {courses.filter(c => enrollments.has(c.id)).length === 0 && (
+                            <div className="col-span-full py-20 flex flex-col items-center text-center space-y-6">
+                               <div className="size-24 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+                                  <BookOpenIcon className="size-10 text-white/20" />
+                               </div>
+                               <div className="max-w-xs">
+                                  <h3 className="text-xl font-bold text-white mb-2">Knowledge Foundation Empty</h3>
+                                  <p className="text-zinc-500">You haven't initialized any modules yet. Visit the catalog to begin your journey.</p>
+                               </div>
+                               <Button className="h-12 px-8 rounded-full" onClick={() => setActiveTab('catalog')}>Initialize First Module</Button>
+                            </div>
+                         )}
+                       </div>
+                    </div>
+                  )}
 
                   {activeTab === "catalog" && (
                     <div className="space-y-12 pb-20">

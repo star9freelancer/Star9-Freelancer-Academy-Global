@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 const tiers = [
   {
     name: "AI for Freelancers",
-    price: "$100",
+    price: "$50",
     period: "one-time",
     subtitle: "Master AI tools and land your first global client",
     referral: "Earn $10 per referral",
@@ -24,10 +24,10 @@ const tiers = [
   },
   {
     name: "Mastering Freelancing",
-    price: "$250",
+    price: "$100",
     period: "one-time",
     subtitle: "The complete pipeline from zero to global freelance income",
-    referral: "Earn $40 per referral",
+    referral: "Earn $15 per referral",
     features: [
       "12-week intensive programme",
       "Everything in AI for Freelancers",
