@@ -31,7 +31,7 @@ interface ReferralStats {
 
 const COMMISSION_MAP: Record<string, number> = {
   "AI for Freelancers": 10,
-  "Mastering Freelancing": 40,
+  "Mastering Freelancing": 15,
   "International Teacher Prep": 40,
 };
 
@@ -146,7 +146,7 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
 
   const commissionGuide = [
     { course: "AI for Freelancers", price: "$100", commission: "$10", color: "bg-primary/10 border-primary/20 text-primary" },
-    { course: "Mastering Freelancing", price: "$250", commission: "$40", color: "bg-secondary/10 border-secondary/20 text-secondary" },
+    { course: "Mastering Freelancing", price: "$250", commission: "$15", color: "bg-secondary/10 border-secondary/20 text-secondary" },
     { course: "International Teacher Prep", price: "$300", commission: "$40", color: "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" },
   ];
 

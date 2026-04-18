@@ -43,7 +43,7 @@ const tiers = [
     emoji: "🚀",
   },
   {
-    name: "International Teacher Prep",
+    name: "International Teacher Preparation",
     price: "$300",
     period: "one-time",
     subtitle: "3-phase pipeline to a US or EU teaching placement",

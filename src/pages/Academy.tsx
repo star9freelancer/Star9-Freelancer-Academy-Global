@@ -691,8 +691,8 @@ const Academy = () => {
                 </div>
                 <div className="text-right">
                   <p className="font-mono text-lg font-black text-white">$ {
-                    courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("mastering") ? "250" : 
-                    courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") ? "300" : "100"
+                    courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("mastering") ? "250" : 
+                    courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher") ? "300" : "100"
                   }</p>
                 </div>
               </button>
@@ -713,8 +713,8 @@ const Academy = () => {
                 <div className="text-right">
                   <p className="font-mono text-lg font-black text-emerald-400">
                     KES {Math.round((
-                      courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("mastering") ? 250 : 
-                      courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") ? 300 : 100
+                      courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("mastering") ? 250 : 
+                      courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher") ? 300 : 100
                     ) * exchangeRate).toLocaleString()}
                   </p>
                 </div>
