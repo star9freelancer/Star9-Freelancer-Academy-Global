@@ -38,7 +38,7 @@ export interface Course {
 }
 
 export const CURRICULUM_LEDGER: Record<string, Module[]> = {
-  // Freelancing Essentials
+  // Mastering Freelancing
   "22222222-2222-2222-2222-222222222222": [
     {
       id: "m1",

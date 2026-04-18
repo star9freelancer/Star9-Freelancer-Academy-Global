@@ -36,7 +36,9 @@ import {
   Link as LinkIcon, 
   Briefcase as BriefcaseIcon, 
   Calendar as CalendarIcon, 
-  Save as SaveIcon
+  Save as SaveIcon,
+  CreditCard as CreditCardIcon,
+  Smartphone as SmartphoneIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -44,6 +46,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import logo from "@/assets/logo_transparent.png";
 
 const Academy = () => {
@@ -202,6 +211,9 @@ const Academy = () => {
     }
   };
 
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [exchangeRate] = useState(150); // Set fixed rate for launch
+
   const handleEnroll = async (courseId: string) => {
     if (!user) {
       toast.info("Sign in Required", { description: "You need to create a free account to enroll in courses." });
@@ -209,11 +221,19 @@ const Academy = () => {
       return;
     }
     setEnrolling(courseId);
+    setPaymentModalOpen(true);
+  };
+
+  const initiatePayment = (currency: 'USD' | 'KES') => {
+    const courseId = enrolling;
+    if (!courseId) return;
 
     const courseObj = courses.find(c => c.id === courseId);
-    let price = 100;
-    if (courseObj?.title.toLowerCase().includes("mastering")) price = 250;
-    if (courseObj?.title.toLowerCase().includes("teacher")) price = 300;
+    let basePrice = 100;
+    if (courseObj?.title.toLowerCase().includes("mastering")) basePrice = 250;
+    if (courseObj?.title.toLowerCase().includes("teacher")) basePrice = 300;
+
+    const amount = currency === 'USD' ? basePrice * 100 : basePrice * exchangeRate * 100;
 
     const paystackKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
     try {
@@ -221,11 +241,12 @@ const Academy = () => {
         const handler = (window as any).PaystackPop.setup({
           key: paystackKey,
           email: user?.email || "student@star9global.com",
-          amount: price * 100, // strictly in cents
-          currency: 'USD', // Lock to Equity USD parameters
-          channels: ['card', 'bank', 'ussd', 'qr', 'mobile_money', 'bank_transfer', 'apple_pay', 'google_pay'],
+          amount: amount,
+          currency: currency,
+          channels: currency === 'USD' 
+            ? ['card', 'apple_pay', 'google_pay'] 
+            : ['card', 'mobile_money', 'bank_transfer'],
           ref: 'ST9_' + Math.floor((Math.random() * 1000000000) + 1),
-          // Crucial Metadata payload for Webhooks + DB integration
           metadata: {
              custom_fields: [
                 { display_name: "Internal User ID", variable_name: "user_id", value: user.id },
@@ -233,23 +254,23 @@ const Academy = () => {
              ]
           },
           callback: function(response: any) {
-            toast.success(`Payment verified by processor! Reference: ${response.reference}`);
-            toast.info(`Please allow up to 60 seconds for the Global Cloud Node to authorize your module unlocks.`);
+            toast.success(`Payment verified! Reference: ${response.reference}`);
+            setPaymentModalOpen(false);
             setEnrolling(null);
-            // The Webhook asynchronously writes to the database. 
             setTimeout(() => { invalidateAll(); }, 5000); 
           },
           onClose: function() {
-            toast.error("Transaction cancelled", { description: "You must complete the payment to access the course." });
             setEnrolling(null);
+            setPaymentModalOpen(false);
           }
         });
         handler.openIframe();
       } else {
-        toast.error("Payment Gateway unreachable. Try refreshing the page.");
+        toast.error("Payment Gateway unreachable.");
         setEnrolling(null);
       }
-    } catch (e) {
+    } catch (err) {
+      console.error(err);
       setEnrolling(null);
     }
   };
@@ -643,7 +664,73 @@ const Academy = () => {
              />
           </div>
         )}
-      </div>
+      {/* Payment Selection Modal */}
+      <Dialog open={paymentModalOpen} onOpenChange={(open) => { if(!open) { setPaymentModalOpen(false); setEnrolling(null); } }}>
+        <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden bg-zinc-950 border-white/10 shadow-2xl rounded-3xl">
+          <div className="p-8 space-y-6">
+            <div className="space-y-2">
+              <DialogTitle className="text-2xl font-bold tracking-tight italic">Secure <span className="text-primary">Checkout</span></DialogTitle>
+              <DialogDescription className="text-zinc-500">Choose your preferred payment method and currency.</DialogDescription>
+            </div>
+
+            <div className="grid gap-4">
+              <button 
+                onClick={() => initiatePayment('USD')}
+                className="group relative flex items-center justify-between p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-primary/50 transition-all text-left"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="size-12 rounded-xl bg-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                    <CreditCardIcon className="size-6" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-lg">International Card</h4>
+                    <p className="text-xs text-zinc-500">Secure USD Transaction (Equity Bank)</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="font-mono text-lg font-black text-white">$ {
+                    courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("mastering") ? "250" : 
+                    courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") ? "300" : "100"
+                  }</p>
+                </div>
+              </button>
+
+              <button 
+                onClick={() => initiatePayment('KES')}
+                className="group relative flex items-center justify-between p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-emerald-500/50 transition-all text-left"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="size-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
+                    <SmartphoneIcon className="size-6" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-lg">M-Pesa / Local Card</h4>
+                    <p className="text-xs text-zinc-500">Mobile Money & Local KES Banks</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="font-mono text-lg font-black text-emerald-400">
+                    KES {Math.round((
+                      courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("mastering") ? 250 : 
+                      courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") ? 300 : 100
+                    ) * exchangeRate).toLocaleString()}
+                  </p>
+                </div>
+              </button>
+            </div>
+
+            <div className="pt-4 flex flex-col items-center gap-4 border-t border-white/5">
+               <div className="flex items-center gap-3 opacity-40">
+                  <GlobeIcon className="size-3" />
+                  <span className="text-[10px] uppercase tracking-widest font-mono">End-to-End Encrypted</span>
+               </div>
+               <p className="text-[10px] text-center text-zinc-600 leading-relaxed italic">
+                 "Freelancing with heart and skill." - Star9 Global Platform
+               </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );

@@ -25,7 +25,7 @@ const About = () => (
           <div className="grid md:grid-cols-2 gap-6">
             <div className="p-6 rounded-xl border border-border bg-card">
               <h3 className="font-semibold text-foreground mb-2">Star9 Academy</h3>
-              <p className="text-sm text-muted-foreground">Professional courses in AI for Freelancers, Freelancing Essentials, and International Teacher Preparation.</p>
+              <p className="text-sm text-muted-foreground">Professional courses in AI for Freelancers, Mastering Freelancing, and International Teacher Preparation.</p>
             </div>
             <div className="p-6 rounded-xl border border-border bg-card">
               <h3 className="font-semibold text-foreground mb-2">Star9 Global</h3>
