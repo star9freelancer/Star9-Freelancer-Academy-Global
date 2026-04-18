@@ -664,6 +664,8 @@ const Academy = () => {
              />
           </div>
         )}
+      </div>
+
       {/* Payment Selection Modal */}
       <Dialog open={paymentModalOpen} onOpenChange={(open) => { if(!open) { setPaymentModalOpen(false); setEnrolling(null); } }}>
         <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden bg-zinc-950 border-white/10 shadow-2xl rounded-3xl">
