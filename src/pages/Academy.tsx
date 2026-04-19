@@ -669,7 +669,7 @@ const Academy = () => {
                             )}
                          </div>
 
-                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 md:gap-10">
                            {courses
                              .filter(c => enrollments.has(c.id))
                              .filter(c => filterTab === "active" ? enrollments.get(c.id)!.progress < 100 : enrollments.get(c.id)!.progress >= 100)
@@ -745,7 +745,7 @@ const Academy = () => {
                           </div>
                        </div>
 
-                       <div className="grid grid-cols-1 gap-12 max-w-6xl mx-auto">
+                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 md:gap-12 max-w-[1600px] mx-auto">
                         {courses
                           .filter(c => !enrollments.has(c.id))
                           .filter(c => !c.title.toLowerCase().includes("teacher")) // Teacher Preparation is now in Global hub
