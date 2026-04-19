@@ -777,34 +777,50 @@ const Academy = () => {
                             </span>
                           </div>
                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 md:gap-12 max-w-[1600px] mx-auto">
+                         {courses
+                           .filter(c => !c.title.toLowerCase().includes("teacher")) // Teacher Preparation is now in Global hub
+                           .filter(c => 
+                             searchQuery === "" || 
+                             c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                             c.category.toLowerCase().includes(searchQuery.toLowerCase())
+                           )
+                           .map((course) => {
+                             const isEnrolled = enrollments.has(course.id);
+                             return (
+                               <div key={course.id} className="relative group">
+                                 {isEnrolled && (
+                                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
+                                     <Badge className="bg-emerald-500 text-white border-0 shadow-lg px-3 py-1 text-[9px] font-black uppercase tracking-widest whitespace-nowrap">
+                                        Enrolled
+                                     </Badge>
+                                   </div>
+                                 )}
+                                 <CourseCard 
+                                   course={course} 
+                                   enrollment={enrollments.get(course.id)} 
+                                   isEnrolling={enrolling === course.id} 
+                                   onEnroll={() => handleEnroll(course.id)} 
+                                   onViewDetails={() => setSelectedProgram(course)} 
+                                 />
+                               </div>
+                             );
+                           })
+                         }
 
-                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 md:gap-12 max-w-[1600px] mx-auto">
-                        {courses
-                          .filter(c => !enrollments.has(c.id))
-                          .filter(c => !c.title.toLowerCase().includes("teacher")) // Teacher Preparation is now in Global hub
-                          .filter(c => 
-                            searchQuery === "" || 
-                            c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            c.category.toLowerCase().includes(searchQuery.toLowerCase())
-                          )
-                          .map((course) => (
-                            <CourseCard key={course.id} course={course} enrollment={enrollments.get(course.id)} isEnrolling={enrolling === course.id} onEnroll={() => handleEnroll(course.id)} onViewDetails={() => setSelectedProgram(course)} />
-                          ))
-                        }
 
-                        {courses.filter(c => !enrollments.has(c.id)).length === 0 && (
-                          <div className="col-span-full py-20 flex flex-col items-center text-center space-y-6 bg-card border border-dashed border-border rounded-[3rem]">
-                            <div className="size-20 rounded-2xl bg-primary/5 flex items-center justify-center border border-primary/20">
-                              <SparklesIcon className="size-10 text-primary" />
-                            </div>
-                            <div className="max-w-sm space-y-2">
-                              <h3 className="text-xl font-bold">You're All Set!</h3>
-                              <p className="text-sm text-muted-foreground leading-relaxed">You have initialized all available curriculums. Check your <span className="text-primary font-bold">Academy</span> tab to continue your learning journey.</p>
-                            </div>
-                            <Button variant="outline" className="rounded-xl px-8" onClick={() => setActiveTab('academy')}>Go to Academy</Button>
-                          </div>
-                        )}
-                      </div>
+                         {courses.length === 0 && (
+                           <div className="col-span-full py-20 flex flex-col items-center text-center space-y-6 bg-card border border-dashed border-border rounded-[3rem]">
+                             <div className="size-20 rounded-2xl bg-primary/5 flex items-center justify-center border border-primary/20">
+                               <SparklesIcon className="size-10 text-primary" />
+                             </div>
+                             <div className="max-w-sm space-y-2">
+                               <h3 className="text-xl font-bold">Initializing Vault...</h3>
+                               <p className="text-sm text-muted-foreground leading-relaxed">We're loading the latest global curriculums. Please ensure your connection is stable.</p>
+                             </div>
+                           </div>
+                         )}
+                       </div>
                    </div>
                  )}
 

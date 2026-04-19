@@ -55,6 +55,7 @@ const CoursePlayer = () => {
   const [videoWatched, setVideoWatched] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
   const [ytPlayer, setYtPlayer] = useState<any>(null);
+  const [isCourseComplete, setIsCourseComplete] = useState(false);
 
   useEffect(() => {
     if (!user || !courseId) return;
@@ -62,10 +63,28 @@ const CoursePlayer = () => {
 
     // Find course from local curriculum first (Optimization for instant navigation)
     const localCourse = courses.find(c => c.id === courseId);
+    
+    const tryFetchProgress = async (cid: string) => {
+      try {
+        const { data, error } = await supabase
+          .from('user_lesson_progress')
+          .select('lesson_id')
+          .eq('user_id', user.id)
+          .eq('course_id', cid);
+        
+        if (error) throw error;
+        if (data) setCompletedLessons(new Set(data.map(p => p.lesson_id)));
+      } catch (err) {
+        console.warn("Database progress fetch failed, falling back to local storage:", err);
+        const localKey = `star9_progress_${user.id}_${cid}`;
+        const localData = JSON.parse(localStorage.getItem(localKey) || '[]');
+        setCompletedLessons(new Set(localData));
+      }
+    };
+
     if (localCourse && localCourse.modules && localCourse.modules.length > 0) {
       setCourse(localCourse);
       
-      // Flatten modules and map property names to match DB schema expected by UI
       const courseLessons = localCourse.modules.flatMap((m: any) => 
         (m.lessons || []).map((l: any) => ({
           ...l,
@@ -77,17 +96,7 @@ const CoursePlayer = () => {
       if (courseLessons.length > 0) {
         setLessons(courseLessons);
         setActiveLesson(courseLessons[0]);
-        
-        // Fetch completed lessons from DB asynchronously
-        supabase
-          .from('user_lesson_progress')
-          .select('lesson_id')
-          .eq('user_id', user.id)
-          .eq('course_id', courseId)
-          .then(({ data }) => {
-            if (data) setCompletedLessons(new Set(data.map(p => p.lesson_id)));
-          });
-        
+        tryFetchProgress(courseId);
         setLoading(false);
         return;
       }
@@ -96,10 +105,13 @@ const CoursePlayer = () => {
     // Fallback: fetch from DB
     const fetchCourseData = async () => {
       try {
-        const { data: courseData } = await supabase
-          .from('academy_courses').select('*').eq('id', courseId).single();
-        if (!courseData) { setLoading(false); return; }
-        setCourse(courseData);
+        const { data: courseData, error: cError } = await supabase
+          .from('academy_courses')
+          .select('*')
+          .eq('id', courseId)
+          .single();
+        
+        if (cError) throw cError;
 
         const [lessonsRes, progressRes] = await Promise.all([
           supabase.from('academy_lessons').select('*').eq('course_id', courseData.id).order('order_index', { ascending: true }),
@@ -123,10 +135,10 @@ const CoursePlayer = () => {
     fetchCourseData();
   }, [courseId, user, courses]);
 
-  // YouTube API
+  // YouTube API Loader
   useEffect(() => {
     if (!activeLesson?.video_url) return;
-
+    
     setVideoWatched(false);
     setShowQuiz(false);
 
@@ -134,16 +146,35 @@ const CoursePlayer = () => {
       ? activeLesson.video_url.split('embed/')[1]?.split('?')[0]
       : activeLesson.video_url?.split('/').pop()?.split('?')[0];
 
+    // Robust Script Loader
+    const loadYoutubeApi = () => {
+      if (!window.YT) {
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+      }
+    };
+
     let interval: any;
 
-    const initPlayer = () => {
+    const createPlayer = () => {
+      if (!window.YT || !window.YT.Player) return;
+      
+      // Cleanup previous player if exists
       const container = document.getElementById('yt-player');
-      if (!container) return;
+      if (container) container.innerHTML = '';
+
       new window.YT.Player('yt-player', {
         height: '100%',
         width: '100%',
         videoId: videoId,
-        playerVars: { autoplay: 0, modestbranding: 1, rel: 0 },
+        playerVars: { 
+          autoplay: 0, 
+          modestbranding: 1, 
+          rel: 0,
+          origin: window.location.origin
+        },
         events: {
           onReady: (event: any) => {
             setYtPlayer(event.target);
@@ -167,19 +198,24 @@ const CoursePlayer = () => {
     };
 
     if (window.YT && window.YT.Player) {
-      setTimeout(initPlayer, 100);
+      createPlayer();
     } else {
-      window.onYouTubeIframeAPIReady = initPlayer;
+      loadYoutubeApi();
+      window.onYouTubeIframeAPIReady = createPlayer;
     }
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (ytPlayer && ytPlayer.destroy) ytPlayer.destroy();
+    };
   }, [activeLesson?.id]);
 
   const handleMarkComplete = async () => {
     if (!user || !activeLesson || !courseId) return;
 
     try {
-      await supabase
+      // Upsert progress with fallback for potential schema mismatch
+      const { error: upsertError } = await supabase
         .from('user_lesson_progress')
         .upsert({ 
           user_id: user.id, 
@@ -187,6 +223,14 @@ const CoursePlayer = () => {
           lesson_id: activeLesson.id,
           completed_at: new Date().toISOString()
         }, { onConflict: 'user_id,lesson_id' });
+
+      if (upsertError && upsertError.code === 'PGRST116') {
+        // Fallback to local storage if table doesn't exist for immediate launch stability
+        const localKey = `star9_progress_${user.id}_${courseId}`;
+        const localData = JSON.parse(localStorage.getItem(localKey) || '[]');
+        localStorage.setItem(localKey, JSON.stringify([...new Set([...localData, activeLesson.id])]));
+        console.warn("Using local storage fallback for progression.");
+      }
 
       setCompletedLessons(prev => new Set([...prev, activeLesson.id]));
 
@@ -223,6 +267,11 @@ const CoursePlayer = () => {
       const currentIdx = lessons.findIndex(l => l.id === activeLesson.id);
       if (currentIdx < lessons.length - 1) {
         setTimeout(() => setActiveLesson(lessons[currentIdx + 1]), 1000);
+      } else {
+        // Last lesson completed!
+        if (progressPercentage >= 95) { // Account for the current lesson just marked
+          setIsCourseComplete(true);
+        }
       }
     } catch (err: any) {
       toast.error("Failed to save progress. Please try again.");
@@ -263,9 +312,52 @@ const CoursePlayer = () => {
     : 1; // Default to 1 week if no enrollment date is found
   const maxAllowedModules = weeksActive * 2;
 
-  // Live Class Check
-  const isAiCourse = course.title?.includes("AI for Freelancers");
-  const isMasteringCourse = course.title?.includes("Mastering Freelancing");
+  if (isCourseComplete) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-background animate-pulse" />
+        <div className="absolute top-0 left-0 w-full h-1 bg-primary animate-in slide-in-from-left duration-[2s]" />
+        
+        <div className="max-w-xl w-full text-center space-y-10 relative z-10 animate-in zoom-in duration-700">
+           <div className="relative inline-block">
+             <div className="absolute inset-0 bg-primary blur-3xl opacity-20 animate-pulse" />
+             <div className="size-32 rounded-[2.5rem] bg-card border border-primary/30 flex items-center justify-center mx-auto shadow-2xl relative">
+                <TrophyIcon className="size-16 text-amber-500" />
+             </div>
+           </div>
+           
+           <div className="space-y-4">
+             <h1 className="text-4xl md:text-6xl font-black italic tracking-tighter text-foreground">
+               Journey <span className="text-primary underline decoration-primary/30 underline-offset-8">Complete</span>
+             </h1>
+             <p className="text-muted-foreground text-lg leading-relaxed">
+               Mastery achieved. You have finalized every module in **{course.title}**. Your global trajectory has just accelerated.
+             </p>
+           </div>
+
+           <div className="grid grid-cols-2 gap-4">
+              <div className="p-6 rounded-2xl bg-card border border-border">
+                 <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">Merit Earned</p>
+                 <p className="text-3xl font-black text-amber-500">+{lessons.length * 10}</p>
+              </div>
+              <div className="p-6 rounded-2xl bg-card border border-border">
+                 <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">Status</p>
+                 <p className="text-3xl font-black text-primary italic">Certified</p>
+              </div>
+           </div>
+
+           <div className="flex flex-col gap-4">
+              <Button size="lg" className="h-16 rounded-2xl bg-primary text-white text-lg font-bold shadow-xl shadow-primary/20" onClick={() => navigate('/academy')}>
+                 Claim Certificate & Return
+              </Button>
+              <Button variant="ghost" className="text-muted-foreground hover:text-foreground" onClick={() => setIsCourseComplete(false)}>
+                 Review Lessons
+              </Button>
+           </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-background overflow-hidden">
