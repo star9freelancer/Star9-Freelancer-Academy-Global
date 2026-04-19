@@ -72,6 +72,7 @@ const Academy = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarHovered, setSidebarHovered] = useState(false);
   const [activeTab, setActiveTab] = useState("home");
+  const [searchDialogOpen, setSearchDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user && activeTab === "home") {
@@ -328,8 +329,8 @@ const Academy = () => {
     { id: "home",         icon: HomeIcon,       label: "Home",         public: true,  priority: "primary" },
     { id: "academy",      icon: BookOpenIcon,   label: "My Courses",   public: false, priority: "primary" },
     { id: "catalog",      icon: GlobeIcon,      label: "Browse",       public: true,  priority: "primary" },
-    { id: "careers",      icon: BriefcaseIcon,  label: "Jobs",         public: true,  priority: "primary" },
-    { id: "certificates", icon: AwardIcon,      label: "Certificates", public: false, priority: "primary" },
+    { id: "careers",      icon: BriefcaseIcon,  label: "Jobs",         public: true,  priority: "secondary" },
+    { id: "certificates", icon: AwardIcon,      label: "Certificates", public: false, priority: "secondary" },
     { id: "community",    icon: UsersIcon,      label: "Community",    public: false, priority: "secondary" },
     { id: "referral",     icon: LinkIcon,       label: "Referrals",    public: false, priority: "secondary" },
     { id: "events",       icon: CalendarIcon,   label: "Events",       public: true,  priority: "secondary" },
@@ -360,19 +361,22 @@ const Academy = () => {
 
           <div className="h-6 w-px bg-white/10 mx-1 shrink-0" />
 
-          {/* Search */}
-          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-full border border-white/10 focus-within:border-primary/40 transition-all group w-48 transition-all">
-            <SearchIcon className="size-3.5 text-white/30 group-focus-within:text-primary transition-colors" />
-            <input 
-              type="text" 
-              placeholder="Search..."
-              className="bg-transparent text-sm outline-none w-full text-white placeholder:text-white/20"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+          {/* Utility Buttons - Search & Notifications */}
+          <div className="flex items-center gap-1">
+            <button 
+              onClick={() => setSearchDialogOpen(true)}
+              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all"
+              title="Search Intelligence (Cmd+K)"
+            >
+              <SearchIcon className="size-4" />
+            </button>
+            <button className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all relative">
+              <BellIcon className="size-4" />
+              <div className="absolute top-2 right-2 size-1.5 bg-primary rounded-full border border-zinc-950" />
+            </button>
           </div>
 
-          <div className="hidden lg:block h-6 w-px bg-white/10 mx-1 shrink-0" />
+          <div className="h-6 w-px bg-white/10 mx-1 shrink-0" />
 
           {/* Navigation Links */}
           <div className="flex items-center gap-1 shrink-0">
@@ -847,8 +851,70 @@ const Academy = () => {
         </DialogContent>
       </Dialog>
 
-    </div>
-  );
+    {/* Search Intelligence Modal */}
+    <Dialog open={searchDialogOpen} onOpenChange={setSearchDialogOpen}>
+      <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden bg-zinc-950/95 backdrop-blur-2xl border-white/10 shadow-2xl rounded-[2rem]">
+        <div className="p-6 border-b border-white/5 flex items-center gap-4">
+           <SearchIcon className="size-5 text-primary" />
+           <input 
+              autoFocus
+              type="text" 
+              placeholder="Search courses, modules, and resources..."
+              className="bg-transparent text-lg outline-none w-full text-white placeholder:text-white/20 font-medium"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => { if(e.key === 'Enter') setSearchDialogOpen(false); }}
+           />
+           <div className="px-2 py-1 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-zinc-500">ESC</div>
+        </div>
+        <div className="p-4 max-h-[400px] overflow-y-auto no-scrollbar">
+           <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-zinc-600 mb-4 px-4">Instant Results</p>
+           <div className="space-y-1">
+             {courses
+               .filter(c => searchQuery === "" || c.title.toLowerCase().includes(searchQuery.toLowerCase()))
+               .slice(0, 5)
+               .map(c => (
+                 <button 
+                  key={c.id} 
+                  onClick={() => { setSelectedProgram(c); setSearchDialogOpen(false); }}
+                  className="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-colors text-left group"
+                 >
+                    <div className="flex items-center gap-4">
+                       <div className="size-10 rounded-xl bg-zinc-900 flex items-center justify-center border border-white/5 group-hover:border-primary/30 transition-colors">
+                          <BookOpenIcon className="size-4 text-zinc-500 group-hover:text-primary transition-colors" />
+                       </div>
+                       <div>
+                          <p className="text-sm font-bold text-white tracking-tight">{c.title}</p>
+                          <p className="text-[10px] text-zinc-500">{c.category}</p>
+                       </div>
+                    </div>
+                    <ArrowRightIcon className="size-3.5 text-zinc-700 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
+                 </button>
+               ))
+             }
+             {searchQuery && courses.filter(c => c.title.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
+               <div className="py-12 text-center space-y-2">
+                  <p className="text-sm font-medium text-zinc-400">No intelligence modules found for "{searchQuery}"</p>
+                  <p className="text-xs text-zinc-600">Try searching for broader skills or categories.</p>
+               </div>
+             )}
+           </div>
+        </div>
+        <div className="p-4 bg-white/[0.02] border-t border-white/5 flex items-center justify-between">
+           <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1.5 text-[10px] text-zinc-500">
+                 <span className="p-1 rounded bg-white/5 border border-white/10 uppercase">↑↓</span> to navigate
+              </div>
+              <div className="flex items-center gap-1.5 text-[10px] text-zinc-500">
+                 <span className="p-1 rounded bg-white/5 border border-white/10 uppercase">↵</span> to select
+              </div>
+           </div>
+           <p className="text-[9px] font-mono text-primary/40 uppercase tracking-widest">Star9 Search Engine</p>
+        </div>
+      </DialogContent>
+    </Dialog>
+  </div>
+);
 };
 
 export default Academy;
