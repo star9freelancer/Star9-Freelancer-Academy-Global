@@ -96,7 +96,7 @@ const Header = () => {
             <Button size="sm" className="gap-2 rounded-full bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/20 brightness-110" asChild>
               <Link to="/academy">
                 <LayoutDashboardIcon className="size-3.5" />
-                Intelligence Hub
+                Academy
               </Link>
             </Button>
           ) : (

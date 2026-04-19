@@ -35,11 +35,12 @@ import {
   Sparkles as SparklesIcon, 
   Globe as GlobeIcon, 
   Link as LinkIcon, 
-  Briefcase as BriefcaseIcon, 
+  BriefcaseIcon, 
   Calendar as CalendarIcon, 
   Save as SaveIcon,
   CreditCard as CreditCardIcon,
-  Smartphone as SmartphoneIcon
+  Smartphone as SmartphoneIcon,
+  CheckCircle2 as CheckCircleIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -73,6 +74,7 @@ const Academy = () => {
   const [sidebarHovered, setSidebarHovered] = useState(false);
   const [activeTab, setActiveTab] = useState("home");
   const [searchDialogOpen, setSearchDialogOpen] = useState(false);
+  const [filterTab, setFilterTab] = useState<"active" | "completed">("active");
 
   useEffect(() => {
     if (!authLoading && !user && activeTab === "home") {
@@ -553,54 +555,125 @@ const Academy = () => {
                  {activeTab === "home" && <HomeFeed setActiveTab={setActiveTab} courses={courses} enrollments={enrollments} profile={profile} />}
 
                   {activeTab === "academy" && (
-                    <div className="space-y-12 pb-12">
-                       {/* Premium Student Dashboard Header */}
-                       <div className="relative p-10 md:p-14 rounded-[3rem] bg-zinc-900 border border-white/5 overflow-hidden group shadow-2xl">
-                          <div className="absolute top-0 right-0 p-12 opacity-5 -rotate-12 group-hover:rotate-0 transition-transform duration-1000">
+                    <div className="space-y-12 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                       {/* Compact Student Dashboard Header */}
+                       <div className="relative p-8 md:p-12 rounded-[2.5rem] bg-zinc-950 border border-white/5 overflow-hidden group shadow-2xl">
+                          <div className="absolute top-0 right-0 p-12 opacity-[0.03] -rotate-12 group-hover:rotate-0 transition-transform duration-[10s]">
                              <SparklesIcon className="size-64 text-primary" />
                           </div>
-                          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary/5 pointer-events-none" />
+                          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 pointer-events-none" />
                           
-                          <div className="relative z-10 space-y-6">
-                             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.2em]">
-                                Student Command Centre
-                             </div>
-                             <h2 className="text-4xl md:text-6xl font-black italic tracking-tighter text-white">
-                                Intelligence <span className="text-primary underline decoration-primary/30 underline-offset-8">Hub</span>
-                             </h2>
-                             <p className="text-zinc-400 text-lg md:text-xl max-w-xl leading-relaxed">
-                                Deploy your skills to the global market. Your active learning modules and career progress are tracked here.
-                             </p>
-                             
-                             <div className="flex flex-wrap gap-8 pt-4">
-                               <div className="space-y-1">
-                                 <p className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Active Modules</p>
-                                 <p className="text-2xl font-black text-white">{courses.filter(c => enrollments.has(c.id)).length}</p>
+                          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+                             <div className="space-y-4">
+                               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[9px] font-black uppercase tracking-[0.2em]">
+                                  Dashboard
                                </div>
-                               <div className="h-10 w-px bg-white/10" />
+                               <h2 className="text-3xl md:text-5xl font-black italic tracking-tighter text-white">
+                                  Star9 <span className="text-primary underline decoration-primary/30 underline-offset-8">Academy</span>
+                               </h2>
+                               <p className="text-zinc-500 text-sm md:text-base max-w-sm leading-relaxed">
+                                  Track modules, certificates, and your global career progress.
+                                </p>
+                             </div>
+
+                             <div className="flex flex-wrap gap-6 md:gap-10">
                                <div className="space-y-1">
-                                 <p className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Merit Points</p>
-                                 <p className="text-2xl font-black text-amber-500 flex items-center gap-2">
+                                 <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 font-bold">Active Modules</p>
+                                 <p className="text-3xl font-black text-white">{courses.filter(c => enrollments.get(c.id)?.progress && enrollments.get(c.id)!.progress < 100).length}</p>
+                               </div>
+                               <div className="h-12 w-px bg-white/5 hidden sm:block" />
+                               <div className="space-y-1">
+                                 <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 font-bold">Merit Points</p>
+                                 <p className="text-3xl font-black text-amber-500 flex items-center gap-2">
                                    {profile?.merit_points || 0}
                                    <SparklesIcon className="size-5" />
+                                 </p>
+                               </div>
+                               <div className="h-12 w-px bg-white/5 hidden sm:block" />
+                               <div className="space-y-1">
+                                 <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 font-bold">Certificates</p>
+                                 <p className="text-3xl font-black text-primary flex items-center gap-2">
+                                   {certificates.length}
+                                   <AwardIcon className="size-5" />
                                  </p>
                                </div>
                              </div>
                           </div>
                        </div>
 
+                       {/* Resume Learning Spotlight */}
+                       {courses.filter(c => enrollments.get(c.id)?.progress && enrollments.get(c.id)!.progress < 100).length > 0 && (
+                         <div className="space-y-6">
+                            <div className="flex items-center gap-3">
+                               <div className="h-px flex-1 bg-white/5" />
+                               <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-zinc-600">Continue Journey</span>
+                               <div className="h-px flex-1 bg-white/5" />
+                            </div>
+                            {(() => {
+                              const activeEnrollments = courses
+                                .filter(c => enrollments.has(c.id) && enrollments.get(c.id)!.progress < 100)
+                                .sort((a, b) => (enrollments.get(b.id)!.progress || 0) - (enrollments.get(a.id)!.progress || 0));
+                              
+                              if (activeEnrollments.length === 0) return null;
+                              const course = activeEnrollments[0];
+                              const progress = enrollments.get(course.id)!.progress;
+
+                              return (
+                                <div 
+                                  onClick={() => navigate(`/academy/course/${course.id}`)}
+                                  className="group relative p-6 md:p-8 rounded-[2rem] bg-zinc-900/50 border border-white/5 hover:border-primary/40 transition-all duration-500 cursor-pointer overflow-hidden shadow-xl"
+                                >
+                                   <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                   <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
+                                      <div className="size-24 md:size-32 rounded-2xl overflow-hidden shrink-0 border border-white/10 group-hover:border-primary/50 transition-colors shadow-lg">
+                                         <img src={course.image_url} alt="" className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-700" />
+                                      </div>
+                                      <div className="flex-1 space-y-3 text-center md:text-left">
+                                         <Badge className="bg-primary/20 text-primary border-none rounded-full px-4 mb-2 animate-pulse">Next Up</Badge>
+                                         <h3 className="text-2xl md:text-3xl font-bold tracking-tighter italic text-white group-hover:text-primary transition-colors">{course.title}</h3>
+                                         <div className="flex items-center justify-center md:justify-start gap-4">
+                                            <div className="h-1.5 w-48 bg-zinc-800 rounded-full overflow-hidden">
+                                               <div className="h-full bg-primary" style={{ width: `${progress}%` }} />
+                                            </div>
+                                            <span className="text-xs font-mono text-zinc-500">{progress}% Complete</span>
+                                         </div>
+                                      </div>
+                                      <Button size="lg" className="rounded-2xl px-10 h-14 bg-white text-black font-bold tracking-tight hover:bg-zinc-200">
+                                         Resume Now <PlayIcon className="size-4 ml-2 fill-current" />
+                                      </Button>
+                                   </div>
+                                </div>
+                              );
+                            })()}
+                         </div>
+                       )}
+
                        <div className="space-y-8">
-                         <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-black uppercase tracking-[0.3em] text-zinc-500">In-Progress Curriculums</h3>
+                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                            <div className="flex items-center gap-4 p-1 bg-zinc-900/50 rounded-2xl border border-white/5 w-fit">
+                               <button 
+                                 onClick={() => setFilterTab("active")}
+                                 className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filterTab === "active" ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-zinc-500 hover:text-white"}`}
+                               >
+                                 In-Progress
+                               </button>
+                               <button 
+                                 onClick={() => setFilterTab("completed")}
+                                 className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filterTab === "completed" ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/20" : "text-zinc-500 hover:text-white"}`}
+                               >
+                                 Completed
+                               </button>
+                            </div>
                             {searchQuery && (
-                              <Badge variant="outline" className="text-[10px] font-mono border-white/10">Filter: {searchQuery}</Badge>
+                              <Badge variant="outline" className="text-[10px] font-mono border-white/10 uppercase tracking-widest text-primary">Filter: {searchQuery}</Badge>
                             )}
                          </div>
 
                          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
                            {courses
                              .filter(c => enrollments.has(c.id))
-                             .filter(c => !c.title.toLowerCase().includes("teacher")) // Moved to Global
+                             .filter(c => filterTab === "active" ? enrollments.get(c.id)!.progress < 100 : enrollments.get(c.id)!.progress >= 100)
+                             .filter(c => !c.title.toLowerCase().includes("teacher"))
                              .filter(c => 
                                searchQuery === "" || 
                                c.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -630,7 +703,7 @@ const Academy = () => {
                                     <p className="text-zinc-500 text-sm">You haven't initialized any modules yet. Your global career starts at the catalog.</p>
                                  </div>
                                  <Button className="h-14 px-10 rounded-2xl bg-primary text-white font-bold tracking-widest text-xs uppercase" onClick={() => setActiveTab('catalog')}>
-                                   Browse Knowledge Vault
+                                   Browse Academy Vault
                                  </Button>
                               </div>
                            )}
