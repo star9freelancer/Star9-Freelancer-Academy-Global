@@ -18,13 +18,3 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     }
   }
 });
-
-// Debug helper — remove in production
-export const testConnection = async () => {
-  const { data, error } = await supabase.from('academy_courses').select('count').single();
-  if (error) {
-    console.error('[Supabase] Connection test FAILED:', error.message, error.code);
-  } else {
-    console.log('[Supabase] Connection test OK:', data);
-  }
-};

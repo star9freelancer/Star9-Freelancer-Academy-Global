@@ -18,7 +18,7 @@ const testimonials = [
   {
     name: "Grace Mensah",
     role: "ESL Teacher, Accra to Texas",
-    text: "The 3-phase Teacher Prep pipeline was exactly what I needed. From my Loom audition to visa documentation, every step was guided and practical.",
+    text: "The 3-phase International Teacher Preparation pipeline was exactly what I needed. From my Loom audition to visa documentation, every step was guided and practical.",
     avatar: "🇬🇭",
     highlight: "Accra to Texas",
   },

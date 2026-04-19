@@ -1,21 +1,22 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const features = [
   {
     emoji: "🤖",
     title: "AI for Freelancers",
-    description: "8-week intensive programme. Learn to leverage AI tools to multiply your output and win global clients. One-time fee of $100.",
+    description: "8-week intensive programme. Learn to leverage AI tools to multiply your output and win global clients. One-time fee of $50.",
     color: "bg-primary/10 border-primary/20",
   },
   {
     emoji: "💼",
     title: "Mastering Freelancing",
-    description: "12-week complete pipeline for building a thriving global freelance business. Includes bonus lifetime access to the Global Job Board. $250 one-time.",
+    description: "12-week complete pipeline for building a thriving global freelance business. Includes bonus lifetime access to the Global Job Board. $100 one-time.",
     color: "bg-secondary/10 border-secondary/20",
   },
   {
     emoji: "✈️",
-    title: "International Teacher Prep",
+    title: "International Teacher Preparation",
     description: "3-phase pipeline: Vetting and Resume review, Loom audition and interviews, then Visa and Relocation support. $300 one-time.",
     color: "bg-emerald-500/10 border-emerald-500/20",
   },
@@ -34,7 +35,7 @@ const features = [
   {
     emoji: "🤝",
     title: "Referral Programme",
-    description: "Earn commissions by referring students. $10 per AI course, $40 per Mastering Freelancing or Teacher Prep enrolment.",
+    description: "Earn commissions by referring students. $10 per AI course, $15 per Mastering Freelancing or Teacher Preparation enrolment.",
     color: "bg-rose-500/10 border-rose-500/20",
   },
 ];
@@ -71,11 +72,18 @@ const FeaturesSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08 }}
-              className={`group p-7 rounded-2xl border ${f.color} hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}
             >
-              <span className="text-3xl mb-4 block">{f.emoji}</span>
-              <h3 className="text-lg font-bold mb-2">{f.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{f.description}</p>
+              <Link
+                to="/auth"
+                className={`group block h-full p-7 rounded-2xl border ${f.color} hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}
+              >
+                <span className="text-3xl mb-4 block">{f.emoji}</span>
+                <h3 className="text-lg font-bold mb-2">{f.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{f.description}</p>
+                <div className="mt-4 flex items-center gap-2 text-xs font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                  Learn more <span className="text-lg">→</span>
+                </div>
+              </Link>
             </motion.div>
           ))}
         </div>

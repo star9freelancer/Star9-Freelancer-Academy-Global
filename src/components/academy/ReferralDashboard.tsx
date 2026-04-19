@@ -32,7 +32,7 @@ interface ReferralStats {
 const COMMISSION_MAP: Record<string, number> = {
   "AI for Freelancers": 10,
   "Mastering Freelancing": 15,
-  "International Teacher Prep": 40,
+  "International Teacher Preparation": 15,
 };
 
 interface ReferralDashboardProps {
@@ -145,9 +145,9 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
   ];
 
   const commissionGuide = [
-    { course: "AI for Freelancers", price: "$100", commission: "$10", color: "bg-primary/10 border-primary/20 text-primary" },
-    { course: "Mastering Freelancing", price: "$250", commission: "$15", color: "bg-secondary/10 border-secondary/20 text-secondary" },
-    { course: "International Teacher Prep", price: "$300", commission: "$40", color: "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" },
+    { course: "AI for Freelancers", price: "$50", commission: "$10", color: "bg-primary/10 border-primary/20 text-primary" },
+    { course: "Mastering Freelancing", price: "$100", commission: "$15", color: "bg-secondary/10 border-secondary/20 text-secondary" },
+    { course: "International Teacher Preparation", price: "$300", commission: "$15", color: "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" },
   ];
 
   const statusColor: Record<string, string> = {
@@ -254,7 +254,7 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
             <div>
               <p className="font-semibold text-foreground">No referrals yet</p>
               <p className="text-sm text-muted-foreground mt-1 max-w-xs mx-auto">
-                Share your referral link with friends and earn $10-$40 per successful enrolment.
+                Share your referral link with friends and earn $10-$15 per successful enrolment.
               </p>
             </div>
             <Button className="gap-2" onClick={copyLink}>

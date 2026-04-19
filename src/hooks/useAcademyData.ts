@@ -74,7 +74,7 @@ export const CURRICULUM_LEDGER: Record<string, Module[]> = {
       ]
     }
   ],
-  // Digital Marketing / Teacher Prep
+  // Digital Marketing / International Teacher Preparation
   "33333333-3333-3333-3333-333333333333": [
     {
       id: "m1",

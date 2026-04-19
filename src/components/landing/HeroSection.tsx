@@ -36,7 +36,7 @@ const HeroSection = () => {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-70" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-secondary" />
               </span>
-              Now enrolling — 2026 cohort
+              Launching May 4th — 2026 cohort
             </motion.div>
 
             {/* Main headline */}
@@ -138,9 +138,9 @@ const HeroSection = () => {
                 {/* Track listings */}
                 <div className="p-5 space-y-3">
                   {[
-                    { icon: StarIcon,     label: "AI for Freelancers",         sub: "8-week programme · $100",    progress: 72, color: "text-primary" },
-                    { icon: BriefcaseIcon, label: "Mastering Freelancing",       sub: "12-week · $250 + Global access", progress: 45, color: "text-secondary" },
-                    { icon: GlobeIcon,    label: "International Teacher Prep",  sub: "3-Phase pipeline · $300",  progress: 20, color: "text-emerald-400" },
+                    { icon: StarIcon,     label: "AI for Freelancers",         sub: "8-week programme · $50",    progress: 72, color: "text-primary" },
+                    { icon: BriefcaseIcon, label: "Mastering Freelancing",       sub: "12-week · $100 + Global access", progress: 45, color: "text-secondary" },
+                    { icon: GlobeIcon,    label: "Teacher Preparation",  sub: "3-Phase pipeline · $300",  progress: 20, color: "text-emerald-400" },
                   ].map((item, i) => (
                     <Link 
                       key={i} 

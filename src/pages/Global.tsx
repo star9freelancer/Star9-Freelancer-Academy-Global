@@ -134,7 +134,7 @@ const Global = () => {
               <Badge className="bg-primary hover:bg-primary/90 text-white border-0 px-3 py-1">Featured</Badge>
               <div>
                 <h3 className="text-2xl font-bold mb-2">International Teacher Placement</h3>
-                <p className="text-sm text-muted-foreground">Dedicated placement to the US, UK, Canada, China, and Germany.</p>
+                <p className="text-sm text-muted-foreground italic">Next cohort launch: May 4th. Dedicated placement to the US, UK, Canada, China, and Germany.</p>
               </div>
 
               <div className="space-y-4">
@@ -306,7 +306,7 @@ const Global = () => {
         <section className="rounded-3xl p-8 md:p-12 bg-gradient-to-r from-primary/10 via-primary/5 to-secondary/10 border border-primary/20 text-center space-y-6">
           <h2 className="text-3xl font-bold">Earn by Referring Others</h2>
           <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-            Share your referral link and earn commissions on every successful enrolment. $10 for AI for Freelancers, $40 for Mastering Freelancing or Teacher Prep.
+            Share your referral link and earn commissions on every successful enrolment. $10 for AI for Freelancers, $15 for Mastering Freelancing or International Teacher Preparation.
           </p>
           <Button size="lg" className="h-12 px-8 gap-2 shadow-xl" asChild>
             <Link to={user ? "/academy" : "/auth"}>

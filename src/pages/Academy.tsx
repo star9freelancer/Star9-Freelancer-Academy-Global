@@ -230,10 +230,10 @@ const Academy = () => {
 
     const courseObj = courses.find(c => c.id === courseId);
     let basePrice = 50; // New default price for AI for Freelancers
-    if (courseObj?.title.toLowerCase().includes("mastering")) basePrice = 100;
-    if (courseObj?.title.toLowerCase().includes("teacher") || courseObj?.title.toLowerCase().includes("preparation")) basePrice = 300;
+    if (courseObj?.title.toLowerCase().includes("mastering freelancing")) basePrice = 100;
+    if (courseObj?.title.toLowerCase().includes("teacher preparation")) basePrice = 300;
 
-    const amount = currency === 'USD' ? basePrice * 100 : basePrice * exchangeRate * 100;
+    const amount = currency === 'USD' ? basePrice * 100 : Math.round(basePrice * exchangeRate) * 100;
 
     const paystackKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
     try {
@@ -494,52 +494,88 @@ const Academy = () => {
                  {activeTab === "home" && <HomeFeed setActiveTab={setActiveTab} courses={courses} enrollments={enrollments} profile={profile} />}
 
                   {activeTab === "academy" && (
-                    <div className="space-y-10">
-                       <div className="relative p-8 rounded-3xl bg-gradient-to-br from-primary/20 via-primary/5 to-transparent border border-white/10 overflow-hidden group">
-                          <div className="absolute top-0 right-0 p-12 opacity-5 -rotate-12 group-hover:rotate-0 transition-transform duration-700">
-                             <AwardIcon className="size-48 text-primary" />
+                    <div className="space-y-12 pb-12">
+                       {/* Premium Student Dashboard Header */}
+                       <div className="relative p-10 md:p-14 rounded-[3rem] bg-zinc-900 border border-white/5 overflow-hidden group shadow-2xl">
+                          <div className="absolute top-0 right-0 p-12 opacity-5 -rotate-12 group-hover:rotate-0 transition-transform duration-1000">
+                             <SparklesIcon className="size-64 text-primary" />
                           </div>
-                          <div className="relative z-10 max-w-2xl space-y-4">
-                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary text-[10px] font-bold uppercase tracking-widest">
-                                Student Portal active
+                          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary/5 pointer-events-none" />
+                          
+                          <div className="relative z-10 space-y-6">
+                             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.2em]">
+                                Student Command Centre
                              </div>
-                             <h2 className="text-4xl font-black italic tracking-tight text-white">Your Intelligence <span className="text-primary">Hub</span></h2>
-                             <p className="text-zinc-400 text-lg">Continue building your global borderless career. Access your modules, assignments, and certificates below.</p>
+                             <h2 className="text-4xl md:text-6xl font-black italic tracking-tighter text-white">
+                                Intelligence <span className="text-primary underline decoration-primary/30 underline-offset-8">Hub</span>
+                             </h2>
+                             <p className="text-zinc-400 text-lg md:text-xl max-w-xl leading-relaxed">
+                                Deploy your skills to the global market. Your active learning modules and career progress are tracked here.
+                             </p>
+                             
+                             <div className="flex flex-wrap gap-8 pt-4">
+                               <div className="space-y-1">
+                                 <p className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Active Modules</p>
+                                 <p className="text-2xl font-black text-white">{courses.filter(c => enrollments.has(c.id)).length}</p>
+                               </div>
+                               <div className="h-10 w-px bg-white/10" />
+                               <div className="space-y-1">
+                                 <p className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Merit Points</p>
+                                 <p className="text-2xl font-black text-amber-500 flex items-center gap-2">
+                                   {profile?.merit_points || 0}
+                                   <SparklesIcon className="size-5" />
+                                 </p>
+                               </div>
+                             </div>
                           </div>
                        </div>
 
-                       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                         {courses
-                           .filter(c => enrollments.has(c.id))
-                           .filter(c => !c.title.toLowerCase().includes("teacher")) // Teacher Preparation is now in Global hub
-                           .filter(c => 
-                             searchQuery === "" || 
-                             c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                             c.category.toLowerCase().includes(searchQuery.toLowerCase())
-                           )
-                           .map((course) => (
-                             <div key={course.id} className="group relative">
-                                <div className="absolute -inset-0.5 bg-gradient-to-br from-primary/50 to-violet-500/50 rounded-[2rem] blur opacity-0 group-hover:opacity-20 transition duration-500" />
-                                <CourseCard 
-                                  course={course} 
-                                  enrollment={enrollments.get(course.id)} 
-                                  onOpen={() => navigate(`/academy/course/${course.id}`)} 
-                                />
-                             </div>
-                           ))
-                         }
-                         {courses.filter(c => enrollments.has(c.id)).length === 0 && (
-                            <div className="col-span-full py-20 flex flex-col items-center text-center space-y-6">
-                               <div className="size-24 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
-                                  <BookOpenIcon className="size-10 text-white/20" />
+                       <div className="space-y-8">
+                         <div className="flex items-center justify-between">
+                            <h3 className="text-sm font-black uppercase tracking-[0.3em] text-zinc-500">In-Progress Curriculums</h3>
+                            {searchQuery && (
+                              <Badge variant="outline" className="text-[10px] font-mono border-white/10">Filter: {searchQuery}</Badge>
+                            )}
+                         </div>
+
+                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                           {courses
+                             .filter(c => enrollments.has(c.id))
+                             .filter(c => !c.title.toLowerCase().includes("teacher")) // Moved to Global
+                             .filter(c => 
+                               searchQuery === "" || 
+                               c.title.toLowerCase().includes(searchQuery.toLowerCase())
+                             )
+                             .map((course) => (
+                               <div key={course.id} className="group relative">
+                                  <div className="absolute -inset-1 bg-gradient-to-br from-primary/40 to-violet-600/40 rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-20 transition duration-700" />
+                                  <div className="relative overflow-hidden rounded-[2.2rem] border border-white/10 bg-zinc-950 hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 shadow-2xl">
+                                    <CourseCard 
+                                      course={course} 
+                                      enrollment={enrollments.get(course.id)} 
+                                      onOpen={() => navigate(`/academy/course/${course.id}`)} 
+                                    />
+                                  </div>
                                </div>
-                               <div className="max-w-xs">
-                                  <h3 className="text-xl font-bold text-white mb-2">Knowledge Foundation Empty</h3>
-                                  <p className="text-zinc-500">You haven't initialized any modules yet. Visit the catalog to begin your journey.</p>
-                               </div>
-                               <Button className="h-12 px-8 rounded-full" onClick={() => setActiveTab('catalog')}>Initialize First Module</Button>
-                            </div>
-                         )}
+                             ))
+                           }
+                           
+                           {courses.filter(c => enrollments.has(c.id)).length === 0 && (
+                              <div className="col-span-full py-24 flex flex-col items-center text-center space-y-8 glass rounded-[3rem] border-white/5">
+                                 <div className="size-32 rounded-full bg-zinc-900 flex items-center justify-center border border-white/10 relative">
+                                    <BookOpenIcon className="size-12 text-zinc-700" />
+                                    <div className="absolute inset-0 rounded-full border border-primary/20 animate-ping opacity-20" />
+                                 </div>
+                                 <div className="max-w-xs space-y-2">
+                                    <h3 className="text-2xl font-black text-white italic tracking-tight">Vault Empty</h3>
+                                    <p className="text-zinc-500 text-sm">You haven't initialized any modules yet. Your global career starts at the catalog.</p>
+                                 </div>
+                                 <Button className="h-14 px-10 rounded-2xl bg-primary text-white font-bold tracking-widest text-xs uppercase" onClick={() => setActiveTab('catalog')}>
+                                   Browse Knowledge Vault
+                                 </Button>
+                              </div>
+                           )}
+                         </div>
                        </div>
                     </div>
                   )}
@@ -579,6 +615,8 @@ const Academy = () => {
 
                        <div className="grid grid-cols-1 gap-12 max-w-6xl mx-auto">
                         {courses
+                          .filter(c => !enrollments.has(c.id))
+                          .filter(c => !c.title.toLowerCase().includes("teacher")) // Teacher Preparation is now in Global hub
                           .filter(c => 
                             searchQuery === "" || 
                             c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -692,7 +730,7 @@ const Academy = () => {
           <div className="p-8 space-y-6">
             <div className="space-y-2">
               <DialogTitle className="text-2xl font-bold tracking-tight italic">Secure <span className="text-primary">Checkout</span></DialogTitle>
-              <DialogDescription className="text-zinc-500">Choose your preferred payment method and currency.</DialogDescription>
+              <DialogDescription className="text-zinc-500">Choose your preferred payment method. Next cohort launch: May 4th.</DialogDescription>
             </div>
 
             <div className="grid gap-4">
@@ -711,8 +749,8 @@ const Academy = () => {
                 </div>
                 <div className="text-right">
                   <p className="font-mono text-lg font-black text-white">$ {
-                    courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("mastering") ? "250" : 
-                    courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher") ? "300" : "100"
+                    courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("mastering freelancing") ? "100" : 
+                    (courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher preparation") || courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher prep")) ? "300" : "50"
                   }</p>
                 </div>
               </button>
@@ -733,8 +771,8 @@ const Academy = () => {
                 <div className="text-right">
                   <p className="font-mono text-lg font-black text-emerald-400">
                     KES {Math.round((
-                      courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("mastering") ? 250 : 
-                      courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher") ? 300 : 100
+                      courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("mastering freelancing") ? 100 : 
+                      (courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher preparation") || courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher prep")) ? 300 : 50
                     ) * exchangeRate).toLocaleString()}
                   </p>
                 </div>

@@ -12,7 +12,7 @@ const cards = [
     gradient: "from-primary/20 to-primary/5",
     borderHover: "hover:border-primary/40",
     accent: "text-primary",
-    stats: ["AI · Freelancing · Teacher Prep", "Pay-per-course access", "Verified Certificates"],
+    stats: ["AI · Freelancing · Teacher Preparation", "Pay-per-course access", "Verified Certificates"],
     emoji: "🎓",
   },
   {
