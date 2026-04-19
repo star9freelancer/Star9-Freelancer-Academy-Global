@@ -26,6 +26,7 @@ import {
   Menu as MenuIcon, 
   Bell as BellIcon, 
   Search as SearchIcon, 
+  LayoutDashboard as LayoutDashboardIcon,
   ArrowLeft as ArrowLeftIcon, 
   ArrowRight as ArrowRightIcon, 
   Download as DownloadIcon, 
@@ -53,6 +54,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown as ChevronDownIcon, LogOut as LogOutIcon } from "lucide-react";
 import logo from "@/assets/logo_transparent.png";
 
 const Academy = () => {
@@ -314,19 +324,21 @@ const Academy = () => {
     }
   };
 
-  const allLinks = [
-    { id: "home",        icon: HomeIcon,       label: "Home",        public: true },
-    { id: "academy",     icon: BookOpenIcon,   label: "My Courses",  public: false },
-    { id: "catalog",     icon: GlobeIcon,      label: "Browse",      public: true },
-    { id: "certificates",icon: AwardIcon,      label: "Certificates",public: false },
-    { id: "community",   icon: UsersIcon,      label: "Community",   public: false },
-    { id: "careers",     icon: BriefcaseIcon,  label: "Jobs",        public: true },
-    { id: "referral",    icon: LinkIcon,   label: "Referrals",   public: false },
-    { id: "events",      icon: CalendarIcon,   label: "Events",      public: true },
-    { id: "settings",    icon: SettingsIcon,   label: "Settings",    public: false },
+  const navItems = [
+    { id: "home",         icon: HomeIcon,       label: "Home",         public: true,  priority: "primary" },
+    { id: "academy",      icon: BookOpenIcon,   label: "My Courses",   public: false, priority: "primary" },
+    { id: "catalog",      icon: GlobeIcon,      label: "Browse",       public: true,  priority: "primary" },
+    { id: "careers",      icon: BriefcaseIcon,  label: "Jobs",         public: true,  priority: "primary" },
+    { id: "certificates", icon: AwardIcon,      label: "Certificates", public: false, priority: "primary" },
+    { id: "community",    icon: UsersIcon,      label: "Community",    public: false, priority: "secondary" },
+    { id: "referral",     icon: LinkIcon,       label: "Referrals",    public: false, priority: "secondary" },
+    { id: "events",       icon: CalendarIcon,   label: "Events",       public: true,  priority: "secondary" },
+    { id: "settings",     icon: SettingsIcon,   label: "Settings",     public: false, priority: "profile" },
   ];
 
-  const studentLinks = user ? allLinks : allLinks.filter(l => l.public);
+  const studentLinks = (user ? navItems : navItems.filter(l => l.public)).filter(l => l.priority === "primary");
+  const secondaryLinks = (user ? navItems : navItems.filter(l => l.public)).filter(l => l.priority === "secondary");
+  const profileLinks = (user ? navItems : navItems.filter(l => l.public)).filter(l => l.priority === "profile");
 
   return (
     <div className="min-h-screen bg-background relative selection:bg-primary/30 selection:text-white">
@@ -384,9 +396,36 @@ const Academy = () => {
                 </button>
               );
             })}
+
+            {/* Resources Dropdown */}
+            {secondaryLinks.length > 0 && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-2 px-3 py-2 rounded-full text-muted-foreground hover:text-foreground transition-all text-sm">
+                    <LayoutDashboardIcon className="size-4" />
+                    <span className="text-xs font-medium hidden xl:inline-block">Resources</span>
+                    <ChevronDownIcon className="size-3 opacity-50" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48 bg-zinc-950 border-white/10 rounded-2xl shadow-2xl">
+                  <DropdownMenuLabel className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">More Options</DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-white/5" />
+                  {secondaryLinks.map((l) => (
+                    <DropdownMenuItem 
+                      key={l.id} 
+                      onClick={() => setActiveTab(l.id)}
+                      className={`gap-3 p-3 rounded-xl cursor-pointer ${activeTab === l.id ? "bg-primary/10 text-primary" : "text-zinc-400 hover:text-white hover:bg-white/5"}`}
+                    >
+                      <l.icon className="size-4" />
+                      <span className="text-xs font-medium">{l.label}</span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
 
-          <div className="h-6 w-px bg-white/10 mx-1 shrink-0" />
+          <div className="hidden lg:block h-6 w-px bg-white/10 mx-1 shrink-0" />
 
           {/* Points & Profile / Auth Buttons */}
           <div className="flex items-center gap-2 shrink-0">
@@ -397,31 +436,47 @@ const Academy = () => {
                   <span className="text-xs font-semibold text-amber-500">{profile?.merit_points || 0}</span>
                 </div>
 
-                <TooltipProvider delayDuration={200}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button 
-                        onClick={() => setActiveTab('settings')}
-                        className="size-8 rounded-full border border-border bg-muted overflow-hidden transition-all hover:border-primary/40"
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="group relative size-8 rounded-full border border-border bg-muted overflow-hidden transition-all hover:border-primary/40">
+                      {profile?.avatar_url ? (
+                        <img src={profile.avatar_url} className="w-full h-full object-cover" alt="Profile" />
+                      ) : (
+                        <span className="text-xs font-semibold text-muted-foreground">{profile?.full_name?.charAt(0) || "U"}</span>
+                      )}
+                      <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <ChevronDownIcon className="size-3 text-white" />
+                      </div>
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56 bg-zinc-950 border-white/10 rounded-2xl shadow-2xl p-2">
+                    <DropdownMenuLabel className="px-3 py-4">
+                      <div className="space-y-1">
+                        <p className="text-sm font-bold text-white tracking-tight">{profile?.full_name || "Star9 Member"}</p>
+                        <p className="text-[10px] font-mono text-zinc-500 truncate">{user.email}</p>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator className="bg-white/5" />
+                    {profileLinks.map((l) => (
+                      <DropdownMenuItem 
+                        key={l.id} 
+                        onClick={() => setActiveTab(l.id)}
+                        className={`gap-3 p-3 rounded-xl cursor-pointer ${activeTab === l.id ? "bg-primary/10 text-primary" : "text-zinc-400 hover:text-white hover:bg-white/5"}`}
                       >
-                        {profile?.avatar_url ? (
-                          <img src={profile.avatar_url} className="w-full h-full object-cover" alt="Profile" />
-                        ) : (
-                          <span className="text-xs font-semibold text-muted-foreground">{profile?.full_name?.charAt(0) || "U"}</span>
-                        )}
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent>Settings</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-
-                <button 
-                  onClick={handleLogout}
-                  className="p-2 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
-                  title="Log Out"
-                >
-                  <ArrowRightIcon className="size-4 rotate-180" />
-                </button>
+                        <l.icon className="size-4" />
+                        <span className="text-xs font-medium">{l.label}</span>
+                      </DropdownMenuItem>
+                    ))}
+                    <DropdownMenuSeparator className="bg-white/5" />
+                    <DropdownMenuItem 
+                      onClick={handleLogout}
+                      className="gap-3 p-3 rounded-xl cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10 transition-colors"
+                    >
+                      <LogOutIcon className="size-4" />
+                      <span className="text-xs font-medium">Log Out</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </>
             ) : (
               <div className="flex items-center gap-2">
@@ -455,7 +510,7 @@ const Academy = () => {
         <div 
           className="flex items-center gap-4 px-6 py-3 rounded-full bg-card/90 backdrop-blur-xl border border-border shadow-lg"
         >
-          {studentLinks.slice(0, user ? 5 : 4).map((l) => {
+          {studentLinks.slice(0, 5).map((l) => {
             const isActive = activeTab === l.id;
             return (
               <button

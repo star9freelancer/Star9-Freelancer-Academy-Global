@@ -15,7 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo_transparent.png";
 import { supabase } from "@/lib/supabase";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
