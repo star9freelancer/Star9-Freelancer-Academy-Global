@@ -16,15 +16,12 @@ import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo_transparent.png";
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
+import { getStoredTheme, applyTheme } from "@/lib/theme";
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [dark, setDark] = useState(() => {
-    const stored = localStorage.getItem("star9-dark-mode");
-    if (stored !== null) return stored === "true";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
-  });
+  const [dark, setDark] = useState(() => getStoredTheme());
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
@@ -46,8 +43,7 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", dark);
-    localStorage.setItem("star9-dark-mode", String(dark));
+    applyTheme(dark);
   }, [dark]);
 
   const navLinks = [
@@ -65,21 +61,21 @@ const Header = () => {
         transition={{ type: "spring", damping: 20, stiffness: 100 }}
         className={`flex items-center gap-2 md:gap-3 px-4 py-2.5 rounded-full backdrop-blur-xl border shadow-lg max-w-full transition-all duration-300 ${
           scrolled
-            ? "bg-zinc-950/80 border-white/10"
-            : "bg-zinc-950/40 border-white/5"
+            ? "bg-background/80 border-border"
+            : "bg-background/40 border-border/50"
         }`}
       >
         {/* Logo */}
-        <Link to="/" className="p-2 rounded-full hover:bg-white/5 transition-colors shrink-0">
+        <Link to="/" className="p-2 rounded-full hover:bg-accent transition-colors shrink-0">
           <img src={logo} alt="Star9" className="h-7 w-auto" />
         </Link>
 
-        <div className="h-6 w-px bg-white/10 mx-1 shrink-0 hidden md:block" />
+        <div className="h-6 w-px bg-border mx-1 shrink-0 hidden md:block" />
 
         {/* Nav Links */}
         <div className="hidden md:flex items-center gap-1">
           {navLinks.map((l) => (
-            <Button key={l.label} variant="ghost" size="sm" className="text-sm font-medium rounded-full gap-2 px-4 text-white/70 hover:text-white hover:bg-white/5 shrink-0" asChild>
+            <Button key={l.label} variant="ghost" size="sm" className="text-sm font-medium rounded-full gap-2 px-4 text-muted-foreground hover:text-foreground hover:bg-accent shrink-0" asChild>
               <Link to={l.href}>
                 <l.icon className="size-4 opacity-50" />
                 {l.label}
@@ -88,10 +84,18 @@ const Header = () => {
           ))}
         </div>
 
-        <div className="h-6 w-px bg-white/10 mx-1 shrink-0 hidden md:block" />
+        <div className="h-6 w-px bg-border mx-1 shrink-0 hidden md:block" />
 
         {/* Right side */}
         <div className="hidden md:flex items-center gap-2">
+          {/* Theme Toggle */}
+          <button 
+            onClick={() => setDark(!dark)}
+            className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-accent transition-all"
+            title={dark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          >
+            {dark ? <SunIcon className="size-4" /> : <MoonIcon className="size-4" />}
+          </button>
           {user ? (
             <Button size="sm" className="gap-2 rounded-full bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/20 brightness-110" asChild>
               <Link to="/academy">
@@ -113,7 +117,7 @@ const Header = () => {
 
         {/* Mobile toggle */}
         <button 
-          className="md:hidden p-2 rounded-full bg-white/5 text-white" 
+          className="md:hidden p-2 rounded-full bg-accent text-foreground" 
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -128,10 +132,10 @@ const Header = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="md:hidden fixed inset-0 z-[60] bg-zinc-950/98 backdrop-blur-2xl flex flex-col p-8 pt-24"
+            className="md:hidden fixed inset-0 z-[60] bg-background/98 backdrop-blur-2xl flex flex-col p-8 pt-24"
           >
             <div className="space-y-4">
-              <p className="text-[10px] font-mono uppercase tracking-[0.5em] text-white/30 mb-8">Navigation Menu</p>
+              <p className="text-[10px] font-mono uppercase tracking-[0.5em] text-muted-foreground/30 mb-8">Navigation Menu</p>
               {navLinks.map((l, i) => (
                 <motion.div
                   key={l.label}
@@ -141,7 +145,7 @@ const Header = () => {
                 >
                   <Link
                     to={l.href}
-                    className="flex items-center justify-between py-4 border-b border-white/5 text-2xl font-bold tracking-tighter text-white/90 hover:text-primary transition-colors"
+                    className="flex items-center justify-between py-4 border-b border-border text-2xl font-bold tracking-tighter text-foreground hover:text-primary transition-colors"
                     onClick={() => setMobileOpen(false)}
                   >
                     {l.label}

@@ -34,7 +34,7 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
       className="h-full cursor-pointer relative group"
       onClick={isEnrolled ? onOpen : onViewDetails}
     >
-      <div className="relative aspect-[3/4.5] w-full rounded-[2.2rem] overflow-hidden border border-white/10 bg-zinc-950 shadow-2xl transition-all duration-700 group-hover:border-primary/50 group-hover:shadow-primary/20">
+      <div className="relative aspect-[3/4.5] w-full rounded-[2.2rem] overflow-hidden border border-border bg-card shadow-2xl transition-all duration-700 group-hover:border-primary/50 group-hover:shadow-primary/20">
         
         {/* Background Image - Full Bleed */}
         <div className="absolute inset-0 z-0">
@@ -43,9 +43,9 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
             alt={course.title} 
             className="w-full h-full object-cover grayscale-[0.4] contrast-[1.1] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-[1.5s] ease-out"
           />
-          {/* Gradients for legibility */}
-          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/50 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+          {/* Gradients for legibility - optimized for theme */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
         </div>
 
         {/* Top Badges */}
@@ -61,7 +61,7 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
         </div>
 
         {/* Bottom Content Overlay */}
-        <div className="absolute bottom-0 inset-x-0 z-10 p-8 pt-20 bg-gradient-to-t from-zinc-950 to-transparent">
+        <div className="absolute bottom-0 inset-x-0 z-10 p-8 pt-20 bg-gradient-to-t from-black/80 to-transparent">
           <div className="space-y-4">
             <div className="space-y-1">
               <p className="text-[10px] font-mono uppercase tracking-[0.4em] text-primary font-black opacity-0 group-hover:opacity-100 transition-opacity duration-500">
@@ -74,10 +74,10 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
 
             <div className="flex items-center gap-4 text-[9px] font-mono uppercase tracking-widest text-zinc-500 group-hover:text-zinc-300 transition-colors">
                <div className="flex items-center gap-2">
-                  <ClockIcon className="size-3 text-primary/60" />
-                  <span>{course.duration || "4H"}</span>
-               </div>
-               <div className="size-1 rounded-full bg-white/20" />
+                   <ClockIcon className="size-3 text-primary/60" />
+                   <span>{course.duration || "4H"}</span>
+                </div>
+                <div className="size-1 rounded-full bg-white/40" />
                <span>6 Modules</span>
             </div>
 
@@ -86,9 +86,9 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
               <div className="space-y-2 pt-2">
                 <div className="flex items-center justify-between">
                   <span className="text-[9px] font-mono text-zinc-500 tracking-widest uppercase">Completion</span>
-                  <span className="text-[10px] font-mono text-primary font-black">{progress}%</span>
+                  <span className="text-10px font-mono text-primary font-black">{progress}%</span>
                 </div>
-                <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden p-[0.5px] border border-white/10 group-hover:border-primary/20 transition-colors">
+                <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden p-[0.5px] border border-white/20 group-hover:border-primary/40 transition-colors">
                   <motion.div 
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
@@ -106,7 +106,7 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
             <div className="pt-2 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
               <Button 
                 variant="outline" 
-                className="w-full h-11 rounded-none border-white/5 bg-white text-black hover:bg-zinc-200 font-black text-[9px] uppercase tracking-[0.2em] shadow-2xl"
+                className="w-full h-11 rounded-none border-white/10 bg-white text-black hover:bg-zinc-100 font-black text-[9px] uppercase tracking-[0.2em] shadow-2xl"
               >
                 {isEnrolled ? "Resume Module" : "Explore Unit"} <PlayIcon className="size-3 ml-2 fill-current" />
               </Button>

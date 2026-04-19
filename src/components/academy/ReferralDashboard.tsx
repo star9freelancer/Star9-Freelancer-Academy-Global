@@ -145,15 +145,15 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
   ];
 
   const commissionGuide = [
-    { course: "AI for Freelancers", price: "$50", commission: "$10", color: "bg-primary/10 border-primary/20 text-primary" },
-    { course: "Mastering Freelancing", price: "$100", commission: "$15", color: "bg-secondary/10 border-secondary/20 text-secondary" },
-    { course: "International Teacher Preparation", price: "$300", commission: "$15", color: "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" },
+    { course: "AI for Freelancers", price: "$50", commission: "$10", color: "bg-primary/5 border-primary/20 text-primary" },
+    { course: "Mastering Freelancing", price: "$100", commission: "$15", color: "bg-secondary/5 border-secondary/20 text-secondary" },
+    { course: "International Teacher Preparation", price: "$300", commission: "$15", color: "bg-emerald-500/5 border-emerald-500/20 text-emerald-500" },
   ];
 
   const statusColor: Record<string, string> = {
-    pending: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
-    confirmed: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-    paid: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+    pending: "bg-yellow-500/5 text-yellow-600 dark:text-yellow-400 border-yellow-500/20",
+    confirmed: "bg-blue-500/5 text-blue-600 dark:text-blue-400 border-blue-500/20",
+    paid: "bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
   };
 
   return (
@@ -274,7 +274,7 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
                 <div key={r.id} className="grid grid-cols-4 gap-4 px-5 py-4 items-center hover:bg-muted/20 transition-colors">
                   <span className="text-sm text-foreground font-medium truncate">{r.referred_email}</span>
                   <span className="text-sm text-muted-foreground truncate">{r.course_name}</span>
-                  <span className="text-sm font-semibold text-emerald-400">${r.commission}</span>
+                  <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">${r.commission}</span>
                   <Badge className={`text-xs border w-fit ${statusColor[r.status]}`}>
                     {r.status.charAt(0).toUpperCase() + r.status.slice(1)}
                   </Badge>

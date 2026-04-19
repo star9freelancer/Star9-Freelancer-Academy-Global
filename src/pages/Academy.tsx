@@ -63,8 +63,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown as ChevronDownIcon, LogOut as LogOutIcon } from "lucide-react";
+import { ChevronDown as ChevronDownIcon, LogOut as LogOutIcon, Sun as SunIcon, Moon as MoonIcon } from "lucide-react";
 import logo from "@/assets/logo_transparent.png";
+import { getStoredTheme, applyTheme } from "@/lib/theme";
 
 const Academy = () => {
   const { user, profile, loading: authLoading, refreshProfile } = useAuth();
@@ -75,6 +76,18 @@ const Academy = () => {
   const [activeTab, setActiveTab] = useState("home");
   const [searchDialogOpen, setSearchDialogOpen] = useState(false);
   const [filterTab, setFilterTab] = useState<"active" | "completed">("active");
+  const [isDarkMode, setIsDarkMode] = useState(() => getStoredTheme());
+
+  // Initialize theme on mount
+  useEffect(() => {
+    applyTheme(isDarkMode);
+  }, []);
+
+  const handleThemeToggle = () => {
+    const next = !isDarkMode;
+    setIsDarkMode(next);
+    applyTheme(next);
+  };
 
   useEffect(() => {
     if (!authLoading && !user && activeTab === "home") {
@@ -242,13 +255,23 @@ const Academy = () => {
     if (!courseId) return;
 
     const courseObj = courses.find(c => c.id === courseId);
-    let basePrice = 50; // New default price for AI for Freelancers
+    let basePrice = 50;
     if (courseObj?.title.toLowerCase().includes("mastering freelancing")) basePrice = 100;
     if (courseObj?.title.toLowerCase().includes("teacher preparation")) basePrice = 300;
 
+    // Paystack amounts are in the smallest currency unit (cents/kobo)
     const amount = currency === 'USD' ? basePrice * 100 : Math.round(basePrice * exchangeRate) * 100;
 
     const paystackKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
+    
+    if (!paystackKey) {
+      toast.error("Payment configuration error. Please contact support.");
+      return;
+    }
+
+    // Close modal first to avoid iframe conflict
+    setPaymentModalOpen(false);
+
     try {
       if ((window as any).PaystackPop) {
         const handler = (window as any).PaystackPop.setup({
@@ -256,34 +279,33 @@ const Academy = () => {
           email: user?.email || "student@star9global.com",
           amount: amount,
           currency: currency,
-          channels: currency === 'USD' 
-            ? ['card', 'apple_pay', 'google_pay'] 
-            : ['card', 'mobile_money', 'bank_transfer'],
           ref: 'ST9_' + Math.floor((Math.random() * 1000000000) + 1),
           metadata: {
-             custom_fields: [
-                { display_name: "Internal User ID", variable_name: "user_id", value: user.id },
-                { display_name: "Course Lookup Hash", variable_name: "course_id", value: courseId }
-             ]
+            custom_fields: [
+              { display_name: "Internal User ID", variable_name: "user_id", value: user!.id },
+              { display_name: "Course Lookup Hash", variable_name: "course_id", value: courseId }
+            ]
           },
           callback: function(response: any) {
-            toast.success(`Payment verified! Reference: ${response.reference}`);
-            setPaymentModalOpen(false);
+            toast.success(`Payment received! Your enrollment is being processed.`, {
+              description: `Ref: ${response.reference}. Access will be granted within 60 seconds.`
+            });
             setEnrolling(null);
-            setTimeout(() => { invalidateAll(); }, 5000); 
+            // Webhook handles enrollment — poll for update
+            setTimeout(() => invalidateAll(), 8000);
           },
           onClose: function() {
             setEnrolling(null);
-            setPaymentModalOpen(false);
           }
         });
         handler.openIframe();
       } else {
-        toast.error("Payment Gateway unreachable.");
+        toast.error("Payment gateway failed to load. Please refresh the page and try again.");
         setEnrolling(null);
       }
     } catch (err) {
-      console.error(err);
+      console.error("Paystack error:", err);
+      toast.error("Payment could not be initiated. Please try again.");
       setEnrolling(null);
     }
   };
@@ -354,31 +376,38 @@ const Academy = () => {
       {/* Top Navigation - hidden on mobile */}
       <div className="hidden md:flex fixed top-0 inset-x-0 z-50 justify-center p-4 md:p-6 transition-all duration-500">
         <nav 
-          className="flex items-center gap-2 md:gap-3 px-4 py-2.5 rounded-full bg-zinc-950/80 backdrop-blur-xl border border-white/10 shadow-lg max-w-full overflow-x-auto no-scrollbar"
+          className="flex items-center gap-2 md:gap-3 px-4 py-2.5 rounded-full bg-background/80 backdrop-blur-xl border border-border shadow-lg max-w-full overflow-x-auto no-scrollbar"
         >
           {/* Logo */}
-          <Link to="/" className="p-2 rounded-full hover:bg-white/5 transition-colors shrink-0">
+          <Link to="/" className="p-2 rounded-full hover:bg-accent transition-colors shrink-0">
             <img src={logo} alt="Star9" className="h-7 w-auto" />
           </Link>
 
-          <div className="h-6 w-px bg-white/10 mx-1 shrink-0" />
+          <div className="h-6 w-px bg-border mx-1 shrink-0" />
 
           {/* Utility Buttons - Search & Notifications */}
           <div className="flex items-center gap-1">
             <button 
               onClick={() => setSearchDialogOpen(true)}
-              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all"
+              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-accent transition-all"
               title="Search Intelligence (Cmd+K)"
             >
               <SearchIcon className="size-4" />
             </button>
-            <button className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all relative">
+            <button 
+              onClick={handleThemeToggle}
+              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-accent transition-all"
+              title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {isDarkMode ? <SunIcon className="size-4" /> : <MoonIcon className="size-4" />}
+            </button>
+            <button className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-accent transition-all relative">
               <BellIcon className="size-4" />
-              <div className="absolute top-2 right-2 size-1.5 bg-primary rounded-full border border-zinc-950" />
+              <div className="absolute top-2 right-2 size-1.5 bg-primary rounded-full border border-background" />
             </button>
           </div>
 
-          <div className="h-6 w-px bg-white/10 mx-1 shrink-0" />
+          <div className="h-6 w-px bg-border mx-1 shrink-0" />
 
           {/* Navigation Links */}
           <div className="flex items-center gap-1 shrink-0">
@@ -413,14 +442,14 @@ const Academy = () => {
                     <ChevronDownIcon className="size-3 opacity-50" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-48 bg-zinc-950 border-white/10 rounded-2xl shadow-2xl">
-                  <DropdownMenuLabel className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">More Options</DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-white/5" />
+                <DropdownMenuContent align="start" className="w-48 bg-card border-border rounded-2xl shadow-2xl">
+                  <DropdownMenuLabel className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">More Options</DropdownMenuLabel>
+                  <DropdownMenuSeparator className="border-border" />
                   {secondaryLinks.map((l) => (
                     <DropdownMenuItem 
                       key={l.id} 
                       onClick={() => setActiveTab(l.id)}
-                      className={`gap-3 p-3 rounded-xl cursor-pointer ${activeTab === l.id ? "bg-primary/10 text-primary" : "text-zinc-400 hover:text-white hover:bg-white/5"}`}
+                      className={`gap-3 p-3 rounded-xl cursor-pointer ${activeTab === l.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-accent"}`}
                     >
                       <l.icon className="size-4" />
                       <span className="text-xs font-medium">{l.label}</span>
@@ -431,7 +460,7 @@ const Academy = () => {
             )}
           </div>
 
-          <div className="hidden lg:block h-6 w-px bg-white/10 mx-1 shrink-0" />
+          <div className="hidden lg:block h-6 w-px bg-border mx-1 shrink-0" />
 
           {/* Points & Profile / Auth Buttons */}
           <div className="flex items-center gap-2 shrink-0">
@@ -455,25 +484,25 @@ const Academy = () => {
                       </div>
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 bg-zinc-950 border-white/10 rounded-2xl shadow-2xl p-2">
+                  <DropdownMenuContent align="end" className="w-56 bg-card border-border rounded-2xl shadow-2xl p-2">
                     <DropdownMenuLabel className="px-3 py-4">
                       <div className="space-y-1">
-                        <p className="text-sm font-bold text-white tracking-tight">{profile?.full_name || "Star9 Member"}</p>
-                        <p className="text-[10px] font-mono text-zinc-500 truncate">{user.email}</p>
+                        <p className="text-sm font-bold text-foreground tracking-tight">{profile?.full_name || "Star9 Member"}</p>
+                        <p className="text-[10px] font-mono text-muted-foreground truncate">{user.email}</p>
                       </div>
                     </DropdownMenuLabel>
-                    <DropdownMenuSeparator className="bg-white/5" />
+                    <DropdownMenuSeparator className="border-border" />
                     {profileLinks.map((l) => (
                       <DropdownMenuItem 
                         key={l.id} 
                         onClick={() => setActiveTab(l.id)}
-                        className={`gap-3 p-3 rounded-xl cursor-pointer ${activeTab === l.id ? "bg-primary/10 text-primary" : "text-zinc-400 hover:text-white hover:bg-white/5"}`}
+                        className={`gap-3 p-3 rounded-xl cursor-pointer ${activeTab === l.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-accent"}`}
                       >
                         <l.icon className="size-4" />
                         <span className="text-xs font-medium">{l.label}</span>
                       </DropdownMenuItem>
                     ))}
-                    <DropdownMenuSeparator className="bg-white/5" />
+                    <DropdownMenuSeparator className="border-border" />
                     <DropdownMenuItem 
                       onClick={handleLogout}
                       className="gap-3 p-3 rounded-xl cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10 transition-colors"
@@ -501,7 +530,7 @@ const Academy = () => {
       {/* Mobile Nav Overlay (Fallback) */}
       {sidebarOpen && (
         <div 
-          className="md:hidden fixed inset-0 z-[60] bg-zinc-950/80 backdrop-blur-md" 
+          className="md:hidden fixed inset-0 z-[60] bg-background/80 backdrop-blur-md" 
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -537,7 +566,11 @@ const Academy = () => {
             <ProgramDetailView 
               course={selectedProgram}
               enrollment={enrollments.get(selectedProgram.id)}
-              onBack={() => setSelectedProgram(null)}
+              onBack={() => {
+                setSelectedProgram(null);
+                // Ensure we are on a relevant tab
+                if (activeTab === 'home' || activeTab === 'settings') setActiveTab('catalog');
+              }}
               onEnroll={() => handleEnroll(selectedProgram.id)}
               onStart={(idx) => { navigate(`/academy/course/${selectedProgram.id}`); setSelectedProgram(null); }}
             />
@@ -553,11 +586,10 @@ const Academy = () => {
 
                <div className="space-y-12 pb-20">
                  {activeTab === "home" && <HomeFeed setActiveTab={setActiveTab} courses={courses} enrollments={enrollments} profile={profile} />}
-
-                  {activeTab === "academy" && (
+                   {activeTab === "academy" && (
                     <div className="space-y-12 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
                        {/* Compact Student Dashboard Header */}
-                       <div className="relative p-8 md:p-12 rounded-[2.5rem] bg-zinc-950 border border-white/5 overflow-hidden group shadow-2xl">
+                       <div className="relative p-8 md:p-12 rounded-[2.5rem] bg-card border border-border overflow-hidden group shadow-2xl">
                           <div className="absolute top-0 right-0 p-12 opacity-[0.03] -rotate-12 group-hover:rotate-0 transition-transform duration-[10s]">
                              <SparklesIcon className="size-64 text-primary" />
                           </div>
@@ -568,30 +600,30 @@ const Academy = () => {
                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[9px] font-black uppercase tracking-[0.2em]">
                                   Dashboard
                                </div>
-                               <h2 className="text-3xl md:text-5xl font-black italic tracking-tighter text-white">
+                               <h2 className="text-3xl md:text-5xl font-black italic tracking-tighter text-foreground">
                                   Star9 <span className="text-primary underline decoration-primary/30 underline-offset-8">Academy</span>
                                </h2>
-                               <p className="text-zinc-500 text-sm md:text-base max-w-sm leading-relaxed">
+                               <p className="text-muted-foreground text-sm md:text-base max-w-sm leading-relaxed">
                                   Track modules, certificates, and your global career progress.
                                 </p>
                              </div>
 
                              <div className="flex flex-wrap gap-6 md:gap-10">
                                <div className="space-y-1">
-                                 <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 font-bold">Active Modules</p>
-                                 <p className="text-3xl font-black text-white">{courses.filter(c => enrollments.get(c.id)?.progress && enrollments.get(c.id)!.progress < 100).length}</p>
+                                 <p className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground font-bold">Active Modules</p>
+                                 <p className="text-3xl font-black text-foreground">{courses.filter(c => enrollments.get(c.id)?.progress && enrollments.get(c.id)!.progress < 100).length}</p>
                                </div>
-                               <div className="h-12 w-px bg-white/5 hidden sm:block" />
+                               <div className="h-12 w-px bg-border hidden sm:block" />
                                <div className="space-y-1">
-                                 <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 font-bold">Merit Points</p>
+                                 <p className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground font-bold">Merit Points</p>
                                  <p className="text-3xl font-black text-amber-500 flex items-center gap-2">
                                    {profile?.merit_points || 0}
                                    <SparklesIcon className="size-5" />
                                  </p>
                                </div>
-                               <div className="h-12 w-px bg-white/5 hidden sm:block" />
+                               <div className="h-12 w-px bg-border hidden sm:block" />
                                <div className="space-y-1">
-                                 <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 font-bold">Certificates</p>
+                                 <p className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground font-bold">Certificates</p>
                                  <p className="text-3xl font-black text-primary flex items-center gap-2">
                                    {certificates.length}
                                    <AwardIcon className="size-5" />
@@ -601,13 +633,14 @@ const Academy = () => {
                           </div>
                        </div>
 
+
                        {/* Resume Learning Spotlight */}
                        {courses.filter(c => enrollments.get(c.id)?.progress && enrollments.get(c.id)!.progress < 100).length > 0 && (
                          <div className="space-y-6">
                             <div className="flex items-center gap-3">
-                               <div className="h-px flex-1 bg-white/5" />
-                               <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-zinc-600">Continue Journey</span>
-                               <div className="h-px flex-1 bg-white/5" />
+                               <div className="h-px flex-1 bg-border" />
+                               <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-muted-foreground">Continue Journey</span>
+                               <div className="h-px flex-1 bg-border" />
                             </div>
                             {(() => {
                               const activeEnrollments = courses
@@ -621,24 +654,24 @@ const Academy = () => {
                               return (
                                 <div 
                                   onClick={() => navigate(`/academy/course/${course.id}`)}
-                                  className="group relative p-6 md:p-8 rounded-[2rem] bg-zinc-900/50 border border-white/5 hover:border-primary/40 transition-all duration-500 cursor-pointer overflow-hidden shadow-xl"
+                                  className="group relative p-6 md:p-8 rounded-[2rem] bg-card border border-border hover:border-primary/40 transition-all duration-500 cursor-pointer overflow-hidden shadow-xl"
                                 >
                                    <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                    <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
-                                      <div className="size-24 md:size-32 rounded-2xl overflow-hidden shrink-0 border border-white/10 group-hover:border-primary/50 transition-colors shadow-lg">
+                                      <div className="size-24 md:size-32 rounded-2xl overflow-hidden shrink-0 border border-border group-hover:border-primary/50 transition-colors shadow-lg">
                                          <img src={course.image_url} alt="" className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-700" />
                                       </div>
                                       <div className="flex-1 space-y-3 text-center md:text-left">
                                          <Badge className="bg-primary/20 text-primary border-none rounded-full px-4 mb-2 animate-pulse">Next Up</Badge>
-                                         <h3 className="text-2xl md:text-3xl font-bold tracking-tighter italic text-white group-hover:text-primary transition-colors">{course.title}</h3>
+                                         <h3 className="text-2xl md:text-3xl font-bold tracking-tighter italic text-foreground group-hover:text-primary transition-colors">{course.title}</h3>
                                          <div className="flex items-center justify-center md:justify-start gap-4">
-                                            <div className="h-1.5 w-48 bg-zinc-800 rounded-full overflow-hidden">
+                                            <div className="h-1.5 w-48 bg-muted rounded-full overflow-hidden">
                                                <div className="h-full bg-primary" style={{ width: `${progress}%` }} />
                                             </div>
-                                            <span className="text-xs font-mono text-zinc-500">{progress}% Complete</span>
+                                            <span className="text-xs font-mono text-muted-foreground">{progress}% Complete</span>
                                          </div>
                                       </div>
-                                      <Button size="lg" className="rounded-2xl px-10 h-14 bg-white text-black font-bold tracking-tight hover:bg-zinc-200">
+                                      <Button size="lg" className="rounded-2xl px-10 h-14 bg-primary text-white font-bold tracking-tight hover:bg-primary/90">
                                          Resume Now <PlayIcon className="size-4 ml-2 fill-current" />
                                       </Button>
                                    </div>
@@ -650,22 +683,22 @@ const Academy = () => {
 
                        <div className="space-y-8">
                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                            <div className="flex items-center gap-4 p-1 bg-zinc-900/50 rounded-2xl border border-white/5 w-fit">
+                            <div className="flex items-center gap-4 p-1 bg-card rounded-2xl border border-border w-fit">
                                <button 
                                  onClick={() => setFilterTab("active")}
-                                 className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filterTab === "active" ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-zinc-500 hover:text-white"}`}
+                                 className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filterTab === "active" ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-muted-foreground hover:text-foreground"}`}
                                >
                                  In-Progress
                                </button>
                                <button 
                                  onClick={() => setFilterTab("completed")}
-                                 className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filterTab === "completed" ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/20" : "text-zinc-500 hover:text-white"}`}
+                                 className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filterTab === "completed" ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/20" : "text-muted-foreground hover:text-foreground"}`}
                                >
                                  Completed
                                </button>
                             </div>
                             {searchQuery && (
-                              <Badge variant="outline" className="text-[10px] font-mono border-white/10 uppercase tracking-widest text-primary">Filter: {searchQuery}</Badge>
+                              <Badge variant="outline" className="text-[10px] font-mono border-border uppercase tracking-widest text-primary">Filter: {searchQuery}</Badge>
                             )}
                          </div>
 
@@ -681,7 +714,7 @@ const Academy = () => {
                              .map((course) => (
                                <div key={course.id} className="group relative">
                                   <div className="absolute -inset-1 bg-gradient-to-br from-primary/40 to-violet-600/40 rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-20 transition duration-700" />
-                                  <div className="relative overflow-hidden rounded-[2.2rem] border border-white/10 bg-zinc-950 hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 shadow-2xl">
+                                  <div className="relative overflow-hidden rounded-[2.2rem] border border-border bg-card hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 shadow-2xl">
                                     <CourseCard 
                                       course={course} 
                                       enrollment={enrollments.get(course.id)} 
@@ -693,14 +726,14 @@ const Academy = () => {
                            }
                            
                            {courses.filter(c => enrollments.has(c.id)).length === 0 && (
-                              <div className="col-span-full py-24 flex flex-col items-center text-center space-y-8 glass rounded-[3rem] border-white/5">
-                                 <div className="size-32 rounded-full bg-zinc-900 flex items-center justify-center border border-white/10 relative">
-                                    <BookOpenIcon className="size-12 text-zinc-700" />
+                              <div className="col-span-full py-24 flex flex-col items-center text-center space-y-8 bg-card rounded-[3rem] border border-border">
+                                 <div className="size-32 rounded-full bg-muted flex items-center justify-center border border-border relative">
+                                    <BookOpenIcon className="size-12 text-muted-foreground" />
                                     <div className="absolute inset-0 rounded-full border border-primary/20 animate-ping opacity-20" />
                                  </div>
                                  <div className="max-w-xs space-y-2">
-                                    <h3 className="text-2xl font-black text-white italic tracking-tight">Vault Empty</h3>
-                                    <p className="text-zinc-500 text-sm">You haven't initialized any modules yet. Your global career starts at the catalog.</p>
+                                    <h3 className="text-2xl font-black text-foreground italic tracking-tight">Vault Empty</h3>
+                                    <p className="text-muted-foreground text-sm">You haven't initialized any modules yet. Your global career starts at the catalog.</p>
                                  </div>
                                  <Button className="h-14 px-10 rounded-2xl bg-primary text-white font-bold tracking-widest text-xs uppercase" onClick={() => setActiveTab('catalog')}>
                                    Browse Academy Vault
@@ -758,6 +791,19 @@ const Academy = () => {
                             <CourseCard key={course.id} course={course} enrollment={enrollments.get(course.id)} isEnrolling={enrolling === course.id} onEnroll={() => handleEnroll(course.id)} onViewDetails={() => setSelectedProgram(course)} />
                           ))
                         }
+
+                        {courses.filter(c => !enrollments.has(c.id)).length === 0 && (
+                          <div className="col-span-full py-20 flex flex-col items-center text-center space-y-6 bg-card border border-dashed border-border rounded-[3rem]">
+                            <div className="size-20 rounded-2xl bg-primary/5 flex items-center justify-center border border-primary/20">
+                              <SparklesIcon className="size-10 text-primary" />
+                            </div>
+                            <div className="max-w-sm space-y-2">
+                              <h3 className="text-xl font-bold">You're All Set!</h3>
+                              <p className="text-sm text-muted-foreground leading-relaxed">You have initialized all available curriculums. Check your <span className="text-primary font-bold">Academy</span> tab to continue your learning journey.</p>
+                            </div>
+                            <Button variant="outline" className="rounded-xl px-8" onClick={() => setActiveTab('academy')}>Go to Academy</Button>
+                          </div>
+                        )}
                       </div>
                    </div>
                  )}
@@ -865,31 +911,33 @@ const Academy = () => {
               <DialogDescription className="text-zinc-500">Choose your preferred payment method. Next cohort launch: May 4th.</DialogDescription>
             </div>
 
-            <div className="grid gap-4">
-              <button 
+            <div className="grid gap-4">               <button 
+                type="button"
                 onClick={() => initiatePayment('USD')}
-                className="group relative flex items-center justify-between p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-primary/50 transition-all text-left"
+                className="group relative flex items-center justify-between p-6 rounded-2xl bg-card border border-border hover:border-primary/50 transition-all text-left w-full shadow-lg"
               >
                 <div className="flex items-center gap-4">
                   <div className="size-12 rounded-xl bg-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                     <CreditCardIcon className="size-6" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-lg">International Card</h4>
-                    <p className="text-xs text-zinc-500">Secure USD Transaction (Equity Bank)</p>
+                    <h4 className="font-bold text-lg text-foreground">International Card</h4>
+                    <p className="text-xs text-muted-foreground">Secure USD Transaction (Equity Bank)</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-mono text-lg font-black text-white">$ {
+                  <p className="font-mono text-lg font-black text-foreground">$ {
                     courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("mastering freelancing") ? "100" : 
                     (courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher preparation") || courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher prep")) ? "300" : "50"
                   }</p>
                 </div>
               </button>
 
+
               <button 
+                type="button"
                 onClick={() => initiatePayment('KES')}
-                className="group relative flex items-center justify-between p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-emerald-500/50 transition-all text-left"
+                className="group relative flex items-center justify-between p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-emerald-500/50 transition-all text-left w-full"
               >
                 <div className="flex items-center gap-4">
                   <div className="size-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
