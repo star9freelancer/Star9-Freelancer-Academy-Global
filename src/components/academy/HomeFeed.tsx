@@ -10,6 +10,7 @@ import {
   Users as UsersIcon, 
   Globe as GlobeIcon
 } from "lucide-react";
+import CourseCard from "./CourseCard";
 
 
 interface HomeFeedProps {
@@ -72,42 +73,15 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
             </div>
             
             {activeEnrolledCourses.length > 0 ? (
-              <div className="grid sm:grid-cols-2 gap-4">
-                {activeEnrolledCourses.slice(0, 4).map((course, i) => {
-                  const enrollment = enrollments.get(course.id);
-                  const progress = enrollment?.progress || 0;
-                  return (
-                    <div 
-                      key={course.id}
-                      className="group relative rounded-xl bg-card border border-border hover:border-primary/30 p-5 transition-all cursor-pointer overflow-hidden"
-                      onClick={() => setActiveTab('academy')}
-                    >
-                      <div className="absolute inset-0 opacity-[0.04] group-hover:opacity-[0.08] transition-opacity">
-                        {course.image_url && <img src={course.image_url} className="w-full h-full object-cover" alt="" />}
-                      </div>
-
-                      <div className="relative z-10 space-y-4">
-                        <div>
-                          <Badge variant="secondary" className="text-[10px] mb-2">{course.category || 'Course'}</Badge>
-                          <h4 className="font-semibold text-foreground line-clamp-2">{course.title}</h4>
-                        </div>
-
-                        <div className="space-y-2">
-                          <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                            <div 
-                              className="h-full bg-primary rounded-full transition-all"
-                              style={{ width: `${progress}%` }}
-                            />
-                          </div>
-                          <div className="flex justify-between text-xs text-muted-foreground">
-                            <span>{progress}% complete</span>
-                            {progress >= 100 && <span className="text-green-500 font-medium">Completed</span>}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
+                {activeEnrolledCourses.slice(0, 4).map((course, i) => (
+                  <CourseCard 
+                    key={course.id}
+                    course={course}
+                    enrollment={enrollments.get(course.id)}
+                    onOpen={() => setActiveTab('academy')}
+                  />
+                ))}
               </div>
             ) : (
               <div className="rounded-xl border border-dashed border-border bg-muted/20 p-12 text-center space-y-4 cursor-pointer" onClick={() => setActiveTab('catalog')}>

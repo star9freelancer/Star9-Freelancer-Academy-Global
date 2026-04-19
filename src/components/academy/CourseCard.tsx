@@ -6,7 +6,8 @@ import {
   ShieldCheck as ShieldCheckIcon, 
   Clock as ClockIcon, 
   ArrowRight as ArrowRightIcon, 
-  Sparkles as SparklesIcon 
+  Sparkles as SparklesIcon,
+  Play as PlayIcon
 } from "lucide-react";
 import { motion } from "framer-motion";
 
