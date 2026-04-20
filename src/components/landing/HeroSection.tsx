@@ -9,6 +9,7 @@ import {
   Star as StarIcon 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import logo from "@/assets/logo_transparent.png";
 
 const HeroSection = () => {
   return (
@@ -27,16 +28,17 @@ const HeroSection = () => {
           <div className="space-y-7">
             {/* Eyebrow */}
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: -16 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary/10 border border-secondary/25 text-secondary text-xs font-semibold tracking-wide"
+              className="flex items-center gap-4"
             >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-70" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-secondary" />
-              </span>
-              Launching May 4th — 2026 cohort
+              <img src={logo} alt="Star9 Logo" className="h-10 w-auto" />
+              <div
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 border border-secondary/25 text-secondary text-xs font-semibold tracking-wide"
+              >
+                Launching May 4th
+              </div>
             </motion.div>
 
             {/* Main headline */}

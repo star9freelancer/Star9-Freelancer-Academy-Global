@@ -160,62 +160,85 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
     <div className="space-y-8 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
 
       {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold text-foreground mb-1">Referral Programme</h2>
-        <p className="text-muted-foreground">
-          Earn commissions by sharing Star9 with your network. Payments are processed after each confirmed enrolment.
-        </p>
-      </div>
-
-      {/* Your Referral Link */}
-      <div className="p-6 rounded-2xl border border-primary/20 bg-primary/5 space-y-4">
-        <div className="flex items-center gap-2">
-          <LinkIcon className="size-5 text-primary" />
-          <h3 className="font-semibold text-foreground">Your Referral Link</h3>
+      {!user ? (
+        <div className="text-center space-y-4 py-8">
+           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-[0.2em]">
+              Partner Programme
+           </div>
+           <h2 className="text-3xl md:text-4xl font-black italic tracking-tighter">
+              Become a <span className="text-primary italic">Star9</span> Partner
+           </h2>
+           <p className="text-muted-foreground text-sm max-w-md mx-auto leading-relaxed">
+              Join our global network of referrers and earn competitive commissions while helping others build their freelance careers.
+           </p>
+           <div className="pt-4">
+              <Button size="lg" className="rounded-2xl px-10 h-14 bg-primary text-white font-bold tracking-tight hover:bg-primary/90" asChild>
+                 <Link to="/auth">Join as Partner <ArrowRightIcon className="size-4 ml-2" /></Link>
+              </Button>
+           </div>
         </div>
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="flex-1 px-4 py-3 rounded-xl bg-background border border-border font-mono text-sm text-muted-foreground overflow-x-auto whitespace-nowrap">
-            {referralLink}
+      ) : (
+        <div>
+          <h2 className="text-2xl font-bold text-foreground mb-1">Referral Programme</h2>
+          <p className="text-muted-foreground">
+            Earn commissions by sharing Star9 with your network. Payments are processed after each confirmed enrolment.
+          </p>
+        </div>
+      )}
+
+      {/* Your Referral Link (Logged In Only) */}
+      {user && (
+        <div className="p-6 rounded-2xl border border-primary/20 bg-primary/5 space-y-4">
+          <div className="flex items-center gap-2">
+            <LinkIcon className="size-5 text-primary" />
+            <h3 className="font-semibold text-foreground">Your Referral Link</h3>
           </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              className="gap-2 shrink-0"
-              onClick={copyLink}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex-1 px-4 py-3 rounded-xl bg-background border border-border font-mono text-sm text-muted-foreground overflow-x-auto whitespace-nowrap">
+              {referralLink}
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                className="gap-2 shrink-0"
+                onClick={copyLink}
+              >
+                {copied ? <CheckIcon className="size-4 text-emerald-400" /> : <CopyIcon className="size-4" />}
+                {copied ? "Copied!" : "Copy"}
+              </Button>
+              <Button className="gap-2 shrink-0" onClick={shareLink}>
+                <Share2Icon className="size-4" /> Share
+              </Button>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Your referral code: <span className="font-mono font-semibold text-primary">{referralCode}</span>. 
+            Commissions are confirmed after the referred student completes payment.
+          </p>
+        </div>
+      )}
+
+      {/* Stat Cards (Logged In Only) */}
+      {user && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {statCards.map((s, i) => (
+            <div
+              key={s.label}
+              className="p-5 rounded-2xl border border-border bg-card space-y-3"
             >
-              {copied ? <CheckIcon className="size-4 text-emerald-400" /> : <CopyIcon className="size-4" />}
-              {copied ? "Copied!" : "Copy"}
-            </Button>
-            <Button className="gap-2 shrink-0" onClick={shareLink}>
-              <Share2Icon className="size-4" /> Share
-            </Button>
-          </div>
+              <div className={`size-9 rounded-xl ${s.bg} flex items-center justify-center`}>
+                <s.icon className={`size-4 ${s.color}`} />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-foreground">
+                  {s.prefix ?? ""}{loading ? "--" : s.value}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">{s.label}</p>
+              </div>
+            </div>
+          ))}
         </div>
-        <p className="text-xs text-muted-foreground">
-          Your referral code: <span className="font-mono font-semibold text-primary">{referralCode}</span>. 
-          Commissions are confirmed after the referred student completes payment.
-        </p>
-      </div>
-
-      {/* Stat Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {statCards.map((s, i) => (
-          <div
-            key={s.label}
-            className="p-5 rounded-2xl border border-border bg-card space-y-3"
-          >
-            <div className={`size-9 rounded-xl ${s.bg} flex items-center justify-center`}>
-              <s.icon className={`size-4 ${s.color}`} />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-foreground">
-                {s.prefix ?? ""}{loading ? "--" : s.value}
-              </p>
-              <p className="text-xs text-muted-foreground mt-0.5">{s.label}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+      )}
 
       {/* Commission Guide */}
       <div className="space-y-3">
@@ -237,53 +260,55 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
         </div>
       </div>
 
-      {/* Referral History */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-foreground">Referral History</h3>
-          <Button variant="ghost" size="sm" onClick={fetchStats}>Refresh</Button>
-        </div>
+      {/* Referral History (Logged In Only) */}
+      {user && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-foreground">Referral History</h3>
+            <Button variant="ghost" size="sm" onClick={fetchStats}>Refresh</Button>
+          </div>
 
-        {loading ? (
-          <div className="text-center py-12 text-muted-foreground text-sm">Loading...</div>
-        ) : stats.referrals.length === 0 ? (
-          <div className="text-center py-16 rounded-2xl border border-border bg-card/40 space-y-4">
-            <div className="size-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-              <UsersIcon className="size-7 text-primary" />
+          {loading ? (
+            <div className="text-center py-12 text-muted-foreground text-sm">Loading...</div>
+          ) : stats.referrals.length === 0 ? (
+            <div className="text-center py-16 rounded-2xl border border-border bg-card/40 space-y-4">
+              <div className="size-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+                <UsersIcon className="size-7 text-primary" />
+              </div>
+              <div>
+                <p className="font-semibold text-foreground">No referrals yet</p>
+                <p className="text-sm text-muted-foreground mt-1 max-w-xs mx-auto">
+                  Share your referral link with friends and earn $10-$15 per successful enrolment.
+                </p>
+              </div>
+              <Button className="gap-2" onClick={copyLink}>
+                <CopyIcon className="size-4" /> Copy Your Link
+              </Button>
             </div>
-            <div>
-              <p className="font-semibold text-foreground">No referrals yet</p>
-              <p className="text-sm text-muted-foreground mt-1 max-w-xs mx-auto">
-                Share your referral link with friends and earn $10-$15 per successful enrolment.
-              </p>
+          ) : (
+            <div className="rounded-2xl border border-border overflow-hidden">
+              <div className="grid grid-cols-4 gap-4 px-5 py-3 bg-muted/40 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                <span>Referred</span>
+                <span>Course</span>
+                <span>Commission</span>
+                <span>Status</span>
+              </div>
+              <div className="divide-y divide-border">
+                {stats.referrals.map((r, i) => (
+                  <div key={r.id} className="grid grid-cols-4 gap-4 px-5 py-4 items-center hover:bg-muted/20 transition-colors">
+                    <span className="text-sm text-foreground font-medium truncate">{r.referred_email}</span>
+                    <span className="text-sm text-muted-foreground truncate">{r.course_name}</span>
+                    <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">${r.commission}</span>
+                    <Badge className={`text-xs border w-fit ${statusColor[r.status]}`}>
+                      {r.status.charAt(0).toUpperCase() + r.status.slice(1)}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
             </div>
-            <Button className="gap-2" onClick={copyLink}>
-              <CopyIcon className="size-4" /> Copy Your Link
-            </Button>
-          </div>
-        ) : (
-          <div className="rounded-2xl border border-border overflow-hidden">
-            <div className="grid grid-cols-4 gap-4 px-5 py-3 bg-muted/40 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              <span>Referred</span>
-              <span>Course</span>
-              <span>Commission</span>
-              <span>Status</span>
-            </div>
-            <div className="divide-y divide-border">
-              {stats.referrals.map((r, i) => (
-                <div key={r.id} className="grid grid-cols-4 gap-4 px-5 py-4 items-center hover:bg-muted/20 transition-colors">
-                  <span className="text-sm text-foreground font-medium truncate">{r.referred_email}</span>
-                  <span className="text-sm text-muted-foreground truncate">{r.course_name}</span>
-                  <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">${r.commission}</span>
-                  <Badge className={`text-xs border w-fit ${statusColor[r.status]}`}>
-                    {r.status.charAt(0).toUpperCase() + r.status.slice(1)}
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
 
       {/* How it works */}
       <div className="p-6 rounded-2xl bg-card border border-border space-y-5">

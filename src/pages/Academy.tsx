@@ -93,7 +93,11 @@ const Academy = () => {
     if (!authLoading && !user && activeTab === "home") {
       setActiveTab("catalog");
     }
-  }, [user, authLoading, activeTab]);
+    // If logged in as referrer, go straight to referral tab
+    if (profile?.role === 'referrer' && activeTab === 'home') {
+      setActiveTab('referral');
+    }
+  }, [user, profile, authLoading, activeTab]);
 
   if (authLoading || loadingCourses) {
     return (
@@ -375,7 +379,7 @@ const Academy = () => {
     { id: "careers",      icon: BriefcaseIcon,  label: "Jobs",         public: true,  priority: "secondary" },
     { id: "certificates", icon: AwardIcon,      label: "Certificates", public: false, priority: "secondary" },
     { id: "community",    icon: UsersIcon,      label: "Community",    public: false, priority: "secondary" },
-    { id: "referral",     icon: LinkIcon,       label: "Referrals",    public: false, priority: "secondary" },
+    { id: "referral",     icon: LinkIcon,       label: "Referrals",    public: true,  priority: "secondary" },
     { id: "events",       icon: CalendarIcon,   label: "Events",       public: true,  priority: "secondary" },
     { id: "settings",     icon: SettingsIcon,   label: "Settings",     public: false, priority: "profile" },
   ];
@@ -398,8 +402,9 @@ const Academy = () => {
           className="flex items-center gap-2 md:gap-3 px-4 py-2.5 rounded-full bg-background/80 backdrop-blur-xl border border-border shadow-lg max-w-full overflow-x-auto no-scrollbar"
         >
           {/* Logo */}
-          <Link to="/" className="p-2 rounded-full hover:bg-accent transition-colors shrink-0">
-            <img src={logo} alt="Star9" className="h-7 w-auto" />
+          <Link to="/" className="flex items-center gap-2 px-4 py-2 hover:bg-accent/50 rounded-xl transition-all group">
+            <img src={logo} alt="Star9" className="h-8 w-auto group-hover:scale-105 transition-transform" />
+            <span className="text-xl font-black italic tracking-tighter hidden lg:inline-block">STAR<span className="text-primary">9</span></span>
           </Link>
 
           <div className="h-6 w-px bg-border mx-1 shrink-0" />
@@ -617,7 +622,7 @@ const Academy = () => {
                           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
                              <div className="space-y-4">
                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[9px] font-black uppercase tracking-[0.2em]">
-                                  Dashboard
+                                  <img src={logo} className="size-4" alt="" /> Dashboard
                                </div>
                                <h2 className="text-3xl md:text-5xl font-black italic tracking-tighter text-foreground">
                                   Star9 <span className="text-primary underline decoration-primary/30 underline-offset-8">Academy</span>
@@ -688,8 +693,6 @@ const Academy = () => {
                                                <div className="h-full bg-primary" style={{ width: `${progress}%` }} />
                                             </div>
                                             <span className="text-xs font-mono text-muted-foreground">{progress}% Complete</span>
-                                         </div>
-                                      </div>
                                       <Button size="lg" className="rounded-2xl px-10 h-14 bg-primary text-white font-bold tracking-tight hover:bg-primary/90">
                                          Resume Now <PlayIcon className="size-4 ml-2 fill-current" />
                                       </Button>

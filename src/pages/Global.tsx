@@ -106,165 +106,180 @@ const Global = () => {
           </div>
         </div>
 
-        {/* ── SECTION A: WORK ABROAD ─────────────────────────────────────── */}
-        <section className="space-y-10" id="work-abroad">
-          <div className="space-y-2">
-            <h2 className="text-3xl font-bold flex items-center gap-3">
-              <BriefcaseIcon className="text-primary size-8" /> Work Abroad — International Placements
+        {/* ── SECTION A: THE FREELANCER HUB ─────────────────────────────── */}
+        <section className="space-y-16" id="freelancers">
+          <div className="space-y-6 text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 text-secondary text-[10px] font-black uppercase tracking-[0.2em]">
+               Global Career Pathways
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black italic tracking-tighter">
+              The <span className="text-primary italic">Freelancer</span> Hub
             </h2>
-            <p className="text-muted-foreground">End-to-end placement assistance for high-demand international roles.</p>
+            <p className="text-muted-foreground text-lg">
+              Whether you're looking for international placement or high-paying remote roles, our hub connects you to the elite global economy.
+            </p>
           </div>
 
-          {/* Countries strip */}
-          <div className="flex flex-wrap gap-3">
-            {workAbroadCountries.map(c => (
-              <div key={c.code} className="flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-card text-sm font-medium">
-                <img src={c.flag} className="h-4 w-6 rounded-sm object-cover" alt={c.name} />
-                {c.name}
-              </div>
-            ))}
-          </div>
+          <div className="space-y-12">
+            <div className="flex items-center gap-4">
+              <div className="h-px flex-1 bg-border/50" />
+              <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-primary font-bold">1. Specialised Placement Tracks</span>
+              <div className="h-px flex-1 bg-border/50" />
+            </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Teacher Placement */}
-            <div className="glass p-8 rounded-3xl space-y-6 border-white/10 relative overflow-hidden shadow-2xl">
-              <div className="absolute top-0 right-0 p-6 opacity-10">
-                <GraduationCapIcon className="size-32" />
-              </div>
-              <Badge className="bg-primary hover:bg-primary/90 text-white border-0 px-3 py-1">Featured</Badge>
-              <div>
-                <h3 className="text-2xl font-bold mb-2">Teacher Preparation and Placement</h3>
-                <p className="text-sm text-muted-foreground italic">Comprehensive training followed by dedicated placement pipeline to the US, UK, Canada, and Germany.</p>
+            {/* Countries strip */}
+            <div className="flex flex-wrap justify-center gap-3">
+              {workAbroadCountries.map(c => (
+                <div key={c.code} className="flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-card text-sm font-medium">
+                  <img src={c.flag} className="h-4 w-6 rounded-sm object-cover" alt={c.name} />
+                  {c.name}
+                </div>
+              ))}
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-8">
+              {/* Teacher Placement */}
+              <div className="glass p-8 rounded-3xl space-y-6 border-white/10 relative overflow-hidden shadow-2xl">
+                <div className="absolute top-0 right-0 p-6 opacity-10">
+                  <GraduationCapIcon className="size-32" />
+                </div>
+                <Badge className="bg-primary hover:bg-primary/90 text-white border-0 px-3 py-1">Featured</Badge>
+                <div>
+                  <h3 className="text-2xl font-bold mb-2">Teacher Preparation and Placement</h3>
+                  <p className="text-sm text-muted-foreground italic">Comprehensive training followed by dedicated placement pipeline to the US, UK, Canada, and Germany.</p>
+                </div>
+
+                <div className="flex flex-wrap gap-4 py-2 border-y border-white/5">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-mono uppercase text-zinc-500">Duration</span>
+                    <span className="text-sm font-bold">12 Weeks</span>
+                  </div>
+                  <div className="w-px bg-white/5" />
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-mono uppercase text-zinc-500">Format</span>
+                    <span className="text-sm font-bold">Hybrid (Online + Placement)</span>
+                  </div>
+                  <div className="w-px bg-white/5" />
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-mono uppercase text-zinc-500">Price</span>
+                    <span className="text-sm font-bold text-primary">$300</span>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  {[
+                    { step: "1", title: "Phase 1: Preparation", desc: "Documentation, Resume Tailoring & Certification Review" },
+                    { step: "2", title: "Phase 2: Audition", desc: "Loom Video Pitch & Live Interview Placements" },
+                    { step: "3", title: "Phase 3: Relocation", desc: "Visa Sponsorship & Study-Work Logistics Support" },
+                  ].map(p => (
+                    <div key={p.step} className="flex gap-4 items-start">
+                      <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold shrink-0">{p.step}</div>
+                      <div>
+                        <h4 className="font-semibold text-foreground">{p.title}</h4>
+                        <p className="text-xs text-muted-foreground mt-1">{p.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <Button className="w-full h-14 shadow-xl shadow-primary/20 gap-2 rounded-2xl text-base font-bold" asChild>
+                  <Link to={user ? "/academy" : "/auth"}>
+                    {user ? "Enroll in Programme" : "Start 3-Phase Process"} <ArrowRightIcon className="size-4" />
+                  </Link>
+                </Button>
               </div>
 
-              <div className="flex flex-wrap gap-4 py-2 border-y border-white/5">
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-mono uppercase text-zinc-500">Duration</span>
-                  <span className="text-sm font-bold">12 Weeks</span>
+              {/* Caregivers */}
+              <div className="glass p-8 rounded-3xl space-y-6 border-white/10 relative overflow-hidden shadow-2xl">
+                <div className="absolute top-0 right-0 p-6 opacity-10">
+                  <HeartPulseIcon className="size-32" />
                 </div>
-                <div className="w-px bg-white/5" />
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-mono uppercase text-zinc-500">Format</span>
-                  <span className="text-sm font-bold">Hybrid (Online + Placement)</span>
+                <Badge variant="outline" className="px-3 py-1">High Demand</Badge>
+                <div>
+                  <h3 className="text-2xl font-bold mb-2">Caregiver & Healthcare Placements</h3>
+                  <p className="text-sm text-muted-foreground">Connecting compassionate professionals with facilities in America and Europe.</p>
                 </div>
-                <div className="w-px bg-white/5" />
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-mono uppercase text-zinc-500">Price</span>
-                  <span className="text-sm font-bold text-primary">$300</span>
-                </div>
-              </div>
 
-              <div className="space-y-4">
-                {[
-                  { step: "1", title: "Phase 1: Preparation", desc: "Documentation, Resume Tailoring & Certification Review" },
-                  { step: "2", title: "Phase 2: Audition", desc: "Loom Video Pitch & Live Interview Placements" },
-                  { step: "3", title: "Phase 3: Relocation", desc: "Visa Sponsorship & Study-Work Logistics Support" },
-                ].map(p => (
-                  <div key={p.step} className="flex gap-4 items-start">
-                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold shrink-0">{p.step}</div>
+                <div className="grid gap-4 mt-6">
+                  <div className="p-4 rounded-2xl bg-card/40 border border-white/5 flex items-center gap-4">
+                    <MapPinIcon className="size-6 text-primary" />
                     <div>
-                      <h4 className="font-semibold text-foreground">{p.title}</h4>
-                      <p className="text-xs text-muted-foreground mt-1">{p.desc}</p>
+                      <h4 className="font-semibold">America & Europe Hubs</h4>
+                      <p className="text-xs text-muted-foreground">Sponsorship options available</p>
                     </div>
                   </div>
+                  <div className="p-4 rounded-2xl bg-card/40 border border-white/5 flex items-center gap-4">
+                    <ClockIcon className="size-6 text-secondary" />
+                    <div>
+                      <h4 className="font-semibold">Flexible Models</h4>
+                      <p className="text-xs text-muted-foreground">On-site and hybrid transition roles</p>
+                    </div>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-card/40 border border-white/5 flex items-center gap-4">
+                    <DollarSignIcon className="size-6 text-emerald-400" />
+                    <div>
+                      <h4 className="font-semibold">5% Placement Commission</h4>
+                      <p className="text-xs text-muted-foreground">Flat $1,000 for contracts exceeding $10k over 6 months</p>
+                    </div>
+                  </div>
+                </div>
+
+                <Button variant="secondary" className="w-full h-12 gap-2" asChild>
+                  <Link to={user ? "/academy" : "/auth"}>
+                    {user ? "Submit Profile" : "Apply as Caregiver"} <ArrowRightIcon className="size-4" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-12">
+            <div className="flex items-center gap-4">
+              <div className="h-px flex-1 bg-border/50" />
+              <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-primary font-bold">2. Remote Work Marketplace</span>
+              <div className="h-px flex-1 bg-border/50" />
+            </div>
+
+            <div className="space-y-10">
+              {/* Search */}
+              <div className="relative max-w-md mx-auto">
+                <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                <input
+                  value={categorySearch}
+                  onChange={e => setCategorySearch(e.target.value)}
+                  placeholder="Search categories..."
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border bg-card text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                {filteredCategories.map((cat, i) => (
+                  <Link
+                    key={i}
+                    to="/auth"
+                    className="glass p-6 rounded-3xl text-center hover:bg-white/5 transition-all cursor-pointer group shadow-xl block"
+                  >
+                    <div className="w-14 h-14 mx-auto rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
+                      <cat.icon className="size-7" />
+                    </div>
+                    <h3 className="font-bold text-sm md:text-base leading-tight mb-2">{cat.label}</h3>
+                    <p className="text-xs font-semibold text-secondary">{cat.count}</p>
+                    <p className="text-xs text-muted-foreground mt-2 flex items-center justify-center gap-1">
+                      Browse roles <ArrowRightIcon className="size-3" />
+                    </p>
+                  </Link>
                 ))}
               </div>
 
-              <Button className="w-full h-14 shadow-xl shadow-primary/20 gap-2 rounded-2xl text-base font-bold" asChild>
-                <Link to={user ? "/academy" : "/auth"}>
-                  {user ? "Enroll in Programme" : "Start 3-Phase Process"} <ArrowRightIcon className="size-4" />
-                </Link>
-              </Button>
-            </div>
-
-            {/* Caregivers */}
-            <div className="glass p-8 rounded-3xl space-y-6 border-white/10 relative overflow-hidden shadow-2xl">
-              <div className="absolute top-0 right-0 p-6 opacity-10">
-                <HeartPulseIcon className="size-32" />
-              </div>
-              <Badge variant="outline" className="px-3 py-1">High Demand</Badge>
-              <div>
-                <h3 className="text-2xl font-bold mb-2">Caregiver & Healthcare Placements</h3>
-                <p className="text-sm text-muted-foreground">Connecting compassionate professionals with facilities in America and Europe.</p>
-              </div>
-
-              <div className="grid gap-4 mt-6">
-                <div className="p-4 rounded-2xl bg-card/40 border border-white/5 flex items-center gap-4">
-                  <MapPinIcon className="size-6 text-primary" />
-                  <div>
-                    <h4 className="font-semibold">America & Europe Hubs</h4>
-                    <p className="text-xs text-muted-foreground">Sponsorship options available</p>
-                  </div>
-                </div>
-                <div className="p-4 rounded-2xl bg-card/40 border border-white/5 flex items-center gap-4">
-                  <ClockIcon className="size-6 text-secondary" />
-                  <div>
-                    <h4 className="font-semibold">Flexible Models</h4>
-                    <p className="text-xs text-muted-foreground">On-site and hybrid transition roles</p>
-                  </div>
-                </div>
-                <div className="p-4 rounded-2xl bg-card/40 border border-white/5 flex items-center gap-4">
-                  <DollarSignIcon className="size-6 text-emerald-400" />
-                  <div>
-                    <h4 className="font-semibold">5% Placement Commission</h4>
-                    <p className="text-xs text-muted-foreground">Flat $1,000 for contracts exceeding $10k over 6 months</p>
-                  </div>
-                </div>
-              </div>
-
-              <Button variant="secondary" className="w-full h-12 gap-2" asChild>
-                <Link to={user ? "/academy" : "/auth"}>
-                  {user ? "Submit Profile" : "Apply as Caregiver"} <ArrowRightIcon className="size-4" />
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </section>
-
-        {/* ── SECTION B: REMOTE WORK ─────────────────────────────────────── */}
-        <section className="space-y-10" id="remote-work">
-          <div className="space-y-2 text-center max-w-2xl mx-auto">
-            <h2 className="text-3xl font-bold">Remote Work Marketplace</h2>
-            <p className="text-muted-foreground">Access verified, high-paying remote roles across 8 core disciplines.</p>
-          </div>
-
-          {/* Search */}
-          <div className="relative max-w-md mx-auto">
-            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-            <input
-              value={categorySearch}
-              onChange={e => setCategorySearch(e.target.value)}
-              placeholder="Search categories..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border bg-card text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {filteredCategories.map((cat, i) => (
-              <Link
-                key={i}
-                to="/auth"
-                className="glass p-6 rounded-3xl text-center hover:bg-white/5 transition-all cursor-pointer group shadow-xl block"
-              >
-                <div className="w-14 h-14 mx-auto rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
-                  <cat.icon className="size-7" />
-                </div>
-                <h3 className="font-bold text-sm md:text-base leading-tight mb-2">{cat.label}</h3>
-                <p className="text-xs font-semibold text-secondary">{cat.count}</p>
-                <p className="text-xs text-muted-foreground mt-2 flex items-center justify-center gap-1">
-                  Browse roles <ArrowRightIcon className="size-3" />
+              <div className="text-center pt-4">
+                <p className="text-sm text-muted-foreground mb-4">
+                  Access to all job listings requires a free account.
                 </p>
-              </Link>
-            ))}
-          </div>
-
-          <div className="text-center pt-4">
-            <p className="text-sm text-muted-foreground mb-4">
-              Access to all job listings requires a free account.
-            </p>
-            <Button className="gap-2" asChild>
-              <Link to="/auth"><UsersIcon className="size-4" /> Create Free Account</Link>
-            </Button>
+                <Button className="gap-2" asChild>
+                  <Link to="/auth"><UsersIcon className="size-4" /> Create Free Account</Link>
+                </Button>
+              </div>
+            </div>
           </div>
         </section>
 

@@ -32,7 +32,7 @@ export default function Auth() {
   const [country, setCountry] = useState("");
   const [nationalId, setNationalId] = useState("");
   const [loading, setLoading] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<'student' | 'employer' | 'freelancer'>('student');
+  const [selectedRole, setSelectedRole] = useState<'student' | 'employer' | 'freelancer' | 'referrer'>('student');
   const [referralCode, setReferralCode] = useState("");
   const [isClearing, setIsClearing] = useState(false);
   const [persistSession, setPersistSession] = useState(true);
@@ -102,7 +102,7 @@ export default function Auth() {
             updated_at: new Date().toISOString()
           });
 
-          if (selectedRole === 'student') {
+          if (selectedRole === 'student' || selectedRole === 'referrer') {
             toast.success("Account created successfully!");
           } else {
             toast.success("Account created! Your profile is pending verification.");
@@ -174,9 +174,14 @@ export default function Auth() {
             </CardHeader>
 
             <TabsContent value="login">
-              <CardHeader className="pt-0">
-                <CardTitle className="text-lg">Welcome back</CardTitle>
-                <CardDescription>Enter your credentials to continue.</CardDescription>
+              <CardHeader className="space-y-4 pb-8">
+                <div className="flex justify-center mb-4">
+                  <img src={logo} alt="Star9 Logo" className="h-16 w-auto" />
+                </div>
+                <div className="space-y-1 text-center">
+                  <CardTitle className="text-3xl font-bold tracking-tighter">Welcome back</CardTitle>
+                  <CardDescription>Enter your credentials to access your dashboard.</CardDescription>
+                </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -201,19 +206,24 @@ export default function Auth() {
             </TabsContent>
 
             <TabsContent value="register">
-              <CardHeader className="pt-0">
-                <CardTitle className="text-lg">Create your account</CardTitle>
-                <CardDescription>Join Star9 and start building your career.</CardDescription>
+              <CardHeader className="space-y-4 pb-8">
+                <div className="flex justify-center mb-4">
+                  <img src={logo} alt="Star9 Logo" className="h-16 w-auto" />
+                </div>
+                <div className="space-y-1 text-center">
+                  <CardTitle className="text-3xl font-bold tracking-tighter">Create your account</CardTitle>
+                  <CardDescription>Join Star9 and start building your career.</CardDescription>
+                </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Role Selection */}
                 <div className="space-y-3 mb-6">
                   <Label>I am a...</Label>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {[
                       { id: 'student', label: 'Student', icon: BookOpenIcon },
-                      { id: 'freelancer', label: 'Freelancer', icon: CodeIcon },
-                      { id: 'employer', label: 'Employer', icon: BriefcaseIcon }
+                      { id: 'freelancer', label: 'Expert', icon: CodeIcon },
+                      { id: 'employer', label: 'Employer', icon: BriefcaseIcon },
+                      { id: 'referrer', label: 'Referrer', icon: UsersIcon }
                     ].map((role) => (
                       <button
                         key={role.id}
