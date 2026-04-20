@@ -26,7 +26,7 @@ const OnboardingGate = ({ children }: { children: React.ReactNode }) => {
   const { user, profile, loading, isOnboardingNeeded } = useAuth();
   
   if (loading) return null;
-  if (!user) return <>{children}</>; // Public access allowed for browse pages
+  if (!user) return <>{children}</>;
   
   if (isOnboardingNeeded) {
     return <Navigate to="/onboarding" replace />;

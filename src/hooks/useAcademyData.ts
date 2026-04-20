@@ -141,8 +141,9 @@ export const useAcademyData = () => {
   const queryClient = useQueryClient();
 
   // Fetch Courses
-  const { data: courses = [], isLoading: isLoadingCourses } = useQuery({
+  const coursesQuery = useQuery({
     queryKey: ["academy_courses"],
+    retry: 1, // Don't hang on retries
     queryFn: async () => {
       const { data, error } = await supabase
         .from("academy_courses")
@@ -160,9 +161,13 @@ export const useAcademyData = () => {
     }
   });
 
+  const courses = coursesQuery.data || [];
+  const isLoadingCourses = coursesQuery.isLoading;
+
   // Fetch Enrollments
-  const { data: enrollmentsRaw = [], isLoading: isLoadingEnrollments } = useQuery({
+  const enrollmentsQuery = useQuery({
     queryKey: ["user_enrollments", user?.id],
+    retry: 1,
     queryFn: async () => {
       if (!user) return [];
       const { data, error } = await supabase
@@ -176,12 +181,16 @@ export const useAcademyData = () => {
     enabled: !!user
   });
 
+  const enrollmentsRaw = enrollmentsQuery.data || [];
+  const isLoadingEnrollments = enrollmentsQuery.isLoading;
+
   // Enrollments map for easy lookup
   const enrollments = new Map(enrollmentsRaw.map(e => [e.course_id, e]));
 
   // Fetch Certificates
-  const { data: certificates = [], isLoading: isLoadingCertificates } = useQuery({
+  const certificatesQuery = useQuery({
     queryKey: ["user_certificates", user?.id],
+    retry: 1,
     queryFn: async () => {
       if (!user) return [];
       const { data, error } = await supabase
@@ -195,17 +204,26 @@ export const useAcademyData = () => {
     enabled: !!user
   });
 
+  const certificates = certificatesQuery.data || [];
+  const isLoadingCertificates = certificatesQuery.isLoading;
+
   const invalidateAll = () => {
     queryClient.invalidateQueries({ queryKey: ["academy_courses"] });
     queryClient.invalidateQueries({ queryKey: ["user_enrollments", user?.id] });
     queryClient.invalidateQueries({ queryKey: ["user_certificates", user?.id] });
   };
 
+  const isLoading = isLoadingCourses || isLoadingEnrollments || isLoadingCertificates;
+  const isError = coursesQuery.isError || enrollmentsQuery.isError || certificatesQuery.isError;
+
   return {
     courses,
     enrollments,
     certificates,
-    isLoading: isLoadingCourses || isLoadingEnrollments || isLoadingCertificates,
+    isLoading,
+    isError,
+    error: coursesQuery.error || enrollmentsQuery.error || certificatesQuery.error,
+    isLoadingCourses,
     invalidateAll
   };
 };

@@ -77,7 +77,28 @@ import { getStoredTheme, applyTheme } from "@/lib/theme";
 
 const Academy = () => {
   const { user, profile, loading: authLoading, refreshProfile } = useAuth();
-  const { courses, enrollments, certificates, isLoading: loadingCourses, invalidateAll } = useAcademyData();
+  const { 
+    courses, enrollments, certificates, 
+    isLoading: loadingCourses, 
+    isError: isDataError, 
+    error: dataError,
+    isLoadingCourses,
+    invalidateAll 
+  } = useAcademyData();
+  
+  const [forceShow, setForceShow] = useState(false);
+  const [showError, setShowError] = useState(false);
+
+  // Safety timeout to prevent permanent black screen
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setForceShow(true);
+      if (authLoading || (loadingCourses && !courses.length)) {
+        setShowError(true);
+      }
+    }, 6000); // 6 seconds limit for the critical path
+    return () => clearTimeout(timer);
+  }, [authLoading, loadingCourses, courses.length]);
   
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarHovered, setSidebarHovered] = useState(false);
@@ -107,9 +128,9 @@ const Academy = () => {
     }
   }, [user, profile, authLoading, activeTab]);
 
-  if (authLoading || loadingCourses) {
+  if ((authLoading || loadingCourses) && !forceShow) {
     return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-8 text-center space-y-8">
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-8 text-center space-y-8 animate-in fade-in duration-500">
          <div className="relative">
             <div className="size-20 rounded-3xl border-4 border-primary/20 border-t-primary animate-spin" />
             <div className="absolute inset-0 flex items-center justify-center">
@@ -120,6 +141,33 @@ const Academy = () => {
             <h2 className="text-2xl font-black italic tracking-tighter text-white">STAR9 <span className="text-primary">VAULT</span></h2>
             <p className="text-zinc-500 text-xs font-mono uppercase tracking-[0.3em] animate-pulse">Initializing Global Intelligence...</p>
          </div>
+      </div>
+    );
+  }
+
+  if (isDataError || (showError && !courses.length)) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-8 text-center space-y-6">
+         <div className="size-16 rounded-2xl bg-destructive/10 flex items-center justify-center border border-destructive/20">
+            <BellIcon className="size-8 text-destructive" />
+         </div>
+         <div className="space-y-2 max-w-md">
+            <h2 className="text-xl font-bold text-white">Security Connection Delay</h2>
+            <p className="text-zinc-400 text-sm">We're having trouble connecting to the Star9 Intelligence Vault. This may be due to high traffic or a temporary database sync issue.</p>
+         </div>
+         <div className="flex flex-col gap-3">
+            <Button onClick={() => window.location.reload()} className="gap-2 px-8">
+               <ArrowRightIcon className="size-4" /> Try Reconnecting
+            </Button>
+            <Button variant="ghost" className="text-zinc-500 text-xs" asChild>
+               <Link to="/">Back to Landing Page</Link>
+            </Button>
+         </div>
+         {dataError && (
+           <p className="text-[10px] font-mono text-zinc-600 mt-8 opacity-50 max-w-sm overflow-hidden truncate">
+             System Log: {JSON.stringify(dataError)}
+           </p>
+         )}
       </div>
     );
   }
