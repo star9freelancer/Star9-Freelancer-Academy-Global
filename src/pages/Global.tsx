@@ -133,8 +133,8 @@ const Global = () => {
               </div>
               <Badge className="bg-primary hover:bg-primary/90 text-white border-0 px-3 py-1">Featured</Badge>
               <div>
-                <h3 className="text-2xl font-bold mb-2">International Teacher Preparation</h3>
-                <p className="text-sm text-muted-foreground italic">Next cohort launch: May 4th. Dedicated placement pipeline to the US, UK, Canada, and Germany.</p>
+                <h3 className="text-2xl font-bold mb-2">Teacher Preparation and Placement</h3>
+                <p className="text-sm text-muted-foreground italic">Comprehensive training followed by dedicated placement pipeline to the US, UK, Canada, and Germany.</p>
               </div>
 
               <div className="flex flex-wrap gap-4 py-2 border-y border-white/5">

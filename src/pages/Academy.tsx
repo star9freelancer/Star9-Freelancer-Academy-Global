@@ -276,6 +276,7 @@ const Academy = () => {
     const courseObj = courses.find(c => c.id === courseId);
     let basePrice = 50;
     if (courseObj?.title.toLowerCase().includes("mastering freelancing")) basePrice = 100;
+    if (courseObj?.title.toLowerCase().includes("teacher preparation")) basePrice = 300;
 
     // Paystack amounts are in the smallest currency unit (cents/kobo)
     const amount = currency === 'USD' ? basePrice * 100 : Math.round(basePrice * exchangeRate) * 100;
@@ -959,8 +960,12 @@ const Academy = () => {
                 </div>
                 <div className="text-right">
                   <p className="font-mono text-lg font-black text-foreground">$ {
-                    courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("mastering freelancing") ? "100" : "50"
+                    courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("mastering freelancing") ? "100" : 
+                    courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher preparation") ? "300" : "50"
                   }</p>
+                  {courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher preparation") && (
+                    <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-1 text-primary animate-pulse">Preparation Only</p>
+                  )}
                 </div>
               </button>
 
@@ -982,9 +987,13 @@ const Academy = () => {
                 <div className="text-right">
                   <p className="font-mono text-lg font-black text-emerald-400">
                     KES {Math.round((
-                      courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("mastering freelancing") ? 100 : 50
+                      courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("mastering freelancing") ? 100 : 
+                      courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher preparation") ? 300 : 50
                     ) * exchangeRate).toLocaleString()}
                   </p>
+                  {courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher preparation") && (
+                    <p className="text-[10px] text-emerald-500/60 font-bold uppercase tracking-wider mt-1">Excludes Visa/Placement</p>
+                  )}
                 </div>
               </button>
             </div>
