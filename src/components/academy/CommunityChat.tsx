@@ -257,34 +257,62 @@ const CommunityChat = ({ user, profile }: CommunityChatProps) => {
               <UsersIcon className="size-3" /> Your Groups
             </h3>
           </div>
-          <div className="flex-1 overflow-y-auto p-2 space-y-1">
-            {myGroups.length === 0 ? (
-              <p className="text-xs text-muted-foreground p-4 text-center">
-                No groups yet. Join a course to unlock course chats!
-              </p>
-            ) : (
-              myGroups.map((group) => (
-                <button
-                  key={group.id}
-                  onClick={() => setActiveGroupId(group.id)}
-                  className={`w-full text-left px-3 py-2.5 rounded-lg transition-all flex items-center gap-3 ${
-                    activeGroupId === group.id
-                      ? "bg-primary/10 text-primary border border-primary/20"
-                      : "hover:bg-muted/50 border border-transparent"
-                  }`}
+          <div className="flex-1 overflow-y-auto p-2 space-y-4">
+            {/* Joined Groups */}
+            <div className="space-y-1">
+              {myGroups.length === 0 ? (
+                <p className="text-xs text-muted-foreground p-4 text-center">
+                  No groups yet. Join a course to unlock course chats!
+                </p>
+              ) : (
+                myGroups.map((group) => (
+                  <button
+                    key={group.id}
+                    onClick={() => setActiveGroupId(group.id)}
+                    className={`w-full text-left px-3 py-2.5 rounded-lg transition-all flex items-center gap-3 ${
+                      activeGroupId === group.id
+                        ? "bg-primary/10 text-primary border border-primary/20"
+                        : "hover:bg-muted/50 border border-transparent"
+                    }`}
+                  >
+                    <HashIcon className="size-4 shrink-0 opacity-50" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate">
+                        {group.name.replace(' Cohort', '')} {group.type === 'course' ? 'Community' : ''}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                        {group.type === "general" ? "Everyone" : "Course"}
+                      </p>
+                    </div>
+                  </button>
+                ))
+              )}
+            </div>
+
+            {/* Official External Channels */}
+            <div className="pt-4 border-t border-border/50 space-y-3">
+              <p className="px-3 text-[10px] font-mono uppercase tracking-widest text-muted-foreground/50">Official Channels</p>
+              <div className="space-y-1">
+                <a 
+                  href="https://discord.gg/jPeNX7dwK" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg border border-indigo-500/10 bg-indigo-500/5 text-indigo-400 hover:bg-indigo-500/10 transition-all"
                 >
-                  <HashIcon className="size-4 shrink-0 opacity-50" />
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      {group.name.replace(' Cohort', '')} {group.type === 'course' ? 'Community' : ''}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                      {group.type === "general" ? "Everyone" : "Course"}
-                    </p>
-                  </div>
-                </button>
-              ))
-            )}
+                  <UsersIcon className="size-4" />
+                  <span className="text-sm font-bold">Discord Server</span>
+                </a>
+                <a 
+                  href="https://wa.me/254117103483" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg border border-emerald-500/10 bg-emerald-500/5 text-emerald-400 hover:bg-emerald-500/10 transition-all"
+                >
+                  <MessageSquareIcon className="size-4" />
+                  <span className="text-sm font-bold">WhatsApp Group</span>
+                </a>
+              </div>
+            </div>
           </div>
         </Card>
 

@@ -40,7 +40,15 @@ import {
   Save as SaveIcon,
   CreditCard as CreditCardIcon,
   Smartphone as SmartphoneIcon,
-  CheckCircle2 as CheckCircleIcon
+  CheckCircle2 as CheckCircleIcon,
+  Facebook as FacebookIcon,
+  Instagram as InstagramIcon,
+  Twitter as TwitterIcon,
+  Linkedin as LinkedinIcon,
+  Music as MusicIcon,
+  MessageCircle as MessageCircleIcon,
+  MessageSquare as MessageSquareIcon,
+  Landmark as LandmarkIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -909,6 +917,138 @@ const Academy = () => {
                   )}
 
                  {activeTab === "careers" && <JobBoard />}
+
+                  {activeTab === "contact" && (
+                    <div className="space-y-8 max-w-4xl mx-auto animate-in fade-in duration-500 pb-20">
+                      <div className="space-y-2">
+                        <h1 className="text-3xl font-bold tracking-tight">Support & Hubs</h1>
+                        <p className="text-muted-foreground">Get help, join the community, and follow our global updates.</p>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-6">
+                        {/* Direct Support */}
+                        <Card className="glass overflow-hidden border-primary/20">
+                          <CardHeader className="bg-primary/5 pb-4">
+                            <CardTitle className="text-lg flex items-center gap-2">
+                              <MessageCircleIcon className="size-5 text-primary" /> Direct Assistance
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="p-6 space-y-4">
+                            <a 
+                              href="https://wa.me/254117103483" 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="group flex items-center justify-between p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10 transition-all"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="size-10 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
+                                  <SmartphoneIcon className="size-5" />
+                                </div>
+                                <div>
+                                  <p className="font-bold text-sm">WhatsApp Call/Text</p>
+                                  <p className="text-xs text-muted-foreground">+254 117 103483</p>
+                                </div>
+                              </div>
+                              <ArrowRightIcon className="size-4 text-emerald-500 opacity-0 group-hover:opacity-100 transition-all" />
+                            </a>
+
+                            <div 
+                              className="group flex items-center justify-between p-4 rounded-xl border border-border bg-muted/30"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="size-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary transition-transform">
+                                  <MessageSquareIcon className="size-5" />
+                                </div>
+                                <div>
+                                  <p className="font-bold text-sm">WeChat Support</p>
+                                  <p className="text-xs text-muted-foreground">ID: <span className="font-mono text-primary select-all">star9_freelancer</span></p>
+                                </div>
+                              </div>
+                              <Badge variant="outline" className="text-[9px] uppercase tracking-tighter">Business ID</Badge>
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        {/* Community Hubs */}
+                        <Card className="glass overflow-hidden border-secondary/20">
+                          <CardHeader className="bg-secondary/5 pb-4">
+                            <CardTitle className="text-lg flex items-center gap-2">
+                              <UsersIcon className="size-5 text-secondary" /> Global Communities
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="p-6 space-y-4">
+                            <a 
+                              href="https://discord.gg/jPeNX7dwK" 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="group flex items-center justify-between p-4 rounded-xl border border-indigo-500/20 bg-indigo-500/5 hover:bg-indigo-500/10 transition-all"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="size-10 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
+                                  <UsersIcon className="size-5" />
+                                </div>
+                                <div>
+                                  <p className="font-bold text-sm">Discord Server</p>
+                                  <p className="text-xs text-muted-foreground">24/7 Peers & Support</p>
+                                </div>
+                              </div>
+                              <ArrowRightIcon className="size-4 text-indigo-400 opacity-0 group-hover:opacity-100 transition-all" />
+                            </a>
+
+                            <div 
+                              onClick={() => setActiveTab('community')}
+                              className="group cursor-pointer flex items-center justify-between p-4 rounded-xl border border-border bg-muted/30 hover:bg-muted/50 transition-all"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="size-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground group-hover:scale-110 transition-transform">
+                                  <LayoutDashboardIcon className="size-5" />
+                                </div>
+                                <div>
+                                  <p className="font-bold text-sm">Internal Discussions</p>
+                                  <p className="text-xs text-muted-foreground">Ask questions in our forum</p>
+                                </div>
+                              </div>
+                              <ArrowRightIcon className="size-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all" />
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
+
+                      {/* Social Presence */}
+                      <Card className="glass">
+                         <CardHeader>
+                            <CardTitle className="text-sm font-mono uppercase tracking-[0.2em] text-muted-foreground/50">Follow Star9 Globally</CardTitle>
+                         </CardHeader>
+                         <CardContent>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                               {[
+                                 { label: "Facebook", href: "https://web.facebook.com/people/Star9-Freelancer/61572019842249/", icon: FacebookIcon, color: "text-blue-500" },
+                                 { label: "Instagram", href: "https://www.instagram.com/star9freelancer", icon: InstagramIcon, color: "text-pink-500" },
+                                 { label: "TikTok", href: "https://www.tiktok.com/@star9.freelancer", icon: MusicIcon, color: "text-zinc-500" },
+                                 { label: "X / Twitter", href: "https://x.com/Star9Freelancer", icon: TwitterIcon, color: "text-sky-500" },
+                                 { label: "LinkedIn", href: "https://www.linkedin.com/company/star9-freelancer/", icon: LinkedinIcon, color: "text-blue-700" },
+                                 { label: "Partner Program", href: "#", icon: LandmarkIcon, color: "text-emerald-500", action: () => setActiveTab('referral') }
+                               ].map((soc) => (
+                                 <a 
+                                   key={soc.label} 
+                                   href={soc.href} 
+                                   target={soc.href === "#" ? undefined : "_blank"} 
+                                   rel={soc.href === "#" ? undefined : "noopener noreferrer"}
+                                   onClick={(e) => { if(soc.action) { e.preventDefault(); soc.action(); } }}
+                                   className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-muted/20 border border-transparent hover:border-border hover:bg-muted/40 transition-all group"
+                                 >
+                                    <div className={`p-3 rounded-xl bg-background border border-border group-hover:scale-110 transition-transform ${soc.color}`}>
+                                       <soc.icon className="size-5" />
+                                    </div>
+                                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground text-center">{soc.label}</span>
+                                 </a>
+                               ))}
+                            </div>
+                         </CardContent>
+                      </Card>
+
+                    </div>
+                  )}
 
                  {activeTab === "settings" && (
                    <UserSettings 
