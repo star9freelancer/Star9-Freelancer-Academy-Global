@@ -1,6 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import { useAuth } from "@/context/AuthContext";
@@ -23,44 +22,33 @@ import {
   Users as UsersIcon, 
   Award as AwardIcon, 
   Settings as SettingsIcon, 
-  Menu as MenuIcon, 
-  Bell as BellIcon, 
   Search as SearchIcon, 
   LayoutDashboard as LayoutDashboardIcon,
-  ArrowLeft as ArrowLeftIcon, 
   ArrowRight as ArrowRightIcon, 
-  Download as DownloadIcon, 
-  Play as PlayIcon, 
-  Clock as ClockIcon, 
   Sparkles as SparklesIcon, 
   Globe as GlobeIcon, 
   Link as LinkIcon, 
-  BriefcaseIcon, 
+  Briefcase as BriefcaseIcon, 
   Calendar as CalendarIcon, 
-  Save as SaveIcon,
   CreditCard as CreditCardIcon,
   Smartphone as SmartphoneIcon,
-  CheckCircle2 as CheckCircleIcon,
   Facebook as FacebookIcon,
   Instagram as InstagramIcon,
   Twitter as TwitterIcon,
   Linkedin as LinkedinIcon,
   Music as MusicIcon,
-  MessageCircle as MessageCircleIcon,
-  MessageSquare as MessageSquareIcon,
-  Landmark as LandmarkIcon
+  LogOut as LogOutIcon,
+  ChevronDown as ChevronDownIcon,
+  Sun as SunIcon,
+  Moon as MoonIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
@@ -71,9 +59,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown as ChevronDownIcon, LogOut as LogOutIcon, Sun as SunIcon, Moon as MoonIcon } from "lucide-react";
 import logo from "@/assets/logo_transparent.png";
 import { getStoredTheme, applyTheme } from "@/lib/theme";
+
+const STAR9_EXCHANGE_RATE = 150;
 
 const Academy = () => {
   const { user, profile, loading: authLoading, refreshProfile } = useAuth();
@@ -82,171 +71,59 @@ const Academy = () => {
     isLoading: loadingCourses, 
     isError: isDataError, 
     error: dataError,
-    isLoadingCourses,
     invalidateAll 
   } = useAcademyData();
   
   const [forceShow, setForceShow] = useState(false);
   const [showError, setShowError] = useState(false);
+  const [activeTab, setActiveTab] = useState("home");
+  const [searchDialogOpen, setSearchDialogOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isDarkMode, setIsDarkMode] = useState(() => getStoredTheme());
+  const [enrolling, setEnrolling] = useState<string | null>(null);
+  const [selectedProgram, setSelectedProgram] = useState<any | null>(null);
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const certificateRef = useRef<HTMLDivElement>(null);
+  const [activeCert, setActiveCert] = useState<any>(null);
+  const [saving, setSaving] = useState(false);
+  const [newSkill, setNewSkill] = useState("");
+  const [profileForm, setProfileForm] = useState<any>({
+    full_name: '', phone_number: '', bio: '', country: '', city: '',
+    date_of_birth: '', gender: 'Other', linkedin_url: '', portfolio_url: '',
+    company_name: '', industry: '', job_title: '', institution: '',
+    degree: '', graduation_year: '', experience_years: '', skills: [],
+    national_id_passport: ''
+  });
 
-  // Safety timeout to prevent permanent black screen
+  const navigate = useNavigate();
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setForceShow(true);
-      if (authLoading || (loadingCourses && !courses.length)) {
-        setShowError(true);
-      }
-    }, 6000); // 6 seconds limit for the critical path
+      if (authLoading || (loadingCourses && !courses.length)) setShowError(true);
+    }, 6000);
     return () => clearTimeout(timer);
   }, [authLoading, loadingCourses, courses.length]);
-  
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarHovered, setSidebarHovered] = useState(false);
-  const [activeTab, setActiveTab] = useState("home");
-  const [searchDialogOpen, setSearchDialogOpen] = useState(false);
-  const [filterTab, setFilterTab] = useState<"active" | "completed">("active");
-  const [isDarkMode, setIsDarkMode] = useState(() => getStoredTheme());
 
-  // Initialize theme on mount
+  useEffect(() => { applyTheme(isDarkMode); }, [isDarkMode]);
+
   useEffect(() => {
-    applyTheme(isDarkMode);
-  }, []);
+    if (profile) setProfileForm({
+      ...profile,
+      experience_years: profile.experience_years || '',
+      skills: profile.skills || []
+    });
+  }, [profile]);
+
+  useEffect(() => {
+    if (!authLoading && !user && activeTab === "home") setActiveTab("catalog");
+    if (profile?.role === 'referrer' && activeTab === 'home') setActiveTab('referral');
+  }, [user, profile, authLoading, activeTab]);
 
   const handleThemeToggle = () => {
     const next = !isDarkMode;
     setIsDarkMode(next);
-    applyTheme(next);
-  };
-
-  useEffect(() => {
-    if (!authLoading && !user && activeTab === "home") {
-      setActiveTab("catalog");
-    }
-    // If logged in as referrer, go straight to referral tab
-    if (profile?.role === 'referrer' && activeTab === 'home') {
-      setActiveTab('referral');
-    }
-  }, [user, profile, authLoading, activeTab]);
-
-  if ((authLoading || loadingCourses) && !forceShow) {
-    return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-8 text-center space-y-8 animate-in fade-in duration-500">
-         <div className="relative">
-            <div className="size-20 rounded-3xl border-4 border-primary/20 border-t-primary animate-spin" />
-            <div className="absolute inset-0 flex items-center justify-center">
-               <img src={logo} alt="" className="size-8" />
-            </div>
-         </div>
-         <div className="space-y-2">
-            <h2 className="text-2xl font-black italic tracking-tighter text-white">STAR9 <span className="text-primary">VAULT</span></h2>
-            <p className="text-zinc-500 text-xs font-mono uppercase tracking-[0.3em] animate-pulse">Initializing Global Intelligence...</p>
-         </div>
-      </div>
-    );
-  }
-
-  if (isDataError || (showError && !courses.length)) {
-    return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-8 text-center space-y-6">
-         <div className="size-16 rounded-2xl bg-destructive/10 flex items-center justify-center border border-destructive/20">
-            <BellIcon className="size-8 text-destructive" />
-         </div>
-         <div className="space-y-2 max-w-md">
-            <h2 className="text-xl font-bold text-white">Security Connection Delay</h2>
-            <p className="text-zinc-400 text-sm">We're having trouble connecting to the Star9 Intelligence Vault. This may be due to high traffic or a temporary database sync issue.</p>
-         </div>
-         <div className="flex flex-col gap-3">
-            <Button onClick={() => window.location.reload()} className="gap-2 px-8">
-               <ArrowRightIcon className="size-4" /> Try Reconnecting
-            </Button>
-            <Button variant="ghost" className="text-zinc-500 text-xs" asChild>
-               <Link to="/">Back to Landing Page</Link>
-            </Button>
-         </div>
-         {dataError && (
-           <p className="text-[10px] font-mono text-zinc-600 mt-8 opacity-50 max-w-sm overflow-hidden truncate">
-             System Log: {JSON.stringify(dataError)}
-           </p>
-         )}
-      </div>
-    );
-  }
-  const [isDownloading, setIsDownloading] = useState(false);
-  const certificateRef = useRef<HTMLDivElement>(null);
-  const [activeCert, setActiveCert] = useState<any>(null);
-  const [enrolling, setEnrolling] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [selectedProgram, setSelectedProgram] = useState<any | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [newSkill, setNewSkill] = useState("");
-  const [profileForm, setProfileForm] = useState<any>({
-    full_name: '',
-    phone_number: '',
-    bio: '',
-    country: '',
-    city: '',
-    date_of_birth: '',
-    gender: 'Other',
-    linkedin_url: '',
-    portfolio_url: '',
-    company_name: '',
-    industry: '',
-    job_title: '',
-    institution: '',
-    degree: '',
-    graduation_year: '',
-    experience_years: '',
-    skills: []
-  });
-
-  useEffect(() => {
-    if (profile) {
-      setProfileForm({
-        full_name: profile.full_name || '',
-        phone_number: profile.phone_number || '',
-        bio: profile.bio || '',
-        country: profile.country || '',
-        city: profile.city || '',
-        national_id_passport: profile.national_id_passport || '',
-        date_of_birth: profile.date_of_birth || '',
-        gender: profile.gender || 'Other',
-        linkedin_url: profile.linkedin_url || '',
-        portfolio_url: profile.portfolio_url || '',
-        company_name: profile.company_name || '',
-        industry: profile.industry || '',
-        job_title: profile.job_title || '',
-        institution: profile.institution || '',
-        degree: profile.degree || '',
-        graduation_year: profile.graduation_year || '',
-        experience_years: profile.experience_years || '',
-        skills: profile.skills || []
-      });
-    }
-  }, [profile]);
-
-  const navigate = useNavigate();
-
-  const handleDownloadPDF = async (cert: any) => {
-    setActiveCert(cert);
-    setIsDownloading(true);
-    setTimeout(async () => {
-      if (certificateRef.current) {
-        try {
-          const canvas = await html2canvas(certificateRef.current, { scale: 3, useCORS: true, backgroundColor: '#fffdf7', logging: false, removeContainer: true });
-          const imgData = canvas.toDataURL('image/png');
-          const pdf = new jsPDF({ orientation: 'landscape', unit: 'px', format: [1122.5, 793.7] });
-          pdf.addImage(imgData, 'PNG', 0, 0, 1122.5, 793.7);
-          pdf.save(`Star9_Certificate_${cert.credential_id}.pdf`);
-          toast.success("Certificate downloaded successfully");
-        } catch (err) {
-          toast.error("Failed to generate PDF. Please try again.");
-        } finally {
-          setIsDownloading(false);
-          setActiveCert(null);
-        }
-      }
-    }, 500);
   };
 
   const handleLogout = async () => {
@@ -257,74 +134,28 @@ const Academy = () => {
   const handleSaveProfile = async () => {
     if (!user) return;
     setSaving(true);
-    const expValue = !profileForm.experience_years ? null : parseInt(String(profileForm.experience_years), 10);
-
-    const { error } = await supabase
-      .from('profiles')
-      .upsert({
-        id: user.id,
-        full_name: profileForm.full_name,
-        phone_number: profileForm.phone_number,
-        bio: profileForm.bio || '',
-        country: profileForm.country || '',
-        city: profileForm.city || '',
-        national_id_passport: profileForm.national_id_passport || '',
-        date_of_birth: profileForm.date_of_birth,
-        gender: profileForm.gender,
-        linkedin_url: profileForm.linkedin_url,
-        portfolio_url: profileForm.portfolio_url,
-        company_name: profileForm.company_name,
-        industry: profileForm.industry,
-        job_title: profileForm.job_title,
-        institution: profileForm.institution,
-        degree: profileForm.degree,
-        graduation_year: profileForm.graduation_year,
-        experience_years: expValue,
-        skills: profileForm.skills || [],
-        email: user?.email || '',
-      }, { onConflict: 'id' });
+    const { error } = await supabase.from('profiles').upsert({
+      ...profileForm, id: user.id, email: user.email
+    });
     setSaving(false);
     if (!error) {
       await refreshProfile();
-      toast.success('Profile saved!', { description: 'Your changes have been applied.' });
+      toast.success('Profile saved!');
     }
   };
 
   const addSkill = () => {
     if (!newSkill.trim()) return;
-    const updated = [...(profileForm.skills || []), newSkill.trim()];
-    setProfileForm((p: any) => ({ ...p, skills: updated }));
+    setProfileForm({ ...profileForm, skills: [...(profileForm.skills || []), newSkill.trim()] });
     setNewSkill("");
   };
 
   const removeSkill = (skill: string) => {
-    setProfileForm((p: any) => ({ ...p, skills: (p.skills || []).filter((s: string) => s !== skill) }));
+    setProfileForm({ ...profileForm, skills: (profileForm.skills || []).filter((s: string) => s !== skill) });
   };
 
-  const issueCertificate = async (courseId: string) => {
-    if (!user) return;
-    const credId = `ST9-${Math.random().toString(36).substring(2, 6).toUpperCase()}-${new Date().getFullYear()}`;
-    const { error } = await supabase.from('user_certificates').insert([{
-      user_id: user?.id,
-      course_id: courseId,
-      credential_id: credId,
-    }]);
-    
-    if (!error) {
-      toast.success("Certificate Issued", { description: "Your certificate is ready to download." });
-      invalidateAll();
-    }
-  };
-
-  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
-  const [exchangeRate] = useState(150); // Set fixed rate for launch
-
-  const handleEnroll = async (courseId: string) => {
-    if (!user) {
-      toast.info("Sign in Required", { description: "You need to create a free account to enroll in courses." });
-      navigate("/auth");
-      return;
-    }
+  const handleEnroll = (courseId: string) => {
+    if (!user) { navigate('/auth'); return; }
     setEnrolling(courseId);
     setPaymentModalOpen(true);
   };
@@ -332,940 +163,215 @@ const Academy = () => {
   const initiatePayment = (currency: 'USD' | 'KES') => {
     const courseId = enrolling;
     if (!courseId) return;
-
     const courseObj = courses.find(c => c.id === courseId);
     let basePrice = 50;
     if (courseObj?.title.toLowerCase().includes("mastering freelancing")) basePrice = 100;
     if (courseObj?.title.toLowerCase().includes("teacher preparation")) basePrice = 300;
-
-    // Paystack amounts are in the smallest currency unit (cents/kobo)
-    const amount = currency === 'USD' ? basePrice * 100 : Math.round(basePrice * exchangeRate) * 100;
-
+    const amount = currency === 'USD' ? basePrice * 100 : Math.round(basePrice * STAR9_EXCHANGE_RATE) * 100;
     const paystackKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
-    
-    if (!paystackKey) {
-      toast.error("Payment configuration error. Please contact support.");
-      return;
-    }
-
-    // Close modal first to avoid iframe conflict
+    if (!paystackKey) { toast.error("Payment configuration error."); return; }
     setPaymentModalOpen(false);
-
-    try {
-      if ((window as any).PaystackPop) {
-        const handler = (window as any).PaystackPop.setup({
-          key: paystackKey,
-          email: user?.email || "student@star9global.com",
-          amount: amount,
-          currency: currency,
-          ref: 'ST9_' + Math.floor((Math.random() * 1000000000) + 1),
-          metadata: {
-            custom_fields: [
-              { display_name: "Internal User ID", variable_name: "user_id", value: user!.id },
-              { display_name: "Course Lookup Hash", variable_name: "course_id", value: courseId }
-            ]
-          },
-          callback: function(response: any) {
-            toast.success(`Payment received! Your enrollment is being processed.`, {
-              description: `Ref: ${response.reference}. Access will be granted within 60 seconds.`
-            });
-            setEnrolling(null);
-            // Webhook handles enrollment — poll for update
-            setTimeout(() => invalidateAll(), 8000);
-          },
-          onClose: function() {
-            setEnrolling(null);
-          }
-        });
-        handler.openIframe();
-      } else {
-        toast.error("Payment gateway failed to load. Please refresh the page and try again.");
-        setEnrolling(null);
-      }
-    } catch (err) {
-      console.error("Paystack error:", err);
-      toast.error("Payment could not be initiated. Please try again.");
-      setEnrolling(null);
+    if ((window as any).PaystackPop) {
+      const handler = (window as any).PaystackPop.setup({
+        key: paystackKey, email: user?.email, amount, currency,
+        ref: 'ST9_' + Math.floor(Math.random() * 1e9),
+        callback: () => { toast.success("Enrollment Synchronizing..."); setTimeout(() => invalidateAll(), 3000); },
+        onClose: () => setEnrolling(null)
+      });
+      handler.openIframe();
     }
   };
 
-  // finalizeEnrollment function intentionally deleted for security purposes.
-  // Real enrollments are now handled solely via supabase/functions/paystack-webhook
-
-  const handleLessonComplete = async (courseId: string, lessonIdx: number, lessonsCount: number) => {
-    if (!user || !profile) return;
-    const newProgress = Math.round(((lessonIdx + 1) / lessonsCount) * 100);
-    
-    // 1. Update Lesson Progress
-    const { error: progressError } = await supabase
-      .from('user_enrollments')
-      .update({ progress: newProgress })
-      .match({ user_id: user.id, course_id: courseId });
-      
-    if (!progressError) {
-      // 2. Award Merit Points (+10 for lesson, +50 for completion)
-      const pointsToAward = newProgress >= 100 ? 50 : 10;
-      const { error: pointsError } = await supabase
-        .from('profiles')
-        .update({ merit_points: (profile.merit_points || 0) + pointsToAward })
-        .eq('id', user.id);
-
-      if (!pointsError) {
-        toast.success(`+${pointsToAward} Merit Points`, { 
-          description: newProgress >= 100 ? "Course Completed!" : "Lesson finished." 
-        });
-        await refreshProfile();
+  const handleDownloadPDF = async (cert: any) => {
+    setActiveCert(cert);
+    setIsDownloading(true);
+    setTimeout(async () => {
+      if (certificateRef.current) {
+        const canvas = await html2canvas(certificateRef.current, { scale: 2 });
+        const pdf = new jsPDF({ orientation: 'landscape', unit: 'px', format: [1122.5, 793.7] });
+        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 1122.5, 793.7);
+        pdf.save(`Star9_Certificate_${cert.credential_id}.pdf`);
+        setIsDownloading(false);
+        setActiveCert(null);
       }
-
-      // 3. Issue Certificate if completed
-      if (newProgress >= 100) {
-        const alreadyHasCert = certificates.some(c => c.course_id === courseId);
-        if (!alreadyHasCert) {
-          await issueCertificate(courseId);
-        }
-      }
-      invalidateAll();
-    }
+    }, 500);
   };
+
+  if ((authLoading || loadingCourses) && !forceShow) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center space-y-6">
+        <img src={logo} className="size-20 animate-pulse" alt="Logo" />
+        <div className="flex gap-1"><div className="w-2 h-2 bg-primary rounded-full animate-bounce" /><div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-75" /><div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-150" /></div>
+      </div>
+    );
+  }
+
+  if (isDataError || (showError && !courses.length)) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-8 text-center space-y-6">
+        <GlobeIcon className="size-16 text-primary animate-pulse" />
+        <h2 className="text-2xl font-bold text-white">Vault Connection Refused</h2>
+        <Button onClick={() => window.location.reload()}>Reconnect to Academy</Button>
+      </div>
+    );
+  }
 
   const navItems = [
-    { id: "home",         icon: HomeIcon,       label: "Home",         public: true,  priority: "primary" },
-    { id: "academy",      icon: BookOpenIcon,   label: "My Courses",   public: false, priority: "primary" },
-    { id: "catalog",      icon: GlobeIcon,      label: "Browse",       public: true,  priority: "primary" },
-    { id: "careers",      icon: BriefcaseIcon,  label: "Jobs",         public: true,  priority: "secondary" },
-    { id: "certificates", icon: AwardIcon,      label: "Certificates", public: false, priority: "secondary" },
-    { id: "community",    icon: UsersIcon,      label: "Community",    public: false, priority: "secondary" },
-    { id: "referral",     icon: LinkIcon,       label: "Referrals",    public: true,  priority: "secondary" },
-    { id: "events",       icon: CalendarIcon,   label: "Events",       public: true,  priority: "secondary" },
-    { id: "settings",     icon: SettingsIcon,   label: "Settings",     public: false, priority: "profile" },
+    { id: "home", icon: HomeIcon, label: "Home", public: true },
+    { id: "academy", icon: BookOpenIcon, label: "Vault", public: false },
+    { id: "catalog", icon: GlobeIcon, label: "Catalog", public: true },
+    { id: "careers", icon: BriefcaseIcon, label: "Careers", public: true },
+    { id: "referral", icon: LinkIcon, label: "Referrals", public: true },
+    { id: "community", icon: UsersIcon, label: "Social", public: false },
+    { id: "certificates", icon: AwardIcon, label: "Credentials", public: false },
+    { id: "settings", icon: SettingsIcon, label: "Security", public: false },
   ];
 
-  const studentLinks = (user ? navItems : navItems.filter(l => l.public)).filter(l => l.priority === "primary");
-  const secondaryLinks = (user ? navItems : navItems.filter(l => l.public)).filter(l => l.priority === "secondary");
-  const profileLinks = (user ? navItems : navItems.filter(l => l.public)).filter(l => l.priority === "profile");
-
   return (
-    <div className="min-h-screen bg-background relative selection:bg-primary/30 selection:text-white">
-      {/* Dynamic Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-primary/5 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-secondary/5 blur-[120px] rounded-full" />
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-500 selection:bg-primary/20">
+      {/* Dynamic Aura */}
+      <div className="fixed inset-0 pointer-events-none -z-10 opacity-30">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/20 blur-[120px]" />
       </div>
 
-      {/* Top Navigation - hidden on mobile */}
-      <div className="hidden md:flex fixed top-0 inset-x-0 z-50 justify-center p-4 md:p-6 transition-all duration-500">
-        <nav 
-          className="flex items-center gap-2 md:gap-3 px-4 py-2.5 rounded-full bg-background/80 backdrop-blur-xl border border-border shadow-lg max-w-full overflow-x-auto no-scrollbar"
-        >
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 px-4 py-2 hover:bg-accent/50 rounded-xl transition-all group">
-            <img src={logo} alt="Star9" className="h-8 w-auto group-hover:scale-105 transition-transform" />
-            <span className="text-xl font-black italic tracking-tighter hidden lg:inline-block">STAR<span className="text-primary">9</span></span>
-          </Link>
-
-          <div className="h-6 w-px bg-border mx-1 shrink-0" />
-
-          {/* Utility Buttons - Search & Notifications */}
+      <nav className="fixed top-0 inset-x-0 z-50 flex justify-center p-6">
+        <div className="flex items-center gap-4 px-6 py-3 rounded-full bg-background/80 backdrop-blur-xl border border-border shadow-2xl">
+          <Link to="/" className="flex items-center gap-2"><img src={logo} className="h-8" /><span className="font-black italic text-xl hidden lg:block">STAR<span className="text-primary">9</span></span></Link>
+          <div className="h-6 w-px bg-border mx-2" />
           <div className="flex items-center gap-1">
-            <button 
-              onClick={() => setSearchDialogOpen(true)}
-              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-accent transition-all"
-              title="Search Intelligence (Cmd+K)"
-            >
-              <SearchIcon className="size-4" />
-            </button>
-            <button 
-              onClick={handleThemeToggle}
-              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-accent transition-all"
-              title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-            >
-              {isDarkMode ? <SunIcon className="size-4" /> : <MoonIcon className="size-4" />}
-            </button>
-            <button className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-accent transition-all relative">
-              <BellIcon className="size-4" />
-              <div className="absolute top-2 right-2 size-1.5 bg-primary rounded-full border border-background" />
-            </button>
-          </div>
-
-          <div className="h-6 w-px bg-border mx-1 shrink-0" />
-
-          {/* Navigation Links */}
-          <div className="flex items-center gap-1 shrink-0">
-            {studentLinks.map((l) => {
-              const isActive = activeTab === l.id;
-              return (
-                <button
-                  key={l.id}
-                  onClick={() => setActiveTab(l.id)}
-                  className={`relative flex items-center gap-2 px-3 py-2 rounded-full transition-all text-sm ${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
-                >
-                  {isActive && (
-                    <div 
-                      className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-full" 
-                    />
-                  )}
-                  <l.icon className="size-4 shrink-0 relative z-10" />
-                  <span className={`text-xs font-medium hidden xl:inline-block relative z-10 ${isActive ? "opacity-100" : ""}`}>
-                    {l.label}
-                  </span>
-                </button>
-              );
-            })}
-
-            {/* Resources Dropdown */}
-            {secondaryLinks.length > 0 && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-2 px-3 py-2 rounded-full text-muted-foreground hover:text-foreground transition-all text-sm">
-                    <LayoutDashboardIcon className="size-4" />
-                    <span className="text-xs font-medium hidden xl:inline-block">Resources</span>
-                    <ChevronDownIcon className="size-3 opacity-50" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-48 bg-card border-border rounded-2xl shadow-2xl">
-                  <DropdownMenuLabel className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">More Options</DropdownMenuLabel>
-                  <DropdownMenuSeparator className="border-border" />
-                  {secondaryLinks.map((l) => (
-                    <DropdownMenuItem 
-                      key={l.id} 
-                      onClick={() => setActiveTab(l.id)}
-                      className={`gap-3 p-3 rounded-xl cursor-pointer ${activeTab === l.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-accent"}`}
-                    >
-                      <l.icon className="size-4" />
-                      <span className="text-xs font-medium">{l.label}</span>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </div>
-
-          <div className="hidden lg:block h-6 w-px bg-border mx-1 shrink-0" />
-
-          {/* Points & Profile / Auth Buttons */}
-          <div className="flex items-center gap-2 shrink-0">
-            {user ? (
-              <>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 rounded-full">
-                  <SparklesIcon className="size-3 text-amber-500" />
-                  <span className="text-xs font-semibold text-amber-500">{profile?.merit_points || 0}</span>
-                </div>
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="group relative size-8 rounded-full border border-border bg-muted overflow-hidden transition-all hover:border-primary/40">
-                      {profile?.avatar_url ? (
-                        <img src={profile.avatar_url} className="w-full h-full object-cover" alt="Profile" />
-                      ) : (
-                        <span className="text-xs font-semibold text-muted-foreground">{profile?.full_name?.charAt(0) || "U"}</span>
-                      )}
-                      <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <ChevronDownIcon className="size-3 text-white" />
-                      </div>
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 bg-card border-border rounded-2xl shadow-2xl p-2">
-                    <DropdownMenuLabel className="px-3 py-4">
-                      <div className="space-y-1">
-                        <p className="text-sm font-bold text-foreground tracking-tight">{profile?.full_name || "Star9 Member"}</p>
-                        <p className="text-[10px] font-mono text-muted-foreground truncate">{user.email}</p>
-                      </div>
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator className="border-border" />
-                    {profileLinks.map((l) => (
-                      <DropdownMenuItem 
-                        key={l.id} 
-                        onClick={() => setActiveTab(l.id)}
-                        className={`gap-3 p-3 rounded-xl cursor-pointer ${activeTab === l.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-accent"}`}
-                      >
-                        <l.icon className="size-4" />
-                        <span className="text-xs font-medium">{l.label}</span>
-                      </DropdownMenuItem>
-                    ))}
-                    <DropdownMenuSeparator className="border-border" />
-                    <DropdownMenuItem 
-                      onClick={handleLogout}
-                      className="gap-3 p-3 rounded-xl cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10 transition-colors"
-                    >
-                      <LogOutIcon className="size-4" />
-                      <span className="text-xs font-medium">Log Out</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm" className="rounded-full text-xs" asChild>
-                   <Link to="/auth">Log In</Link>
-                </Button>
-                <Button size="sm" className="rounded-full text-xs px-5" asChild>
-                   <Link to="/auth">Sign Up</Link>
-                </Button>
-              </div>
-            )}
-          </div>
-        </nav>
-      </div>
-
-      {/* Mobile Nav Overlay (Fallback) */}
-      {sidebarOpen && (
-        <div 
-          className="md:hidden fixed inset-0 z-[60] bg-background/80 backdrop-blur-md" 
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* MAIN CONTENT WRAPPER */}
-      <div className="pt-6 md:pt-28 pb-20 md:pb-12 min-h-screen flex flex-col">
-        <main className="max-w-full mx-auto px-4 md:px-10 lg:px-12 xl:px-20 space-y-8 md:space-y-16 relative z-10 flex-grow flex flex-col w-full">
-
-      {/* MOBILE BOTTOM DOCK */}
-      <div className="md:hidden fixed bottom-6 inset-x-0 z-50 flex justify-center pointer-events-none">
-        <div className="pointer-events-auto">
-        <div 
-          className="flex items-center gap-4 px-6 py-3 rounded-full bg-card/90 backdrop-blur-xl border border-border shadow-lg"
-        >
-          {studentLinks.slice(0, 5).map((l) => {
-            const isActive = activeTab === l.id;
-            return (
-              <button
-                key={l.id}
-                onClick={() => setActiveTab(l.id)}
-                className={`flex flex-col items-center gap-1 transition-all ${isActive ? "text-primary" : "text-muted-foreground"}`}
+            {navItems.filter(i => i.public || user).map(item => (
+              <button 
+                key={item.id} 
+                onClick={() => setActiveTab(item.id)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all ${activeTab === item.id ? "bg-primary text-white" : "text-muted-foreground hover:bg-accent"}`}
               >
-                <l.icon className="size-5" />
-                <span className="text-[9px] font-medium">{l.label.split(' ')[0]}</span>
+                <item.icon className="size-4" /> <span className="hidden xl:block">{item.label}</span>
               </button>
-            );
-          })}
+            ))}
+          </div>
+          <div className="h-6 w-px bg-border mx-2" />
+          <button onClick={() => setSearchDialogOpen(true)} className="p-2"><SearchIcon className="size-4" /></button>
+          <button onClick={handleThemeToggle} className="p-2">{isDarkMode ? <SunIcon className="size-4" /> : <MoonIcon className="size-4" />}</button>
+          
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger className="ml-2 outline-none">
+                <div className="size-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-xs">{profile?.full_name?.charAt(0) || "S"}</div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 mt-4">
+                <DropdownMenuLabel className="px-3 py-4"><p className="font-bold">{profile?.full_name}</p><p className="text-[10px] text-muted-foreground">{user.email}</p></DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setActiveTab('settings')} className="rounded-xl gap-2 p-3"><SettingsIcon className="size-4" /> Account Settings</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout} className="rounded-xl gap-2 p-3 text-destructive"><LogOutIcon className="size-4" /> Disconnect</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : <Button size="sm" className="rounded-full px-6" asChild><Link to="/auth">Access</Link></Button>}
         </div>
-        </div>
-      </div>
+      </nav>
 
-          {selectedProgram ? (
-            <ProgramDetailView 
-              course={selectedProgram}
-              enrollment={enrollments.get(selectedProgram.id)}
-              onBack={() => {
-                setSelectedProgram(null);
-                // Ensure we are on a relevant tab
-                if (activeTab === 'home' || activeTab === 'settings') setActiveTab('catalog');
-              }}
-              onEnroll={() => handleEnroll(selectedProgram.id)}
-              onStart={(idx) => { navigate(`/academy/course/${selectedProgram.id}`); setSelectedProgram(null); }}
-            />
-          ) : (
-            <div className="space-y-8 animate-in fade-in duration-500">
-               {['learning', 'catalog'].includes(activeTab) && (
-                 <AcademyHero 
-                   type={activeTab === 'catalog' ? 'catalog' : 'learning'}
-                   userName={profile?.full_name?.split(' ')[0]}
-                   onTabChange={setActiveTab}
-                 />
-               )}
+      <main className="pt-32 pb-20 px-6 max-w-7xl mx-auto w-full flex-grow">
+        {selectedProgram ? (
+          <ProgramDetailView 
+            course={selectedProgram} onBack={() => setSelectedProgram(null)}
+            enrollment={enrollments.get(selectedProgram.id)} 
+            onEnroll={() => handleEnroll(selectedProgram.id)} 
+            onStart={() => navigate(`/academy/course/${selectedProgram.id}`)}
+          />
+        ) : (
+          <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            {['academy', 'catalog'].includes(activeTab) && <AcademyHero type={activeTab === 'catalog' ? 'catalog' : 'learning'} userName={profile?.full_name?.split(' ')[0]} onTabChange={setActiveTab} />}
+            
+            <div className="min-h-[400px]">
+              {activeTab === "home" && <HomeFeed setActiveTab={setActiveTab} courses={courses} enrollments={enrollments} profile={profile} />}
+              
+              {(activeTab === "academy" || activeTab === "catalog") && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                  {courses
+                    .filter(c => (activeTab === "academy" ? enrollments.has(c.id) : true))
+                    .filter(c => !searchQuery || c.title.toLowerCase().includes(searchQuery.toLowerCase()))
+                    .map(course => (
+                      <CourseCard 
+                        key={course.id} course={course} 
+                        enrollment={enrollments.get(course.id)}
+                        onEnroll={() => handleEnroll(course.id)}
+                        onViewDetails={() => setSelectedProgram(course)}
+                        onOpen={() => navigate(`/academy/course/${course.id}`)}
+                      />
+                    ))
+                  }
+                </div>
+              )}
 
-               <div className="space-y-12 pb-20">
-                 {activeTab === "home" && <HomeFeed setActiveTab={setActiveTab} courses={courses} enrollments={enrollments} profile={profile} />}
-                   {activeTab === "academy" && (
-                    <div className="space-y-12 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                       {/* Compact Student Dashboard Header */}
-                       <div className="relative p-8 md:p-12 rounded-[2.5rem] bg-card border border-border overflow-hidden group shadow-2xl">
-                          <div className="absolute top-0 right-0 p-12 opacity-[0.03] -rotate-12 group-hover:rotate-0 transition-transform duration-[10s]">
-                             <SparklesIcon className="size-64 text-primary" />
-                          </div>
-                          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 pointer-events-none" />
-                          
-                          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
-                             <div className="space-y-4">
-                               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[9px] font-black uppercase tracking-[0.2em]">
-                                  <img src={logo} className="size-4" alt="" /> Dashboard
-                               </div>
-                               <h2 className="text-3xl md:text-5xl font-black italic tracking-tighter text-foreground">
-                                  Star9 <span className="text-primary underline decoration-primary/30 underline-offset-8">Academy</span>
-                               </h2>
-                               <p className="text-muted-foreground text-sm md:text-base max-w-sm leading-relaxed">
-                                  Track modules, certificates, and your global career progress.
-                                </p>
-                             </div>
+              {activeTab === "certificates" && (
+                <div className="grid md:grid-cols-2 gap-6">
+                  {certificates.map(cert => (
+                    <Card key={cert.id} className="border-border hover:border-primary/50 transition-colors">
+                      <CardHeader><CardTitle className="text-lg">{cert.academy_courses?.title}</CardTitle><CardDescription className="text-[10px] font-mono">{cert.credential_id}</CardDescription></CardHeader>
+                      <CardFooter><Button className="w-full gap-2 rounded-xl" variant="outline" onClick={() => handleDownloadPDF(cert)}><AwardIcon className="size-4" /> Download Credential</Button></CardFooter>
+                    </Card>
+                  ))}
+                </div>
+              )}
 
-                             <div className="flex flex-wrap gap-6 md:gap-10">
-                               <div className="space-y-1">
-                                 <p className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground font-bold">Active Modules</p>
-                                 <p className="text-3xl font-black text-foreground">{courses.filter(c => enrollments.get(c.id)?.progress && enrollments.get(c.id)!.progress < 100).length}</p>
-                               </div>
-                               <div className="h-12 w-px bg-border hidden sm:block" />
-                               <div className="space-y-1">
-                                 <p className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground font-bold">Merit Points</p>
-                                 <p className="text-3xl font-black text-amber-500 flex items-center gap-2">
-                                   {profile?.merit_points || 0}
-                                   <SparklesIcon className="size-5" />
-                                 </p>
-                               </div>
-                               <div className="h-12 w-px bg-border hidden sm:block" />
-                               <div className="space-y-1">
-                                 <p className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground font-bold">Certificates</p>
-                                 <p className="text-3xl font-black text-primary flex items-center gap-2">
-                                   {certificates.length}
-                                   <AwardIcon className="size-5" />
-                                 </p>
-                               </div>
-                             </div>
-                          </div>
-                       </div>
-
-
-                       {/* Resume Learning Spotlight */}
-                       {courses.filter(c => enrollments.get(c.id)?.progress && enrollments.get(c.id)!.progress < 100).length > 0 && (
-                         <div className="space-y-6">
-                            <div className="flex items-center gap-3">
-                               <div className="h-px flex-1 bg-border" />
-                               <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-muted-foreground">Continue Journey</span>
-                               <div className="h-px flex-1 bg-border" />
-                            </div>
-                            {(() => {
-                              const activeEnrollments = courses
-                                .filter(c => enrollments.has(c.id) && enrollments.get(c.id)!.progress < 100)
-                                .sort((a, b) => (enrollments.get(b.id)!.progress || 0) - (enrollments.get(a.id)!.progress || 0));
-                              
-                              if (activeEnrollments.length === 0) return null;
-                              const course = activeEnrollments[0];
-                              const progress = enrollments.get(course.id)!.progress;
-
-                              return (
-                                <div 
-                                  onClick={() => navigate(`/academy/course/${course.id}`)}
-                                  className="group relative p-6 md:p-8 rounded-[2rem] bg-card border border-border hover:border-primary/40 transition-all duration-500 cursor-pointer overflow-hidden shadow-xl"
-                                >
-                                   <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                   <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
-                                      <div className="size-24 md:size-32 rounded-2xl overflow-hidden shrink-0 border border-border group-hover:border-primary/50 transition-colors shadow-lg">
-                                         <img src={course.image_url} alt="" className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-700" />
-                                      </div>
-                                      <div className="flex-1 space-y-3 text-center md:text-left">
-                                         <Badge className="bg-primary/20 text-primary border-none rounded-full px-4 mb-2 animate-pulse">Next Up</Badge>
-                                         <h3 className="text-2xl md:text-3xl font-bold tracking-tighter italic text-foreground group-hover:text-primary transition-colors">{course.title}</h3>
-                                         <div className="flex items-center justify-center md:justify-start gap-4">
-                                            <div className="h-1.5 w-48 bg-muted rounded-full overflow-hidden">
-                                               <div className="h-full bg-primary" style={{ width: `${progress}%` }} />
-                                            </div>
-                                            <span className="text-xs font-mono text-muted-foreground">{progress}% Complete</span>
-                                      <Button size="lg" className="rounded-2xl px-10 h-14 bg-primary text-white font-bold tracking-tight hover:bg-primary/90">
-                                         Resume Now <PlayIcon className="size-4 ml-2 fill-current" />
-                                      </Button>
-                                   </div>
-                                </div>
-                              );
-                            })()}
-                         </div>
-                       )}
-
-                       <div className="space-y-8">
-                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                            <div className="flex items-center gap-4 p-1 bg-card rounded-2xl border border-border w-fit">
-                               <button 
-                                 onClick={() => setFilterTab("active")}
-                                 className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filterTab === "active" ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-muted-foreground hover:text-foreground"}`}
-                               >
-                                 In-Progress
-                               </button>
-                               <button 
-                                 onClick={() => setFilterTab("completed")}
-                                 className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filterTab === "completed" ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/20" : "text-muted-foreground hover:text-foreground"}`}
-                               >
-                                 Completed
-                               </button>
-                            </div>
-                            {searchQuery && (
-                              <Badge variant="outline" className="text-[10px] font-mono border-border uppercase tracking-widest text-primary">Filter: {searchQuery}</Badge>
-                            )}
-                         </div>
-
-                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 md:gap-10">
-                           {courses
-                             .filter(c => enrollments.has(c.id))
-                             .filter(c => filterTab === "active" ? enrollments.get(c.id)!.progress < 100 : enrollments.get(c.id)!.progress >= 100)
-                             .filter(c => 
-                               searchQuery === "" || 
-                               c.title.toLowerCase().includes(searchQuery.toLowerCase())
-                             )
-                             .map((course) => (
-                               <div key={course.id} className="group relative">
-                                  <div className="absolute -inset-1 bg-gradient-to-br from-primary/40 to-violet-600/40 rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-20 transition duration-700" />
-                                  <div className="relative overflow-hidden rounded-[2.2rem] border border-border bg-card hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 shadow-2xl">
-                                    <CourseCard 
-                                      course={course} 
-                                      enrollment={enrollments.get(course.id)} 
-                                      onOpen={() => navigate(`/academy/course/${course.id}`)} 
-                                    />
-                                  </div>
-                               </div>
-                             ))
-                           }
-                           
-                           {courses.filter(c => enrollments.has(c.id)).length === 0 && (
-                              <div className="col-span-full py-24 flex flex-col items-center text-center space-y-8 bg-card rounded-[3rem] border border-border">
-                                 <div className="size-32 rounded-full bg-muted flex items-center justify-center border border-border relative">
-                                    <BookOpenIcon className="size-12 text-muted-foreground" />
-                                    <div className="absolute inset-0 rounded-full border border-primary/20 animate-ping opacity-20" />
-                                 </div>
-                                 <div className="max-w-xs space-y-2">
-                                    <h3 className="text-2xl font-black text-foreground italic tracking-tight">Vault Empty</h3>
-                                    <p className="text-muted-foreground text-sm">You haven't initialized any modules yet. Your global career starts at the catalog.</p>
-                                 </div>
-                                 <Button className="h-14 px-10 rounded-2xl bg-primary text-white font-bold tracking-widest text-xs uppercase" onClick={() => setActiveTab('catalog')}>
-                                   Browse Academy Vault
-                                 </Button>
-                              </div>
-                           )}
-                         </div>
-                       </div>
-                    </div>
-                  )}
-
-                  {activeTab === "catalog" && (
-                    <div className="space-y-12 pb-20">
-                       {!user && (
-                         <div className="bg-gradient-to-r from-zinc-900 to-zinc-950 p-8 md:p-12 rounded-[3rem] border border-white/5 relative overflow-hidden group shadow-2xl">
-                            <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-                               <SparklesIcon className="size-32 text-primary" />
-                            </div>
-                            <div className="relative z-10 space-y-4 max-w-2xl">
-                               <h2 className="text-3xl md:text-4xl font-bold tracking-tighter italic">Transform Your Business <span className="text-primary">With AI & Global Strategy</span></h2>
-                               <p className="text-zinc-500 text-sm md:text-base leading-relaxed">Join thousands of professionals already mastering the digital economy. Create a free account to track your progress and earn verifiable global credentials.</p>
-                               <div className="flex flex-wrap gap-4 pt-4">
-                                  <Button className="h-12 px-8 rounded-2xl bg-primary text-white hover:bg-primary/90 font-bold tracking-widest text-[10px] uppercase shadow-lg shadow-primary/20" asChild>
-                                     <Link to="/auth">Sign Up Free</Link>
-                                  </Button>
-                                  <p className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-zinc-500">
-                                     <UsersIcon className="size-3" /> Already 520+ Active Students
-                                  </p>
-                               </div>
-                            </div>
-                         </div>
-                       )}
-
-                       <div className="relative pt-8">
-                          <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                            <div className="w-full border-t border-white/5"></div>
-                          </div>
-                          <div className="relative flex justify-center">
-                            <span className="bg-[#09090b] px-6 text-[10px] font-mono font-black uppercase tracking-[0.5em] text-zinc-600">
-                               Available Curriculums
-                            </span>
-                          </div>
-                       </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 md:gap-12 max-w-[1600px] mx-auto">
-                         {courses
-                           .filter(c => 
-                             searchQuery === "" || 
-                             c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                             c.category.toLowerCase().includes(searchQuery.toLowerCase())
-                           )
-                           .map((course) => {
-                             const isEnrolled = enrollments.has(course.id);
-                             return (
-                               <div key={course.id} className="relative group">
-                                 {isEnrolled && (
-                                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
-                                     <Badge className="bg-emerald-500 text-white border-0 shadow-lg px-3 py-1 text-[9px] font-black uppercase tracking-widest whitespace-nowrap">
-                                        Enrolled
-                                     </Badge>
-                                   </div>
-                                 )}
-                                 <CourseCard 
-                                   course={course} 
-                                   enrollment={enrollments.get(course.id)} 
-                                   isEnrolling={enrolling === course.id} 
-                                   onEnroll={() => handleEnroll(course.id)} 
-                                   onViewDetails={() => setSelectedProgram(course)} 
-                                 />
-                               </div>
-                             );
-                           })
-                         }
-
-
-                         {courses.length === 0 && (
-                           <div className="col-span-full py-20 flex flex-col items-center text-center space-y-6 bg-card border border-dashed border-border rounded-[3rem]">
-                             <div className="size-20 rounded-2xl bg-primary/5 flex items-center justify-center border border-primary/20">
-                               <SparklesIcon className="size-10 text-primary" />
-                             </div>
-                             <div className="max-w-sm space-y-2">
-                               <h3 className="text-xl font-bold">Initializing Vault...</h3>
-                               <p className="text-sm text-muted-foreground leading-relaxed">We're loading the latest global curriculums. Please ensure your connection is stable.</p>
-                             </div>
-                           </div>
-                         )}
-                       </div>
-                   </div>
-                 )}
-
-                 {activeTab === "certificates" && (
-                   <div className="space-y-8 relative z-10 animate-in fade-in duration-500">
-                     <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 md:p-8 rounded-3xl border border-primary/20 relative overflow-hidden flex flex-col md:flex-row items-center gap-6 shadow-sm">
-                        <div className="size-16 rounded-2xl bg-primary/20 flex items-center justify-center shrink-0">
-                           <AwardIcon className="size-8 text-primary" />
-                        </div>
-                        <div className="relative z-10 flex-1 text-center md:text-left">
-                           <h2 className="text-2xl font-bold tracking-tight mb-2">Your Credentials Vault</h2>
-                           <p className="text-muted-foreground text-sm leading-relaxed max-w-xl mx-auto md:mx-0">Every certificate you earn is cryptographically tied to your profile and verifiable globally. Showcasing these on LinkedIn can significantly increase hiring velocity.</p>
-                        </div>
-                        <div className="absolute top-1/2 -translate-y-1/2 -right-8 opacity-[0.04] pointer-events-none">
-                           <AwardIcon className="size-64 -rotate-12" />
-                        </div>
-                     </div>
-                     
-                     <div className="flex items-center gap-3">
-                        <div className="h-px flex-1 bg-border/50" />
-                        <h3 className="text-sm font-medium text-muted-foreground">Obtained Certificates</h3>
-                        <div className="h-px flex-1 bg-border/50" />
-                     </div>
-                     <div className="grid md:grid-cols-2 gap-6">
-                       {certificates.map((cert) => (
-                         <Card key={cert.id} className="glass overflow-hidden group">
-                           <div className="h-40 bg-zinc-900 flex flex-col items-center justify-center p-6 border-b border-white/5 relative">
-                             <AwardIcon className="w-16 h-16 text-primary/20 mb-2" />
-                             <p className="text-[10px] font-mono tracking-widest text-primary uppercase">Star9 Certificate</p>
-                           </div>
-                           <CardHeader className="text-center">
-                             <CardTitle className="text-lg">{cert.academy_courses?.title}</CardTitle>
-                             <CardDescription className="font-mono text-[10px] uppercase tracking-widest">ID: {cert.credential_id}</CardDescription>
-                           </CardHeader>
-                           <CardFooter className="flex gap-2">
-                             <Button className="flex-1 bg-primary/10 text-primary border-primary/20" variant="outline" onClick={() => handleDownloadPDF(cert)}>Download PDF</Button>
-                           </CardFooter>
-                         </Card>
-                       ))}
-                     </div>
-                   </div>
-                 )}
-
-                 {activeTab === "community" && <CommunityChat user={user} profile={profile} />}
-
-                 {activeTab === "events" && (
-                   <div className="space-y-6">
-                      <div className="flex items-center gap-3 text-center opacity-70 p-16">
-                         <CalendarIcon className="size-16 mx-auto mb-6 text-muted-foreground" />
-                         <h2 className="text-2xl font-bold">No Events Scheduled</h2>
-                      </div>
-                   </div>
-                 )}
-
-                  {activeTab === "referral" && (
-                    user
-                      ? <ReferralDashboard user={user} profile={profile} />
-                      : (
-                        <div className="text-center py-24 space-y-4">
-                          <LinkIcon className="size-12 mx-auto text-muted-foreground" />
-                          <h3 className="text-xl font-bold">Sign in to access Referrals</h3>
-                          <p className="text-muted-foreground text-sm max-w-sm mx-auto">Create a free account to get your referral link and start earning commissions.</p>
-                          <Button asChild><Link to="/auth">Sign Up Free</Link></Button>
-                        </div>
-                      )
-                  )}
-
-                 {activeTab === "careers" && <JobBoard />}
-
-                  {activeTab === "contact" && (
-                    <div className="space-y-8 max-w-4xl mx-auto animate-in fade-in duration-500 pb-20">
-                      <div className="space-y-2">
-                        <h1 className="text-3xl font-bold tracking-tight">Support & Hubs</h1>
-                        <p className="text-muted-foreground">Get help, join the community, and follow our global updates.</p>
-                      </div>
-
-                      <div className="grid md:grid-cols-2 gap-6">
-                        {/* Direct Support */}
-                        <Card className="glass overflow-hidden border-primary/20">
-                          <CardHeader className="bg-primary/5 pb-4">
-                            <CardTitle className="text-lg flex items-center gap-2">
-                              <MessageCircleIcon className="size-5 text-primary" /> Direct Assistance
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className="p-6 space-y-4">
-                            <a 
-                              href="https://wa.me/254117103483" 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="group flex items-center justify-between p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10 transition-all"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className="size-10 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
-                                  <SmartphoneIcon className="size-5" />
-                                </div>
-                                <div>
-                                  <p className="font-bold text-sm">WhatsApp Call/Text</p>
-                                  <p className="text-xs text-muted-foreground">+254 117 103483</p>
-                                </div>
-                              </div>
-                              <ArrowRightIcon className="size-4 text-emerald-500 opacity-0 group-hover:opacity-100 transition-all" />
-                            </a>
-
-                            <div 
-                              className="group flex items-center justify-between p-4 rounded-xl border border-border bg-muted/30"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className="size-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary transition-transform">
-                                  <MessageSquareIcon className="size-5" />
-                                </div>
-                                <div>
-                                  <p className="font-bold text-sm">WeChat Support</p>
-                                  <p className="text-xs text-muted-foreground">ID: <span className="font-mono text-primary select-all">star9_freelancer</span></p>
-                                </div>
-                              </div>
-                              <Badge variant="outline" className="text-[9px] uppercase tracking-tighter">Business ID</Badge>
-                            </div>
-                          </CardContent>
-                        </Card>
-
-                        {/* Community Hubs */}
-                        <Card className="glass overflow-hidden border-secondary/20">
-                          <CardHeader className="bg-secondary/5 pb-4">
-                            <CardTitle className="text-lg flex items-center gap-2">
-                              <UsersIcon className="size-5 text-secondary" /> Global Communities
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className="p-6 space-y-4">
-                            <a 
-                              href="https://discord.gg/jPeNX7dwK" 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="group flex items-center justify-between p-4 rounded-xl border border-indigo-500/20 bg-indigo-500/5 hover:bg-indigo-500/10 transition-all"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className="size-10 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
-                                  <UsersIcon className="size-5" />
-                                </div>
-                                <div>
-                                  <p className="font-bold text-sm">Discord Server</p>
-                                  <p className="text-xs text-muted-foreground">24/7 Peers & Support</p>
-                                </div>
-                              </div>
-                              <ArrowRightIcon className="size-4 text-indigo-400 opacity-0 group-hover:opacity-100 transition-all" />
-                            </a>
-
-                            <div 
-                              onClick={() => setActiveTab('community')}
-                              className="group cursor-pointer flex items-center justify-between p-4 rounded-xl border border-border bg-muted/30 hover:bg-muted/50 transition-all"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className="size-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground group-hover:scale-110 transition-transform">
-                                  <LayoutDashboardIcon className="size-5" />
-                                </div>
-                                <div>
-                                  <p className="font-bold text-sm">Internal Discussions</p>
-                                  <p className="text-xs text-muted-foreground">Ask questions in our forum</p>
-                                </div>
-                              </div>
-                              <ArrowRightIcon className="size-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all" />
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </div>
-
-                      {/* Social Presence */}
-                      <Card className="glass">
-                         <CardHeader>
-                            <CardTitle className="text-sm font-mono uppercase tracking-[0.2em] text-muted-foreground/50">Follow Star9 Globally</CardTitle>
-                         </CardHeader>
-                         <CardContent>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-                               {[
-                                 { label: "Facebook", href: "https://web.facebook.com/people/Star9-Freelancer/61572019842249/", icon: FacebookIcon, color: "text-blue-500" },
-                                 { label: "Instagram", href: "https://www.instagram.com/star9freelancer", icon: InstagramIcon, color: "text-pink-500" },
-                                 { label: "TikTok", href: "https://www.tiktok.com/@star9.freelancer", icon: MusicIcon, color: "text-zinc-500" },
-                                 { label: "X / Twitter", href: "https://x.com/Star9Freelancer", icon: TwitterIcon, color: "text-sky-500" },
-                                 { label: "LinkedIn", href: "https://www.linkedin.com/company/star9-freelancer/", icon: LinkedinIcon, color: "text-blue-700" },
-                                 { label: "Partner Program", href: "#", icon: LandmarkIcon, color: "text-emerald-500", action: () => setActiveTab('referral') }
-                               ].map((soc) => (
-                                 <a 
-                                   key={soc.label} 
-                                   href={soc.href} 
-                                   target={soc.href === "#" ? undefined : "_blank"} 
-                                   rel={soc.href === "#" ? undefined : "noopener noreferrer"}
-                                   onClick={(e) => { if(soc.action) { e.preventDefault(); soc.action(); } }}
-                                   className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-muted/20 border border-transparent hover:border-border hover:bg-muted/40 transition-all group"
-                                 >
-                                    <div className={`p-3 rounded-xl bg-background border border-border group-hover:scale-110 transition-transform ${soc.color}`}>
-                                       <soc.icon className="size-5" />
-                                    </div>
-                                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground text-center">{soc.label}</span>
-                                 </a>
-                               ))}
-                            </div>
-                         </CardContent>
-                      </Card>
-
-                    </div>
-                  )}
-
-                 {activeTab === "settings" && (
-                   <UserSettings 
-                     user={user} profile={profile} profileForm={profileForm} setProfileForm={setProfileForm}
-                     saving={saving} handleSaveProfile={handleSaveProfile} newSkill={newSkill} setNewSkill={setNewSkill}
-                     addSkill={addSkill} removeSkill={removeSkill} certificates={certificates} handleLogout={handleLogout}
-                   />
-                 )}
-               </div>
+              {activeTab === "community" && <CommunityChat user={user} profile={profile} />}
+              {activeTab === "referral" && <ReferralDashboard user={user} profile={profile} />}
+              {activeTab === "careers" && <JobBoard />}
+              {activeTab === "settings" && <UserSettings 
+                  user={user} profile={profile} profileForm={profileForm} setProfileForm={setProfileForm}
+                  saving={saving} handleSaveProfile={handleSaveProfile} newSkill={newSkill} setNewSkill={setNewSkill}
+                  addSkill={addSkill} removeSkill={removeSkill} certificates={certificates} handleLogout={handleLogout}
+              />}
             </div>
-          )}
-          <AcademyFooter />
-        </main>
-      </div>
-
-      {/* Persistence Modal for Certificates (Hidden) */}
-      <div className="fixed -left-[2000px] top-0 pointer-events-none">
-        {activeCert && (
-          <div ref={certificateRef}>
-             <CertificateTemplate 
-                studentName={profile?.full_name || "Member"} 
-                courseTitle={activeCert.academy_courses?.title || "Star9 Mastery Class"}
-                issueDate={new Date(activeCert.created_at).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}
-                credentialId={activeCert.credential_id}
-             />
           </div>
         )}
+      </main>
+
+      <AcademyFooter />
+
+      {/* Hidden Certificate Ref */}
+      <div className="fixed -left-[2000px] top-0 pointer-events-none">
+        {activeCert && <div ref={certificateRef}><CertificateTemplate studentName={profile?.full_name} courseTitle={activeCert.academy_courses?.title} issueDate={new Date().toLocaleDateString()} credentialId={activeCert.credential_id} /></div>}
       </div>
 
-      {/* Payment Selection Modal */}
-      <Dialog open={paymentModalOpen} onOpenChange={(open) => { if(!open) { setPaymentModalOpen(false); setEnrolling(null); } }}>
-        <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden bg-zinc-950 border-white/10 shadow-2xl rounded-3xl">
-          <div className="p-8 space-y-6">
-            <div className="space-y-2">
-              <DialogTitle className="text-2xl font-bold tracking-tight italic">Secure <span className="text-primary">Checkout</span></DialogTitle>
-              <DialogDescription className="text-zinc-500">Choose your preferred payment method. Next cohort launch: May 4th.</DialogDescription>
-            </div>
-
-            <div className="grid gap-4">               <button 
-                type="button"
-                onClick={() => initiatePayment('USD')}
-                className="group relative flex items-center justify-between p-6 rounded-2xl bg-card border border-border hover:border-primary/50 transition-all text-left w-full shadow-lg"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="size-12 rounded-xl bg-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                    <CreditCardIcon className="size-6" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-lg text-foreground">International Card</h4>
-                    <p className="text-xs text-muted-foreground">Secure USD Transaction (Equity Bank)</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-mono text-lg font-black text-foreground">$ {
-                    courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("mastering freelancing") ? "100" : 
-                    courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher preparation") ? "300" : "50"
-                  }</p>
-                  {courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher preparation") && (
-                    <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-1 text-primary animate-pulse">Preparation Only</p>
-                  )}
-                </div>
-              </button>
-
-
-              <button 
-                type="button"
-                onClick={() => initiatePayment('KES')}
-                className="group relative flex items-center justify-between p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-emerald-500/50 transition-all text-left w-full"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="size-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
-                    <SmartphoneIcon className="size-6" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-lg">M-Pesa / Local Card</h4>
-                    <p className="text-xs text-zinc-500">Mobile Money & Local KES Banks</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-mono text-lg font-black text-emerald-400">
-                    KES {Math.round((
-                      courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("mastering freelancing") ? 100 : 
-                      courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher preparation") ? 300 : 50
-                    ) * exchangeRate).toLocaleString()}
-                  </p>
-                  {courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher preparation") && (
-                    <p className="text-[10px] text-emerald-500/60 font-bold uppercase tracking-wider mt-1">Excludes Visa/Placement</p>
-                  )}
-                </div>
-              </button>
-            </div>
-
-            <div className="pt-4 flex flex-col items-center gap-4 border-t border-white/5">
-               <div className="flex items-center gap-3 opacity-40">
-                  <GlobeIcon className="size-3" />
-                  <span className="text-[10px] uppercase tracking-widest font-mono">End-to-End Encrypted</span>
-               </div>
-               <p className="text-[10px] text-center text-zinc-600 leading-relaxed italic">
-                 "Freelancing with heart and skill." - Star9 Global Platform
-               </p>
-            </div>
+      <Dialog open={paymentModalOpen} onOpenChange={setPaymentModalOpen}>
+        <DialogContent className="sm:max-w-md rounded-3xl p-8">
+          <DialogTitle className="text-2xl font-black italic">Secure <span className="text-primary">Enrollment</span></DialogTitle>
+          <DialogDescription>Access the May 4th Cohort. Select payment method.</DialogDescription>
+          <div className="grid gap-3 pt-4">
+            <Button onClick={() => initiatePayment('USD')} className="h-16 flex justify-between px-6 rounded-2xl group">
+              <span className="flex items-center gap-3"><CreditCardIcon /> Global Card (USD)</span>
+              <span className="font-mono">$ {courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") ? "300" : "50"}</span>
+            </Button>
+            <Button onClick={() => initiatePayment('KES')} variant="outline" className="h-16 flex justify-between px-6 rounded-2xl group border-emerald-500/20 hover:bg-emerald-500/5">
+              <span className="flex items-center gap-3"><SmartphoneIcon className="text-emerald-500" /> M-Pesa / Local</span>
+              <span className="font-mono text-emerald-500">KES {(courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") ? 300 : 50) * STAR9_EXCHANGE_RATE}</span>
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
 
-    {/* Search Intelligence Modal */}
-    <Dialog open={searchDialogOpen} onOpenChange={setSearchDialogOpen}>
-      <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden bg-zinc-950/95 backdrop-blur-2xl border-white/10 shadow-2xl rounded-[2rem]">
-        <div className="p-6 border-b border-white/5 flex items-center gap-4">
-           <SearchIcon className="size-5 text-primary" />
-           <input 
-              autoFocus
-              type="text" 
-              placeholder="Search courses, modules, and resources..."
-              className="bg-transparent text-lg outline-none w-full text-white placeholder:text-white/20 font-medium"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => { if(e.key === 'Enter') setSearchDialogOpen(false); }}
-           />
-           <div className="px-2 py-1 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-zinc-500">ESC</div>
-        </div>
-        <div className="p-4 max-h-[400px] overflow-y-auto no-scrollbar">
-           <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-zinc-600 mb-4 px-4">Instant Results</p>
-           <div className="space-y-1">
-             {courses
-               .filter(c => searchQuery === "" || c.title.toLowerCase().includes(searchQuery.toLowerCase()))
-               .slice(0, 5)
-               .map(c => (
-                 <button 
-                  key={c.id} 
-                  onClick={() => { setSelectedProgram(c); setSearchDialogOpen(false); }}
-                  className="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-colors text-left group"
-                 >
-                    <div className="flex items-center gap-4">
-                       <div className="size-10 rounded-xl bg-zinc-900 flex items-center justify-center border border-white/5 group-hover:border-primary/30 transition-colors">
-                          <BookOpenIcon className="size-4 text-zinc-500 group-hover:text-primary transition-colors" />
-                       </div>
-                       <div>
-                          <p className="text-sm font-bold text-white tracking-tight">{c.title}</p>
-                          <p className="text-[10px] text-zinc-500">{c.category}</p>
-                       </div>
-                    </div>
-                    <ArrowRightIcon className="size-3.5 text-zinc-700 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
-                 </button>
-               ))
-             }
-             {searchQuery && courses.filter(c => c.title.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
-               <div className="py-12 text-center space-y-2">
-                  <p className="text-sm font-medium text-zinc-400">No intelligence modules found for "{searchQuery}"</p>
-                  <p className="text-xs text-zinc-600">Try searching for broader skills or categories.</p>
-               </div>
-             )}
-           </div>
-        </div>
-        <div className="p-4 bg-white/[0.02] border-t border-white/5 flex items-center justify-between">
-           <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5 text-[10px] text-zinc-500">
-                 <span className="p-1 rounded bg-white/5 border border-white/10 uppercase">↑↓</span> to navigate
+      <Dialog open={searchDialogOpen} onOpenChange={setSearchDialogOpen}>
+        <DialogContent className="sm:max-w-2xl rounded-3xl p-0 overflow-hidden border-border bg-card/95 backdrop-blur-2xl">
+          <div className="p-6 border-b border-border flex items-center gap-4">
+            <SearchIcon className="size-5 text-primary" />
+            <input 
+              autoFocus className="bg-transparent border-none outline-none w-full text-lg placeholder:text-muted-foreground"
+              placeholder="Search intelligence modules..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <div className="max-h-[400px] overflow-y-auto p-2">
+            {courses.filter(c => c.title.toLowerCase().includes(searchQuery.toLowerCase())).map(c => (
+              <div key={c.id} className="p-4 hover:bg-accent rounded-xl cursor-pointer flex justify-between items-center group" onClick={() => { setSelectedProgram(c); setSearchDialogOpen(false); }}>
+                <div><p className="font-bold">{c.title}</p><p className="text-[10px] text-muted-foreground">{c.category}</p></div>
+                <ArrowRightIcon className="size-4 opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
-              <div className="flex items-center gap-1.5 text-[10px] text-zinc-500">
-                 <span className="p-1 rounded bg-white/5 border border-white/10 uppercase">↵</span> to select
-              </div>
-           </div>
-           <p className="text-[9px] font-mono text-primary/40 uppercase tracking-widest">Star9 Search Engine</p>
-        </div>
-      </DialogContent>
-    </Dialog>
-  </div>
-);
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
 };
 
 export default Academy;

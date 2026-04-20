@@ -1,23 +1,26 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { 
   Sparkles as SparklesIcon, 
   Users as UsersIcon, 
   BookOpen as BookOpenIcon, 
   Globe as GlobeIcon, 
   Award as AwardIcon, 
-  TrendingUp as TrendingUpIcon 
+  TrendingUp as TrendingUpIcon,
+  Home as HomeIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface AcademyHeroProps {
-  type: "community" | "learning" | "catalog" | "career";
+  type: "community" | "learning" | "catalog" | "career" | "referral";
   title?: string;
   subtitle?: string;
   userName?: string;
+  onTabChange?: (tab: string) => void;
 }
 
-const AcademyHero = ({ type, title, subtitle, userName }: AcademyHeroProps) => {
+const AcademyHero = ({ type, title, subtitle, userName, onTabChange }: AcademyHeroProps) => {
   const configs = {
     community: {
       gradient: "from-blue-600/30 via-primary/20 to-transparent",

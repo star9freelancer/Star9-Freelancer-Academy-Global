@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
@@ -23,12 +23,7 @@ import {
   LogOut as LogOutIcon,
   FileText as FileTextIcon, 
   Download as DownloadIcon, 
-  UserCheck as UserCheckIcon,
-  MessageSquare,
-  Trash2,
-  Eye,
-  EyeOff,
-  Mail
+  UserCheck as UserCheckIcon
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -880,7 +875,7 @@ const Admin = () => {
                           </td>
                           <td className="px-6 py-4 text-right">
                             <Button size="icon" variant="ghost" className="hover:text-destructive" onClick={() => handleDeleteOpportunity(opp.id)}>
-                              <Trash2 className="size-4" />
+                              <Trash2Icon className="size-4" />
                             </Button>
                           </td>
                         </tr>
@@ -902,7 +897,7 @@ const Admin = () => {
                 <div className="text-center py-12 text-muted-foreground">Loading messages...</div>
               ) : contactMessages.length === 0 ? (
                 <Card className="p-12 text-center border-dashed">
-                  <MessageSquare className="size-12 mx-auto mb-4 text-muted-foreground" />
+                  <MessageSquareIcon className="size-12 mx-auto mb-4 text-muted-foreground" />
                   <CardTitle>No messages yet</CardTitle>
                   <p className="text-sm text-muted-foreground mt-2">Contact form submissions will appear here.</p>
                 </Card>
@@ -934,7 +929,7 @@ const Admin = () => {
                             onClick={() => markMessageRead(msg.id, msg.is_read)}
                             title={msg.is_read ? "Mark as unread" : "Mark as read"}
                           >
-                            {msg.is_read ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                            {msg.is_read ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
                           </Button>
                           <Button
                             variant="ghost"
@@ -944,7 +939,7 @@ const Admin = () => {
                             title="Reply via email"
                           >
                             <a href={`mailto:${msg.email}?subject=${encodeURIComponent(`Re: ${msg.subject}`)}`}>
-                              <Mail className="size-4" />
+                              <MailIcon className="size-4" />
                             </a>
                           </Button>
                           <Button 
@@ -954,7 +949,7 @@ const Admin = () => {
                             onClick={() => handleDeleteMessage(msg.id)}
                             title="Delete message"
                           >
-                            <Trash2 className="size-4" />
+                            <Trash2Icon className="size-4" />
                           </Button>
                         </div>
                       </div>

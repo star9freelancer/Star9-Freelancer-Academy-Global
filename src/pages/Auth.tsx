@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
@@ -18,7 +18,8 @@ import {
   X as XIcon, 
   BookOpen as BookOpenIcon, 
   Code as CodeIcon, 
-  Briefcase as BriefcaseIcon 
+  Briefcase as BriefcaseIcon,
+  Users as UsersIcon 
 } from "lucide-react";
 import logo from "@/assets/logo_transparent.png";
 
