@@ -148,6 +148,7 @@ const Academy = () => {
         bio: profile.bio || '',
         country: profile.country || '',
         city: profile.city || '',
+        national_id_passport: profile.national_id_passport || '',
         date_of_birth: profile.date_of_birth || '',
         gender: profile.gender || 'Other',
         linkedin_url: profile.linkedin_url || '',

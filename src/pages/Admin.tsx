@@ -623,7 +623,10 @@ const Admin = () => {
                                   <p className="font-semibold">{user.full_name || 'Unnamed'}</p>
                                   <p className="text-xs text-muted-foreground">{user.email}</p>
                                   <p className="text-xs text-muted-foreground mt-1">
-                                    {user.city && `${user.city}`} | Joined {new Date(user.created_at).toLocaleDateString()}
+                                    {user.city && `${user.city}, ${user.country}`} | ID: {user.national_id_passport || "N/A"}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    Phone: {user.phone_number || "N/A"} | Role: <span className="capitalize">{user.role}</span>
                                   </p>
                                   
                                   {user.resume_url && (
