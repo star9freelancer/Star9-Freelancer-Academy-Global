@@ -534,6 +534,14 @@ const Admin = () => {
                                         <p className="font-medium text-sm">{std.phone_number || "Not provided"}</p>
                                       </div>
                                       <div>
+                                        <p className="text-xs text-muted-foreground mb-1">National ID / Passport</p>
+                                        <p className="font-medium text-sm">{std.national_id_passport || "Not provided"}</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-xs text-muted-foreground mb-1">Role</p>
+                                        <p className="font-medium text-sm capitalize">{std.role || "student"}</p>
+                                      </div>
+                                      <div>
                                         <p className="text-xs text-muted-foreground mb-1">Location</p>
                                         <p className="font-medium text-sm">{[std.city, std.country].filter(Boolean).join(', ') || "Not provided"}</p>
                                       </div>
@@ -587,7 +595,7 @@ const Admin = () => {
               </div>
 
               {(() => {
-                const pendingUsers = students.filter(s => s.resume_url && s.verification_status !== 'verified');
+                const pendingUsers = students.filter(s => s.verification_status === 'pending');
                 const verifiedUsers = students.filter(s => s.verification_status === 'verified');
 
                 return (

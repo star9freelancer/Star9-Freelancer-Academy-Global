@@ -29,13 +29,13 @@ export default function Auth() {
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
+  const [nationalId, setNationalId] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState<'student' | 'employer' | 'freelancer'>('student');
   const [referralCode, setReferralCode] = useState("");
   const [isClearing, setIsClearing] = useState(false);
   const [persistSession, setPersistSession] = useState(true);
-  const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -56,27 +56,6 @@ export default function Auth() {
     }
   }, [location]);
 
-  const uploadResume = async (userId: string, file: File) => {
-    const ext = file.name.split('.').pop();
-    const filePath = `${userId}/resume.${ext}`;
-    
-    const { error } = await supabase.storage
-      .from('resumes')
-      .upload(filePath, file, { upsert: true });
-    
-    if (error) {
-      console.error("Resume upload error:", error);
-      return null;
-    }
-
-    // Save resume path to profile
-    await supabase.from('profiles').update({
-      resume_url: filePath,
-      verification_status: 'pending'
-    }).eq('id', userId);
-
-    return filePath;
-  };
 
   const handleAuth = async (isSignUp: boolean) => {
     if (!email || !password) {
@@ -84,8 +63,8 @@ export default function Auth() {
       return;
     }
 
-    if (isSignUp && !fullName) {
-      toast.error("Please enter your full name.");
+    if (isSignUp && (!fullName || !phone || !city || !country || !nationalId)) {
+      toast.error("Please fill in all required fields (Name, Phone, City, Country, ID).");
       return;
     }
 
@@ -107,12 +86,27 @@ export default function Auth() {
         });
         if (error) throw error;
 
-        // Upload resume if provided
-        if (resumeFile && data.user) {
-          await uploadResume(data.user.id, resumeFile);
-          toast.success("Account created! Your resume has been submitted for review.");
-        } else {
-          toast.success("Account created! You can upload your resume later in settings.");
+        if (data.user) {
+          const verificationStatus = (selectedRole === 'employer' || selectedRole === 'freelancer') ? 'pending' : 'verified';
+          
+          await supabase.from('profiles').upsert({
+            id: data.user.id,
+            full_name: fullName,
+            phone_number: phone,
+            city: city,
+            country: country,
+            national_id_passport: nationalId,
+            role: selectedRole,
+            verification_status: verificationStatus,
+            email: email,
+            updated_at: new Date().toISOString()
+          });
+
+          if (selectedRole === 'student') {
+            toast.success("Account created successfully!");
+          } else {
+            toast.success("Account created! Your profile is pending verification.");
+          }
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -128,23 +122,6 @@ export default function Auth() {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    const allowed = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-    
-    if (!allowed.includes(file.type)) {
-      toast.error("Please upload a PDF or Word document.");
-      return;
-    }
-    if (file.size > maxSize) {
-      toast.error("File must be under 5MB.");
-      return;
-    }
-    setResumeFile(file);
-  };
 
   if (isClearing) {
     return (
@@ -269,47 +246,23 @@ export default function Auth() {
                     <Input id="reg-name" type="text" placeholder="John Doe" value={fullName} onChange={(e) => setFullName(e.target.value)} className="h-11" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="reg-phone">Phone (optional)</Label>
+                    <Label htmlFor="reg-phone">Phone Number</Label>
                     <Input id="reg-phone" type="tel" placeholder="+254 117 103 483" value={phone} onChange={(e) => setPhone(e.target.value)} className="h-11" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="reg-city">City</Label>
                     <Input id="reg-city" type="text" placeholder="Nairobi" value={city} onChange={(e) => setCity(e.target.value)} className="h-11" />
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="reg-country">Country</Label>
+                    <Input id="reg-country" type="text" placeholder="Kenya" value={country} onChange={(e) => setCountry(e.target.value)} className="h-11" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="reg-id">National ID / Passport</Label>
+                    <Input id="reg-id" type="text" placeholder="ID Number" value={nationalId} onChange={(e) => setNationalId(e.target.value)} className="h-11" />
+                  </div>
                 </div>
 
-                {/* Resume Upload */}
-                <div className="space-y-2 pt-2">
-                  <Label>Resume / CV (optional)</Label>
-                  <p className="text-xs text-muted-foreground mb-2">Upload your resume to get verified faster. PDF or Word, max 5MB.</p>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept=".pdf,.doc,.docx"
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-                  {resumeFile ? (
-                    <div className="flex items-center gap-3 p-3 rounded-lg border border-primary/30 bg-primary/5">
-                      <FileTextIcon className="size-5 text-primary shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{resumeFile.name}</p>
-                        <p className="text-xs text-muted-foreground">{(resumeFile.size / 1024).toFixed(0)} KB</p>
-                      </div>
-                      <button onClick={() => setResumeFile(null)} className="p-1 rounded-full hover:bg-muted transition-colors">
-                        <XIcon className="size-4 text-muted-foreground" />
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => fileInputRef.current?.click()}
-                      className="w-full p-4 rounded-lg border-2 border-dashed border-border hover:border-primary/40 hover:bg-primary/5 transition-all flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground"
-                    >
-                      <UploadIcon className="size-5" />
-                      <span className="text-sm font-medium">Click to upload resume</span>
-                    </button>
-                  )}
-                </div>
               </CardContent>
               <CardFooter className="pt-4">
                 <Button className="w-full h-12" disabled={loading} onClick={() => handleAuth(true)}>

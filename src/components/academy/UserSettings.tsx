@@ -140,7 +140,7 @@ export const UserSettings = ({
                 <div className="space-y-2">
                   <Label>City</Label>
                   <Input 
-                    value={profileForm.city} 
+                    value={profileForm.city || ""} 
                     onChange={(e) => setProfileForm({...profileForm, city: e.target.value})}
                     placeholder="e.g. Nairobi"
                   />
@@ -148,9 +148,28 @@ export const UserSettings = ({
                 <div className="space-y-2">
                   <Label>Country</Label>
                   <Input 
-                    value={profileForm.country} 
+                    value={profileForm.country || ""} 
                     onChange={(e) => setProfileForm({...profileForm, country: e.target.value})}
                     placeholder="e.g. Kenya"
+                  />
+                </div>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Phone Number</Label>
+                  <Input 
+                    value={profileForm.phone_number || ""} 
+                    onChange={(e) => setProfileForm({...profileForm, phone_number: e.target.value})}
+                    placeholder="e.g. +254 ..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>National ID / Passport</Label>
+                  <Input 
+                    value={profileForm.national_id_passport || ""} 
+                    onChange={(e) => setProfileForm({...profileForm, national_id_passport: e.target.value})}
+                    placeholder="ID Number"
                   />
                 </div>
               </div>
