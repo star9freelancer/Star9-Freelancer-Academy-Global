@@ -151,10 +151,12 @@ export const useAcademyData = () => {
       
       if (error) throw error;
 
-      return (data || []).map(course => ({
-        ...course,
-        modules: CURRICULUM_LEDGER[course.id] || []
-      }));
+      return (data || [])
+        .filter(course => !course.title.toLowerCase().includes("teacher preparation") && !course.title.toLowerCase().includes("teacher prep"))
+        .map(course => ({
+          ...course,
+          modules: CURRICULUM_LEDGER[course.id] || []
+        }));
     }
   });
 

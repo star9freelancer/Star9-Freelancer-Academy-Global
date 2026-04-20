@@ -133,18 +133,35 @@ const Global = () => {
               </div>
               <Badge className="bg-primary hover:bg-primary/90 text-white border-0 px-3 py-1">Featured</Badge>
               <div>
-                <h3 className="text-2xl font-bold mb-2">International Teacher Placement</h3>
-                <p className="text-sm text-muted-foreground italic">Next cohort launch: May 4th. Dedicated placement to the US, UK, Canada, China, and Germany.</p>
+                <h3 className="text-2xl font-bold mb-2">International Teacher Preparation</h3>
+                <p className="text-sm text-muted-foreground italic">Next cohort launch: May 4th. Dedicated placement pipeline to the US, UK, Canada, and Germany.</p>
+              </div>
+
+              <div className="flex flex-wrap gap-4 py-2 border-y border-white/5">
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-mono uppercase text-zinc-500">Duration</span>
+                  <span className="text-sm font-bold">12 Weeks</span>
+                </div>
+                <div className="w-px bg-white/5" />
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-mono uppercase text-zinc-500">Format</span>
+                  <span className="text-sm font-bold">Hybrid (Online + Placement)</span>
+                </div>
+                <div className="w-px bg-white/5" />
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-mono uppercase text-zinc-500">Price</span>
+                  <span className="text-sm font-bold text-primary">$300</span>
+                </div>
               </div>
 
               <div className="space-y-4">
                 {[
                   { step: "1", title: "Phase 1: Preparation", desc: "Documentation, Resume Tailoring & Certification Review" },
                   { step: "2", title: "Phase 2: Audition", desc: "Loom Video Pitch & Live Interview Placements" },
-                  { step: "3", title: "Phase 3: Relocation", desc: "Visa Sponsorship & Travel Logistics Support" },
+                  { step: "3", title: "Phase 3: Relocation", desc: "Visa Sponsorship & Study-Work Logistics Support" },
                 ].map(p => (
                   <div key={p.step} className="flex gap-4 items-start">
-                    <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center text-secondary font-bold shrink-0">{p.step}</div>
+                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold shrink-0">{p.step}</div>
                     <div>
                       <h4 className="font-semibold text-foreground">{p.title}</h4>
                       <p className="text-xs text-muted-foreground mt-1">{p.desc}</p>
@@ -153,9 +170,9 @@ const Global = () => {
                 ))}
               </div>
 
-              <Button className="w-full h-12 shadow-md shadow-primary/20 gap-2" asChild>
+              <Button className="w-full h-14 shadow-xl shadow-primary/20 gap-2 rounded-2xl text-base font-bold" asChild>
                 <Link to={user ? "/academy" : "/auth"}>
-                  {user ? "Continue Application" : "Start 3-Phase Process"} <ArrowRightIcon className="size-4" />
+                  {user ? "Enroll in Programme" : "Start 3-Phase Process"} <ArrowRightIcon className="size-4" />
                 </Link>
               </Button>
             </div>

@@ -57,6 +57,10 @@ const CoursePlayer = () => {
   const [ytPlayer, setYtPlayer] = useState<any>(null);
   const [isCourseComplete, setIsCourseComplete] = useState(false);
 
+  // Derived state for specific course logic
+  const isAiCourse = course?.title?.toLowerCase()?.includes("ai") || false;
+  const isMasteringCourse = course?.title?.toLowerCase()?.includes("mastering freelancing") || false;
+
   useEffect(() => {
     if (!user || !courseId) return;
     setLoading(true);
@@ -109,24 +113,39 @@ const CoursePlayer = () => {
           .from('academy_courses')
           .select('*')
           .eq('id', courseId)
-          .single();
+          .maybeSingle(); // Safe lookup
         
         if (cError) throw cError;
+        if (!courseData) {
+          setLoading(false);
+          return;
+        }
 
+        setCourse(courseData);
+
+        // Fetch lessons and progress in parallel with error tolerance
         const [lessonsRes, progressRes] = await Promise.all([
           supabase.from('academy_lessons').select('*').eq('course_id', courseData.id).order('order_index', { ascending: true }),
           supabase.from('user_lesson_progress').select('lesson_id').eq('user_id', user.id).eq('course_id', courseData.id)
         ]);
           
         if (lessonsRes.data && lessonsRes.data.length > 0) {
-          setLessons(lessonsRes.data);
-          setActiveLesson(lessonsRes.data[0]);
+          const formattedLessons = lessonsRes.data.map(l => ({
+            ...l,
+            duration_minutes: parseInt(l.duration || "0"),
+            video_url: l.video_url || l.videoUrl
+          }));
+          setLessons(formattedLessons);
+          setActiveLesson(formattedLessons[0]);
         }
+
         if (progressRes.data) {
-          setCompletedLessons(new Set(progressRes.data.map(p => p.lesson_id)));
+          setCompletedLessons(new Set(progressRes.data.map((p: any) => p.lesson_id)));
+        } else if (progressRes.error) {
+          console.warn("Table 'user_lesson_progress' missing or unavailable, falling back to local state.");
         }
       } catch (err) {
-        console.error("Error fetching course data:", err);
+        console.error("Critical Error in CoursePlayer fetch:", err);
       } finally {
         setLoading(false);
       }
@@ -515,7 +534,7 @@ const CoursePlayer = () => {
             <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8">
               
               {/* Dynamic Module Area */}
-              {activeLesson?.type === 'video' || !activeLesson?.type ? (
+              {(activeLesson?.type === 'video' || !activeLesson?.type) && activeLesson?.video_url ? (
                 <div className="aspect-video w-full rounded-xl overflow-hidden bg-black shadow-xl relative" id="yt-player-container">
                   <div id="yt-player" className="absolute inset-0 w-full h-full" />
                 </div>
@@ -528,7 +547,7 @@ const CoursePlayer = () => {
                     <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{activeLesson?.title || "Welcome"}</h2>
                   </div>
                   <div className="flex items-center gap-3">
-                    {completedLessons.has(activeLesson?.id) ? (
+                    {activeLesson && completedLessons.has(activeLesson.id) ? (
                       <Button size="sm" disabled className="bg-emerald-500/20 text-emerald-500 border-emerald-500/20">
                         <CheckCircle2Icon className="size-3 mr-2" /> Completed
                       </Button>
@@ -555,7 +574,7 @@ const CoursePlayer = () => {
                 </div>
 
                 {/* Module Body */}
-                {showQuiz ? (
+                {showQuiz && activeLesson?.quiz_data ? (
                   <QuizModule 
                     quizData={activeLesson.quiz_data} 
                     onPass={() => {
@@ -564,7 +583,7 @@ const CoursePlayer = () => {
                     }} 
                   />
                 ) : activeLesson?.type === 'article' ? (
-                  <ArticleModule content={activeLesson.content} readTime={activeLesson.duration_minutes || 5} />
+                  <ArticleModule content={activeLesson.content || ""} readTime={activeLesson.duration_minutes || 5} />
                 ) : activeLesson?.type === 'toolkit' ? (
                   <ToolkitModule resources={activeLesson.quiz_data?.resources || []} />
                 ) : activeLesson?.type === 'checklist' ? (
@@ -572,7 +591,7 @@ const CoursePlayer = () => {
                 ) : activeLesson?.type === 'simulator' ? (
                   <SimulatorModule scenarios={activeLesson.quiz_data?.scenarios || []} />
                 ) : activeLesson?.type === 'playground' ? (
-                  <PlaygroundModule instructions={activeLesson.content} prompts={activeLesson.quiz_data?.prompts || []} />
+                  <PlaygroundModule instructions={activeLesson.content || ""} prompts={activeLesson.quiz_data?.prompts || []} />
                 ) : activeLesson?.content ? (
                   <div className="prose prose-zinc dark:prose-invert max-w-none">
                     {activeLesson.content
@@ -609,7 +628,7 @@ const CoursePlayer = () => {
                 ) : (
                   <div className="py-16 text-center border rounded-xl bg-muted/20 border-dashed">
                     <FileTextIcon className="size-10 text-muted-foreground/30 mx-auto mb-4" />
-                    <p className="text-sm text-muted-foreground">No lesson available yet.</p>
+                    <p className="text-sm text-muted-foreground">This personnel curriculum module is currently being finalized.</p>
                   </div>
                 )}
                 

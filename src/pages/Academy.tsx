@@ -94,6 +94,23 @@ const Academy = () => {
       setActiveTab("catalog");
     }
   }, [user, authLoading, activeTab]);
+
+  if (authLoading || loadingCourses) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-8 text-center space-y-8">
+         <div className="relative">
+            <div className="size-20 rounded-3xl border-4 border-primary/20 border-t-primary animate-spin" />
+            <div className="absolute inset-0 flex items-center justify-center">
+               <img src={logo} alt="" className="size-8" />
+            </div>
+         </div>
+         <div className="space-y-2">
+            <h2 className="text-2xl font-black italic tracking-tighter text-white">STAR9 <span className="text-primary">VAULT</span></h2>
+            <p className="text-zinc-500 text-xs font-mono uppercase tracking-[0.3em] animate-pulse">Initializing Global Intelligence...</p>
+         </div>
+      </div>
+    );
+  }
   const [isDownloading, setIsDownloading] = useState(false);
   const certificateRef = useRef<HTMLDivElement>(null);
   const [activeCert, setActiveCert] = useState<any>(null);
@@ -257,7 +274,6 @@ const Academy = () => {
     const courseObj = courses.find(c => c.id === courseId);
     let basePrice = 50;
     if (courseObj?.title.toLowerCase().includes("mastering freelancing")) basePrice = 100;
-    if (courseObj?.title.toLowerCase().includes("teacher preparation")) basePrice = 300;
 
     // Paystack amounts are in the smallest currency unit (cents/kobo)
     const amount = currency === 'USD' ? basePrice * 100 : Math.round(basePrice * exchangeRate) * 100;
@@ -706,7 +722,6 @@ const Academy = () => {
                            {courses
                              .filter(c => enrollments.has(c.id))
                              .filter(c => filterTab === "active" ? enrollments.get(c.id)!.progress < 100 : enrollments.get(c.id)!.progress >= 100)
-                             .filter(c => !c.title.toLowerCase().includes("teacher"))
                              .filter(c => 
                                searchQuery === "" || 
                                c.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -779,7 +794,6 @@ const Academy = () => {
                        </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 md:gap-12 max-w-[1600px] mx-auto">
                          {courses
-                           .filter(c => !c.title.toLowerCase().includes("teacher")) // Teacher Preparation is now in Global hub
                            .filter(c => 
                              searchQuery === "" || 
                              c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -943,8 +957,7 @@ const Academy = () => {
                 </div>
                 <div className="text-right">
                   <p className="font-mono text-lg font-black text-foreground">$ {
-                    courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("mastering freelancing") ? "100" : 
-                    (courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher preparation") || courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher prep")) ? "300" : "50"
+                    courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("mastering freelancing") ? "100" : "50"
                   }</p>
                 </div>
               </button>
@@ -967,8 +980,7 @@ const Academy = () => {
                 <div className="text-right">
                   <p className="font-mono text-lg font-black text-emerald-400">
                     KES {Math.round((
-                      courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("mastering freelancing") ? 100 : 
-                      (courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher preparation") || courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("teacher prep")) ? 300 : 50
+                      courses.find(c => c.id === enrolling)?.title?.toLowerCase()?.includes("mastering freelancing") ? 100 : 50
                     ) * exchangeRate).toLocaleString()}
                   </p>
                 </div>

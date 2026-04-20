@@ -69,16 +69,27 @@ export const UserSettings = ({
 
     // Insert into documents table
     const { data: publicUrlData } = supabase.storage.from('user-documents').getPublicUrl(filePath);
-    const { error: dbError } = await supabase.from('documents').insert([
-      { user_id: user.id, document_type: 'resume', file_url: publicUrlData.publicUrl }
-    ]);
+    
+    try {
+      const { error: dbError } = await supabase.from('documents').insert([
+        { user_id: user.id, document_type: 'resume', file_url: publicUrlData.publicUrl }
+      ]);
+
+      if (dbError) {
+        if (dbError.code === 'PGRST116') {
+          toast.warning("Table 'documents' missing. Upload successful to storage, but metadata not saved.");
+        } else {
+          toast.error("Failed to link document", { description: dbError.message });
+        }
+      } else {
+        toast.success("Resume uploaded successfully");
+      }
+    } catch (err) {
+      console.error("Document link error:", err);
+      toast.warning("Metadata sync failed, but document is available in storage.");
+    }
 
     setUploadingDoc(false);
-    if (!dbError) {
-      toast.success("Resume uploaded successfully");
-    } else {
-      toast.error("Failed to link document", { description: dbError.message });
-    }
   };
 
   return (
@@ -100,9 +111,9 @@ export const UserSettings = ({
                 <div className="space-y-2">
                   <Label>Full Name</Label>
                   <Input 
-                    value={profileForm.full_name} 
+                    value={profileForm.full_name || ""} 
                     onChange={(e) => setProfileForm({...profileForm, full_name: e.target.value})}
-                    placeholder="Your Name"
+                    placeholder="Personnel Full Name"
                   />
                 </div>
                 <div className="space-y-2">
@@ -118,7 +129,7 @@ export const UserSettings = ({
               <div className="space-y-2">
                 <Label>Bio</Label>
                 <textarea 
-                  value={profileForm.bio}
+                  value={profileForm.bio || ""}
                   onChange={(e) => setProfileForm({...profileForm, bio: e.target.value})}
                   placeholder="Tell us about your professional background..."
                   className="w-full min-h-[100px] bg-background border border-input rounded-md p-3 text-sm outline-none focus:border-primary transition-colors resize-none"

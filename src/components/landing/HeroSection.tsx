@@ -70,13 +70,13 @@ const HeroSection = () => {
               className="flex flex-col sm:flex-row gap-3"
             >
               <Button size="lg" className="h-12 px-8 font-semibold text-sm group shadow-lg shadow-primary/20" asChild>
-                <Link to="/auth" className="flex items-center gap-2">
-                  Start Learning Free
+                <Link to="/academy" className="flex items-center gap-2">
+                  Academy
                   <ArrowRightIcon className="size-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
               <Button variant="outline" size="lg" className="h-12 px-8 font-semibold text-sm" asChild>
-                <Link to="/academy">Explore Courses</Link>
+                <Link to="/global">Global</Link>
               </Button>
             </motion.div>
 
