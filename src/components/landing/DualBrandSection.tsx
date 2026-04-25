@@ -17,14 +17,14 @@ const cards = [
   },
   {
     title: "Star9 Global",
-    subtitle: "Work. Travel. Grow.",
+    subtitle: "Work Globally. Study Abroad. Build Your Future.",
     description:
-      "Connecting African professionals to Work Abroad opportunities in the US, UK, Canada, China, and Germany, plus 8 curated Remote Work categories and Study Abroad programme support.",
+      "Star9 Global Opportunities connects African youth and women to life-changing pathways beyond borders through remote work, study abroad, and work abroad programs. We provide structured support to help individuals access global careers, earn remotely, and gain international exposure.",
     link: "/global",
     gradient: "from-secondary/20 to-secondary/5",
     borderHover: "hover:border-secondary/40",
     accent: "text-secondary",
-    stats: ["Work Abroad: 5 Countries", "8 Remote Categories", "Study Abroad Portals"],
+    stats: ["Work Abroad", "Remote Work", "Study Abroad"],
     emoji: "🌍",
   },
 ];
