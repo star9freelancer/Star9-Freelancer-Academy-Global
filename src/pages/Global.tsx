@@ -73,8 +73,8 @@ const Global = () => {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Background orbs */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[100px] -z-10" />
-      <div className="absolute bottom-[20%] left-[-10%] w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[80px] -z-10" />
+      <div className="absolute hidden md:block top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[100px] -z-10" />
+      <div className="absolute hidden md:block bottom-[20%] left-[-10%] w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[80px] -z-10" />
 
       <Header />
 
@@ -286,7 +286,7 @@ const Global = () => {
         {/* ── SECTION C: STUDY ABROAD ────────────────────────────────────── */}
         <section className="space-y-10" id="study-abroad">
           <div className="glass rounded-3xl p-8 md:p-12 border-white/10 shadow-2xl relative overflow-hidden text-center md:text-left">
-            <div className="absolute right-[-10%] top-[-20%] w-[60%] h-[150%] bg-secondary/5 rounded-full blur-[80px] -z-10" />
+            <div className="absolute hidden md:block right-[-10%] top-[-20%] w-[60%] h-[150%] bg-secondary/5 rounded-full blur-[80px] -z-10" />
 
             <div className="md:flex items-center justify-between gap-12">
               <div className="space-y-6 flex-1">

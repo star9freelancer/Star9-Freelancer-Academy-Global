@@ -246,8 +246,8 @@ const Admin = () => {
     <div className="min-h-screen bg-background relative selection:bg-primary/30 selection:text-white pb-32 md:pb-0">
       {/* Dynamic Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-primary/5 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-secondary/5 blur-[120px] rounded-full" />
+        <div className="absolute hidden md:block top-[-10%] right-[-10%] w-[60%] h-[60%] bg-primary/5 blur-[120px] rounded-full" />
+        <div className="absolute hidden md:block bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-secondary/5 blur-[120px] rounded-full" />
       </div>
 
       {/* Top Navigation - hidden on mobile */}

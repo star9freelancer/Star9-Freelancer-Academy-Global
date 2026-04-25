@@ -28,7 +28,7 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
       
       {/* Welcome Banner */}
       <div className="relative rounded-2xl bg-card border border-border overflow-hidden p-8 md:p-10">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[80px] pointer-events-none" />
+        <div className="absolute hidden md:block top-0 right-0 w-64 h-64 bg-primary/5 blur-[80px] pointer-events-none" />
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-2">
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">

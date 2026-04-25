@@ -133,7 +133,7 @@ const Header = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="md:hidden fixed inset-0 z-[60] bg-background/98 backdrop-blur-2xl flex flex-col p-8 pt-24"
+            className="md:hidden fixed inset-0 z-[60] bg-background/98 backdrop-blur-none bg-background/100 md:bg-background/98 md:backdrop-blur-2xl flex flex-col p-8 pt-24"
           >
             <div className="space-y-4">
               <div className="flex items-center gap-3 mb-8 pb-8 border-b border-border/50">

@@ -231,8 +231,8 @@ const Academy = () => {
     <div className="min-h-screen bg-background text-foreground transition-colors duration-500 selection:bg-primary/20">
       {/* Dynamic Aura */}
       <div className="fixed inset-0 pointer-events-none -z-10 opacity-30">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 blur-[120px]" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/20 blur-[120px]" />
+        <div className="absolute hidden md:block top-0 right-0 w-96 h-96 bg-primary/20 blur-[120px]" />
+        <div className="absolute hidden md:block bottom-0 left-0 w-96 h-96 bg-secondary/20 blur-[120px]" />
       </div>
 
       <nav className="fixed top-0 inset-x-0 z-50 flex justify-center p-6">
@@ -358,7 +358,7 @@ const Academy = () => {
       </Dialog>
 
       <Dialog open={searchDialogOpen} onOpenChange={setSearchDialogOpen}>
-        <DialogContent className="sm:max-w-2xl rounded-3xl p-0 overflow-hidden border-border bg-card/95 backdrop-blur-2xl">
+        <DialogContent className="sm:max-w-2xl rounded-3xl p-0 overflow-hidden border-border bg-card/95 backdrop-blur-none bg-background/100 md:bg-background/98 md:backdrop-blur-2xl">
           <div className="p-6 border-b border-border flex items-center gap-4">
             <SearchIcon className="size-5 text-primary" />
             <input 

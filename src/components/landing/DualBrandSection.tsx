@@ -5,9 +5,9 @@ import { ArrowRight as ArrowRightIcon } from "lucide-react";
 const cards = [
   {
     title: "Star9 Academy",
-    subtitle: "Learn. Certify. Get Placed.",
+    subtitle: "Learn. Build Skills. Earn Globally.",
     description:
-      "High-impact, pay-per-course programmes in AI for Freelancers and Mastering Freelancing. Structured 8-12 week curricula with quizzes, projects, and verified certificates.",
+      "Star9 Academy is the learning hub of Star9 Freelancer Ltd, designed to equip African youth and women with in-demand digital skills for the global economy. Through fully online, practical, and beginner-friendly courses, we train learners in high-demand fields such as Artificial Intelligence (AI), freelancing, and remote work.",
     link: "/academy",
     gradient: "from-primary/20 to-primary/5",
     borderHover: "hover:border-primary/40",

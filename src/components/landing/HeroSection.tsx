@@ -17,8 +17,8 @@ const HeroSection = () => {
 
       {/* Background glow orbs */}
       <div className="absolute inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-[15%] right-[5%] w-[500px] h-[500px] bg-secondary/15 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[0%] left-[0%] w-[400px] h-[400px] bg-primary/10 rounded-full blur-[100px]" />
+        <div className="absolute hidden md:block top-[15%] right-[5%] w-[500px] h-[500px] bg-secondary/15 rounded-full blur-[120px]" />
+        <div className="absolute hidden md:block bottom-[0%] left-[0%] w-[400px] h-[400px] bg-primary/10 rounded-full blur-[100px]" />
       </div>
 
       <div className="container max-w-7xl mx-auto px-6">

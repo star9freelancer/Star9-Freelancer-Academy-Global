@@ -75,7 +75,7 @@ const Verify = () => {
   return (
     <div className="min-h-screen bg-background relative selection:bg-primary/20">
       {/* Background Ambience */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[600px] bg-primary/5 blur-[120px] rounded-full -z-10" />
+      <div className="absolute hidden md:block top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[600px] bg-primary/5 blur-[120px] rounded-full -z-10" />
       
       {/* Public Header */}
       <header className="h-20 border-b flex items-center justify-between px-6 md:px-12 backdrop-blur-md sticky top-0 z-50">
@@ -97,7 +97,7 @@ const Verify = () => {
         </div>
 
         <Card className="glass border-primary/20 shadow-2xl relative overflow-hidden animate-in slide-in-from-bottom-8 duration-700">
-          <div className="absolute top-[-20%] right-[-10%] w-[40%] h-[60%] bg-primary/5 rounded-full blur-[80px]" />
+          <div className="absolute hidden md:block top-[-20%] right-[-10%] w-[40%] h-[60%] bg-primary/5 rounded-full blur-[80px]" />
           
           <CardHeader className="text-center space-y-6 pt-12 pb-8 border-b border-primary/10">
             <div className="space-y-2">

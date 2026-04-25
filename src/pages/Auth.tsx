@@ -127,7 +127,7 @@ export default function Auth() {
   if (isClearing) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background overflow-hidden relative">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute hidden md:block top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
         <div className="relative z-10 flex flex-col items-center max-w-sm w-full px-6 text-center space-y-8">
           <div className="relative">
             <div className="absolute -inset-4 bg-primary/20 rounded-full blur-2xl animate-pulse" />
@@ -157,7 +157,7 @@ export default function Auth() {
         <ArrowLeftIcon className="w-4 h-4" /> Back to Home
       </Link>
 
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[100px] animate-pulse pointer-events-none" />
+      <div className="absolute hidden md:block top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[100px] animate-pulse pointer-events-none" />
       
       <div className="w-full max-w-lg p-4 relative z-10">
         <div className="flex flex-col items-center justify-center mb-8 gap-3">

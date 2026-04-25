@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 const CTASection = () => {
   return (
     <section className="py-24 relative overflow-hidden border-t border-border bg-background">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-primary/10 rounded-full blur-[120px] -z-10" />
+      <div className="absolute hidden md:block top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-primary/10 rounded-full blur-[120px] -z-10" />
 
       <div className="container max-w-4xl relative z-10">
         <motion.div
