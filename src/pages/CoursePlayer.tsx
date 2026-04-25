@@ -33,12 +33,7 @@ import { useAcademyData } from "@/hooks/useAcademyData";
 import { ArticleModule, ToolkitModule, ChecklistModule, SimulatorModule, PlaygroundModule } from "@/components/academy/InteractiveModules";
 import logo from "@/assets/logo_transparent.png";
 
-declare global {
-  interface Window {
-    onYouTubeIframeAPIReady: () => void;
-    YT: any;
-  }
-}
+
 
 const CoursePlayer = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -52,9 +47,7 @@ const CoursePlayer = () => {
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024);
   const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
-  const [videoWatched, setVideoWatched] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
-  const [ytPlayer, setYtPlayer] = useState<any>(null);
   const [isCourseComplete, setIsCourseComplete] = useState(false);
 
   // Derived state for specific course logic
@@ -154,80 +147,7 @@ const CoursePlayer = () => {
     fetchCourseData();
   }, [courseId, user, courses]);
 
-  // YouTube API Loader
-  useEffect(() => {
-    if (!activeLesson?.video_url) return;
-    
-    setVideoWatched(false);
-    setShowQuiz(false);
 
-    const videoId = activeLesson.video_url.includes('embed/')
-      ? activeLesson.video_url.split('embed/')[1]?.split('?')[0]
-      : activeLesson.video_url?.split('/').pop()?.split('?')[0];
-
-    // Robust Script Loader
-    const loadYoutubeApi = () => {
-      if (!window.YT) {
-        const tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-      }
-    };
-
-    let interval: any;
-
-    const createPlayer = () => {
-      if (!window.YT || !window.YT.Player) return;
-      
-      // Cleanup previous player if exists
-      const container = document.getElementById('yt-player');
-      if (container) container.innerHTML = '';
-
-      new window.YT.Player('yt-player', {
-        height: '100%',
-        width: '100%',
-        videoId: videoId,
-        playerVars: { 
-          autoplay: 0, 
-          modestbranding: 1, 
-          rel: 0,
-          origin: window.location.origin
-        },
-        events: {
-          onReady: (event: any) => {
-            setYtPlayer(event.target);
-          },
-          onStateChange: (event: any) => {
-            if (event.data === window.YT.PlayerState.PLAYING) {
-              interval = setInterval(() => {
-                const duration = event.target.getDuration();
-                const currentTime = event.target.getCurrentTime();
-                if (duration > 0 && (currentTime / duration) > 0.9) {
-                  setVideoWatched(true);
-                  clearInterval(interval);
-                }
-              }, 1000);
-            } else {
-              clearInterval(interval);
-            }
-          }
-        }
-      });
-    };
-
-    if (window.YT && window.YT.Player) {
-      createPlayer();
-    } else {
-      loadYoutubeApi();
-      window.onYouTubeIframeAPIReady = createPlayer;
-    }
-
-    return () => {
-      clearInterval(interval);
-      if (ytPlayer && ytPlayer.destroy) ytPlayer.destroy();
-    };
-  }, [activeLesson?.id]);
 
   const handleMarkComplete = async () => {
     if (!user || !activeLesson || !courseId) return;
@@ -533,12 +453,7 @@ const CoursePlayer = () => {
           <ScrollArea className="flex-1">
             <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8">
               
-              {/* Dynamic Module Area */}
-              {(activeLesson?.type === 'video' || !activeLesson?.type) && activeLesson?.video_url ? (
-                <div className="aspect-video w-full rounded-xl overflow-hidden bg-black shadow-xl relative" id="yt-player-container">
-                  <div id="yt-player" className="absolute inset-0 w-full h-full" />
-                </div>
-              ) : null}
+
 
               {/* Lesson Info */}
               <div className="space-y-6">
@@ -558,12 +473,9 @@ const CoursePlayer = () => {
                     ) : (
                       <Button 
                         size="sm" 
-                        disabled={activeLesson?.type === 'video' && !videoWatched}
-                        onClick={() => (activeLesson?.quiz_data && activeLesson.type === 'video') ? setShowQuiz(true) : handleMarkComplete()}
+                        onClick={() => (activeLesson?.quiz_data) ? setShowQuiz(true) : handleMarkComplete()}
                       >
-                        {(activeLesson?.type === 'video' && !videoWatched) ? (
-                          <><ClockIcon className="size-3 mr-2" /> Watch video to continue</>
-                        ) : (activeLesson?.quiz_data && activeLesson.type === 'video') ? (
+                        {(activeLesson?.quiz_data) ? (
                           "Take Quiz"
                         ) : (
                           "Mark Complete"
