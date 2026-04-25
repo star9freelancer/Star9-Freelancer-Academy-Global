@@ -29,7 +29,7 @@ const features = [
   {
     emoji: "💻",
     title: "Remote Work Board",
-    description: "Diverse remote work categories covering writing, design, development, virtual assistance, teaching, sales, data, and AI consulting.",
+    description: "Diverse remote work categories covering writing, design, development, virtual assistance, online tutoring, sales, data, AI consulting, etc.",
     color: "bg-amber-500/10 border-amber-500/20",
   },
   {

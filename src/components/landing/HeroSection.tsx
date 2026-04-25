@@ -26,20 +26,6 @@ const HeroSection = () => {
 
           {/* ── LEFT: Text ──────────────────────────────────────────────── */}
           <div className="space-y-7">
-            {/* Eyebrow */}
-            <motion.div
-              initial={{ opacity: 0, x: -16 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="flex items-center gap-4"
-            >
-              <img src={logo} alt="Star9 Logo" className="h-10 w-auto" />
-              <div
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 border border-secondary/25 text-secondary text-xs font-semibold tracking-wide"
-              >
-                Now Enrolling
-              </div>
-            </motion.div>
 
             {/* Main headline */}
             <motion.h1

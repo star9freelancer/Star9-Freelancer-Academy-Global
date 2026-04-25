@@ -47,7 +47,7 @@ const Header = () => {
   }, [dark]);
 
   const navLinks = [
-    { label: "Freelancer", href: "/", icon: UsersIcon },
+    { label: "Home", href: "/", icon: HomeIcon },
     { label: "Academy", href: "/academy", icon: BookOpenIcon },
     { label: "Global", href: "/global", icon: GlobeIcon },
     { label: "Support", href: "/support", icon: SparklesIcon },
