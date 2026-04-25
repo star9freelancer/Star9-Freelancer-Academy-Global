@@ -29,13 +29,13 @@ const features = [
   {
     emoji: "💻",
     title: "Remote Work Board",
-    description: "8 core remote work categories covering writing, design, development, virtual assistance, teaching, sales, data, and AI consulting.",
+    description: "Diverse remote work categories covering writing, design, development, virtual assistance, teaching, sales, data, and AI consulting.",
     color: "bg-amber-500/10 border-amber-500/20",
   },
   {
     emoji: "🤝",
     title: "Referral Programme",
-    description: "Earn commissions by referring students. $10 per AI course, $15 per Mastering Freelancing or Teacher Preparation enrolment.",
+    description: "Earn commissions by referring students. $10 per AI course, $15 per Mastering Freelancing, and $40 per Teacher Prep and Placement enrolment.",
     color: "bg-rose-500/10 border-rose-500/20",
   },
 ];

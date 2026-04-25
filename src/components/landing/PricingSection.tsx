@@ -43,11 +43,11 @@ const tiers = [
     emoji: "🚀",
   },
   {
-    name: "International Teacher Preparation",
+    name: "International Teacher Prep and Placement",
     price: "$1500",
     period: "one-time",
     subtitle: "3-phase pipeline to a US or EU teaching placement.",
-    referral: "Earn $15 per referral",
+    referral: "Earn $40 per referral",
     features: [
       "Phase 1: Vetting and resume review",
       "Phase 2: Loom audition and interview coaching",
@@ -73,7 +73,7 @@ const PricingSection = () => {
             <span className="text-muted-foreground">Transparent Pricing.</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Pay once. Gain skills and access that pay for themselves. Paystack payment accepted — USD via Equity Bank.
+            Pay once. Gain skills and access that pay for themselves. Paystack payment accepted — All currencies accepted.
           </p>
         </div>
 
