@@ -23,8 +23,8 @@ const CTASection = () => {
             </span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Join thousands of African professionals building borderless careers with Star9. All curriculums launch on May 4th.
-            Enroll in AI for Freelancers ($50), Mastering Freelancing ($100), or International Teacher Preparation ($300) and start earning on the global stage.
+            Join thousands of African professionals building borderless careers with Star9.
+            Enroll in AI for Freelancers ($50), Mastering Freelancing ($100), or International Teacher Preparation ($1500) and start earning on the global stage.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button size="lg" className="h-14 px-10 text-sm font-semibold group shadow-lg shadow-primary/20" asChild>

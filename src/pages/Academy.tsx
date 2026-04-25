@@ -337,7 +337,7 @@ const Academy = () => {
       <Dialog open={paymentModalOpen} onOpenChange={setPaymentModalOpen}>
         <DialogContent className="sm:max-w-md rounded-3xl p-8">
           <DialogTitle className="text-2xl font-black italic">Secure <span className="text-primary">Enrollment</span></DialogTitle>
-          <DialogDescription>Access the May 4th Cohort. Select payment method.</DialogDescription>
+          <DialogDescription>Access the program. Select payment method.</DialogDescription>
           <div className="grid gap-3 pt-4">
             <Button onClick={() => initiatePayment('USD')} className="h-16 flex justify-between px-6 rounded-2xl group">
               <span className="flex items-center gap-3"><CreditCardIcon /> Global Card (USD)</span>

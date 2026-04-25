@@ -8,7 +8,7 @@ const tiers = [
     name: "AI for Freelancers",
     price: "$50",
     period: "one-time",
-    subtitle: "Launch: May 4th. Master AI tools and land your first global client.",
+    subtitle: "Master AI tools and land your first global client.",
     referral: "Earn $10 per referral",
     features: [
       "8-week structured programme",
@@ -26,7 +26,7 @@ const tiers = [
     name: "Mastering Freelancing",
     price: "$100",
     period: "one-time",
-    subtitle: "Launch: May 4th. The complete pipeline from zero to global freelance income.",
+    subtitle: "The complete pipeline from zero to global freelance income.",
     referral: "Earn $15 per referral",
     features: [
       "12-week intensive programme",
@@ -46,7 +46,7 @@ const tiers = [
     name: "International Teacher Preparation",
     price: "$1500",
     period: "one-time",
-    subtitle: "Next Cohort: May 4th. 3-phase pipeline to a US or EU teaching placement.",
+    subtitle: "3-phase pipeline to a US or EU teaching placement.",
     referral: "Earn $15 per referral",
     features: [
       "Phase 1: Vetting and resume review",
