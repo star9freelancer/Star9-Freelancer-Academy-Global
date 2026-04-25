@@ -166,7 +166,7 @@ const Academy = () => {
     const courseObj = courses.find(c => c.id === courseId);
     let basePrice = 50;
     if (courseObj?.title.toLowerCase().includes("mastering freelancing")) basePrice = 100;
-    if (courseObj?.title.toLowerCase().includes("teacher preparation")) basePrice = 300;
+    if (courseObj?.title.toLowerCase().includes("teacher preparation")) basePrice = 1500;
     const amount = currency === 'USD' ? basePrice * 100 : Math.round(basePrice * STAR9_EXCHANGE_RATE) * 100;
     const paystackKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
     if (!paystackKey) { toast.error("Payment configuration error."); return; }
@@ -341,11 +341,17 @@ const Academy = () => {
           <div className="grid gap-3 pt-4">
             <Button onClick={() => initiatePayment('USD')} className="h-16 flex justify-between px-6 rounded-2xl group">
               <span className="flex items-center gap-3"><CreditCardIcon /> Global Card (USD)</span>
-              <span className="font-mono">$ {courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") ? "300" : "50"}</span>
+              <span className="font-mono">$ {
+                courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") ? "1500" :
+                courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("mastering") ? "100" : "50"
+              }</span>
             </Button>
             <Button onClick={() => initiatePayment('KES')} variant="outline" className="h-16 flex justify-between px-6 rounded-2xl group border-emerald-500/20 hover:bg-emerald-500/5">
               <span className="flex items-center gap-3"><SmartphoneIcon className="text-emerald-500" /> M-Pesa / Local</span>
-              <span className="font-mono text-emerald-500">KES {(courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") ? 300 : 50) * STAR9_EXCHANGE_RATE}</span>
+              <span className="font-mono text-emerald-500">KES {(
+                courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") ? 1500 :
+                courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("mastering") ? 100 : 50
+              ) * STAR9_EXCHANGE_RATE}</span>
             </Button>
           </div>
         </DialogContent>

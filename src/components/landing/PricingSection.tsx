@@ -44,7 +44,7 @@ const tiers = [
   },
   {
     name: "International Teacher Preparation",
-    price: "$300",
+    price: "$1500",
     period: "one-time",
     subtitle: "Next Cohort: May 4th. 3-phase pipeline to a US or EU teaching placement.",
     referral: "Earn $15 per referral",
