@@ -16,14 +16,14 @@ const features = [
   },
   {
     emoji: "✈️",
-    title: "International Teacher Preparation",
-    description: "3-phase pipeline: Vetting and Resume review, Loom audition and interviews, then Visa and Relocation support. $300 one-time.",
+    title: "International Teacher Prep and Placement",
+    description: "3-phase pipeline: Vetting and Resume review, Loom audition and interviews, then Visa and Relocation support. $1500 one-time.",
     color: "bg-emerald-500/10 border-emerald-500/20",
   },
   {
     emoji: "🌐",
     title: "Work Abroad Portal",
-    description: "Curated placements in the US, UK, Canada, China, and Germany. Each listing is manually reviewed before publication.",
+    description: "Curated placements across top global destinations such as the US, UK, Canada, China, Germany, and more. Each listing is manually reviewed before publication.",
     color: "bg-violet-500/10 border-violet-500/20",
   },
   {
