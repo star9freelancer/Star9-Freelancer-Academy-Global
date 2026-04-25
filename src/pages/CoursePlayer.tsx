@@ -210,6 +210,19 @@ const CoursePlayer = () => {
         // Last lesson completed!
         if (progressPercentage >= 95) { // Account for the current lesson just marked
           setIsCourseComplete(true);
+
+          // Issue Certificate
+          const certId = `CERT-${user.id.substring(0,8).toUpperCase()}-${courseId.substring(0,8).toUpperCase()}`;
+          const { error: certErr } = await supabase.from('user_certificates').upsert({
+            user_id: user.id,
+            course_id: courseId,
+            credential_id: certId,
+            issued_at: new Date().toISOString()
+          }, { onConflict: 'user_id,course_id' });
+          
+          if(!certErr) {
+            toast.success("Certificate awarded! Check your credentials tab.");
+          }
         }
       }
     } catch (err: any) {

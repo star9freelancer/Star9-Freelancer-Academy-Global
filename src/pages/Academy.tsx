@@ -251,6 +251,19 @@ const Academy = () => {
             ))}
           </div>
           <div className="h-6 w-px bg-border mx-2" />
+          {user?.email === 'umuroyattani2@gmail.com' && (
+            <Button onClick={async () => {
+                 const courseId = Array.from(enrollments.keys())[0] || courses[0]?.id;
+                 if(!courseId) return;
+                 const certId = `CERT-TEST-${user.id.substring(0,6).toUpperCase()}-${courseId.substring(0,6).toUpperCase()}`;
+                 await supabase.from('user_certificates').upsert({
+                   user_id: user.id, course_id: courseId, credential_id: certId, issued_at: new Date().toISOString()
+                 }, { onConflict: 'user_id,course_id' });
+                 toast.success("Test Certificate Generated!");
+            }} size="sm" variant="outline" className="mr-2 text-xs border-amber-500 text-amber-500">
+               Dev: Generate Cert
+            </Button>
+          )}
           <button onClick={() => setSearchDialogOpen(true)} className="p-2"><SearchIcon className="size-4" /></button>
           <button onClick={handleThemeToggle} className="p-2">{isDarkMode ? <SunIcon className="size-4" /> : <MoonIcon className="size-4" />}</button>
           
