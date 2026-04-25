@@ -77,7 +77,7 @@ const Footer = () => (
           <Link to="/about"   className="hover:text-primary transition-colors">About</Link>
           <Link to="/academy" className="hover:text-primary transition-colors">Academy</Link>
           <Link to="/global"  className="hover:text-primary transition-colors">Global</Link>
-          <Link to="/support" className="hover:text-primary transition-colors">Support</Link>
+          <Link to="/contact" className="hover:text-primary transition-colors">Contact Page</Link>
           <a href="https://wa.me/254117103483" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-emerald-500 hover:text-emerald-400 font-bold transition-colors">
             <WhatsAppIcon className="size-4" /> WhatsApp
           </a>

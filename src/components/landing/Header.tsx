@@ -50,7 +50,7 @@ const Header = () => {
     { label: "Freelancer", href: "/", icon: UsersIcon },
     { label: "Academy", href: "/academy", icon: BookOpenIcon },
     { label: "Global", href: "/global", icon: GlobeIcon },
-    { label: "Support", href: "/contact", icon: SparklesIcon },
+    { label: "Support", href: "/support", icon: SparklesIcon },
   ];
 
   return (
@@ -66,8 +66,9 @@ const Header = () => {
         }`}
       >
         {/* Logo */}
-        <Link to="/" className="p-2 rounded-full hover:bg-accent transition-colors shrink-0">
-          <img src={logo} alt="Star9" className="h-7 w-auto" />
+        <Link to="/" className="p-2 rounded-full hover:bg-accent transition-colors shrink-0 flex items-center gap-2">
+          <img src={logo} alt="Star9 Freelancer" className="h-10 w-auto" />
+          <span className="font-bold hidden sm:block tracking-tight">Star9 Freelancer</span>
         </Link>
 
         <div className="h-6 w-px bg-border mx-1 shrink-0 hidden md:block" />

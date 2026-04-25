@@ -61,7 +61,7 @@ const HeroSection = () => {
               transition={{ duration: 0.6, delay: 0.25 }}
               className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg"
             >
-              Star9 equips African professionals through three high-impact programmes in AI, freelancing, and International Teacher Placement — with direct access to a curated global job and study network.
+              Star9 Freelancer Ltd empowers African youth and women with in-demand skills, remote work, study abroad, and work abroad opportunities. We teach full courses online, including high-demand fields like Artificial Intelligence (AI) and freelancing, equipping learners with practical skills to earn globally. Our programs also connect individuals to study abroad pathways and structured work abroad opportunities such as International Teacher Placement and Preparation and the Caregiving Program – International, enabling them to build sustainable global careers and access life-changing opportunities beyond borders.
             </motion.p>
 
             {/* CTAs */}
@@ -142,7 +142,6 @@ const HeroSection = () => {
                   {[
                     { icon: StarIcon,     label: "AI for Freelancers",         sub: "8-week programme · $50",    progress: 72, color: "text-primary" },
                     { icon: BriefcaseIcon, label: "Mastering Freelancing",       sub: "12-week · $100 + Global access", progress: 45, color: "text-secondary" },
-                    { icon: GlobeIcon,    label: "Teacher Preparation",  sub: "3-Phase pipeline · $300",  progress: 20, color: "text-emerald-400" },
                   ].map((item, i) => (
                     <Link 
                       key={i} 

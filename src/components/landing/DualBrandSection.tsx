@@ -7,12 +7,12 @@ const cards = [
     title: "Star9 Academy",
     subtitle: "Learn. Certify. Get Placed.",
     description:
-      "Three high-impact, pay-per-course programmes in AI for Freelancers, Mastering Freelancing, and International Teacher Preparation. Structured 8-12 week curricula with quizzes, projects, and verified certificates.",
+      "High-impact, pay-per-course programmes in AI for Freelancers and Mastering Freelancing. Structured 8-12 week curricula with quizzes, projects, and verified certificates.",
     link: "/academy",
     gradient: "from-primary/20 to-primary/5",
     borderHover: "hover:border-primary/40",
     accent: "text-primary",
-    stats: ["AI · Freelancing · Teacher Preparation", "Pay-per-course access", "Verified Certificates"],
+    stats: ["AI · Freelancing", "Pay-per-course access", "Verified Certificates"],
     emoji: "🎓",
   },
   {
