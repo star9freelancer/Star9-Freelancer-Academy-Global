@@ -1,9 +1,44 @@
+import { useState } from "react";
 import Header from "@/components/landing/Header";
 import Footer from "@/components/landing/Footer";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
-const Support = () => (
-  <div className="min-h-screen bg-background">
+const Support = () => {
+  const [amount, setAmount] = useState('50');
+  const [email, setEmail] = useState('');
+
+  const handleDonate = () => {
+    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
+      toast.error('Please enter a valid amount');
+      return;
+    }
+    const paystackKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
+    if (!paystackKey) { toast.error("Payment configuration error."); return; }
+    
+    if ((window as any).PaystackPop) {
+      const handler = (window as any).PaystackPop.setup({
+        key: paystackKey, 
+        email: email || 'donor@star9freelancer.com', 
+        amount: Math.round(Number(amount) * 100), 
+        currency: 'USD',
+        ref: 'DONATE_' + Math.floor(Math.random() * 1e9),
+        callback: () => { 
+          toast.success("Thank you for your generous support!"); 
+          setAmount('50'); 
+          setEmail(''); 
+        },
+        onClose: () => { }
+      });
+      handler.openIframe();
+    } else {
+      toast.error("Payment system is loading, please try again in a moment.");
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
     <Header />
     <main className="pt-32 pb-20">
       <div className="container max-w-4xl space-y-12 shrink-0">
@@ -117,12 +152,32 @@ const Support = () => (
           <p className="text-muted-foreground text-lg max-w-xl mx-auto">
             Every contribution counts. Together, we can build a future where African talent is recognized and empowered globally.
           </p>
-          <div className="pt-6">
-             <Button size="lg" className="h-16 px-12 text-lg font-bold group shadow-xl shadow-primary/20 rounded-full" onClick={() => window.open('https://paystack.com/pay/q6-31a8o2j', '_blank')}>
-               Support Us Here
+          <div className="pt-6 max-w-sm mx-auto space-y-4">
+             <div className="space-y-3">
+               <Input 
+                 placeholder="Email Address (Optional for receipt)" 
+                 type="email" 
+                 value={email}
+                 onChange={(e) => setEmail(e.target.value)}
+                 className="h-12 bg-background border-primary/20 focus-visible:ring-primary text-center"
+               />
+               <div className="relative">
+                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-medium text-lg">$</span>
+                 <Input 
+                   placeholder="Amount (USD)" 
+                   type="number" 
+                   value={amount}
+                   onChange={(e) => setAmount(e.target.value)}
+                   className="h-12 pl-12 bg-background border-primary/20 focus-visible:ring-primary text-left text-lg font-bold"
+                 />
+                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm uppercase tracking-widest">USD</span>
+               </div>
+             </div>
+             <Button size="lg" className="w-full h-14 text-lg font-bold shadow-xl shadow-primary/20 rounded-xl" onClick={handleDonate}>
+               Donate Securely
              </Button>
-             <p className="mt-4 text-sm text-muted-foreground font-medium">
-               <a href="https://www.star9freelancer.com/support" className="hover:underline">www.star9freelancer.com/support</a>
+             <p className="pt-2 text-xs text-muted-foreground/60 font-medium tracking-wide">
+               SECURE ENCRYPTED PAYMENT VIA PAYSTACK
              </p>
           </div>
         </section>
@@ -166,6 +221,7 @@ const Support = () => (
     </main>
     <Footer />
   </div>
-);
+  );
+};
 
 export default Support;
