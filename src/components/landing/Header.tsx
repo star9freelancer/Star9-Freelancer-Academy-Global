@@ -67,8 +67,8 @@ const Header = () => {
       >
         {/* Logo */}
         <Link to="/" className="p-2 rounded-full hover:bg-accent transition-colors shrink-0 flex items-center gap-2">
-          <img src={logo} alt="Star9 Freelancer" className="h-10 w-auto" />
-          <span className="font-bold hidden sm:block tracking-tight">Star9 Freelancer</span>
+          <img src={logo} alt="Star9 Freelancer" className="h-10 sm:h-10 w-auto" />
+          <span className="font-bold tracking-tight">Star9 Freelancer</span>
         </Link>
 
         <div className="h-6 w-px bg-border mx-1 shrink-0 hidden md:block" />
@@ -136,6 +136,10 @@ const Header = () => {
             className="md:hidden fixed inset-0 z-[60] bg-background/98 backdrop-blur-2xl flex flex-col p-8 pt-24"
           >
             <div className="space-y-4">
+              <div className="flex items-center gap-3 mb-8 pb-8 border-b border-border/50">
+                <img src={logo} alt="Star9 Freelancer" className="h-10 w-auto" />
+                <span className="font-bold text-xl tracking-tight">Star9 Freelancer</span>
+              </div>
               <p className="text-[10px] font-mono uppercase tracking-[0.5em] text-muted-foreground/30 mb-8">Navigation Menu</p>
               {navLinks.map((l, i) => (
                 <motion.div

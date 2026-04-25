@@ -41,7 +41,7 @@ const studyPrograms = [
   { level: "Bachelor's Degree", regions: "Global" },
   { level: "Master's Degree",   regions: "Global" },
   { level: "PhD Programs",      regions: "Global" },
-  { level: "Germany Diploma",   regions: "Europe" },
+  { level: "Diploma",          regions: "Europe" },
   { level: "Certificate Programs", regions: "Global" },
   { level: "Short Courses",     regions: "Online" },
 ];
