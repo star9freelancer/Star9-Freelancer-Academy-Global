@@ -40,9 +40,14 @@ import {
   LogOut as LogOutIcon,
   ChevronDown as ChevronDownIcon,
   Sun as SunIcon,
-  Moon as MoonIcon
+  Moon as MoonIcon,
+  User as UserIcon,
+  Trophy as TrophyIcon,
+  Plane as PlaneIcon,
+  Check as CheckIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -367,9 +372,58 @@ const Academy = () => {
       </div>
 
       <Dialog open={paymentModalOpen} onOpenChange={setPaymentModalOpen}>
-        <DialogContent className="sm:max-w-md rounded-3xl p-8">
-          <DialogTitle className="text-2xl font-black italic">Secure <span className="text-primary">Enrollment</span></DialogTitle>
+        <DialogContent className={`${courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") ? "sm:max-w-xl" : "sm:max-w-md"} rounded-3xl p-8 max-h-[90vh] overflow-y-auto no-scrollbar`}>
+          <DialogTitle className="text-2xl font-black italic tracking-tighter">Secure <span className="text-primary">Enrollment</span></DialogTitle>
           <DialogDescription>Access the program. Select payment method.</DialogDescription>
+          
+          {courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") && (
+            <div className="bg-primary/5 border border-primary/20 rounded-2xl p-5 my-4 space-y-4 text-sm animate-in fade-in zoom-in duration-500">
+               <div className="flex items-center justify-between">
+                 <h3 className="font-bold text-primary flex items-center gap-2 text-base">
+                   <PlaneIcon className="size-5" /> Global Placement Package
+                 </h3>
+                 <Badge className="bg-primary text-white">Value $3,500+</Badge>
+               </div>
+               
+               <div className="space-y-2">
+                 <p className="font-bold text-foreground italic flex items-center gap-2">
+                   One-time fee of <span className="text-primary text-lg">$1,500</span> includes:
+                 </p>
+                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 pl-2">
+                   {["Teacher Preparation", "Passport fees", "USA Document Verification", "Visa fee", "Relocation mentorship"].map((item, idx) => (
+                     <li key={idx} className="flex items-center gap-2 text-[12px] font-medium text-muted-foreground">
+                       <CheckIcon className="size-3.5 text-emerald-500 shrink-0" /> {item}
+                     </li>
+                   ))}
+                 </ul>
+               </div>
+
+               <div className="space-y-4 pt-4 border-t border-primary/10">
+                  <div className="flex gap-4 items-start group">
+                    <div className="size-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0 font-bold text-primary text-xs group-hover:scale-110 transition-transform">1</div>
+                    <div>
+                      <p className="font-bold text-xs uppercase tracking-widest text-primary mb-1">Phase 1: Vetting & Admin</p>
+                      <p className="text-[11px] leading-relaxed text-muted-foreground">Passport application, resume writing, loom video creation, LinkedIn Optimization, and USA Document Verification.</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4 items-start group">
+                    <div className="size-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0 font-bold text-primary text-xs group-hover:scale-110 transition-transform">2</div>
+                    <div>
+                      <p className="font-bold text-xs uppercase tracking-widest text-primary mb-1">Phase 2: Vetting & Interviews</p>
+                      <p className="text-[11px] leading-relaxed text-muted-foreground">Comprehensive interview preparation and taking the actual interviews to secure your offer letter.</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4 items-start group">
+                    <div className="size-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0 font-bold text-primary text-xs group-hover:scale-110 transition-transform">3</div>
+                    <div>
+                      <p className="font-bold text-xs uppercase tracking-widest text-primary mb-1">Phase 3: Visa & Travel</p>
+                      <p className="text-[11px] leading-relaxed text-muted-foreground">Full support with your Visa application and travel preparations.</p>
+                    </div>
+                  </div>
+               </div>
+            </div>
+          )}
+
           <div className="grid gap-3 pt-4">
             <Button onClick={() => initiatePayment('USD')} className="h-14 flex justify-between px-6 rounded-2xl group">
               <span className="flex items-center gap-3"><CreditCardIcon className="size-5" /> Global Card (USD)</span>
