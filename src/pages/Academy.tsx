@@ -160,20 +160,25 @@ const Academy = () => {
     setPaymentModalOpen(true);
   };
 
-  const initiatePayment = (currency: 'USD' | 'KES') => {
+  const initiatePayment = (currency: 'USD' | 'KES' | 'GHS') => {
     const courseId = enrolling;
     if (!courseId) return;
     const courseObj = courses.find(c => c.id === courseId);
     let basePrice = 50;
     if (courseObj?.title.toLowerCase().includes("mastering freelancing")) basePrice = 100;
     if (courseObj?.title.toLowerCase().includes("teacher preparation")) basePrice = 1500;
-    const amount = currency === 'USD' ? basePrice * 100 : Math.round(basePrice * STAR9_EXCHANGE_RATE) * 100;
+    
+    let amount = basePrice * 100;
+    if (currency === 'KES') amount = Math.round(basePrice * STAR9_EXCHANGE_RATE) * 100;
+    if (currency === 'GHS') amount = Math.round(basePrice * 15) * 100;
+
     const paystackKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
     if (!paystackKey) { toast.error("Payment configuration error."); return; }
     setPaymentModalOpen(false);
     if ((window as any).PaystackPop) {
       const handler = (window as any).PaystackPop.setup({
         key: paystackKey, email: user?.email, amount, currency,
+        channels: ['card', 'bank', 'ussd', 'qr', 'mobile_money', 'bank_transfer'],
         ref: 'ST9_' + Math.floor(Math.random() * 1e9),
         callback: () => { toast.success("Enrollment Synchronizing..."); setTimeout(() => invalidateAll(), 3000); },
         onClose: () => setEnrolling(null)
@@ -358,19 +363,26 @@ const Academy = () => {
           <DialogTitle className="text-2xl font-black italic">Secure <span className="text-primary">Enrollment</span></DialogTitle>
           <DialogDescription>Access the program. Select payment method.</DialogDescription>
           <div className="grid gap-3 pt-4">
-            <Button onClick={() => initiatePayment('USD')} className="h-16 flex justify-between px-6 rounded-2xl group">
-              <span className="flex items-center gap-3"><CreditCardIcon /> Global Card (USD)</span>
+            <Button onClick={() => initiatePayment('USD')} className="h-14 flex justify-between px-6 rounded-2xl group">
+              <span className="flex items-center gap-3"><CreditCardIcon className="size-5" /> Global Card (USD)</span>
               <span className="font-mono">$ {
                 courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") ? "1500" :
                 courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("mastering") ? "100" : "50"
               }</span>
             </Button>
-            <Button onClick={() => initiatePayment('KES')} variant="outline" className="h-16 flex justify-between px-6 rounded-2xl group border-emerald-500/20 hover:bg-emerald-500/5">
-              <span className="flex items-center gap-3"><SmartphoneIcon className="text-emerald-500" /> M-Pesa / Local</span>
+            <Button onClick={() => initiatePayment('KES')} variant="outline" className="h-14 flex justify-between px-6 rounded-2xl group border-emerald-500/20 hover:bg-emerald-500/5">
+              <span className="flex items-center gap-3"><SmartphoneIcon className="size-5 text-emerald-500" /> M-Pesa (KES)</span>
               <span className="font-mono text-emerald-500">KES {(
                 courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") ? 1500 :
                 courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("mastering") ? 100 : 50
               ) * STAR9_EXCHANGE_RATE}</span>
+            </Button>
+            <Button onClick={() => initiatePayment('GHS')} variant="outline" className="h-14 flex justify-between px-6 rounded-2xl group border-amber-500/20 hover:bg-amber-500/5">
+              <span className="flex items-center gap-3"><SmartphoneIcon className="size-5 text-amber-500" /> Airtel / MTN (GHS)</span>
+              <span className="font-mono text-amber-500">GH₵ {(
+                courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") ? 1500 :
+                courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("mastering") ? 100 : 50
+              ) * 15}</span>
             </Button>
           </div>
         </DialogContent>
