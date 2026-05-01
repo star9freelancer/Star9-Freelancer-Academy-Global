@@ -261,12 +261,12 @@ const CoursePlayer = () => {
     );
   }
 
-  // Pacing Calculation (2 modules per week starting from enrollment)
+  // Pacing Calculation (3 lessons per day starting from enrollment)
   const enrollment = courseId ? enrollments.get(courseId) : null;
-  const weeksActive = enrollment?.created_at 
-    ? Math.floor((Date.now() - new Date(enrollment.created_at).getTime()) / (1000 * 60 * 60 * 24 * 7)) + 1 
-    : 1; // Default to 1 week if no enrollment date is found
-  const maxAllowedModules = weeksActive * 2;
+  const daysActive = enrollment?.created_at 
+    ? Math.floor((Date.now() - new Date(enrollment.created_at).getTime()) / (1000 * 60 * 60 * 24)) + 1 
+    : 1; // Default to 1 day if no enrollment date is found
+  const maxAllowedLessons = daysActive * 3;
 
   if (isCourseComplete) {
     return (
@@ -372,8 +372,8 @@ const CoursePlayer = () => {
                 const isCompleted = completedLessons.has(lesson.id);
                 // Locked by sequence
                 const isLockedBySequence = idx > 0 && !completedLessons.has(lessons[idx - 1].id);
-                // Locked by pace (2 per week)
-                const isLockedByPace = idx >= maxAllowedModules;
+                // Locked by pace (3 lessons per day)
+                const isLockedByPace = idx >= maxAllowedLessons;
                 const isLocked = isLockedBySequence || isLockedByPace;
 
                 return (
@@ -417,7 +417,7 @@ const CoursePlayer = () => {
                         </span>
                         {lesson.quiz_data && <Badge variant="secondary" className="text-[9px] py-0 px-1.5">Quiz</Badge>}
                         {isLockedByPace ? (
-                           <Badge variant="outline" className="text-[9px] py-0 px-1.5 border-amber-500/30 text-amber-500 bg-amber-500/10">Locked: Week {Math.floor(idx / 2) + 1}</Badge>
+                           <Badge variant="outline" className="text-[9px] py-0 px-1.5 border-amber-500/30 text-amber-500 bg-amber-500/10">Locked: Day {Math.floor(idx / 3) + 1}</Badge>
                         ) : isLockedBySequence ? (
                            <Badge variant="secondary" className="text-[9px] py-0 px-1.5">Locked</Badge>
                         ) : null}
@@ -528,6 +528,13 @@ const CoursePlayer = () => {
                       .split('\n')
                       .map((line: string, i: number) => {
                         const trimmedLine = line.trim();
+                        if (trimmedLine.startsWith('![') && trimmedLine.includes('](')) {
+                          const altMatch = trimmedLine.match(/!\[(.*?)\]/);
+                          const urlMatch = trimmedLine.match(/\((.*?)\)/);
+                          if (altMatch && urlMatch) {
+                            return <img key={i} src={urlMatch[1]} alt={altMatch[1]} className="rounded-2xl w-full max-h-[400px] object-cover my-8 shadow-xl border border-border" />;
+                          }
+                        }
                         if (trimmedLine.startsWith('# ')) {
                           return <h1 key={i} className="text-2xl font-bold mt-8 mb-4 border-b pb-2 text-foreground font-display">{trimmedLine.replace('# ', '')}</h1>;
                         }
