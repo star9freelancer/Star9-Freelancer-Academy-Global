@@ -216,15 +216,17 @@ const Academy = () => {
     );
   }
 
-  const navItems = [
+  const mainNavItems = [
     { id: "home", icon: HomeIcon, label: "Home", public: true },
     { id: "academy", icon: BookOpenIcon, label: "Vault", public: false },
     { id: "catalog", icon: GlobeIcon, label: "Catalog", public: true },
+  ];
+
+  const moreNavItems = [
     { id: "careers", icon: BriefcaseIcon, label: "Careers", public: true },
     { id: "referral", icon: LinkIcon, label: "Referrals", public: true },
     { id: "community", icon: UsersIcon, label: "Social", public: false },
     { id: "certificates", icon: AwardIcon, label: "Credentials", public: false },
-    { id: "settings", icon: SettingsIcon, label: "Security", public: false },
   ];
 
   return (
@@ -240,7 +242,7 @@ const Academy = () => {
           <Link to="/" className="flex items-center gap-2"><img src={logo} className="h-8" /><span className="font-black italic text-xl hidden lg:block">STAR<span className="text-primary">9</span></span></Link>
           <div className="h-6 w-px bg-border mx-2" />
           <div className="flex items-center gap-1">
-            {navItems.filter(i => i.public || user).map(item => (
+            {mainNavItems.filter(i => i.public || user).map(item => (
               <button 
                 key={item.id} 
                 onClick={() => setActiveTab(item.id)}
@@ -249,21 +251,25 @@ const Academy = () => {
                 <item.icon className="size-4" /> <span className="hidden xl:block">{item.label}</span>
               </button>
             ))}
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all text-muted-foreground hover:bg-accent outline-none">
+                More <ChevronDownIcon className="size-3" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48 rounded-2xl p-2 mt-2">
+                {moreNavItems.filter(i => i.public || user).map(item => (
+                  <DropdownMenuItem 
+                    key={item.id} 
+                    onClick={() => setActiveTab(item.id)} 
+                    className={`rounded-xl gap-2 p-3 cursor-pointer ${activeTab === item.id ? "bg-primary/10 text-primary" : ""}`}
+                  >
+                    <item.icon className="size-4" /> {item.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <div className="h-6 w-px bg-border mx-2" />
-          {user?.email === 'umuroyattani2@gmail.com' && (
-            <Button onClick={async () => {
-                 const courseId = Array.from(enrollments.keys())[0] || courses[0]?.id;
-                 if(!courseId) return;
-                 const certId = `CERT-TEST-${user.id.substring(0,6).toUpperCase()}-${courseId.substring(0,6).toUpperCase()}`;
-                 await supabase.from('user_certificates').upsert({
-                   user_id: user.id, course_id: courseId, credential_id: certId, issued_at: new Date().toISOString()
-                 }, { onConflict: 'user_id,course_id' });
-                 toast.success("Test Certificate Generated!");
-            }} size="sm" variant="outline" className="mr-2 text-xs border-amber-500 text-amber-500">
-               Dev: Generate Cert
-            </Button>
-          )}
           <button onClick={() => setSearchDialogOpen(true)} className="p-2"><SearchIcon className="size-4" /></button>
           <button onClick={handleThemeToggle} className="p-2">{isDarkMode ? <SunIcon className="size-4" /> : <MoonIcon className="size-4" />}</button>
           
@@ -275,8 +281,8 @@ const Academy = () => {
               <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 mt-4">
                 <DropdownMenuLabel className="px-3 py-4"><p className="font-bold">{profile?.full_name}</p><p className="text-[10px] text-muted-foreground">{user.email}</p></DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setActiveTab('settings')} className="rounded-xl gap-2 p-3"><SettingsIcon className="size-4" /> Account Settings</DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout} className="rounded-xl gap-2 p-3 text-destructive"><LogOutIcon className="size-4" /> Disconnect</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab('settings')} className="rounded-xl gap-2 p-3 cursor-pointer"><SettingsIcon className="size-4" /> Account Settings</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout} className="rounded-xl gap-2 p-3 text-destructive cursor-pointer"><LogOutIcon className="size-4" /> Disconnect</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : <Button size="sm" className="rounded-full px-6" asChild><Link to="/auth">Access</Link></Button>}
