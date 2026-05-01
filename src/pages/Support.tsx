@@ -8,6 +8,7 @@ import { toast } from "sonner";
 const Support = () => {
   const [amount, setAmount] = useState('50');
   const [email, setEmail] = useState('');
+  const [currency, setCurrency] = useState('USD');
 
   const handleDonate = () => {
     if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
@@ -22,7 +23,7 @@ const Support = () => {
         key: paystackKey, 
         email: email || 'donor@star9freelancer.com', 
         amount: Math.round(Number(amount) * 100), 
-        currency: 'USD',
+        currency: currency,
         channels: ['card', 'bank', 'ussd', 'qr', 'mobile_money', 'bank_transfer'],
         ref: 'DONATE_' + Math.floor(Math.random() * 1e9),
         callback: () => { 
@@ -163,15 +164,29 @@ const Support = () => {
                  className="h-12 bg-background border-primary/20 focus-visible:ring-primary text-center"
                />
                <div className="relative">
-                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-medium text-lg">$</span>
+                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-medium text-lg">
+                   {currency === 'USD' ? '$' : currency === 'KES' ? 'KSh' : currency === 'GHS' ? 'GH₵' : ''}
+                 </span>
                  <Input 
-                   placeholder="Amount (USD)" 
+                   placeholder={`Amount (${currency})`} 
                    type="number" 
                    value={amount}
                    onChange={(e) => setAmount(e.target.value)}
-                   className="h-12 pl-12 bg-background border-primary/20 focus-visible:ring-primary text-left text-lg font-bold"
+                   className="h-12 pl-14 pr-20 bg-background border-primary/20 focus-visible:ring-primary text-left text-lg font-bold"
                  />
-                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm uppercase tracking-widest">USD</span>
+                 <select
+                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-transparent text-muted-foreground text-sm uppercase tracking-widest outline-none cursor-pointer hover:text-foreground transition-colors"
+                    value={currency}
+                    onChange={(e) => {
+                      setCurrency(e.target.value);
+                      if (e.target.value === 'KES' && amount === '50') setAmount('6500');
+                      else if (e.target.value === 'USD' && amount === '6500') setAmount('50');
+                    }}
+                  >
+                    <option value="USD">USD</option>
+                    <option value="KES">KES</option>
+                    <option value="GHS">GHS</option>
+                  </select>
                </div>
              </div>
              <Button size="lg" className="w-full h-14 text-lg font-bold shadow-xl shadow-primary/20 rounded-xl" onClick={handleDonate}>
