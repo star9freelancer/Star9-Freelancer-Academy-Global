@@ -175,7 +175,7 @@ const Header = () => {
                    </Button>
                  </div>
                )}
-               <p className="text-center text-[10px] font-mono text-white/20 uppercase tracking-widest pt-4">&copy; {new Date().getFullYear()} Star9 Academy Global</p>
+               <p className="text-center text-[10px] font-mono text-white/20 uppercase tracking-widest pt-4">&copy; {new Date().getFullYear()} Star9 Freelancer</p>
             </div>
           </motion.div>
         )}
