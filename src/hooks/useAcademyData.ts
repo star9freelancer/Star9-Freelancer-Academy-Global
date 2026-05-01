@@ -156,6 +156,7 @@ export const useAcademyData = () => {
         .filter(course => !course.title.toLowerCase().includes("teacher preparation") && !course.title.toLowerCase().includes("teacher prep"))
         .map(course => ({
           ...course,
+          title: course.title === "Freelancing Essentials" ? "Mastering Freelancing" : course.title,
           modules: CURRICULUM_LEDGER[course.id] || []
         }));
     }
@@ -199,7 +200,13 @@ export const useAcademyData = () => {
         .eq("user_id", user.id);
       
       if (error) throw error;
-      return data || [];
+      return (data || []).map((cert: any) => ({
+        ...cert,
+        academy_courses: cert.academy_courses ? {
+          ...cert.academy_courses,
+          title: cert.academy_courses.title === "Freelancing Essentials" ? "Mastering Freelancing" : cert.academy_courses.title
+        } : null
+      }));
     },
     enabled: !!user
   });

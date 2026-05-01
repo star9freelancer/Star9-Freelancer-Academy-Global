@@ -38,8 +38,8 @@ VALUES
   ),
   (
     '22222222-2222-2222-2222-222222222222',
-    'freelancing-essentials',
-    'Freelancing Essentials', 
+    'mastering-freelancing',
+    'Mastering Freelancing', 
     'Global Business', 
     '{"Upwork", "Fiverr", "LinkedIn", "Wise", "Payoneer"}', 
     'Transform your skills into a highly profitable, borderless business. This comprehensive foundational course provides the exact roadmap required to successfully launch, manage, and scale a lucrative freelancing career on the global stage.',
@@ -113,7 +113,7 @@ VALUES
   ('11111111-1111-1111-1111-111111111111', 'Module 5: Architecting and Selling AI-Powered Services', 60, 5, 'video', 'https://www.youtube.com/embed/z-EtmaFJieY', '# Selling the Future\n\nPackage your new skills into high-value services that clients are eager to pay for.', null),
   ('11111111-1111-1111-1111-111111111111', 'Module 6: Ethics, Integrity, and Responsible AI Application', 40, 6, 'video', 'https://www.youtube.com/embed/z-EtmaFJieY', '# Ethical AI\n\nMaintaining human integrity in an automated world.', null);
 
--- Course 2: Freelancing Essentials
+-- Course 2: Mastering Freelancing
 INSERT INTO academy_lessons (course_id, title, duration_minutes, order_index, type, video_url)
 VALUES 
   ('22222222-2222-2222-2222-222222222222', 'Module 1: Introduction to the Global Freelancing Landscape', 40, 1, 'video', 'https://www.youtube.com/embed/z-EtmaFJieY'),
@@ -138,6 +138,6 @@ INSERT INTO chat_groups (id, name, type, course_id)
 VALUES 
   ('44444444-4444-4444-4444-444444444444', 'Global Freelancer Lounge', 'general', null),
   ('55555555-5555-5555-5555-555555555555', 'AI for Freelancers Cohort', 'course', '11111111-1111-1111-1111-111111111111'),
-  ('66666666-6666-6666-6666-666666666666', 'Freelancing Essentials Cohort', 'course', '22222222-2222-2222-2222-222222222222'),
+  ('66666666-6666-6666-6666-666666666666', 'Mastering Freelancing Cohort', 'course', '22222222-2222-2222-2222-222222222222'),
   ('77777777-7777-7777-7777-777777777777', 'International Teachers Cohort', 'course', '33333333-3333-3333-3333-333333333333')
 ON CONFLICT (id) DO NOTHING;

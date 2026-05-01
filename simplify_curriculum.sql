@@ -11,7 +11,7 @@ UPDATE academy_lessons SET title = 'Automation' WHERE course_id = '11111111-1111
 UPDATE academy_lessons SET title = 'Monetization' WHERE course_id = '11111111-1111-1111-1111-111111111111' AND order_index = 5;
 UPDATE academy_lessons SET title = 'Ethics & Integrity' WHERE course_id = '11111111-1111-1111-1111-111111111111' AND order_index = 6;
 
--- Freelancing Essentials
+-- Mastering Freelancing
 UPDATE academy_lessons SET title = 'Global Landscape' WHERE course_id = '22222222-2222-2222-2222-222222222222' AND order_index = 1;
 UPDATE academy_lessons SET title = 'Profile Mastery' WHERE course_id = '22222222-2222-2222-2222-222222222222' AND order_index = 2;
 UPDATE academy_lessons SET title = 'Client Acquisition' WHERE course_id = '22222222-2222-2222-2222-222222222222' AND order_index = 3;

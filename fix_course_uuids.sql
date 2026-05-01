@@ -57,8 +57,8 @@ VALUES
   ),
   (
     '22222222-2222-2222-2222-222222222222',
-    'freelancing-essentials',
-    'Freelancing Essentials', 
+    'mastering-freelancing',
+    'Mastering Freelancing', 
     'Global Business', 
     '{"Upwork", "Fiverr", "LinkedIn", "Wise", "Payoneer"}', 
     'Transform your skills into a highly profitable, borderless business. This comprehensive foundational course provides the exact roadmap required to successfully launch, manage, and scale a lucrative freelancing career on the global stage.',

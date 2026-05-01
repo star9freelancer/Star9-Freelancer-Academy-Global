@@ -162,7 +162,7 @@ const Global = () => {
                   <div className="w-px bg-white/5" />
                   <div className="flex flex-col">
                     <span className="text-[10px] font-mono uppercase text-zinc-500">Price</span>
-                    <span className="text-sm font-bold text-primary">$300</span>
+                    <span className="text-sm font-bold text-primary">$1500</span>
                   </div>
                 </div>
 

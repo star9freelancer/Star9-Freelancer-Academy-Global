@@ -114,6 +114,10 @@ const CoursePlayer = () => {
           return;
         }
 
+        if (courseData.title === "Freelancing Essentials") {
+          courseData.title = "Mastering Freelancing";
+        }
+
         setCourse(courseData);
 
         // Fetch lessons and progress in parallel with error tolerance

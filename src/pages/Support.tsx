@@ -23,6 +23,7 @@ const Support = () => {
         email: email || 'donor@star9freelancer.com', 
         amount: Math.round(Number(amount) * 100), 
         currency: 'USD',
+        channels: ['card', 'bank', 'ussd', 'qr', 'mobile_money', 'bank_transfer'],
         ref: 'DONATE_' + Math.floor(Math.random() * 1e9),
         callback: () => { 
           toast.success("Thank you for your generous support!"); 
@@ -176,8 +177,9 @@ const Support = () => {
              <Button size="lg" className="w-full h-14 text-lg font-bold shadow-xl shadow-primary/20 rounded-xl" onClick={handleDonate}>
                Donate Securely
              </Button>
-             <p className="pt-2 text-xs text-muted-foreground/60 font-medium tracking-wide">
-               SECURE ENCRYPTED PAYMENT VIA PAYSTACK
+             <p className="pt-2 text-xs text-muted-foreground/60 font-medium tracking-wide flex flex-col items-center gap-1">
+               <span>SECURE ENCRYPTED PAYMENT VIA PAYSTACK</span>
+               <span>SUPPORTS M-PESA & AIRTEL MONEY</span>
              </p>
           </div>
         </section>
