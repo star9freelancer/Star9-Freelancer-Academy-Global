@@ -242,23 +242,23 @@ const Academy = () => {
         <div className="absolute hidden md:block bottom-0 left-0 w-96 h-96 bg-secondary/20 blur-[120px]" />
       </div>
 
-      <nav className="fixed top-0 inset-x-0 z-50 flex justify-center p-6">
-        <div className="flex items-center gap-4 px-6 py-3 rounded-full bg-background/80 backdrop-blur-xl border border-border shadow-2xl">
-          <Link to="/" className="flex items-center gap-2"><img src={logo} className="h-8" /><span className="font-black italic text-xl hidden lg:block">STAR<span className="text-primary">9</span></span></Link>
-          <div className="h-6 w-px bg-border mx-2" />
-          <div className="flex items-center gap-1">
+      <nav className="fixed top-0 inset-x-0 z-50 flex justify-center p-2 md:p-6 pointer-events-none">
+        <div className="flex items-center gap-1 md:gap-4 px-2 md:px-6 py-2 md:py-3 rounded-full bg-background/80 backdrop-blur-xl border border-border shadow-2xl pointer-events-auto max-w-[98vw] overflow-x-auto no-scrollbar">
+          <Link to="/" className="flex items-center gap-2 shrink-0"><img src={logo} className="h-6 md:h-8" /><span className="font-black italic text-xl hidden lg:block">STAR<span className="text-primary">9</span></span></Link>
+          <div className="h-6 w-px bg-border mx-1 md:mx-2 shrink-0" />
+          <div className="flex items-center gap-0.5 md:gap-1">
             {mainNavItems.filter(i => i.public || user).map(item => (
               <button 
                 key={item.id} 
                 onClick={() => setActiveTab(item.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all ${activeTab === item.id ? "bg-primary text-white" : "text-muted-foreground hover:bg-accent"}`}
+                className={`flex items-center gap-1.5 md:gap-2 px-2 md:px-4 py-1.5 md:py-2 rounded-full text-[10px] md:text-xs font-bold transition-all shrink-0 ${activeTab === item.id ? "bg-primary text-white" : "text-muted-foreground hover:bg-accent"}`}
               >
-                <item.icon className="size-4" /> <span className="hidden xl:block">{item.label}</span>
+                <item.icon className="size-3.5 md:size-4" /> <span className="hidden xl:block">{item.label}</span>
               </button>
             ))}
             
             <DropdownMenu>
-              <DropdownMenuTrigger className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all text-muted-foreground hover:bg-accent outline-none">
+              <DropdownMenuTrigger className="flex items-center gap-1 md:gap-2 px-2 md:px-4 py-1.5 md:py-2 rounded-full text-[10px] md:text-xs font-bold transition-all text-muted-foreground hover:bg-accent outline-none shrink-0">
                 More <ChevronDownIcon className="size-3" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-48 rounded-2xl p-2 mt-2">
@@ -274,23 +274,31 @@ const Academy = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <div className="h-6 w-px bg-border mx-2" />
-          <button onClick={() => setSearchDialogOpen(true)} className="p-2"><SearchIcon className="size-4" /></button>
-          <button onClick={handleThemeToggle} className="p-2">{isDarkMode ? <SunIcon className="size-4" /> : <MoonIcon className="size-4" />}</button>
+          <div className="h-6 w-px bg-border mx-1 md:mx-2 shrink-0" />
+          <button onClick={() => setSearchDialogOpen(true)} className="p-1.5 md:p-2 shrink-0"><SearchIcon className="size-3.5 md:size-4" /></button>
+          <button onClick={handleThemeToggle} className="p-1.5 md:p-2 shrink-0">{isDarkMode ? <SunIcon className="size-3.5 md:size-4" /> : <MoonIcon className="size-3.5 md:size-4" />}</button>
           
-          {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger className="ml-2 outline-none">
-                <div className="size-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-xs">{profile?.full_name?.charAt(0) || "S"}</div>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 mt-4">
-                <DropdownMenuLabel className="px-3 py-4"><p className="font-bold">{profile?.full_name}</p><p className="text-[10px] text-muted-foreground">{user.email}</p></DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setActiveTab('settings')} className="rounded-xl gap-2 p-3 cursor-pointer"><SettingsIcon className="size-4" /> Account Settings</DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout} className="rounded-xl gap-2 p-3 text-destructive cursor-pointer"><LogOutIcon className="size-4" /> Disconnect</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : <Button size="sm" className="rounded-full px-6" asChild><Link to="/auth">Access</Link></Button>}
+          <div className="shrink-0 ml-1">
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger className="outline-none">
+                  <div className="size-8 md:size-10 rounded-full border-2 border-primary/20 p-0.5 hover:border-primary/50 transition-colors bg-primary/5 flex items-center justify-center overflow-hidden">
+                    <img 
+                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`} 
+                      alt="Avatar" 
+                      className="size-full rounded-full"
+                    />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 mt-4">
+                  <DropdownMenuLabel className="px-3 py-4"><p className="font-bold">{profile?.full_name}</p><p className="text-[10px] text-muted-foreground">{user.email}</p></DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setActiveTab('settings')} className="rounded-xl gap-2 p-3 cursor-pointer"><SettingsIcon className="size-4" /> Account Settings</DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout} className="rounded-xl gap-2 p-3 text-destructive cursor-pointer"><LogOutIcon className="size-4" /> Disconnect</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : <Button size="sm" className="rounded-full px-4 md:px-6 h-8 md:h-10 text-[10px] md:text-xs" asChild><Link to="/auth">Access</Link></Button>}
+          </div>
         </div>
       </nav>
 

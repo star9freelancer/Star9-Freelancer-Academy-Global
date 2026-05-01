@@ -120,7 +120,7 @@ const Support = () => {
                 <span className="text-2xl">✈️</span>
               </div>
               <h3 className="font-semibold text-foreground text-lg mb-1">Teacher Placement</h3>
-              <p className="text-emerald-500 font-bold mb-3 md:text-xl">$1,000 / teacher</p>
+              <p className="text-emerald-500 font-bold mb-3 md:text-xl">$1,500 / teacher</p>
               <p className="text-sm text-muted-foreground">Supporting qualified teachers to secure jobs abroad</p>
             </div>
           </div>
