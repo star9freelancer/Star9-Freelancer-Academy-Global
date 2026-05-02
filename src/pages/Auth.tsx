@@ -37,6 +37,7 @@ export default function Auth() {
   const [referralCode, setReferralCode] = useState("");
   const [isClearing, setIsClearing] = useState(false);
   const [persistSession, setPersistSession] = useState(true);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -48,15 +49,25 @@ export default function Auth() {
     }
   }, [user, authLoading, navigate, location]);
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const ref = params.get("ref");
-    if (ref) {
-      setReferralCode(ref);
-      toast.info("Referral code applied!", { description: `You're joining via code: ${ref}` });
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast.error("Please enter your email first.");
+      return;
     }
-  }, [location]);
-
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      toast.success("Reset link sent!", { description: "Check your email for the recovery link." });
+      setIsForgotPassword(false);
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAuth = async (isSignUp: boolean) => {
     if (!email || !password) {
@@ -103,10 +114,16 @@ export default function Auth() {
             updated_at: new Date().toISOString()
           });
 
-          if (selectedRole === 'student' || selectedRole === 'referrer') {
-            toast.success("Account created successfully!");
-          } else {
-            toast.success("Account created! Your profile is pending verification.");
+          toast.success("Account created successfully!");
+          
+          // If a session was returned (email confirmation disabled in Supabase), 
+          // we are already logged in via onAuthStateChange in AuthContext.
+          // The useEffect at the top will handle navigation.
+          // If no session was returned, we might need to inform them (but user asked to get rid of verification)
+          if (!data.session) {
+            // Fallback: manually sign in if signup didn't auto-session
+            const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+            if (signInError) throw signInError;
           }
         }
       } else {
@@ -180,8 +197,15 @@ export default function Auth() {
                   <img src={logo} alt="Star9 Logo" className="h-16 w-auto" />
                 </div>
                 <div className="space-y-1 text-center">
-                  <CardTitle className="text-3xl font-bold tracking-tighter">Welcome back</CardTitle>
-                  <CardDescription>Enter your credentials to access your dashboard.</CardDescription>
+                  <CardTitle className="text-3xl font-bold tracking-tighter">
+                    {isForgotPassword ? "Reset Password" : "Welcome back"}
+                  </CardTitle>
+                  <CardDescription>
+                    {isForgotPassword 
+                      ? "Enter your email to receive a reset link." 
+                      : "Enter your credentials to access your dashboard."
+                    }
+                  </CardDescription>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -189,19 +213,41 @@ export default function Auth() {
                   <Label htmlFor="email">Email</Label>
                   <Input id="email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') handleAuth(false) }} className="h-11" />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') handleAuth(false) }} className="h-11" />
-                </div>
-                <div className="flex items-center space-x-2 pt-1">
-                  <Checkbox id="persist" checked={persistSession} onCheckedChange={(checked) => setPersistSession(!!checked)} />
-                  <label htmlFor="persist" className="text-sm text-muted-foreground cursor-pointer">Remember me</label>
-                </div>
+                {!isForgotPassword && (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Password</Label>
+                      <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') handleAuth(false) }} className="h-11" />
+                    </div>
+                    <div className="flex items-center justify-between pt-1">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox id="persist" checked={persistSession} onCheckedChange={(checked) => setPersistSession(!!checked)} />
+                        <label htmlFor="persist" className="text-sm text-muted-foreground cursor-pointer">Remember me</label>
+                      </div>
+                      <button 
+                        type="button"
+                        onClick={() => setIsForgotPassword(true)}
+                        className="text-xs font-semibold text-primary hover:underline"
+                      >
+                        Forgot Password?
+                      </button>
+                    </div>
+                  </>
+                )}
+                {isForgotPassword && (
+                  <button 
+                    type="button"
+                    onClick={() => setIsForgotPassword(false)}
+                    className="text-xs font-semibold text-muted-foreground hover:text-foreground"
+                  >
+                    ← Back to Login
+                  </button>
+                )}
               </CardContent>
               <CardFooter>
-                <Button className="w-full h-12" disabled={loading} onClick={() => handleAuth(false)}>
+                <Button className="w-full h-12" disabled={loading} onClick={() => isForgotPassword ? handleForgotPassword() : handleAuth(false)}>
                   {loading && <Loader2Icon className="h-4 w-4 animate-spin mr-2" />}
-                  Log In
+                  {isForgotPassword ? "Send Reset Link" : "Log In"}
                 </Button>
               </CardFooter>
             </TabsContent>

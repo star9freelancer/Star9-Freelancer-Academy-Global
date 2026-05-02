@@ -12,6 +12,7 @@ import Auth from "./pages/Auth.tsx";
 import Admin from "./pages/Admin.tsx";
 import CoursePlayer from "./pages/CoursePlayer.tsx";
 import Verify from "./pages/Verify.tsx";
+import ResetPassword from "./pages/ResetPassword.tsx";
 import About from "./pages/About.tsx";
 import Onboarding from "./pages/Onboarding.tsx";
 import Terms from "./pages/Terms.tsx";
@@ -49,6 +50,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             
             {/* Public Browse Routes - Gated by Onboarding for logged in users */}
             <Route path="/academy" element={<OnboardingGate><Academy /></OnboardingGate>} />

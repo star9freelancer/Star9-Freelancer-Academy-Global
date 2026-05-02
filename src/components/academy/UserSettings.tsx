@@ -14,7 +14,10 @@ import {
   FileUp as FileUpIcon, 
   FileText as FileTextIcon, 
   MapPin as MapPinIcon, 
-  LogOut as LogOutIcon
+  LogOut as LogOutIcon,
+  Lock as LockIcon,
+  Mail as MailIcon,
+  ShieldCheck as ShieldCheckIcon
 } from "lucide-react";
 import React, { useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -92,6 +95,40 @@ export const UserSettings = ({
     setUploadingDoc(false);
   };
 
+  const [newPassword, setNewPassword] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [updatingAuth, setUpdatingAuth] = useState(false);
+
+  const handleUpdatePassword = async () => {
+    if (!newPassword) { toast.error("Please enter a new password"); return; }
+    setUpdatingAuth(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      toast.success("Password updated successfully");
+      setNewPassword("");
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setUpdatingAuth(false);
+    }
+  };
+
+  const handleUpdateEmail = async () => {
+    if (!newEmail) { toast.error("Please enter a new email"); return; }
+    setUpdatingAuth(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ email: newEmail });
+      if (error) throw error;
+      toast.success("Confirmation link sent to new email!");
+      setNewEmail("");
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setUpdatingAuth(false);
+    }
+  };
+
   return (
     <div className="space-y-8 max-w-4xl mx-auto animate-in fade-in duration-500 pb-20">
       <div>
@@ -102,6 +139,50 @@ export const UserSettings = ({
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Profile Form */}
         <div className="flex-1 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2"><ShieldCheckIcon className="size-4 text-primary" /> Account Security</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+               <div className="grid sm:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="new-password">Change Password</Label>
+                    <div className="flex gap-2">
+                       <Input 
+                         type="password" 
+                         placeholder="New Password" 
+                         value={newPassword}
+                         onChange={(e) => setNewPassword(e.target.value)}
+                         className="h-11" 
+                       />
+                       <Button variant="outline" className="h-11 px-4 shrink-0" onClick={handleUpdatePassword} disabled={updatingAuth}>
+                         Update
+                       </Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="new-email">Update Email</Label>
+                    <div className="flex gap-2">
+                       <Input 
+                         type="email" 
+                         placeholder="New Email" 
+                         value={newEmail}
+                         onChange={(e) => setNewEmail(e.target.value)}
+                         className="h-11" 
+                       />
+                       <Button variant="outline" className="h-11 px-4 shrink-0" onClick={handleUpdateEmail} disabled={updatingAuth}>
+                         Update
+                       </Button>
+                    </div>
+                  </div>
+               </div>
+               <p className="text-[10px] text-muted-foreground italic flex items-center gap-1">
+                 <MailIcon className="size-3" /> Note: Email updates require confirmation via your inbox.
+               </p>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Personal Information</CardTitle>
