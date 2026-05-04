@@ -1,5 +1,11 @@
 import { motion } from "framer-motion";
-import { Check as CheckIcon, ArrowRight as ArrowRightIcon } from "lucide-react";
+import {
+  Check,
+  ArrowRight,
+  Cpu,
+  Briefcase,
+  GraduationCap,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -20,7 +26,7 @@ const tiers = [
     ],
     buttonText: "Enroll Now",
     buttonVariant: "outline" as const,
-    emoji: "🤖",
+    Icon: Cpu,
   },
   {
     name: "Mastering Freelancing",
@@ -40,40 +46,45 @@ const tiers = [
     buttonVariant: "default" as const,
     highlighted: true,
     badge: "Best Value",
-    emoji: "🚀",
+    Icon: Briefcase,
   },
   {
-    name: "International Teacher Prep and Placement",
-    price: "$1500",
+    name: "International Teacher Prep",
+    price: "$1,500",
     period: "one-time",
     subtitle: "3-phase pipeline to a US or EU teaching placement.",
     referral: "Earn $40 per referral",
     features: [
-      "Phase 1: Vetting and resume review",
-      "Phase 2: Loom audition and interview coaching",
-      "Phase 3: Visa and relocation support",
+      "Phase 1 — Vetting and resume review",
+      "Phase 2 — Loom audition and interview coaching",
+      "Phase 3 — Visa and relocation support",
       "Priority school placement (US / EU)",
       "Ongoing post-placement check-ins",
       "Verified programme certificate",
     ],
     buttonText: "Apply Now",
     buttonVariant: "outline" as const,
-    emoji: "✈️",
+    Icon: GraduationCap,
   },
 ];
 
 const PricingSection = () => {
   return (
-    <section id="pricing" className="py-24 overflow-hidden relative border-t border-border">
+    <section
+      id="pricing"
+      className="py-24 overflow-hidden relative border-t border-border"
+    >
       <div className="container max-w-6xl mx-auto px-4">
         <div className="text-center mb-16 space-y-4">
-          <p className="text-sm uppercase tracking-widest text-muted-foreground">Pricing</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            Pricing
+          </p>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-            Simple.{" "}
-            <span className="text-muted-foreground">Transparent Pricing.</span>
+            Simple,{" "}
+            <span className="text-muted-foreground">transparent pricing.</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Pay once. Gain skills and access that pay for themselves. Paystack payment accepted — All currencies accepted.
+            Pay once. Gain skills and access that pay for themselves. Paystack accepted in all currencies.
           </p>
         </div>
 
@@ -92,28 +103,52 @@ const PricingSection = () => {
               }`}
             >
               {tier.badge && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-primary text-primary-foreground text-xs font-semibold">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-primary text-primary-foreground text-[11px] font-semibold tracking-wide uppercase">
                   {tier.badge}
                 </div>
               )}
 
               <div className="mb-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-2xl">{tier.emoji}</span>
-                  <p className="text-sm font-semibold text-muted-foreground">{tier.name}</p>
+                <div className="flex items-center gap-3 mb-4">
+                  <div
+                    className={`size-10 rounded-lg flex items-center justify-center border ${
+                      tier.highlighted
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-primary/10 text-primary border-primary/20"
+                    }`}
+                  >
+                    <tier.Icon className="size-5" strokeWidth={1.75} />
+                  </div>
+                  <p className="text-sm font-semibold text-foreground">
+                    {tier.name}
+                  </p>
                 </div>
                 <div className="flex items-end gap-1 mb-1">
-                  <span className="text-4xl font-bold tracking-tight text-foreground">{tier.price}</span>
-                  <span className="text-muted-foreground text-sm pb-1">{tier.period}</span>
+                  <span className="text-4xl font-bold tracking-tight text-foreground">
+                    {tier.price}
+                  </span>
+                  <span className="text-muted-foreground text-sm pb-1">
+                    {tier.period}
+                  </span>
                 </div>
-                <p className="text-xs text-secondary font-medium mt-1">{tier.referral}</p>
-                <p className="text-sm text-muted-foreground mt-2">{tier.subtitle}</p>
+                <p className="text-xs text-secondary font-medium mt-1">
+                  {tier.referral}
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  {tier.subtitle}
+                </p>
               </div>
 
               <ul className="space-y-3 mb-8 flex-1">
                 {tier.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-3 text-sm">
-                    <CheckIcon className="size-4 text-primary shrink-0 mt-0.5" />
+                  <li
+                    key={feature}
+                    className="flex items-start gap-3 text-sm"
+                  >
+                    <Check
+                      className="size-4 text-primary shrink-0 mt-0.5"
+                      strokeWidth={2.5}
+                    />
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -124,9 +159,12 @@ const PricingSection = () => {
                 variant={tier.buttonVariant}
                 asChild
               >
-                <Link to="/auth" className="flex items-center justify-center gap-2">
+                <Link
+                  to="/auth"
+                  className="flex items-center justify-center gap-2"
+                >
                   {tier.buttonText}
-                  <ArrowRightIcon className="size-3.5 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="size-3.5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
             </motion.div>
@@ -139,7 +177,8 @@ const PricingSection = () => {
           viewport={{ once: true }}
           className="text-center text-sm text-muted-foreground mt-10 max-w-lg mx-auto"
         >
-          5% commission applies on all remote earnings. Flat $1,000 fee for contracts exceeding $10k over 6 months. Employers are never charged.
+          5% commission applies on remote earnings. Flat $1,000 fee for
+          contracts exceeding $10k over 6 months. Employers are never charged.
         </motion.p>
       </div>
     </section>

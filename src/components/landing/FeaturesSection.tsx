@@ -1,55 +1,67 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import {
+  Cpu,
+  Briefcase,
+  GraduationCap,
+  Globe,
+  Laptop,
+  HandshakeIcon,
+  ArrowRight,
+} from "lucide-react";
 
 const features = [
   {
-    emoji: "🤖",
+    Icon: Cpu,
     title: "AI for Freelancers",
-    description: "8-week intensive programme. Learn to leverage AI tools to multiply your output and win global clients. One-time fee of $50.",
-    color: "bg-primary/10 border-primary/20",
+    description:
+      "8-week intensive programme. Learn to leverage AI tools to multiply your output and win global clients. One-time fee of $50.",
   },
   {
-    emoji: "💼",
+    Icon: Briefcase,
     title: "Mastering Freelancing",
-    description: "12-week complete pipeline for building a thriving global freelance business. Includes bonus lifetime access to the Global Job Board. $100 one-time.",
-    color: "bg-secondary/10 border-secondary/20",
+    description:
+      "12-week complete pipeline for building a thriving global freelance business. Includes lifetime access to the Global Job Board. $100 one-time.",
   },
   {
-    emoji: "✈️",
-    title: "International Teacher Prep and Placement",
-    description: "3-phase pipeline: Vetting and Resume review, Loom audition and interviews, then Visa and Relocation support. $1500 one-time.",
-    color: "bg-emerald-500/10 border-emerald-500/20",
+    Icon: GraduationCap,
+    title: "International Teacher Prep & Placement",
+    description:
+      "3-phase pipeline: vetting and resume review, Loom audition and interviews, then visa and relocation support. $1,500 one-time.",
   },
   {
-    emoji: "🌐",
+    Icon: Globe,
     title: "Work Abroad Portal",
-    description: "Curated placements across top global destinations such as the US, UK, Canada, China, Germany, and more. Each listing is manually reviewed before publication.",
-    color: "bg-violet-500/10 border-violet-500/20",
+    description:
+      "Curated placements across the US, UK, Canada, China, Germany and more. Each listing is manually reviewed before publication.",
   },
   {
-    emoji: "💻",
+    Icon: Laptop,
     title: "Remote Work Board",
-    description: "Diverse remote work categories covering writing, design, development, virtual assistance, online tutoring, sales, data, AI consulting, etc.",
-    color: "bg-amber-500/10 border-amber-500/20",
+    description:
+      "Diverse remote categories covering writing, design, development, virtual assistance, online tutoring, sales, data, and AI consulting.",
   },
   {
-    emoji: "🤝",
+    Icon: HandshakeIcon,
     title: "Referral Programme",
-    description: "Earn commissions by referring students. $10 per AI course, $15 per Mastering Freelancing, and $40 per Teacher Prep and Placement enrolment.",
-    color: "bg-rose-500/10 border-rose-500/20",
+    description:
+      "Earn commissions by referring students. $10 per AI course, $15 per Mastering Freelancing, and $40 per Teacher Prep enrolment.",
   },
 ];
 
 const FeaturesSection = () => {
   return (
-    <section id="features" className="py-24 bg-card relative overflow-hidden border-t border-border">
+    <section
+      id="features"
+      className="py-24 bg-card relative overflow-hidden border-t border-border"
+    >
       <div className="container relative z-10 max-w-6xl">
         <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="text-sm uppercase tracking-widest text-secondary font-semibold"
+            className="text-xs uppercase tracking-[0.2em] text-secondary font-semibold"
           >
             Why Star9
           </motion.p>
@@ -62,26 +74,37 @@ const FeaturesSection = () => {
             Everything You Need{" "}
             <span className="text-muted-foreground">In One Place</span>
           </motion.h2>
+          <p className="text-muted-foreground max-w-xl mx-auto">
+            A complete ecosystem for African talent — from foundational training to global placement.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border rounded-2xl overflow-hidden border border-border">
           {features.map((f, i) => (
             <motion.div
               key={f.title}
-              initial={{ opacity: 0, y: 25 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
+              transition={{ delay: i * 0.06 }}
+              className="bg-card"
             >
               <Link
                 to="/auth"
-                className={`group block h-full p-7 rounded-2xl border ${f.color} hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}
+                className="group relative block h-full p-8 hover:bg-accent/40 transition-colors duration-300"
               >
-                <span className="text-3xl mb-4 block">{f.emoji}</span>
-                <h3 className="text-lg font-bold mb-2">{f.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{f.description}</p>
-                <div className="mt-4 flex items-center gap-2 text-xs font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                  Learn more <span className="text-lg">→</span>
+                <div className="size-11 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-5 group-hover:bg-primary/15 transition-colors">
+                  <f.Icon className="size-5 text-primary" strokeWidth={1.75} />
+                </div>
+                <h3 className="text-base font-semibold mb-2 tracking-tight">
+                  {f.title}
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {f.description}
+                </p>
+                <div className="mt-5 flex items-center gap-1.5 text-xs font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                  Learn more
+                  <ArrowRight className="size-3.5" />
                 </div>
               </Link>
             </motion.div>

@@ -1,32 +1,33 @@
 import { motion } from "framer-motion";
+import { Quote } from "lucide-react";
 
 const testimonials = [
   {
     name: "Amina Okafor",
-    role: "Freelance AI Consultant, Lagos",
-    text: "The AI for Freelancers course completely changed how I work. I automated half my workflow and went from $500/month to $3,200/month in four months.",
-    avatar: "🇳🇬",
-    highlight: "$3,200/month",
+    role: "Freelance AI Consultant · Lagos, Nigeria",
+    initials: "AO",
+    text: "The AI for Freelancers course completely changed how I work. I automated half my workflow and went from $500 a month to $3,200 a month in four months.",
   },
   {
     name: "David Mutua",
-    role: "Remote Data Analyst, Nairobi",
-    text: "Mastering Freelancing gave me a complete system. The Global Job Board bonus alone paid for the course fee — I landed a $2,800/month contract within weeks.",
-    avatar: "🇰🇪",
-    highlight: "$2,800/month contract",
+    role: "Remote Data Analyst · Nairobi, Kenya",
+    initials: "DM",
+    text: "Mastering Freelancing gave me a complete system. The Global Job Board bonus alone paid for the course fee — I landed a $2,800 a month contract within weeks.",
   },
   {
     name: "Grace Mensah",
-    role: "ESL Teacher, Accra to Texas",
-    text: "The 3-phase International Teacher Preparation pipeline was exactly what I needed. From my Loom audition to visa documentation, every step was guided and practical.",
-    avatar: "🇬🇭",
-    highlight: "Accra to Texas",
+    role: "ESL Teacher · Accra, Ghana → Texas, USA",
+    initials: "GM",
+    text: "The 3-phase International Teacher Preparation pipeline was exactly what I needed. From the Loom audition to visa documentation, every step was guided and practical.",
   },
 ];
 
 const TestimonialsSection = () => {
   return (
-    <section id="testimonials" className="py-24 overflow-hidden relative bg-background border-t border-border">
+    <section
+      id="testimonials"
+      className="py-24 overflow-hidden relative bg-background border-t border-border"
+    >
       <div className="container max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -34,9 +35,11 @@ const TestimonialsSection = () => {
           viewport={{ once: true }}
           className="text-center mb-16 space-y-4"
         >
-          <p className="text-sm uppercase tracking-widest text-muted-foreground">Our Members</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            Our Members
+          </p>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-            What Our Members Say
+            What our members say
           </h2>
         </motion.div>
 
@@ -48,23 +51,22 @@ const TestimonialsSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.12 }}
-              className="bg-card border border-border/50 rounded-2xl p-8 hover:border-primary/30 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 relative group"
+              className="bg-card border border-border/60 rounded-2xl p-8 hover:border-primary/30 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 relative"
             >
-              {/* Rating */}
-              <div className="flex gap-1 mb-5 text-secondary">
-                {[...Array(5)].map((_, i) => (
-                  <svg key={i} className="size-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                ))}
-              </div>
+              <Quote className="size-6 text-primary/30 mb-5" strokeWidth={2} />
 
               <p className="text-foreground text-[15px] leading-relaxed mb-8">
-                "{t.text}"
+                {t.text}
               </p>
 
-              <div className="flex items-center gap-3 pt-5 border-t border-border/50">
-                <span className="text-2xl">{t.avatar}</span>
+              <div className="flex items-center gap-3 pt-5 border-t border-border/60">
+                <div className="size-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
+                  {t.initials}
+                </div>
                 <div>
-                  <h4 className="font-semibold text-sm text-foreground">{t.name}</h4>
+                  <h4 className="font-semibold text-sm text-foreground">
+                    {t.name}
+                  </h4>
                   <p className="text-xs text-muted-foreground">{t.role}</p>
                 </div>
               </div>
