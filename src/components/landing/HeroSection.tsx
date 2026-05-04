@@ -45,9 +45,9 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.25 }}
-              className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg"
+              className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-xl"
             >
-              Star9 Freelancer Ltd empowers African youth and women with in-demand skills, remote work, study abroad, and work abroad opportunities. We teach full courses online, including high-demand fields like Artificial Intelligence (AI) and freelancing, equipping learners with practical skills to earn globally. Our programs also connect individuals to study abroad pathways and structured work abroad opportunities such as International Teacher Placement and Preparation and the Caregiving Program – International, enabling them to build sustainable global careers and access life-changing opportunities beyond borders.
+              We empower African youth and women with in-demand skills, remote work, study abroad, and work abroad opportunities — equipping you to earn globally and build sustainable careers beyond borders.
             </motion.p>
 
             {/* CTAs */}
