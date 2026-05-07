@@ -13,7 +13,7 @@ import {
   Sparkles as SparklesIcon 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/logo_highres.jpg";
+import logo from "@/assets/logo_highres_transparent.png";
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
 import { getStoredTheme, applyTheme } from "@/lib/theme";

@@ -60,7 +60,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import logo from "@/assets/logo_highres.jpg";
+import logo from "@/assets/logo_highres_transparent.png";
 import { getStoredTheme, applyTheme } from "@/lib/theme";
 
 const STAR9_EXCHANGE_RATE = 150;
@@ -337,6 +337,7 @@ const Academy = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                     {courses
                     .filter(c => (activeTab === "academy" ? enrollments.has(c.id) : true))
+                    .filter(c => activeTab === "catalog" ? !c.title.toLowerCase().includes("teacher") : true)
                     .filter(c => !searchQuery || c.title.toLowerCase().includes(searchQuery.toLowerCase()))
                     .map(course => (
                       <CourseCard 
