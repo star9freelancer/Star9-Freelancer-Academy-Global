@@ -105,6 +105,13 @@ export default function Auth() {
       toast.error("Please fill in all required fields (Name, Phone, City, Country, ID).");
       return;
     }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
     if (!selectedCourse) {
       toast.error("Please select a program to enroll in.");
       return;
@@ -126,6 +133,7 @@ export default function Auth() {
     }
 
     if ((window as any).PaystackPop) {
+      console.log("🚀 INITIATING PAYSTACK POPUP:", { paystackKey, email, amount, currency });
       const handler = (window as any).PaystackPop.setup({
         key: paystackKey, 
         email: email, 
