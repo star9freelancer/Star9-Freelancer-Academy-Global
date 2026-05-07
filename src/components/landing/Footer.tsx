@@ -40,7 +40,7 @@ const Footer = () => (
       <div className="flex flex-col md:flex-row items-center justify-between gap-8">
         <div className="flex flex-col items-center md:items-start gap-4">
           <div className="flex items-center gap-3">
-            <img src={logo} alt="Star9" className="h-8 w-auto" />
+            <img src={logo} alt="Star9" className="h-20 w-auto object-contain" />
             <span className="text-xl font-bold tracking-tighter">STAR9</span>
           </div>
           <p className="text-sm text-muted-foreground text-center md:text-left max-w-xs">

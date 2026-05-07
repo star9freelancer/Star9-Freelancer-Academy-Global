@@ -10,7 +10,7 @@ import {
   Users as UsersIcon, 
   Globe as GlobeIcon
 } from "lucide-react";
-import CourseCard from "./CourseCard";
+import { Link } from "react-router-dom";
 
 
 interface HomeFeedProps {
@@ -73,15 +73,41 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
             </div>
             
             {activeEnrolledCourses.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
-                {activeEnrolledCourses.slice(0, 4).map((course, i) => (
-                  <CourseCard 
-                    key={course.id}
-                    course={course}
-                    enrollment={enrollments.get(course.id)}
-                    onOpen={() => setActiveTab('academy')}
-                  />
-                ))}
+              <div className="flex flex-col gap-4">
+                <div className="rounded-2xl bg-gradient-to-r from-primary/10 via-background to-background border border-primary/20 p-6 md:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-64 h-full bg-gradient-to-l from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                  
+                  <div className="space-y-3 z-10">
+                    <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 text-[10px] tracking-widest uppercase mb-1">
+                      Pick up where you left off
+                    </Badge>
+                    <h4 className="text-2xl font-bold tracking-tight">
+                      {activeEnrolledCourses[0].title}
+                    </h4>
+                    <p className="text-muted-foreground max-w-lg text-sm leading-relaxed">
+                      You are enrolled in this program. Jump back in to continue building your skills and advancing your career.
+                    </p>
+                  </div>
+                  
+                  <Button 
+                    size="lg" 
+                    className="h-14 px-8 rounded-xl font-bold gap-2 shrink-0 z-10 shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+                    asChild
+                  >
+                    <Link to={`/academy/course/${activeEnrolledCourses[0].id}`}>
+                      Continue Learning <ArrowRightIcon className="size-4" />
+                    </Link>
+                  </Button>
+                </div>
+                
+                <div className="flex items-center justify-between pt-2 px-2">
+                  <p className="text-sm text-muted-foreground flex items-center gap-2">
+                    <BookOpenIcon className="size-4" /> {activeEnrolledCourses.length - 1} other active programs in your Vault.
+                  </p>
+                  <Button variant="outline" size="sm" onClick={() => setActiveTab('academy')} className="gap-2 rounded-lg">
+                    Open Vault <ArrowRightIcon className="size-3" />
+                  </Button>
+                </div>
               </div>
             ) : (
               <div className="rounded-xl border border-dashed border-border bg-muted/20 p-12 text-center space-y-4 cursor-pointer" onClick={() => setActiveTab('catalog')}>

@@ -40,7 +40,7 @@ export const AcademyFooter = () => {
       <div className="max-w-full mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
         <div className="flex flex-col md:flex-row items-center gap-6">
           <div className="flex items-center gap-3">
-            <img src={logo} alt="Star9" className="h-6 w-auto opacity-60" />
+            <img src={logo} alt="Star9" className="h-16 w-auto opacity-80 object-contain" />
             <span className="text-xs text-muted-foreground font-medium">Star9 Academy</span>
           </div>
 

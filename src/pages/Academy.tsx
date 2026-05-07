@@ -212,7 +212,7 @@ const Academy = () => {
   if ((authLoading || loadingCourses) && !forceShow) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center space-y-6">
-        <img src={logo} className="size-20 animate-pulse" alt="Logo" />
+        <img src={logo} className="h-32 w-auto animate-pulse object-contain" alt="Logo" />
         <div className="flex gap-1"><div className="w-2 h-2 bg-primary rounded-full animate-bounce" /><div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-75" /><div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-150" /></div>
       </div>
     );
@@ -251,7 +251,7 @@ const Academy = () => {
 
       <nav className="fixed top-0 inset-x-0 z-50 flex justify-center p-2 md:p-6 pointer-events-none">
         <div className="flex items-center gap-1 md:gap-4 px-2 md:px-6 py-2 md:py-3 rounded-full bg-background/80 backdrop-blur-xl border border-border shadow-2xl pointer-events-auto max-w-[98vw] overflow-x-auto no-scrollbar">
-          <Link to="/" className="flex items-center gap-2 shrink-0"><img src={logo} className="h-6 md:h-8" /><span className="font-black italic text-xl hidden lg:block">STAR<span className="text-primary">9</span></span></Link>
+          <Link to="/" className="flex items-center gap-3 shrink-0"><img src={logo} className="h-10 md:h-14 object-contain" /><span className="font-black italic text-2xl hidden lg:block">STAR<span className="text-primary">9</span></span></Link>
           <div className="h-6 w-px bg-border mx-1 md:mx-2 shrink-0" />
           <div className="flex items-center gap-0.5 md:gap-1">
             {mainNavItems.filter(i => i.public || user).map(item => (
@@ -319,14 +319,23 @@ const Academy = () => {
           />
         ) : (
           <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {['academy', 'catalog'].includes(activeTab) && <AcademyHero type={activeTab === 'catalog' ? 'catalog' : 'learning'} userName={profile?.full_name?.split(' ')[0]} onTabChange={setActiveTab} />}
+            {activeTab === 'catalog' && <AcademyHero type="catalog" userName={profile?.full_name?.split(' ')[0]} onTabChange={setActiveTab} />}
             
             <div className="min-h-[400px]">
               {activeTab === "home" && <HomeFeed setActiveTab={setActiveTab} courses={courses} enrollments={enrollments} profile={profile} />}
               
               {(activeTab === "academy" || activeTab === "catalog") && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                  {courses
+                <div className="space-y-6">
+                  {activeTab === "academy" && (
+                    <div className="flex items-center justify-between pb-4 border-b border-border">
+                      <div>
+                        <h2 className="text-3xl font-black tracking-tight">My Vault</h2>
+                        <p className="text-muted-foreground">Access your enrolled courses and active programs.</p>
+                      </div>
+                    </div>
+                  )}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    {courses
                     .filter(c => (activeTab === "academy" ? enrollments.has(c.id) : true))
                     .filter(c => !searchQuery || c.title.toLowerCase().includes(searchQuery.toLowerCase()))
                     .map(course => (
@@ -339,6 +348,7 @@ const Academy = () => {
                       />
                     ))
                   }
+                  </div>
                 </div>
               )}
 

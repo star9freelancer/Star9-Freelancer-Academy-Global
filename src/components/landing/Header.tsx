@@ -66,9 +66,9 @@ const Header = () => {
         }`}
       >
         {/* Logo */}
-        <Link to="/" className="p-2 rounded-full hover:bg-accent transition-colors shrink-0 flex items-center gap-2">
-          <img src={logo} alt="Star9 Freelancer" className="h-10 sm:h-10 w-auto" />
-          <span className="font-bold tracking-tight">Star9 Freelancer</span>
+        <Link to="/" className="p-2 rounded-full hover:bg-accent transition-colors shrink-0 flex items-center gap-3">
+          <img src={logo} alt="Star9 Freelancer" className="h-16 sm:h-20 w-auto object-contain" />
+          <span className="font-bold text-lg md:text-xl tracking-tight hidden sm:block">Star9 Freelancer</span>
         </Link>
 
         <div className="h-6 w-px bg-border mx-1 shrink-0 hidden md:block" />
@@ -137,7 +137,7 @@ const Header = () => {
           >
             <div className="space-y-4">
               <div className="flex items-center gap-3 mb-8 pb-8 border-b border-border/50">
-                <img src={logo} alt="Star9 Freelancer" className="h-10 w-auto" />
+                <img src={logo} alt="Star9 Freelancer" className="h-16 w-auto object-contain" />
                 <span className="font-bold text-xl tracking-tight">Star9 Freelancer</span>
               </div>
               <p className="text-[10px] font-mono uppercase tracking-[0.5em] text-muted-foreground/30 mb-8">Navigation Menu</p>

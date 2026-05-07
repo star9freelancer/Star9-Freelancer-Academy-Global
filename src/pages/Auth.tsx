@@ -305,7 +305,7 @@ export default function Auth() {
       
       <div className="w-full max-w-lg p-4 relative z-10">
         <div className="flex flex-col items-center justify-center mb-8 gap-3">
-          <img src={logo} alt="Star9" className="h-12 w-auto object-contain" />
+          <img src={logo} alt="Star9" className="h-20 md:h-24 w-auto object-contain" />
           <p className="text-sm text-muted-foreground">Sign in to access your account</p>
         </div>
 
@@ -321,7 +321,7 @@ export default function Auth() {
             <TabsContent value="login">
               <CardHeader className="space-y-4 pb-8">
                 <div className="flex justify-center mb-4">
-                  <img src={logo} alt="Star9 Logo" className="h-16 w-auto" />
+                  <img src={logo} alt="Star9 Logo" className="h-24 w-auto object-contain" />
                 </div>
                 <div className="space-y-1 text-center">
                   <CardTitle className="text-3xl font-bold tracking-tighter">
@@ -382,7 +382,7 @@ export default function Auth() {
             <TabsContent value="register">
               <CardHeader className="space-y-4 pb-8">
                 <div className="flex justify-center mb-4">
-                  <img src={logo} alt="Star9 Logo" className="h-16 w-auto" />
+                  <img src={logo} alt="Star9 Logo" className="h-24 w-auto object-contain" />
                 </div>
                 <div className="space-y-1 text-center">
                   <CardTitle className="text-3xl font-bold tracking-tighter">Create your account</CardTitle>
