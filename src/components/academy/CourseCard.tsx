@@ -84,7 +84,7 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
             <div className="flex items-center gap-4 text-xs text-muted-foreground font-medium">
                <div className="flex items-center gap-1.5">
                    <ClockIcon className="size-3.5" />
-                   <span>{course.duration || "4 Hours"}</span>
+                   <span>{course.duration || "4 Weeks (Self-Paced)"}</span>
                </div>
                <div className="size-1 rounded-full bg-border" />
                <span>6 Modules</span>

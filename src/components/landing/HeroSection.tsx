@@ -126,7 +126,7 @@ const HeroSection = () => {
                 {/* Track listings */}
                 <div className="p-5 space-y-3">
                   {[
-                    { icon: StarIcon,     label: "AI for Freelancers",         sub: "8-week programme · $50",    progress: 72, color: "text-primary" },
+                    { icon: StarIcon,     label: "AI for Freelancers",         sub: "4-week self-paced · $50",    progress: 72, color: "text-primary" },
                     { icon: BriefcaseIcon, label: "Mastering Freelancing",       sub: "12-week · $100 + Global access", progress: 45, color: "text-secondary" },
                   ].map((item, i) => (
                     <Link 

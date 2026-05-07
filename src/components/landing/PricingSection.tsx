@@ -17,7 +17,7 @@ const tiers = [
     subtitle: "Master AI tools and land your first global client.",
     referral: "Earn $10 per referral",
     features: [
-      "8-week structured programme",
+      "4-week self-paced programme",
       "AI productivity and automation tools",
       "Prompt engineering fundamentals",
       "Weekly quizzes and projects",

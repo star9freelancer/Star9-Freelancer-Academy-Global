@@ -64,7 +64,7 @@ const ProgramDetailView = ({ course, enrollment, onBack, onEnroll, onStart }: Pr
 
           <div className="grid grid-cols-2 gap-4">
               {[
-                { label: "Duration", value: course.duration || "4 Hours", icon: ClockIcon },
+                { label: "Duration", value: course.duration || "4 Weeks (Self-Paced)", icon: ClockIcon },
                 { label: "Lessons", value: lessons.length.toString(), icon: PlayCircleIcon },
                 { label: "Points", value: "500 XP", icon: SparklesIcon },
                 { label: "Format", value: "Online Video", icon: DatabaseIcon }

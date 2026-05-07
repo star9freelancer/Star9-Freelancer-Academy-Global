@@ -15,7 +15,7 @@ const features = [
     Icon: Cpu,
     title: "AI for Freelancers",
     description:
-      "8-week intensive programme. Learn to leverage AI tools to multiply your output and win global clients. One-time fee of $50.",
+      "4-week self-paced programme. Learn to leverage AI tools to multiply your output and win global clients. Go at your own pace — finish in a week if you want. One-time fee of $50.",
   },
   {
     Icon: Briefcase,
