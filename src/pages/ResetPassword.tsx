@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2 as Loader2Icon, ArrowLeft as ArrowLeftIcon, CheckCircle2 as CheckCircle2Icon } from "lucide-react";
-import logo from "@/assets/logo_transparent.png";
+import logo from "@/assets/logo_highres.jpg";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");

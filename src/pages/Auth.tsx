@@ -23,7 +23,7 @@ import {
   Briefcase as BriefcaseIcon,
   Users as UsersIcon 
 } from "lucide-react";
-import logo from "@/assets/logo_transparent.png";
+import logo from "@/assets/logo_highres.jpg";
 
 export default function Auth() {
   const { user, loading: authLoading } = useAuth();

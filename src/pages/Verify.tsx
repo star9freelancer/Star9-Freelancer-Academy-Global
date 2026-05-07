@@ -13,7 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import logo from "@/assets/logo_transparent.png";
+import logo from "@/assets/logo_highres.jpg";
 
 const Verify = () => {
   const { credentialId } = useParams<{ credentialId: string }>();

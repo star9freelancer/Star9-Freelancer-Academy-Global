@@ -60,7 +60,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import logo from "@/assets/logo_transparent.png";
+import logo from "@/assets/logo_highres.jpg";
 import { getStoredTheme, applyTheme } from "@/lib/theme";
 
 const STAR9_EXCHANGE_RATE = 150;

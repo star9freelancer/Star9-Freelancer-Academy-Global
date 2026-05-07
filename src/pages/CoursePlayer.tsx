@@ -31,7 +31,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { useAcademyData } from "@/hooks/useAcademyData";
 import { ArticleModule, ToolkitModule, ChecklistModule, SimulatorModule, PlaygroundModule } from "@/components/academy/InteractiveModules";
-import logo from "@/assets/logo_transparent.png";
+import logo from "@/assets/logo_highres.jpg";
 
 
 

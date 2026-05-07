@@ -3,7 +3,7 @@ import {
   Music2 as TikTokIcon,
   MessageCircle as WhatsAppIcon
 } from "lucide-react";
-import logo from "@/assets/logo_transparent.png";
+import logo from "@/assets/logo_highres.jpg";
 
 const FacebookIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

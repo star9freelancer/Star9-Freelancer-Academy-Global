@@ -9,7 +9,7 @@ import {
   Star as StarIcon 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/logo_transparent.png";
+import logo from "@/assets/logo_highres.jpg";
 
 const HeroSection = () => {
   return (
