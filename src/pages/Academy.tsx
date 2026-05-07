@@ -195,7 +195,13 @@ const Academy = () => {
             { display_name: "Course ID", variable_name: "course_id", value: courseId }
           ]
         },
-        callback: () => { toast.success("Enrollment Synchronizing..."); setTimeout(() => invalidateAll(), 3000); },
+        callback: () => { 
+          toast.success("🎉 Enrolled! Lessons begin Tuesday, 12th May.", {
+            description: "We'll see you on the 12th — get excited!",
+            duration: 8000,
+          });
+          setTimeout(() => invalidateAll(), 3000); 
+        },
         onClose: () => setEnrolling(null)
       });
       handler.openIframe();

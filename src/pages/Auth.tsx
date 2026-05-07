@@ -224,7 +224,10 @@ export default function Auth() {
           if (enrollError) throw new Error("Enrollment failed: " + enrollError.message);
         }
 
-        toast.success("Account created and enrolled successfully!");
+        toast.success("🎉 You're enrolled! Lessons begin Tuesday, 12th May.", {
+          description: "Your account is ready. We'll see you on the 12th — get excited!",
+          duration: 8000,
+        });
         
         if (!data.session) {
           const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
