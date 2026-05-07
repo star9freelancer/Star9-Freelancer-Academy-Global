@@ -316,7 +316,7 @@ const CoursePlayer = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background overflow-hidden">
+    <div className="h-[100dvh] w-full flex flex-col bg-background overflow-hidden">
       {/* Top Bar */}
       <header className="h-14 border-b bg-card/80 backdrop-blur-md flex items-center justify-between px-4 md:px-6 z-50 shrink-0 sticky top-0">
         <div className="flex items-center gap-3">
@@ -358,7 +358,7 @@ const CoursePlayer = () => {
         )}
         
         {/* Sidebar */}
-        <aside className={`${sidebarOpen ? "w-80 border-r" : "w-0 border-transparent"} bg-card flex flex-col transition-all duration-300 overflow-hidden absolute lg:relative z-40 h-[calc(100vh-3.5rem)]`}>
+        <aside className={`${sidebarOpen ? "w-80 border-r" : "w-0 border-transparent"} bg-card flex flex-col transition-all duration-300 overflow-hidden absolute lg:relative z-40 h-full`}>
           <div className="p-4 border-b shrink-0 flex items-center justify-between">
             <h2 className="text-sm font-semibold text-muted-foreground">Course Modules</h2>
             <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setSidebarOpen(false)}>
