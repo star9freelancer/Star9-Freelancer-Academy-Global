@@ -58,6 +58,14 @@ export default function Auth() {
     }
   }, [user, authLoading, navigate, location]);
 
+  const getCoursePrice = (courseId: string) => {
+    const c = courses.find(course => course.id === courseId);
+    if (!c) return 50;
+    if (c.title.toLowerCase().includes("teacher")) return 1500;
+    if (c.title.toLowerCase().includes("mastering freelancing")) return 100;
+    return 50;
+  };
+
   const handleForgotPassword = async () => {
     if (!email) {
       toast.error("Please enter your email first.");
@@ -421,7 +429,7 @@ export default function Auth() {
                       <SelectContent>
                         {courses.map((c) => (
                           <SelectItem key={c.id} value={c.id}>
-                            {c.title}
+                            {c.title} - ${getCoursePrice(c.id)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -441,9 +449,19 @@ export default function Auth() {
                           <SelectItem value="GHS">GHS (Airtel / MTN)</SelectItem>
                         </SelectContent>
                       </Select>
-                      <p className="text-xs text-muted-foreground pt-1">
-                        Note: You will be prompted to complete payment before your account is finalized.
-                      </p>
+                      <div className="p-3 bg-primary/10 rounded-xl border border-primary/20 mt-3">
+                        <p className="text-sm font-bold text-foreground">
+                          Total Due Today: <span className="text-primary text-lg ml-1">
+                            {currency === 'USD' ? '$' : currency === 'KES' ? 'KES ' : 'GH₵ '}
+                            {currency === 'USD' ? getCoursePrice(selectedCourse) : 
+                             currency === 'KES' ? getCoursePrice(selectedCourse) * STAR9_EXCHANGE_RATE : 
+                             getCoursePrice(selectedCourse) * 15}
+                          </span>
+                        </p>
+                        <p className="text-xs text-muted-foreground pt-1">
+                          Note: You will be prompted to complete payment securely via Paystack before your account is finalized.
+                        </p>
+                      </div>
                     </div>
                   )}
                 </div>
