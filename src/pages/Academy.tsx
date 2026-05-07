@@ -181,6 +181,12 @@ const Academy = () => {
         key: paystackKey, email: user?.email, amount, currency,
         channels: ['card', 'bank', 'ussd', 'qr', 'mobile_money', 'bank_transfer'],
         ref: 'ST9_' + Math.floor(Math.random() * 1e9),
+        metadata: {
+          custom_fields: [
+            { display_name: "User ID", variable_name: "user_id", value: user?.id },
+            { display_name: "Course ID", variable_name: "course_id", value: courseId }
+          ]
+        },
         callback: () => { toast.success("Enrollment Synchronizing..."); setTimeout(() => invalidateAll(), 3000); },
         onClose: () => setEnrolling(null)
       });
