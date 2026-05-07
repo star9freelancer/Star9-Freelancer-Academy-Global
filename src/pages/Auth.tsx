@@ -159,9 +159,14 @@ export default function Auth() {
       if (error) throw error;
 
       if (data.user) {
+        // Handle Supabase email enumeration protection (fake success for existing emails)
+        if (data.user.identities && data.user.identities.length === 0) {
+          throw new Error("This email is already registered. Please log in instead.");
+        }
+
         const verificationStatus = (selectedRole === 'employer' || selectedRole === 'freelancer') ? 'pending' : 'verified';
         
-        await supabase.from('profiles').upsert({
+        const { error: profileError } = await supabase.from('profiles').upsert({
           id: data.user.id,
           full_name: fullName,
           phone_number: phone,
@@ -173,14 +178,17 @@ export default function Auth() {
           email: email,
           updated_at: new Date().toISOString()
         });
+        
+        if (profileError) throw new Error("Profile creation failed: " + profileError.message);
 
         // Add user enrollment directly since webhook may fail due to missing user_id initially
         if (selectedCourse) {
-          await supabase.from('user_enrollments').insert({
+          const { error: enrollError } = await supabase.from('user_enrollments').insert({
             user_id: data.user.id,
             course_id: selectedCourse,
             progress: 0
           });
+          if (enrollError) throw new Error("Enrollment failed: " + enrollError.message);
         }
 
         toast.success("Account created and enrolled successfully!");
