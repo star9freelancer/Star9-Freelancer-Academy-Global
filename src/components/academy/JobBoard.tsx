@@ -33,6 +33,7 @@ export default function JobBoard() {
       .from('academy_jobs')
       .select('*')
       .eq('is_active', true)
+      .not('employer_id', 'is', null)  // Only show employer-posted jobs
       .order('posted_at', { ascending: false });
 
     if (error) {
@@ -135,14 +136,14 @@ export default function JobBoard() {
                    </p>
                    
                    <div className="flex flex-wrap gap-1.5">
-                      {job.requirements?.slice(0, 3).map((req: string, i: number) => (
-                         <span key={i} className="text-[8px] px-2 py-0.5 rounded-full bg-white/5 border border-white/10 uppercase tracking-widest text-zinc-400 font-bold">
-                            {req}
-                         </span>
-                      ))}
-                      <span className="text-[8px] px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 uppercase tracking-widest text-primary font-bold">
-                         Level: Intermediate
-                      </span>
+                      {job.requirements?.map((req: string, i: number) => {
+                         const isSubmission = req.startsWith("SUBMISSION") || req.startsWith("✓");
+                         return (
+                           <span key={i} className={`text-[8px] px-2 py-0.5 rounded-full border uppercase tracking-widest font-bold ${isSubmission ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-white/5 border-white/10 text-zinc-400'}`}>
+                              {req}
+                           </span>
+                         )
+                      })}
                    </div>
                  </div>
               </CardContent>

@@ -16,6 +16,7 @@ import { HomeFeed } from "@/components/academy/HomeFeed";
 import { UserSettings } from "@/components/academy/UserSettings";
 import { AcademyFooter } from "@/components/academy/AcademyFooter";
 import ReferralDashboard from "@/components/academy/ReferralDashboard";
+import { EmployerDashboard } from "@/components/employer/EmployerDashboard";
 import { 
   Home as HomeIcon, 
   BookOpen as BookOpenIcon, 
@@ -118,8 +119,15 @@ const Academy = () => {
   }, [profile]);
 
   useEffect(() => {
-    if (!authLoading && !user && activeTab === "home") setActiveTab("catalog");
-    if (profile?.role === 'referrer' && activeTab === 'home') setActiveTab('referral');
+    if (!authLoading) {
+      if (!user && activeTab === "home") {
+        setActiveTab("catalog");
+      } else if (profile && activeTab === "home") {
+        if (profile.role === 'employer') setActiveTab('employer');
+        else if (profile.role === 'freelancer') setActiveTab('careers');
+        else if (profile.role === 'referrer') setActiveTab('referral');
+      }
+    }
   }, [user, profile, authLoading, activeTab]);
 
   const handleThemeToggle = () => {
@@ -228,18 +236,34 @@ const Academy = () => {
     );
   }
 
-  const mainNavItems = [
+  let mainNavItems = [
     { id: "home", icon: HomeIcon, label: "Home", public: true },
     { id: "academy", icon: BookOpenIcon, label: "Vault", public: false },
     { id: "catalog", icon: GlobeIcon, label: "Catalog", public: true },
   ];
 
-  const moreNavItems = [
+  if (profile?.role === 'employer') {
+    mainNavItems = [
+      { id: "employer", icon: LayoutDashboardIcon, label: "Employer Hub", public: false },
+      ...mainNavItems
+    ];
+  } else if (profile?.role === 'freelancer') {
+    mainNavItems = [
+      { id: "careers", icon: BriefcaseIcon, label: "Career Engine", public: false },
+      ...mainNavItems
+    ];
+  }
+
+  let moreNavItems = [
     { id: "careers", icon: BriefcaseIcon, label: "Careers", public: true },
     { id: "referral", icon: LinkIcon, label: "Referrals", public: true },
     { id: "community", icon: UsersIcon, label: "Social", public: false },
     { id: "certificates", icon: AwardIcon, label: "Credentials", public: false },
   ];
+
+  if (profile?.role === 'freelancer') {
+    moreNavItems = moreNavItems.filter(item => item.id !== 'careers');
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-500 selection:bg-primary/20">
@@ -367,6 +391,7 @@ const Academy = () => {
               {activeTab === "community" && <CommunityChat user={user} profile={profile} />}
               {activeTab === "referral" && <ReferralDashboard user={user} profile={profile} />}
               {activeTab === "careers" && <JobBoard />}
+              {activeTab === "employer" && <EmployerDashboard user={user} profile={profile} />}
               {activeTab === "settings" && <UserSettings 
                   user={user} profile={profile} profileForm={profileForm} setProfileForm={setProfileForm}
                   saving={saving} handleSaveProfile={handleSaveProfile} newSkill={newSkill} setNewSkill={setNewSkill}

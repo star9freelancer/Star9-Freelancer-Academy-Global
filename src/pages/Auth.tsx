@@ -214,8 +214,8 @@ export default function Auth() {
         
         if (profileError) throw new Error("Profile creation failed: " + profileError.message);
 
-        // Add user enrollment directly since webhook may fail due to missing user_id initially
-        if (selectedCourse) {
+        // Add user enrollment directly — only for students purchasing a course
+        if (selectedCourse && selectedRole === 'student') {
           const { error: enrollError } = await supabase.from('user_enrollments').insert({
             user_id: data.user.id,
             course_id: selectedCourse,
@@ -248,8 +248,22 @@ export default function Auth() {
     }
 
     if (isSignUp) {
-      // Defer to the payment flow
-      initiateRegistrationPayment();
+      // Defer to the payment flow for students, otherwise create account immediately
+      if (selectedRole === 'employer' || selectedRole === 'freelancer') {
+        // Basic validation for non-student roles
+        if (!email || !password || !fullName || !phone || !city || !country) {
+          toast.error("Please fill in all required fields.");
+          return;
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          toast.error("Please enter a valid email address.");
+          return;
+        }
+        executeSignup();
+      } else {
+        initiateRegistrationPayment();
+      }
       return;
     }
 
@@ -445,23 +459,25 @@ export default function Auth() {
                     <Label htmlFor="reg-id">National ID / Passport</Label>
                     <Input id="reg-id" type="text" placeholder="ID Number" value={nationalId} onChange={(e) => setNationalId(e.target.value)} className="h-11" />
                   </div>
-                  <div className="space-y-2 md:col-span-2 pt-2 border-t border-border mt-2">
-                    <Label>Select Your Program</Label>
-                    <Select value={selectedCourse} onValueChange={setSelectedCourse}>
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Choose a program to enroll in..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {courses.map((c) => (
-                          <SelectItem key={c.id} value={c.id}>
-                            {c.title} - ${getCoursePrice(c.id)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  {!(selectedRole === 'employer' || selectedRole === 'freelancer') && (
+                    <div className="space-y-2 md:col-span-2 pt-2 border-t border-border mt-2">
+                      <Label>Select Your Program</Label>
+                      <Select value={selectedCourse} onValueChange={setSelectedCourse}>
+                        <SelectTrigger className="h-11">
+                          <SelectValue placeholder="Choose a program to enroll in..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {courses.map((c) => (
+                            <SelectItem key={c.id} value={c.id}>
+                              {c.title} - ${getCoursePrice(c.id)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
                   
-                  {selectedCourse && (
+                  {!(selectedRole === 'employer' || selectedRole === 'freelancer') && selectedCourse && (
                     <div className="space-y-2 md:col-span-2">
                       <Label>Preferred Currency</Label>
                       <Select value={currency} onValueChange={(v: any) => setCurrency(v)}>
@@ -495,7 +511,7 @@ export default function Auth() {
               <CardFooter className="pt-4">
                 <Button className="w-full h-12" disabled={loading} onClick={() => handleAuth(true)}>
                   {loading && <Loader2Icon className="h-4 w-4 animate-spin mr-2" />}
-                  Pay & Create Account
+                  {selectedRole === 'employer' || selectedRole === 'freelancer' ? "Create Account" : "Pay & Create Account"}
                 </Button>
               </CardFooter>
             </TabsContent>
