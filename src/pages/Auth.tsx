@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAcademyData } from "@/hooks/useAcademyData";
 import { toast } from "sonner";
 import { 
   Loader2 as Loader2Icon, 
@@ -38,6 +40,13 @@ export default function Auth() {
   const [isClearing, setIsClearing] = useState(false);
   const [persistSession, setPersistSession] = useState(true);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+  
+  // New State for Registration Course Selection
+  const { courses } = useAcademyData();
+  const [selectedCourse, setSelectedCourse] = useState<string>("");
+  const [currency, setCurrency] = useState<'USD' | 'KES' | 'GHS'>('USD');
+  const STAR9_EXCHANGE_RATE = 150;
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -69,70 +78,132 @@ export default function Auth() {
     }
   };
 
+  const initiateRegistrationPayment = () => {
+    if (!email || !password || !fullName || !phone || !city || !country || !nationalId) {
+      toast.error("Please fill in all required fields (Name, Phone, City, Country, ID).");
+      return;
+    }
+    if (!selectedCourse) {
+      toast.error("Please select a program to enroll in.");
+      return;
+    }
+
+    const courseObj = courses.find(c => c.id === selectedCourse);
+    let basePrice = 50;
+    if (courseObj?.title.toLowerCase().includes("mastering freelancing")) basePrice = 100;
+    if (courseObj?.title.toLowerCase().includes("teacher preparation")) basePrice = 1500;
+    
+    let amount = basePrice * 100;
+    if (currency === 'KES') amount = Math.round(basePrice * STAR9_EXCHANGE_RATE) * 100;
+    if (currency === 'GHS') amount = Math.round(basePrice * 15) * 100;
+
+    const paystackKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
+    if (!paystackKey) { 
+      toast.error("Payment configuration error."); 
+      return; 
+    }
+
+    if ((window as any).PaystackPop) {
+      const handler = (window as any).PaystackPop.setup({
+        key: paystackKey, 
+        email: email, 
+        amount, 
+        currency,
+        channels: ['card', 'bank', 'ussd', 'qr', 'mobile_money', 'bank_transfer'],
+        ref: 'ST9_REG_' + Math.floor(Math.random() * 1e9),
+        callback: async () => {
+          toast.success("Payment successful! Creating your account...");
+          await executeSignup();
+        },
+        onClose: () => {
+          toast.error("Payment cancelled. Account creation paused.");
+        }
+      });
+      handler.openIframe();
+    } else {
+      toast.error("Payment gateway is not ready. Please try again.");
+    }
+  };
+
+  const executeSignup = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+            phone_number: phone,
+            city: city,
+            role: selectedRole,
+            referred_by_code: referralCode
+          }
+        }
+      });
+      if (error) throw error;
+
+      if (data.user) {
+        const verificationStatus = (selectedRole === 'employer' || selectedRole === 'freelancer') ? 'pending' : 'verified';
+        
+        await supabase.from('profiles').upsert({
+          id: data.user.id,
+          full_name: fullName,
+          phone_number: phone,
+          city: city,
+          country: country,
+          national_id_passport: nationalId,
+          role: selectedRole,
+          verification_status: verificationStatus,
+          email: email,
+          updated_at: new Date().toISOString()
+        });
+
+        // Add user enrollment directly since webhook may fail due to missing user_id initially
+        if (selectedCourse) {
+          await supabase.from('user_enrollments').insert({
+            user_id: data.user.id,
+            course_id: selectedCourse,
+            progress: 0
+          });
+        }
+
+        toast.success("Account created and enrolled successfully!");
+        
+        if (!data.session) {
+          const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+          if (signInError) throw signInError;
+        }
+        
+        setIsClearing(true);
+        setTimeout(() => navigate("/academy"), 1800);
+      }
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred during account creation.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleAuth = async (isSignUp: boolean) => {
     if (!email || !password) {
       toast.error("Please enter both email and password.");
       return;
     }
 
-    if (isSignUp && (!fullName || !phone || !city || !country || !nationalId)) {
-      toast.error("Please fill in all required fields (Name, Phone, City, Country, ID).");
+    if (isSignUp) {
+      // Defer to the payment flow
+      initiateRegistrationPayment();
       return;
     }
 
     setLoading(true);
     try {
-      if (isSignUp) {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              full_name: fullName,
-              phone_number: phone,
-              city: city,
-              role: selectedRole,
-              referred_by_code: referralCode
-            }
-          }
-        });
-        if (error) throw error;
-
-        if (data.user) {
-          const verificationStatus = (selectedRole === 'employer' || selectedRole === 'freelancer') ? 'pending' : 'verified';
-          
-          await supabase.from('profiles').upsert({
-            id: data.user.id,
-            full_name: fullName,
-            phone_number: phone,
-            city: city,
-            country: country,
-            national_id_passport: nationalId,
-            role: selectedRole,
-            verification_status: verificationStatus,
-            email: email,
-            updated_at: new Date().toISOString()
-          });
-
-          toast.success("Account created successfully!");
-          
-          // If a session was returned (email confirmation disabled in Supabase), 
-          // we are already logged in via onAuthStateChange in AuthContext.
-          // The useEffect at the top will handle navigation.
-          // If no session was returned, we might need to inform them (but user asked to get rid of verification)
-          if (!data.session) {
-            // Fallback: manually sign in if signup didn't auto-session
-            const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-            if (signInError) throw signInError;
-          }
-        }
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        
-        setIsClearing(true);
-        setTimeout(() => navigate("/academy"), 1800);
-      }
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      
+      setIsClearing(true);
+      setTimeout(() => navigate("/academy"), 1800);
     } catch (error: any) {
       toast.error(error.message || "An error occurred.");
     } finally {
@@ -318,13 +389,47 @@ export default function Auth() {
                     <Label htmlFor="reg-id">National ID / Passport</Label>
                     <Input id="reg-id" type="text" placeholder="ID Number" value={nationalId} onChange={(e) => setNationalId(e.target.value)} className="h-11" />
                   </div>
+                  <div className="space-y-2 md:col-span-2 pt-2 border-t border-border mt-2">
+                    <Label>Select Your Program</Label>
+                    <Select value={selectedCourse} onValueChange={setSelectedCourse}>
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Choose a program to enroll in..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {courses.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>
+                            {c.title}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  {selectedCourse && (
+                    <div className="space-y-2 md:col-span-2">
+                      <Label>Preferred Currency</Label>
+                      <Select value={currency} onValueChange={(v: any) => setCurrency(v)}>
+                        <SelectTrigger className="h-11">
+                          <SelectValue placeholder="Select Currency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="USD">USD (Global Card)</SelectItem>
+                          <SelectItem value="KES">KES (M-Pesa)</SelectItem>
+                          <SelectItem value="GHS">GHS (Airtel / MTN)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <p className="text-xs text-muted-foreground pt-1">
+                        Note: You will be prompted to complete payment before your account is finalized.
+                      </p>
+                    </div>
+                  )}
                 </div>
 
               </CardContent>
               <CardFooter className="pt-4">
                 <Button className="w-full h-12" disabled={loading} onClick={() => handleAuth(true)}>
                   {loading && <Loader2Icon className="h-4 w-4 animate-spin mr-2" />}
-                  Create Account
+                  Pay & Create Account
                 </Button>
               </CardFooter>
             </TabsContent>
