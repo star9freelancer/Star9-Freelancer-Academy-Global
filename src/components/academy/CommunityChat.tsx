@@ -43,11 +43,16 @@ const CommunityChat = ({ user, profile }: CommunityChatProps) => {
   const [sending, setSending] = useState(false);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [profileCache, setProfileCache] = useState<Record<string, string>>({});
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: "smooth"
+      });
+    }
   }, []);
 
   // Load groups and memberships
@@ -351,7 +356,7 @@ const CommunityChat = ({ user, profile }: CommunityChatProps) => {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
                 {loadingMessages ? (
                   <div className="flex items-center justify-center h-full">
                     <Loader2Icon className="size-6 animate-spin text-muted-foreground" />
@@ -422,7 +427,6 @@ const CommunityChat = ({ user, profile }: CommunityChatProps) => {
                     );
                   })
                 )}
-                <div ref={messagesEndRef} />
               </div>
 
               {/* Input */}
