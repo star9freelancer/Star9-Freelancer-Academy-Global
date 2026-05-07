@@ -6,9 +6,15 @@ import {
   Clock as ClockIcon, 
   ArrowRight as ArrowRightIcon,
   PlayCircle as PlayCircleIcon,
-  CheckCircle2 as CheckCircle2Icon
+  CheckCircle2 as CheckCircle2Icon,
+  Lock as LockIcon,
+  CalendarClock as CalendarClockIcon
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
+
+// Cohort launch gate — lessons unlock on this date
+const COHORT_START = new Date("2026-05-12T00:00:00");
 
 interface CourseCardProps {
   course: any;
@@ -22,6 +28,18 @@ interface CourseCardProps {
 const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewDetails }: CourseCardProps) => {
   const isEnrolled = !!enrollment;
   const progress = enrollment?.progress || 0;
+  const isLocked = isEnrolled && new Date() < COHORT_START;
+
+  const handleCardClick = () => {
+    if (isLocked) {
+      toast.info("📅 Lessons begin Tuesday, 12th May", {
+        description: "Hang tight — your course unlocks on the 12th. Get excited!",
+        duration: 5000,
+      });
+      return;
+    }
+    isEnrolled ? onOpen?.() : onViewDetails?.();
+  };
 
   return (
     <motion.div
@@ -34,7 +52,7 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
     >
       <Card 
         className="w-full flex flex-col overflow-hidden border-border/50 hover:border-primary/30 hover:shadow-xl transition-all duration-300 cursor-pointer group bg-card"
-        onClick={isEnrolled ? onOpen : onViewDetails}
+        onClick={handleCardClick}
       >
         {/* Top Image Section */}
         <div className="relative aspect-video w-full overflow-hidden bg-muted shrink-0">
@@ -99,11 +117,21 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
         {/* Footer Action */}
         <div className="p-5 pt-0 mt-auto">
           <div className="w-full flex items-center justify-between pt-4 border-t border-border/50">
-            <span className="text-sm font-semibold text-foreground">
-              {isEnrolled ? "Continue Learning" : "View Details"}
-            </span>
-            <div className="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-              {isEnrolled ? <PlayCircleIcon className="size-4" /> : <ArrowRightIcon className="size-4" />}
+            {isLocked ? (
+              <span className="text-sm font-semibold text-amber-500 flex items-center gap-2">
+                <CalendarClockIcon className="size-4" /> Starts May 12th
+              </span>
+            ) : (
+              <span className="text-sm font-semibold text-foreground">
+                {isEnrolled ? "Continue Learning" : "View Details"}
+              </span>
+            )}
+            <div className={`size-8 rounded-full flex items-center justify-center transition-colors ${
+              isLocked 
+                ? 'bg-amber-500/10 text-amber-500' 
+                : 'bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground'
+            }`}>
+              {isLocked ? <LockIcon className="size-4" /> : isEnrolled ? <PlayCircleIcon className="size-4" /> : <ArrowRightIcon className="size-4" />}
             </div>
           </div>
         </div>

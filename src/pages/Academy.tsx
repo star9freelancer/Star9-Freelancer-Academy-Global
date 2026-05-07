@@ -65,6 +65,7 @@ import logo from "@/assets/logo_highres_transparent.png";
 import { getStoredTheme, applyTheme } from "@/lib/theme";
 
 const STAR9_EXCHANGE_RATE = 150;
+const COHORT_START = new Date("2026-05-12T00:00:00");
 
 const Academy = () => {
   const { user, profile, loading: authLoading, refreshProfile } = useAuth();
@@ -167,6 +168,17 @@ const Academy = () => {
     if (!user) { navigate('/auth'); return; }
     setEnrolling(courseId);
     setPaymentModalOpen(true);
+  };
+
+  const handleOpenCourse = (courseId: string) => {
+    if (new Date() < COHORT_START) {
+      toast.info("📅 Lessons begin Tuesday, 12th May", {
+        description: "Hang tight — your course unlocks on the 12th. Get excited!",
+        duration: 5000,
+      });
+      return;
+    }
+    navigate(`/academy/course/${courseId}`);
   };
 
   const initiatePayment = (currency: 'USD' | 'KES' | 'GHS') => {
@@ -345,7 +357,7 @@ const Academy = () => {
             course={selectedProgram} onBack={() => setSelectedProgram(null)}
             enrollment={enrollments.get(selectedProgram.id)} 
             onEnroll={() => handleEnroll(selectedProgram.id)} 
-            onStart={() => navigate(`/academy/course/${selectedProgram.id}`)}
+            onStart={() => handleOpenCourse(selectedProgram.id)}
           />
         ) : (
           <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -375,7 +387,7 @@ const Academy = () => {
                         enrollment={enrollments.get(course.id)}
                         onEnroll={() => handleEnroll(course.id)}
                         onViewDetails={() => setSelectedProgram(course)}
-                        onOpen={() => navigate(`/academy/course/${course.id}`)}
+                        onOpen={() => handleOpenCourse(course.id)}
                       />
                     ))
                   }

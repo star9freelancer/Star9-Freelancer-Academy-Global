@@ -8,9 +8,11 @@ import {
   Calendar as CalendarIcon, 
   Settings as SettingsIcon, 
   Users as UsersIcon, 
-  Globe as GlobeIcon
+  Globe as GlobeIcon,
+  Lock as LockIcon
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 
 interface HomeFeedProps {
@@ -89,15 +91,31 @@ export const HomeFeed = ({ setActiveTab, courses, enrollments, profile }: HomeFe
                     </p>
                   </div>
                   
-                  <Button 
-                    size="lg" 
-                    className="h-14 px-8 rounded-xl font-bold gap-2 shrink-0 z-10 shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
-                    asChild
-                  >
-                    <Link to={`/academy/course/${activeEnrolledCourses[0].id}`}>
-                      Continue Learning <ArrowRightIcon className="size-4" />
-                    </Link>
-                  </Button>
+                  {(() => {
+                    const isLocked = new Date() < new Date("2026-05-12T00:00:00");
+                    return isLocked ? (
+                      <Button
+                        size="lg"
+                        className="h-14 px-8 rounded-xl font-bold gap-2 shrink-0 z-10 bg-amber-500 hover:bg-amber-600 text-white shadow-xl"
+                        onClick={() => toast.info("📅 Lessons begin Tuesday, 12th May", {
+                          description: "Hang tight — your course unlocks on the 12th!",
+                          duration: 5000,
+                        })}
+                      >
+                        <LockIcon className="size-4" /> Unlocks May 12th
+                      </Button>
+                    ) : (
+                      <Button
+                        size="lg"
+                        className="h-14 px-8 rounded-xl font-bold gap-2 shrink-0 z-10 shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+                        asChild
+                      >
+                        <Link to={`/academy/course/${activeEnrolledCourses[0].id}`}>
+                          Continue Learning <ArrowRightIcon className="size-4" />
+                        </Link>
+                      </Button>
+                    );
+                  })()}
                 </div>
                 
                 <div className="flex items-center justify-between pt-2 px-2">
