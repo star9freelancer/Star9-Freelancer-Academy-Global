@@ -141,24 +141,27 @@ export default function Auth() {
         currency,
         channels: ['card', 'bank', 'ussd', 'qr', 'mobile_money', 'bank_transfer'],
         ref: 'ST9_REG_' + Math.floor(Math.random() * 1e9),
-        callback: async (response: any) => {
-          try {
-            toast.success("Payment successful! Verifying...");
-            const { data, error } = await supabase.functions.invoke('verify-payment', {
-              body: { reference: response.reference }
-            });
+        callback: (response: any) => {
+          const verifyPayment = async () => {
+            try {
+              toast.success("Payment successful! Verifying...");
+              const { data, error } = await supabase.functions.invoke('verify-payment', {
+                body: { reference: response.reference }
+              });
 
-            if (error) throw error;
-            
-            if (data?.status && data?.data?.status === 'success') {
-              toast.success("Payment verified! Creating your account...");
-              await executeSignup();
-            } else {
-              toast.error("Payment verification failed.");
+              if (error) throw error;
+              
+              if (data?.status && data?.data?.status === 'success') {
+                toast.success("Payment verified! Creating your account...");
+                await executeSignup();
+              } else {
+                toast.error("Payment verification failed.");
+              }
+            } catch (error: any) {
+               toast.error("Could not verify payment: " + error.message);
             }
-          } catch (error: any) {
-             toast.error("Could not verify payment: " + error.message);
-          }
+          };
+          verifyPayment();
         },
         onClose: () => {
           toast.error("Payment cancelled. Account creation paused.");
