@@ -45,7 +45,21 @@ export default function Auth() {
   const { courses } = useAcademyData();
   const [selectedCourse, setSelectedCourse] = useState<string>("");
   const [currency, setCurrency] = useState<'USD' | 'KES' | 'GHS'>('USD');
-  const STAR9_EXCHANGE_RATE = 150;
+  const [exchangeRates, setExchangeRates] = useState({ KES: 130, GHS: 14.5 });
+
+  useEffect(() => {
+    fetch('https://api.exchangerate-api.com/v4/latest/USD')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.rates) {
+          setExchangeRates({
+            KES: data.rates.KES || 130,
+            GHS: data.rates.GHS || 14.5
+          });
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -102,8 +116,8 @@ export default function Auth() {
     if (courseObj?.title.toLowerCase().includes("teacher preparation")) basePrice = 1500;
     
     let amount = basePrice * 100;
-    if (currency === 'KES') amount = Math.round(basePrice * STAR9_EXCHANGE_RATE) * 100;
-    if (currency === 'GHS') amount = Math.round(basePrice * 15) * 100;
+    if (currency === 'KES') amount = Math.round(basePrice * exchangeRates.KES) * 100;
+    if (currency === 'GHS') amount = Math.round(basePrice * exchangeRates.GHS) * 100;
 
     const paystackKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
     if (!paystackKey) { 
@@ -453,9 +467,9 @@ export default function Auth() {
                         <p className="text-sm font-bold text-foreground">
                           Total Due Today: <span className="text-primary text-lg ml-1">
                             {currency === 'USD' ? '$' : currency === 'KES' ? 'KES ' : 'GH₵ '}
-                            {currency === 'USD' ? getCoursePrice(selectedCourse) : 
-                             currency === 'KES' ? getCoursePrice(selectedCourse) * STAR9_EXCHANGE_RATE : 
-                             getCoursePrice(selectedCourse) * 15}
+                            {currency === 'USD' ? getCoursePrice(selectedCourse).toLocaleString() : 
+                             currency === 'KES' ? Math.round(getCoursePrice(selectedCourse) * exchangeRates.KES).toLocaleString() : 
+                             Math.round(getCoursePrice(selectedCourse) * exchangeRates.GHS).toLocaleString()}
                           </span>
                         </p>
                         <p className="text-xs text-muted-foreground pt-1">

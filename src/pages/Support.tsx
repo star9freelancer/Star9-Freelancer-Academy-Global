@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/landing/Header";
 import Footer from "@/components/landing/Footer";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,21 @@ const Support = () => {
   const [amount, setAmount] = useState('50');
   const [email, setEmail] = useState('');
   const [currency, setCurrency] = useState('USD');
+  const [exchangeRates, setExchangeRates] = useState({ KES: 130, GHS: 14.5 });
+
+  useEffect(() => {
+    fetch('https://api.exchangerate-api.com/v4/latest/USD')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.rates) {
+          setExchangeRates({
+            KES: data.rates.KES || 130,
+            GHS: data.rates.GHS || 14.5
+          });
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   const handleDonate = () => {
     if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
@@ -178,9 +193,19 @@ const Support = () => {
                     className="absolute right-4 top-1/2 -translate-y-1/2 bg-transparent text-muted-foreground text-sm uppercase tracking-widest outline-none cursor-pointer hover:text-foreground transition-colors"
                     value={currency}
                     onChange={(e) => {
-                      setCurrency(e.target.value);
-                      if (e.target.value === 'KES' && amount === '50') setAmount('6500');
-                      else if (e.target.value === 'USD' && amount === '6500') setAmount('50');
+                      const newCurrency = e.target.value;
+                      
+                      // Convert whatever is currently typed
+                      let currentUsd = Number(amount) || 0;
+                      if (currency === 'KES') currentUsd = currentUsd / exchangeRates.KES;
+                      if (currency === 'GHS') currentUsd = currentUsd / exchangeRates.GHS;
+
+                      let newAmount = currentUsd;
+                      if (newCurrency === 'KES') newAmount = currentUsd * exchangeRates.KES;
+                      if (newCurrency === 'GHS') newAmount = currentUsd * exchangeRates.GHS;
+                      
+                      setCurrency(newCurrency);
+                      setAmount(newAmount > 0 ? Math.round(newAmount).toString() : '');
                     }}
                   >
                     <option value="USD">USD</option>
