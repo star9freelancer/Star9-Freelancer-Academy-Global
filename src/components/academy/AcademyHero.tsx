@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { 
-  Sparkles as SparklesIcon, 
-  Users as UsersIcon, 
-  BookOpen as BookOpenIcon, 
-  Globe as GlobeIcon, 
-  Award as AwardIcon, 
+import {
+  Sparkles as SparklesIcon,
+  Users as UsersIcon,
+  BookOpen as BookOpenIcon,
+  Globe as GlobeIcon,
+  Award as AwardIcon,
   TrendingUp as TrendingUpIcon,
   Home as HomeIcon
 } from "lucide-react";
@@ -63,17 +63,17 @@ const AcademyHero = ({ type, title, subtitle, userName, onTabChange }: AcademyHe
     <div className="relative w-full rounded-[2rem] overflow-hidden mb-8 group border border-white/5 shadow-2xl">
       {/* Background Image / Overlay */}
       <div className="absolute inset-0 z-0">
-        <motion.img 
+        <motion.img
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
           transition={{ duration: 2, ease: "easeOut" }}
-          src={config.image} 
-          alt="Hero background" 
+          src={config.image}
+          alt="Hero background"
           className="w-full h-full object-cover opacity-40 grayscale-[0.3] group-hover:scale-105 transition-transform duration-[20s]"
         />
         <div className={`absolute inset-0 bg-gradient-to-r ${config.gradient}`} />
         <div className="absolute inset-0 bg-zinc-950/60 backdrop-blur-[1px]" />
-        
+
         {/* Animated Particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {[...Array(6)].map((_, i) => (
@@ -101,20 +101,20 @@ const AcademyHero = ({ type, title, subtitle, userName, onTabChange }: AcademyHe
 
       {/* Content */}
       <div className="relative z-10 p-6 md:p-8 space-y-3 max-w-4xl">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
           className="flex items-center gap-3"
         >
           <div className={`p-2.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md ${config.accent} shadow-lg`}>
-             <Icon className="size-5" />
+            <Icon className="size-5" />
           </div>
           <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-white/50 font-bold">Academy Home</span>
         </motion.div>
-        
+
         <div className="space-y-4">
-          <motion.h1 
+          <motion.h1
             key={type + "title"}
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -125,8 +125,8 @@ const AcademyHero = ({ type, title, subtitle, userName, onTabChange }: AcademyHe
               <span key={i} className={i === 0 ? "text-primary" : ""}>{word} </span>
             ))}
           </motion.h1>
-          
-          <motion.p 
+
+          <motion.p
             key={type + "subtitle"}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -137,7 +137,7 @@ const AcademyHero = ({ type, title, subtitle, userName, onTabChange }: AcademyHe
           </motion.p>
         </div>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
@@ -145,35 +145,28 @@ const AcademyHero = ({ type, title, subtitle, userName, onTabChange }: AcademyHe
         >
           {type === 'community' && (
             <>
-               <Button 
-                 className="font-mono text-[9px] uppercase tracking-widest bg-primary hover:bg-primary/90 text-white px-6 py-4 rounded-xl shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
-                 onClick={() => onTabChange?.('community')}
-               >
-                  Join Community
-               </Button>
-               <Button 
-                 variant="outline" 
-                 className="font-mono text-[9px] uppercase tracking-widest border-white/10 text-white/80 hover:bg-white/5 px-6 py-4 rounded-xl backdrop-blur-md"
-                 onClick={() => onTabChange?.('events')}
-               >
-                  View Events
-               </Button>
+              <Button
+                className="font-mono text-[9px] uppercase tracking-widest bg-primary hover:bg-primary/90 text-white px-6 py-4 rounded-xl shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
+                onClick={() => onTabChange?.('community')}
+              >
+                Join Community
+              </Button>
+              <Button
+                variant="outline"
+                className="font-mono text-[9px] uppercase tracking-widest border-white/10 text-white/80 hover:bg-white/5 px-6 py-4 rounded-xl backdrop-blur-md"
+                onClick={() => onTabChange?.('events')}
+              >
+                View Events
+              </Button>
             </>
           )}
           {type === 'catalog' && (
-            <div className="flex items-center gap-4">
-               <Button 
-                 className="font-mono text-[10px] uppercase tracking-widest bg-amber-500 hover:bg-amber-600 text-white px-8 py-6 rounded-xl shadow-xl shadow-amber-500/20 transition-all hover:scale-105 active:scale-95"
-                 onClick={() => onTabChange?.('catalog')}
-               >
-                  Browse Courses
-               </Button>
-               {!userName && (
-                 <Button variant="outline" className="font-mono text-[10px] uppercase tracking-widest border-white/10 text-white/80 hover:bg-white/5 px-8 py-6 rounded-xl backdrop-blur-md" asChild>
-                    <Link to="/auth">Sign Up Free</Link>
-                 </Button>
-               )}
-            </div>
+            <Button
+              className="font-mono text-[10px] uppercase tracking-widest bg-amber-500 hover:bg-amber-600 text-white px-8 py-6 rounded-xl shadow-xl shadow-amber-500/20 transition-all hover:scale-105 active:scale-95"
+              onClick={() => onTabChange?.('catalog')}
+            >
+              Explore Courses
+            </Button>
           )}
         </motion.div>
       </div>

@@ -1,20 +1,31 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { 
-  Copy as CopyIcon, 
-  Check as CheckIcon, 
-  Users as UsersIcon, 
-  DollarSign as DollarSignIcon, 
-  TrendingUp as TrendingUpIcon, 
-  Link as LinkIcon, 
-  Share2 as Share2Icon, 
-  ArrowRight as ArrowRightIcon, 
-  Clock as ClockIcon 
+import {
+  Copy as CopyIcon,
+  Check as CheckIcon,
+  Users as UsersIcon,
+  DollarSign as DollarSignIcon,
+  TrendingUp as TrendingUpIcon,
+  Link as LinkIcon,
+  Share2 as Share2Icon,
+  ArrowRight as ArrowRightIcon,
+  Clock as ClockIcon,
+  Download as DownloadIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { supabase } from "@/lib/supabase";
+import { getReferrerDashboard, requestWithdrawal } from "@/lib/referrals";
+import { BecomeReferrerModal } from "./BecomeReferrerModal";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface ReferralStats {
   total_referrals: number;
@@ -50,9 +61,15 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
     referrals: [],
   });
   const [loading, setLoading] = useState(true);
+  const [isReferrer, setIsReferrer] = useState(false);
+  const [referrerInfo, setReferrerInfo] = useState<any>(null);
+  const [showBecomeReferrer, setShowBecomeReferrer] = useState(false);
+  const [showWithdrawal, setShowWithdrawal] = useState(false);
+  const [withdrawalAmount, setWithdrawalAmount] = useState("");
+  const [withdrawing, setWithdrawing] = useState(false);
 
-  const referralCode = profile?.referral_code ?? user?.id?.slice(0, 8).toUpperCase() ?? "XXXXXXXX";
-  const referralLink = `${window.location.origin}/auth?ref=${referralCode}`;
+  const referralCode = referrerInfo?.referral_code || "XXXXXXXX";
+  const referralLink = `${window.location.origin}/auth?tab=register&ref=${referralCode}`;
 
   useEffect(() => {
     if (!user?.id) return;
@@ -62,33 +79,73 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
   const fetchStats = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from("referrals")
-        .select("*")
-        .eq("referrer_id", user.id)
-        .order("created_at", { ascending: false });
+      const result = await getReferrerDashboard(user.id);
 
-      if (error) throw error;
-
-      const referrals = data ?? [];
-      const pending = referrals
-        .filter(r => r.status === "pending" || r.status === "confirmed")
-        .reduce((sum, r) => sum + (r.commission ?? 0), 0);
-      const paid = referrals
-        .filter(r => r.status === "paid")
-        .reduce((sum, r) => sum + (r.commission ?? 0), 0);
-
-      setStats({
-        total_referrals: referrals.length,
-        pending_earnings: pending,
-        paid_earnings: paid,
-        referrals,
-      });
-    } catch {
-      // Table may not exist yet — show empty state gracefully
+      if (result.success && result.isReferrer) {
+        setIsReferrer(true);
+        setReferrerInfo(result.referrer);
+        setStats({
+          total_referrals: result.referrer.total_referrals,
+          pending_earnings: result.referrer.available_balance,
+          paid_earnings: result.referrer.total_withdrawn,
+          referrals: result.referrals.map((r: any) => ({
+            id: r.id,
+            referred_email: r.referred_email,
+            course_name: r.course_name || "Pending enrollment",
+            commission: r.commission_amount || 0,
+            status: r.status,
+            created_at: r.created_at,
+          })),
+        });
+      } else {
+        setIsReferrer(false);
+      }
+    } catch (error: any) {
+      console.error("Error fetching stats:", error);
+      // If tables don't exist, show setup message
+      if (error.message?.includes("relation") || error.message?.includes("does not exist")) {
+        toast.error("Referral system not set up", {
+          description: "Please contact admin to set up the referral database tables.",
+        });
+      }
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleWithdrawal = async () => {
+    const amount = parseFloat(withdrawalAmount);
+
+    if (isNaN(amount) || amount <= 0) {
+      toast.error("Please enter a valid amount");
+      return;
+    }
+
+    if (amount < 10) {
+      toast.error("Minimum withdrawal amount is $10");
+      return;
+    }
+
+    if (amount > (referrerInfo?.available_balance || 0)) {
+      toast.error("Insufficient balance");
+      return;
+    }
+
+    setWithdrawing(true);
+    const result = await requestWithdrawal(referrerInfo.id, amount);
+
+    if (result.success) {
+      toast.success("Withdrawal request submitted!", {
+        description: "Your request will be processed within 2-3 business days.",
+      });
+      setShowWithdrawal(false);
+      setWithdrawalAmount("");
+      fetchStats();
+    } else {
+      toast.error(result.error || "Failed to request withdrawal");
+    }
+
+    setWithdrawing(false);
   };
 
   const copyLink = async () => {
@@ -104,7 +161,7 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
         title: "Join Star9 Academy",
         text: "I use Star9 to build a global freelance career. Join using my link!",
         url: referralLink,
-      }).catch(() => {});
+      }).catch(() => { });
     } else {
       copyLink();
     }
@@ -163,20 +220,20 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
       {/* Header */}
       {!user ? (
         <div className="text-center space-y-4 py-8">
-           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-[0.2em]">
-              Partner Programme
-           </div>
-           <h2 className="text-3xl md:text-4xl font-black italic tracking-tighter">
-              Become a <span className="text-primary italic">Star9</span> Partner
-           </h2>
-           <p className="text-muted-foreground text-sm max-w-md mx-auto leading-relaxed">
-              Join our global network of referrers and earn competitive commissions while helping others build their freelance careers.
-           </p>
-           <div className="pt-4">
-              <Button size="lg" className="rounded-2xl px-10 h-14 bg-primary text-white font-bold tracking-tight hover:bg-primary/90" asChild>
-                 <Link to="/auth">Join as Partner <ArrowRightIcon className="size-4 ml-2" /></Link>
-              </Button>
-           </div>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-[0.2em]">
+            Partner Programme
+          </div>
+          <h2 className="text-3xl md:text-4xl font-black italic tracking-tighter">
+            Become a <span className="text-primary italic">Star9</span> Partner
+          </h2>
+          <p className="text-muted-foreground text-sm max-w-md mx-auto leading-relaxed">
+            Join our global network of referrers and earn competitive commissions while helping others build their freelance careers.
+          </p>
+          <div className="pt-4">
+            <Button size="lg" className="rounded-2xl px-10 h-14 bg-primary text-white font-bold tracking-tight hover:bg-primary/90" asChild>
+              <Link to="/auth">Join as Partner <ArrowRightIcon className="size-4 ml-2" /></Link>
+            </Button>
+          </div>
         </div>
       ) : (
         <div>
@@ -187,8 +244,8 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
         </div>
       )}
 
-      {/* Your Referral Link (Logged In Only) */}
-      {user && (
+      {/* Your Referral Link (Logged In Referrers Only) */}
+      {user && isReferrer && (
         <div className="p-6 rounded-2xl border border-primary/20 bg-primary/5 space-y-4">
           <div className="flex items-center gap-2">
             <LinkIcon className="size-5 text-primary" />
@@ -213,14 +270,14 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
             </div>
           </div>
           <p className="text-xs text-muted-foreground">
-            Your referral code: <span className="font-mono font-semibold text-primary">{referralCode}</span>. 
+            Your referral code: <span className="font-mono font-semibold text-primary">{referralCode}</span>.
             Commissions are confirmed after the referred student completes payment.
           </p>
         </div>
       )}
 
-      {/* Stat Cards (Logged In Only) */}
-      {user && (
+      {/* Stat Cards (Logged In Referrers Only) */}
+      {user && isReferrer && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {statCards.map((s, i) => (
             <div
@@ -261,8 +318,8 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
         </div>
       </div>
 
-      {/* Referral History (Logged In Only) */}
-      {user && (
+      {/* Referral History (Logged In Referrers Only) */}
+      {user && isReferrer && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-foreground">Referral History</h3>
@@ -330,6 +387,91 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
           ))}
         </div>
       </div>
+
+      {/* Become Referrer Modal */}
+      {user && (
+        <BecomeReferrerModal
+          open={showBecomeReferrer}
+          onClose={() => setShowBecomeReferrer(false)}
+          userId={user.id}
+          userFullName={profile?.full_name}
+          onSuccess={(data) => {
+            setReferrerInfo(data);
+            setIsReferrer(true);
+            fetchStats();
+          }}
+        />
+      )}
+
+      {/* Withdrawal Modal */}
+      <Dialog open={showWithdrawal} onOpenChange={setShowWithdrawal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Request Withdrawal</DialogTitle>
+            <DialogDescription>
+              Enter the amount you want to withdraw. Minimum withdrawal is $10.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <div className="p-4 rounded-lg bg-muted/50 border border-border">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm text-muted-foreground">Available Balance</span>
+                <span className="text-lg font-bold text-primary">
+                  ${referrerInfo?.available_balance?.toFixed(2) || "0.00"}
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="amount">Withdrawal Amount ($)</Label>
+              <Input
+                id="amount"
+                type="number"
+                min="10"
+                step="0.01"
+                placeholder="Enter amount"
+                value={withdrawalAmount}
+                onChange={(e) => setWithdrawalAmount(e.target.value)}
+              />
+            </div>
+
+            <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+              <p className="text-xs text-muted-foreground">
+                <strong className="text-foreground">Payment Method:</strong>{" "}
+                {referrerInfo?.payment_method === "bank_transfer" ? "Bank Transfer" : "Mobile Money"}
+              </p>
+              {referrerInfo?.payment_method === "bank_transfer" ? (
+                <p className="text-xs text-muted-foreground mt-1">
+                  {referrerInfo?.bank_name} - {referrerInfo?.bank_account_number}
+                </p>
+              ) : (
+                <p className="text-xs text-muted-foreground mt-1">
+                  {referrerInfo?.mobile_money_provider} - {referrerInfo?.mobile_money_number}
+                </p>
+              )}
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowWithdrawal(false)}
+                className="flex-1"
+                disabled={withdrawing}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleWithdrawal}
+                className="flex-1"
+                disabled={withdrawing}
+              >
+                {withdrawing ? "Processing..." : "Request Withdrawal"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );

@@ -1,29 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
-import { 
-  ArrowLeft as ArrowLeftIcon, 
-  PlayCircle as PlayCircleIcon, 
-  FileText as FileTextIcon, 
-  CheckCircle2 as CheckCircle2Icon, 
-  ChevronRight as ChevronRightIcon, 
-  Lock as LockIcon, 
-  Clock as ClockIcon, 
-  Award as AwardIcon, 
-  Menu as MenuIcon, 
-  X as XIcon, 
-  ChevronLeft as ChevronLeftIcon, 
-  Trophy as TrophyIcon, 
-  AlertTriangle as AlertTriangleIcon, 
-  RefreshCcw as RefreshCcwIcon, 
-  Video as VideoIcon, 
+import {
+  ArrowLeft as ArrowLeftIcon,
+  PlayCircle as PlayCircleIcon,
+  FileText as FileTextIcon,
+  CheckCircle2 as CheckCircle2Icon,
+  ChevronRight as ChevronRightIcon,
+  Lock as LockIcon,
+  Clock as ClockIcon,
+  Award as AwardIcon,
+  Menu as MenuIcon,
+  X as XIcon,
+  ChevronLeft as ChevronLeftIcon,
+  Trophy as TrophyIcon,
+  AlertTriangle as AlertTriangleIcon,
+  RefreshCcw as RefreshCcwIcon,
+  Video as VideoIcon,
   Link as LinkIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { 
-  Card, CardContent, CardHeader, CardTitle, CardFooter 
+import {
+  Card, CardContent, CardHeader, CardTitle, CardFooter
 } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -33,14 +33,139 @@ import { useAcademyData } from "@/hooks/useAcademyData";
 import { ArticleModule, ToolkitModule, ChecklistModule, SimulatorModule, PlaygroundModule } from "@/components/academy/InteractiveModules";
 import logo from "@/assets/logo_highres.jpg";
 
+// Helper function to render structured lesson content
+const renderLessonContent = (content: any): React.ReactNode => {
+  if (typeof content === 'string') {
+    // Handle string content (legacy format)
+    return content
+      .replace(/\\n/g, '\n')
+      .split('\n')
+      .map((line: string, i: number) => {
+        const trimmedLine = line.trim();
+        if (trimmedLine.startsWith('![') && trimmedLine.includes('](')) {
+          const altMatch = trimmedLine.match(/!\[(.*?)\]/);
+          const urlMatch = trimmedLine.match(/\((.*?)\)/);
+          if (altMatch && urlMatch) {
+            return <img key={i} src={urlMatch[1]} alt={altMatch[1]} className="rounded-2xl w-full max-h-[400px] object-cover my-8 shadow-xl border border-border" />;
+          }
+        }
+        if (trimmedLine.startsWith('# ')) {
+          return <h1 key={i} className="text-2xl font-bold mt-8 mb-4 border-b pb-2 text-foreground font-display">{trimmedLine.replace('# ', '')}</h1>;
+        }
+        if (trimmedLine.startsWith('### ')) {
+          return <h3 key={i} className="text-lg font-bold mt-6 mb-2 text-primary">{trimmedLine.replace('### ', '')}</h3>;
+        }
+        if (trimmedLine.startsWith('- ')) {
+          return (
+            <li key={i} className="text-muted-foreground ml-4 my-2 flex items-start gap-3 group">
+              <div className="size-1.5 rounded-full bg-primary/60 shrink-0 mt-2 group-hover:bg-primary transition-colors" />
+              <span dangerouslySetInnerHTML={{ __html: trimmedLine.replace('- ', '').replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground">$1</strong>') }} />
+            </li>
+          );
+        }
+        if (trimmedLine === '') {
+          return <div key={i} className="h-4" />;
+        }
+        return (
+          <p
+            key={i}
+            className="text-muted-foreground leading-relaxed my-4"
+            dangerouslySetInnerHTML={{ __html: line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground font-semibold">$1</strong>') }}
+          />
+        );
+      });
+  }
+
+  // Handle structured content (new format from database)
+  if (content.sections && Array.isArray(content.sections)) {
+    return (
+      <div className="space-y-8">
+        {content.sections.map((section: any, idx: number) => (
+          <div key={idx} className="space-y-4">
+            {section.heading && (
+              <h3 className="text-xl font-bold text-primary border-b pb-2">{section.heading}</h3>
+            )}
+
+            {section.points && Array.isArray(section.points) && (
+              <ul className="space-y-2">
+                {section.points.map((point: string, pidx: number) => (
+                  <li key={pidx} className="flex items-start gap-3 text-muted-foreground">
+                    <div className="size-1.5 rounded-full bg-primary/60 shrink-0 mt-2" />
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {section.formula && (
+              <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
+                <p className="font-mono text-sm text-primary">{section.formula}</p>
+              </div>
+            )}
+
+            {section.example && (
+              <div className="p-4 bg-muted/50 rounded-lg border">
+                <p className="text-sm"><span className="font-semibold">Example:</span> {section.example}</p>
+              </div>
+            )}
+
+            {section.tools && Array.isArray(section.tools) && (
+              <div className="flex flex-wrap gap-2">
+                {section.tools.map((tool: string, tidx: number) => (
+                  <span key={tidx} className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">
+                    {tool}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {section.activities && Array.isArray(section.activities) && (
+              <div className="space-y-2">
+                <p className="font-semibold text-sm text-foreground">Activities:</p>
+                <ul className="space-y-2">
+                  {section.activities.map((activity: string, aidx: number) => (
+                    <li key={aidx} className="flex items-start gap-3 text-sm text-muted-foreground">
+                      <span className="text-primary font-bold">{aidx + 1}.</span>
+                      <span>{activity}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {section.rules && Array.isArray(section.rules) && (
+              <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg space-y-2">
+                {section.rules.map((rule: string, ridx: number) => (
+                  <p key={ridx} className="text-sm text-amber-900 flex items-start gap-2">
+                    <span className="font-bold">⚠️</span>
+                    <span>{rule}</span>
+                  </p>
+                ))}
+              </div>
+            )}
+
+            {section.project && (
+              <div className="p-6 bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl border-2 border-primary/20">
+                <p className="font-bold text-primary mb-2">📋 Mini-Project</p>
+                <p className="text-foreground">{section.project}</p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return <p className="text-muted-foreground">Content not available</p>;
+};
 
 
 const CoursePlayer = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { courses, enrollments } = useAcademyData();
-  
+
   const [course, setCourse] = useState<any | null>(null);
   const [lessons, setLessons] = useState<any[]>([]);
   const [activeLesson, setActiveLesson] = useState<any | null>(null);
@@ -60,7 +185,7 @@ const CoursePlayer = () => {
 
     // Find course from local curriculum first (Optimization for instant navigation)
     const localCourse = courses.find(c => c.id === courseId);
-    
+
     const tryFetchProgress = async (cid: string) => {
       try {
         const { data, error } = await supabase
@@ -68,7 +193,7 @@ const CoursePlayer = () => {
           .select('lesson_id')
           .eq('user_id', user.id)
           .eq('course_id', cid);
-        
+
         if (error) throw error;
         if (data) setCompletedLessons(new Set(data.map(p => p.lesson_id)));
       } catch (err) {
@@ -81,8 +206,8 @@ const CoursePlayer = () => {
 
     if (localCourse && localCourse.modules && localCourse.modules.length > 0) {
       setCourse(localCourse);
-      
-      const courseLessons = localCourse.modules.flatMap((m: any) => 
+
+      const courseLessons = localCourse.modules.flatMap((m: any) =>
         (m.lessons || []).map((l: any) => ({
           ...l,
           duration_minutes: parseInt(l.duration || "0"),
@@ -107,7 +232,7 @@ const CoursePlayer = () => {
           .select('*')
           .eq('id', courseId)
           .maybeSingle(); // Safe lookup
-        
+
         if (cError) throw cError;
         if (!courseData) {
           setLoading(false);
@@ -125,7 +250,7 @@ const CoursePlayer = () => {
           supabase.from('academy_lessons').select('*').eq('course_id', courseData.id).order('order_index', { ascending: true }),
           supabase.from('user_lesson_progress').select('lesson_id').eq('user_id', user.id).eq('course_id', courseData.id)
         ]);
-          
+
         if (lessonsRes.data && lessonsRes.data.length > 0) {
           const formattedLessons = lessonsRes.data.map(l => ({
             ...l,
@@ -160,9 +285,9 @@ const CoursePlayer = () => {
       // Upsert progress with fallback for potential schema mismatch
       const { error: upsertError } = await supabase
         .from('user_lesson_progress')
-        .upsert({ 
-          user_id: user.id, 
-          course_id: courseId, 
+        .upsert({
+          user_id: user.id,
+          course_id: courseId,
           lesson_id: activeLesson.id,
           completed_at: new Date().toISOString()
         }, { onConflict: 'user_id,lesson_id' });
@@ -216,15 +341,15 @@ const CoursePlayer = () => {
           setIsCourseComplete(true);
 
           // Issue Certificate
-          const certId = `CERT-${user.id.substring(0,8).toUpperCase()}-${courseId.substring(0,8).toUpperCase()}`;
+          const certId = `CERT-${user.id.substring(0, 8).toUpperCase()}-${courseId.substring(0, 8).toUpperCase()}`;
           const { error: certErr } = await supabase.from('user_certificates').upsert({
             user_id: user.id,
             course_id: courseId,
             credential_id: certId,
             issued_at: new Date().toISOString()
           }, { onConflict: 'user_id,course_id' });
-          
-          if(!certErr) {
+
+          if (!certErr) {
             toast.success("Certificate awarded! Check your credentials tab.");
           }
         }
@@ -234,8 +359,8 @@ const CoursePlayer = () => {
     }
   };
 
-  const progressPercentage = lessons.length > 0 
-    ? Math.round((completedLessons.size / lessons.length) * 100) 
+  const progressPercentage = lessons.length > 0
+    ? Math.round((completedLessons.size / lessons.length) * 100)
     : 0;
 
   if (loading) {
@@ -262,54 +387,55 @@ const CoursePlayer = () => {
   }
 
   // Pacing Calculation (3 lessons per day starting from enrollment)
+  // Admins bypass all pacing restrictions
   const enrollment = courseId ? enrollments.get(courseId) : null;
-  const daysActive = enrollment?.created_at 
-    ? Math.floor((Date.now() - new Date(enrollment.created_at).getTime()) / (1000 * 60 * 60 * 24)) + 1 
+  const daysActive = enrollment?.created_at
+    ? Math.floor((Date.now() - new Date(enrollment.created_at).getTime()) / (1000 * 60 * 60 * 24)) + 1
     : 1; // Default to 1 day if no enrollment date is found
-  const maxAllowedLessons = daysActive * 3;
+  const maxAllowedLessons = isAdmin ? lessons.length : (daysActive * 3);
 
   if (isCourseComplete) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-background animate-pulse" />
         <div className="absolute top-0 left-0 w-full h-1 bg-primary animate-in slide-in-from-left duration-[2s]" />
-        
+
         <div className="max-w-xl w-full text-center space-y-10 relative z-10 animate-in zoom-in duration-700">
-           <div className="relative inline-block">
-             <div className="absolute inset-0 bg-primary blur-3xl opacity-20 animate-pulse" />
-             <div className="size-32 rounded-[2.5rem] bg-card border border-primary/30 flex items-center justify-center mx-auto shadow-2xl relative">
-                <TrophyIcon className="size-16 text-amber-500" />
-             </div>
-           </div>
-           
-           <div className="space-y-4">
-             <h1 className="text-4xl md:text-6xl font-black italic tracking-tighter text-foreground">
-               Journey <span className="text-primary underline decoration-primary/30 underline-offset-8">Complete</span>
-             </h1>
-             <p className="text-muted-foreground text-lg leading-relaxed">
-               Mastery achieved. You have finalized every module in **{course.title}**. Your global trajectory has just accelerated.
-             </p>
-           </div>
+          <div className="relative inline-block">
+            <div className="absolute inset-0 bg-primary blur-3xl opacity-20 animate-pulse" />
+            <div className="size-32 rounded-[2.5rem] bg-card border border-primary/30 flex items-center justify-center mx-auto shadow-2xl relative">
+              <TrophyIcon className="size-16 text-amber-500" />
+            </div>
+          </div>
 
-           <div className="grid grid-cols-2 gap-4">
-              <div className="p-6 rounded-2xl bg-card border border-border">
-                 <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">Merit Earned</p>
-                 <p className="text-3xl font-black text-amber-500">+{lessons.length * 10}</p>
-              </div>
-              <div className="p-6 rounded-2xl bg-card border border-border">
-                 <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">Status</p>
-                 <p className="text-3xl font-black text-primary italic">Certified</p>
-              </div>
-           </div>
+          <div className="space-y-4">
+            <h1 className="text-4xl md:text-6xl font-black italic tracking-tighter text-foreground">
+              Journey <span className="text-primary underline decoration-primary/30 underline-offset-8">Complete</span>
+            </h1>
+            <p className="text-muted-foreground text-lg leading-relaxed">
+              Mastery achieved. You have finalized every module in **{course.title}**. Your global trajectory has just accelerated.
+            </p>
+          </div>
 
-           <div className="flex flex-col gap-4">
-              <Button size="lg" className="h-16 rounded-2xl bg-primary text-white text-lg font-bold shadow-xl shadow-primary/20" onClick={() => navigate('/academy')}>
-                 Claim Certificate & Return
-              </Button>
-              <Button variant="ghost" className="text-muted-foreground hover:text-foreground" onClick={() => setIsCourseComplete(false)}>
-                 Review Lessons
-              </Button>
-           </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="p-6 rounded-2xl bg-card border border-border">
+              <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">Merit Earned</p>
+              <p className="text-3xl font-black text-amber-500">+{lessons.length * 10}</p>
+            </div>
+            <div className="p-6 rounded-2xl bg-card border border-border">
+              <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">Status</p>
+              <p className="text-3xl font-black text-primary italic">Certified</p>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <Button size="lg" className="h-16 rounded-2xl bg-primary text-white text-lg font-bold shadow-xl shadow-primary/20" onClick={() => navigate('/academy')}>
+              Claim Certificate & Return
+            </Button>
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground" onClick={() => setIsCourseComplete(false)}>
+              Review Lessons
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -332,7 +458,7 @@ const CoursePlayer = () => {
             <p className="text-xs text-muted-foreground">{course.category}</p>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-3">
           <div className="hidden lg:flex items-center gap-3">
             <span className="text-xs text-muted-foreground">Progress</span>
@@ -348,15 +474,15 @@ const CoursePlayer = () => {
 
       {/* Main Area */}
       <div className="flex-1 flex overflow-hidden relative">
-        
+
         {/* Mobile Sidebar Overlay */}
         {sidebarOpen && (
-          <div 
-            className="lg:hidden absolute inset-0 z-30 bg-background/80 backdrop-blur-sm" 
-            onClick={() => setSidebarOpen(false)} 
+          <div
+            className="lg:hidden absolute inset-0 z-30 bg-background/80 backdrop-blur-sm"
+            onClick={() => setSidebarOpen(false)}
           />
         )}
-        
+
         {/* Sidebar */}
         <aside className={`${sidebarOpen ? "w-80 border-r" : "w-0 border-transparent"} bg-card flex flex-col transition-all duration-300 overflow-hidden absolute lg:relative z-40 h-full`}>
           <div className="p-4 border-b shrink-0 flex items-center justify-between">
@@ -370,10 +496,10 @@ const CoursePlayer = () => {
               {lessons.map((lesson, idx) => {
                 const isActive = activeLesson?.id === lesson.id;
                 const isCompleted = completedLessons.has(lesson.id);
-                // Locked by sequence
-                const isLockedBySequence = idx > 0 && !completedLessons.has(lessons[idx - 1].id);
-                // Locked by pace (3 lessons per day)
-                const isLockedByPace = idx >= maxAllowedLessons;
+                // Locked by sequence (admins bypass this)
+                const isLockedBySequence = !isAdmin && idx > 0 && !completedLessons.has(lessons[idx - 1].id);
+                // Locked by pace (3 lessons per day - admins bypass this)
+                const isLockedByPace = !isAdmin && idx >= maxAllowedLessons;
                 const isLocked = isLockedBySequence || isLockedByPace;
 
                 return (
@@ -384,13 +510,12 @@ const CoursePlayer = () => {
                       setActiveLesson(lesson);
                       if (window.innerWidth < 1024) setSidebarOpen(false);
                     }}
-                    className={`w-full flex items-start gap-3 p-3 rounded-lg text-left transition-all ${
-                      isActive 
-                        ? "bg-primary/10 border border-primary/20" 
-                        : isLocked
+                    className={`w-full flex items-start gap-3 p-3 rounded-lg text-left transition-all ${isActive
+                      ? "bg-primary/10 border border-primary/20"
+                      : isLocked
                         ? "opacity-40 cursor-not-allowed"
                         : "hover:bg-muted text-muted-foreground hover:text-foreground"
-                    }`}
+                      }`}
                   >
                     <div className="mt-0.5 shrink-0">
                       {isCompleted ? (
@@ -417,9 +542,9 @@ const CoursePlayer = () => {
                         </span>
                         {lesson.quiz_data && <Badge variant="secondary" className="text-[9px] py-0 px-1.5">Quiz</Badge>}
                         {isLockedByPace ? (
-                           <Badge variant="outline" className="text-[9px] py-0 px-1.5 border-amber-500/30 text-amber-500 bg-amber-500/10">Locked: Day {Math.floor(idx / 3) + 1}</Badge>
+                          <Badge variant="outline" className="text-[9px] py-0 px-1.5 border-amber-500/30 text-amber-500 bg-amber-500/10">Locked: Day {Math.floor(idx / 3) + 1}</Badge>
                         ) : isLockedBySequence ? (
-                           <Badge variant="secondary" className="text-[9px] py-0 px-1.5">Locked</Badge>
+                          <Badge variant="secondary" className="text-[9px] py-0 px-1.5">Locked</Badge>
                         ) : null}
                       </div>
                     </div>
@@ -432,10 +557,10 @@ const CoursePlayer = () => {
 
         {/* Content Area */}
         <main className="flex-1 flex flex-col overflow-hidden relative">
-          
+
           {!sidebarOpen && (
-            <Button 
-              size="icon" variant="secondary" 
+            <Button
+              size="icon" variant="secondary"
               className="absolute top-4 left-4 z-40 rounded-full shadow-lg"
               onClick={() => setSidebarOpen(true)}
             >
@@ -469,7 +594,7 @@ const CoursePlayer = () => {
           {/* Module Content */}
           <ScrollArea className="flex-1">
             <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8">
-              
+
 
 
               {/* Lesson Info */}
@@ -488,8 +613,8 @@ const CoursePlayer = () => {
                         Back to Lesson
                       </Button>
                     ) : (
-                      <Button 
-                        size="sm" 
+                      <Button
+                        size="sm"
                         onClick={() => (activeLesson?.quiz_data) ? setShowQuiz(true) : handleMarkComplete()}
                       >
                         {(activeLesson?.quiz_data) ? (
@@ -504,13 +629,36 @@ const CoursePlayer = () => {
 
                 {/* Module Body */}
                 {showQuiz && activeLesson?.quiz_data ? (
-                  <QuizModule 
-                    quizData={activeLesson.quiz_data} 
+                  <QuizModule
+                    quizData={activeLesson.quiz_data}
                     onPass={() => {
                       setShowQuiz(false);
                       handleMarkComplete();
-                    }} 
+                    }}
                   />
+                ) : activeLesson?.type === 'video' && activeLesson?.url ? (
+                  <div className="space-y-6">
+                    {/* Video Player */}
+                    <div className="aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-2xl border border-border">
+                      <iframe
+                        src={activeLesson.url.replace('watch?v=', 'embed/')}
+                        title={activeLesson.title}
+                        className="w-full h-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+
+                    {/* Course Notes */}
+                    {activeLesson.content && (
+                      <div className="mt-8 space-y-6">
+                        <h3 className="text-xl font-bold border-b pb-3">Course Notes</h3>
+                        <div className="prose prose-zinc dark:prose-invert max-w-none">
+                          {renderLessonContent(activeLesson.content)}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 ) : activeLesson?.type === 'article' ? (
                   <ArticleModule content={activeLesson.content || ""} readTime={activeLesson.duration_minutes || 5} />
                 ) : activeLesson?.type === 'toolkit' ? (
@@ -544,7 +692,7 @@ const CoursePlayer = () => {
                         if (trimmedLine.startsWith('- ')) {
                           return (
                             <li key={i} className="text-muted-foreground ml-4 my-2 flex items-start gap-3 group">
-                              <div className="size-1.5 rounded-full bg-primary/60 shrink-0 mt-2 group-hover:bg-primary transition-colors" /> 
+                              <div className="size-1.5 rounded-full bg-primary/60 shrink-0 mt-2 group-hover:bg-primary transition-colors" />
                               <span dangerouslySetInnerHTML={{ __html: trimmedLine.replace('- ', '').replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground">$1</strong>') }} />
                             </li>
                           );
@@ -553,13 +701,13 @@ const CoursePlayer = () => {
                           return <div key={i} className="h-4" />;
                         }
                         return (
-                          <p 
-                            key={i} 
-                            className="text-muted-foreground leading-relaxed my-4" 
-                            dangerouslySetInnerHTML={{ __html: line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground font-semibold">$1</strong>') }} 
+                          <p
+                            key={i}
+                            className="text-muted-foreground leading-relaxed my-4"
+                            dangerouslySetInnerHTML={{ __html: line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground font-semibold">$1</strong>') }}
                           />
                         );
-                    })}
+                      })}
                   </div>
                 ) : (
                   <div className="py-16 text-center border rounded-xl bg-muted/20 border-dashed">
@@ -567,10 +715,10 @@ const CoursePlayer = () => {
                     <p className="text-sm text-muted-foreground">This personnel curriculum module is currently being finalized.</p>
                   </div>
                 )}
-                
+
                 {/* Module Nav */}
                 <div className="flex items-center justify-between pt-8 border-t mt-8">
-                  <Button 
+                  <Button
                     variant="ghost" className="gap-2 group"
                     disabled={lessons.findIndex(l => l.id === activeLesson?.id) === 0}
                     onClick={() => {
@@ -580,7 +728,7 @@ const CoursePlayer = () => {
                   >
                     <ChevronLeftIcon className="size-4" /> Previous
                   </Button>
-                  <Button 
+                  <Button
                     variant="ghost" className="gap-2 group"
                     disabled={lessons.findIndex(l => l.id === activeLesson?.id) === lessons.length - 1}
                     onClick={() => {
@@ -616,7 +764,7 @@ const QuizModule = ({ quizData, onPass }: { quizData: any, onPass: () => void })
     if (selectedAnswer === questions[currentQuestion].correctAnswer) {
       setScore(s => s + 1);
     }
-    
+
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(c => c + 1);
       setSelectedAnswer(null);
@@ -626,7 +774,7 @@ const QuizModule = ({ quizData, onPass }: { quizData: any, onPass: () => void })
   };
 
   const passThreshold = 0.8;
-  const finalScore = finished 
+  const finalScore = finished
     ? score / questions.length
     : (score + (selectedAnswer === questions[currentQuestion]?.correctAnswer ? 1 : 0)) / questions.length;
   const passed = finalScore >= passThreshold;
@@ -673,8 +821,8 @@ const QuizModule = ({ quizData, onPass }: { quizData: any, onPass: () => void })
           <CardTitle className="text-lg md:text-xl font-bold leading-tight">{questions[currentQuestion].question}</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
-          <RadioGroup 
-            value={selectedAnswer?.toString()} 
+          <RadioGroup
+            value={selectedAnswer?.toString()}
             onValueChange={(v) => setSelectedAnswer(parseInt(v))}
             className="grid gap-3"
           >
@@ -693,8 +841,8 @@ const QuizModule = ({ quizData, onPass }: { quizData: any, onPass: () => void })
           </RadioGroup>
         </CardContent>
         <CardFooter className="bg-muted/30 p-4 border-t flex justify-end">
-          <Button 
-            disabled={selectedAnswer === null} 
+          <Button
+            disabled={selectedAnswer === null}
             onClick={handleNext}
           >
             {currentQuestion < questions.length - 1 ? "Next Question" : "See Results"}

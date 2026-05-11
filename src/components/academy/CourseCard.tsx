@@ -1,9 +1,7 @@
-import React from "react";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { 
-  Clock as ClockIcon, 
+import {
+  Clock as ClockIcon,
   ArrowRight as ArrowRightIcon,
   PlayCircle as PlayCircleIcon,
   CheckCircle2 as CheckCircle2Icon,
@@ -12,6 +10,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 
 // Cohort launch gate — lessons unlock on this date
 const COHORT_START = new Date("2026-05-12T00:00:00");
@@ -19,16 +18,25 @@ const COHORT_START = new Date("2026-05-12T00:00:00");
 interface CourseCardProps {
   course: any;
   enrollment?: any;
-  isEnrolling?: boolean;
   onEnroll?: () => void;
   onOpen?: () => void;
-  onViewDetails?: () => void;
 }
 
-const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewDetails }: CourseCardProps) => {
-  const isEnrolled = !!enrollment;
+const CourseCard = ({ course, enrollment, onEnroll, onOpen }: CourseCardProps) => {
+  const { isAdmin } = useAuth();
+  const isEnrolled = !!enrollment || isAdmin; // Admins are treated as enrolled
   const progress = enrollment?.progress || 0;
-  const isLocked = isEnrolled && new Date() < COHORT_START;
+  const isLocked = isEnrolled && !isAdmin && new Date() < COHORT_START; // Admins bypass cohort lock
+
+  // DEBUG: Log admin status (remove after testing)
+  console.log(`[CourseCard] ${course.title}:`, {
+    isAdmin,
+    isEnrolled,
+    isLocked,
+    hasEnrollment: !!enrollment,
+    cohortStart: COHORT_START,
+    now: new Date()
+  });
 
   const handleCardClick = () => {
     if (isLocked) {
@@ -38,7 +46,12 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
       });
       return;
     }
-    isEnrolled ? onOpen?.() : onViewDetails?.();
+    // If enrolled, open the course; otherwise, trigger enrollment
+    if (isEnrolled) {
+      onOpen?.();
+    } else {
+      onEnroll?.();
+    }
   };
 
   return (
@@ -50,19 +63,19 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
       transition={{ duration: 0.3, ease: "easeOut" }}
       className="h-full flex"
     >
-      <Card 
+      <Card
         className="w-full flex flex-col overflow-hidden border-border/50 hover:border-primary/30 hover:shadow-xl transition-all duration-300 cursor-pointer group bg-card"
         onClick={handleCardClick}
       >
         {/* Top Image Section */}
         <div className="relative aspect-video w-full overflow-hidden bg-muted shrink-0">
-          <img 
-            src={course.image_url || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800"} 
-            alt={course.title} 
+          <img
+            src={course.image_url || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800"}
+            alt={course.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
-          
+
           <div className="absolute top-3 left-3 flex flex-wrap gap-2">
             <Badge variant="secondary" className="bg-background/90 hover:bg-background backdrop-blur-sm text-foreground text-[10px] font-semibold border-none shadow-sm">
               {course.category}
@@ -82,12 +95,23 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
               {course.title}
             </h3>
             <div className="flex items-center gap-4 text-xs text-muted-foreground font-medium">
-               <div className="flex items-center gap-1.5">
-                   <ClockIcon className="size-3.5" />
-                   <span>{course.duration || "4 Weeks (Self-Paced)"}</span>
-               </div>
-               <div className="size-1 rounded-full bg-border" />
-               <span>6 Modules</span>
+              <div className="flex items-center gap-1.5">
+                <ClockIcon className="size-3.5" />
+                <span>{course.duration || "4 Weeks (Self-Paced)"}</span>
+              </div>
+              <div className="size-1 rounded-full bg-border" />
+              <span>
+                {(() => {
+                  // Count total modules from lessons structure
+                  if (course.lessons && Array.isArray(course.lessons)) {
+                    const totalModules = course.lessons.reduce((count: number, week: any) => {
+                      return count + (week.modules?.length || 0);
+                    }, 0);
+                    return `${totalModules} ${totalModules === 1 ? 'Module' : 'Modules'}`;
+                  }
+                  return '6 Modules'; // Fallback
+                })()}
+              </span>
             </div>
           </div>
 
@@ -104,10 +128,10 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
                 <span className="text-primary">{progress}%</span>
               </div>
               <div className="h-2 w-full bg-secondary/50 rounded-full overflow-hidden">
-                <motion.div 
+                <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
-                  className="h-full bg-primary" 
+                  className="h-full bg-primary"
                 />
               </div>
             </div>
@@ -123,14 +147,13 @@ const CourseCard = ({ course, enrollment, isEnrolling, onEnroll, onOpen, onViewD
               </span>
             ) : (
               <span className="text-sm font-semibold text-foreground">
-                {isEnrolled ? "Continue Learning" : "View Details"}
+                {isEnrolled ? "Continue Learning" : "Enroll Now"}
               </span>
             )}
-            <div className={`size-8 rounded-full flex items-center justify-center transition-colors ${
-              isLocked 
-                ? 'bg-amber-500/10 text-amber-500' 
-                : 'bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground'
-            }`}>
+            <div className={`size-8 rounded-full flex items-center justify-center transition-colors ${isLocked
+              ? 'bg-amber-500/10 text-amber-500'
+              : 'bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground'
+              }`}>
               {isLocked ? <LockIcon className="size-4" /> : isEnrolled ? <PlayCircleIcon className="size-4" /> : <ArrowRightIcon className="size-4" />}
             </div>
           </div>

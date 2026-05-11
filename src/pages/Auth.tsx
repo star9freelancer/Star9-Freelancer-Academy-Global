@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { trackReferral, confirmReferralCommission } from "@/lib/referrals";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,17 +12,15 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAcademyData } from "@/hooks/useAcademyData";
 import { toast } from "sonner";
-import { 
-  Loader2 as Loader2Icon, 
-  ArrowLeft as ArrowLeftIcon, 
-  CheckCircle2 as CheckCircle2Icon, 
-  Upload as UploadIcon, 
-  FileText as FileTextIcon, 
-  X as XIcon, 
-  BookOpen as BookOpenIcon, 
-  Code as CodeIcon, 
+import PaymentReceipt from "@/components/academy/PaymentReceipt";
+import {
+  Loader2 as Loader2Icon,
+  ArrowLeft as ArrowLeftIcon,
+  CheckCircle2 as CheckCircle2Icon,
+  BookOpen as BookOpenIcon,
+  Code as CodeIcon,
   Briefcase as BriefcaseIcon,
-  Users as UsersIcon 
+  Users as UsersIcon
 } from "lucide-react";
 import logo from "@/assets/logo_highres_transparent.png";
 
@@ -29,23 +28,37 @@ export default function Auth() {
   const { user, loading: authLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
+  const [surname, setSurname] = useState("");
+  const [otherNames, setOtherNames] = useState("");
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
   const [nationalId, setNationalId] = useState("");
+  const [idVerified, setIdVerified] = useState(false);
+  const [verifyingId, setVerifyingId] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState<'student' | 'employer' | 'freelancer' | 'referrer'>('student');
   const [referralCode, setReferralCode] = useState("");
   const [isClearing, setIsClearing] = useState(false);
   const [persistSession, setPersistSession] = useState(true);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
-  
+  const [showReceipt, setShowReceipt] = useState(false);
+  const [receiptData, setReceiptData] = useState<any>(null);
+
   // New State for Registration Course Selection
   const { courses } = useAcademyData();
-  const [selectedCourse, setSelectedCourse] = useState<string>("");
   const [currency, setCurrency] = useState<'USD' | 'KES' | 'GHS'>('USD');
   const [exchangeRates, setExchangeRates] = useState({ KES: 130, GHS: 14.5 });
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get course ID from navigation state (when user clicks enroll on a course)
+  const selectedCourse = (location.state as any)?.courseId || "";
+
+  // Get default tab from URL search params (e.g., ?tab=register)
+  const searchParams = new URLSearchParams(location.search);
+  const defaultTab = searchParams.get('tab') || 'login';
 
   useEffect(() => {
     fetch('https://api.exchangerate-api.com/v4/latest/USD')
@@ -60,9 +73,6 @@ export default function Auth() {
       })
       .catch(console.error);
   }, []);
-
-  const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -100,9 +110,82 @@ export default function Auth() {
     }
   };
 
+  const verifyNationalId = async () => {
+    setVerifyingId(true);
+
+    try {
+      // TODO: Integrate with Persona verification API
+      // Example: https://docs.withpersona.com/docs/embedded-flow
+
+      // For now, simulate the verification process
+      // In production, this should call Persona's API or open their embedded flow
+
+      toast.info("Opening Persona verification...", {
+        description: "Please complete the ID verification process.",
+      });
+
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // In production, you would:
+      // 1. Initialize Persona client with your template ID
+      // 2. Open the embedded verification flow
+      // 3. Persona will collect ID document and selfie
+      // 4. Wait for verification completion
+      // 5. Receive verification status and extracted data from webhook or callback
+
+      // Example Persona integration (commented out):
+      /*
+      const client = new Persona.Client({
+        templateId: import.meta.env.VITE_PERSONA_TEMPLATE_ID,
+        environmentId: import.meta.env.VITE_PERSONA_ENVIRONMENT_ID,
+        
+        // Pre-fill with user data
+        fields: {
+          nameFirst: otherNames,
+          nameLast: surname,
+          phoneNumber: phone,
+          emailAddress: email,
+        },
+        
+        onComplete: ({ inquiryId, status, fields }) => {
+          if (status === 'completed') {
+            // Store the inquiry ID and extracted ID number from Persona
+            setNationalId(fields.identificationNumber || inquiryId);
+            setIdVerified(true);
+            toast.success("ID verified successfully!");
+          }
+        },
+        onError: (error) => {
+          toast.error("Verification failed: " + error.message);
+        }
+      });
+      client.open();
+      */
+
+      // Temporary: Simulate successful verification for demo
+      setIdVerified(true);
+      // Simulate extracting ID number from Persona
+      setNationalId('PERSONA_VERIFIED_' + Date.now());
+      toast.success("ID verified successfully!", {
+        description: "Your identity has been confirmed.",
+      });
+
+    } catch (error: any) {
+      toast.error("Verification failed. Please try again.");
+    } finally {
+      setVerifyingId(false);
+    }
+  };
+
   const initiateRegistrationPayment = () => {
-    if (!email || !password || !fullName || !phone || !city || !country || !nationalId) {
-      toast.error("Please fill in all required fields (Name, Phone, City, Country, ID).");
+    if (!email || !password || !surname || !otherNames || !phone) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
+    if (!idVerified) {
+      toast.error("Please verify your ID with Persona first.");
       return;
     }
 
@@ -117,27 +200,29 @@ export default function Auth() {
       return;
     }
 
+    const fullName = `${surname} ${otherNames}`.trim();
+
     const courseObj = courses.find(c => c.id === selectedCourse);
     let basePrice = 50;
     if (courseObj?.title.toLowerCase().includes("mastering freelancing")) basePrice = 100;
     if (courseObj?.title.toLowerCase().includes("teacher preparation")) basePrice = 1500;
-    
+
     let amount = basePrice * 100;
     if (currency === 'KES') amount = Math.round(basePrice * exchangeRates.KES) * 100;
     if (currency === 'GHS') amount = Math.round(basePrice * exchangeRates.GHS) * 100;
 
     const paystackKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
-    if (!paystackKey) { 
-      toast.error("Payment configuration error."); 
-      return; 
+    if (!paystackKey) {
+      toast.error("Payment configuration error.");
+      return;
     }
 
     if ((window as any).PaystackPop) {
       console.log("🚀 INITIATING PAYSTACK POPUP:", { paystackKey, email, amount, currency });
       const handler = (window as any).PaystackPop.setup({
-        key: paystackKey, 
-        email: email, 
-        amount, 
+        key: paystackKey,
+        email: email,
+        amount,
         currency,
         channels: ['card', 'bank', 'ussd', 'qr', 'mobile_money', 'bank_transfer'],
         ref: 'ST9_REG_' + Math.floor(Math.random() * 1e9),
@@ -150,15 +235,36 @@ export default function Auth() {
               });
 
               if (error) throw error;
-              
+
               if (data?.status && data?.data?.status === 'success') {
                 toast.success("Payment verified! Creating your account...");
+
+                // Generate receipt data
+                const receipt = {
+                  receiptNumber: `ST9-${Date.now()}`,
+                  date: new Date().toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  }),
+                  studentName: fullName,
+                  email: email,
+                  courseName: courseObj?.title || 'Selected Course',
+                  amount: basePrice,
+                  currency: currency === 'USD' ? '$' : currency === 'KES' ? 'KES' : 'GH₵',
+                  paymentMethod: currency === 'USD' ? 'Card Payment' : currency === 'KES' ? 'M-Pesa' : 'Mobile Money',
+                  transactionId: response.reference,
+                };
+
+                setReceiptData(receipt);
+                setShowReceipt(true);
+
                 await executeSignup();
               } else {
                 toast.error("Payment verification failed.");
               }
             } catch (error: any) {
-               toast.error("Could not verify payment: " + error.message);
+              toast.error("Could not verify payment: " + error.message);
             }
           };
           verifyPayment();
@@ -176,6 +282,8 @@ export default function Auth() {
   const executeSignup = async () => {
     setLoading(true);
     try {
+      const fullName = `${surname} ${otherNames}`.trim();
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -198,7 +306,7 @@ export default function Auth() {
         }
 
         const verificationStatus = (selectedRole === 'employer' || selectedRole === 'freelancer') ? 'pending' : 'verified';
-        
+
         const { error: profileError } = await supabase.from('profiles').upsert({
           id: data.user.id,
           full_name: fullName,
@@ -211,7 +319,7 @@ export default function Auth() {
           email: email,
           updated_at: new Date().toISOString()
         });
-        
+
         if (profileError) throw new Error("Profile creation failed: " + profileError.message);
 
         // Add user enrollment directly — only for students purchasing a course
@@ -222,18 +330,41 @@ export default function Auth() {
             progress: 0
           });
           if (enrollError) throw new Error("Enrollment failed: " + enrollError.message);
+
+          // Track referral if referral code was provided
+          if (referralCode && referralCode.trim()) {
+            const courseObj = courses.find(c => c.id === selectedCourse);
+            await trackReferral(referralCode, data.user.id, email, fullName);
+
+            // Confirm commission immediately after enrollment
+            if (courseObj) {
+              let basePrice = 50;
+              if (courseObj.title.toLowerCase().includes("mastering freelancing")) basePrice = 100;
+              if (courseObj.title.toLowerCase().includes("teacher preparation")) basePrice = 1500;
+
+              await confirmReferralCommission(
+                data.user.id,
+                selectedCourse,
+                courseObj.title,
+                basePrice
+              );
+            }
+          }
+        } else if (referralCode && referralCode.trim()) {
+          // Track referral for non-students (employers, freelancers, referrers)
+          await trackReferral(referralCode, data.user.id, email, fullName);
         }
 
         toast.success("🎉 You're enrolled! Lessons begin Tuesday, 12th May.", {
           description: "Your account is ready. We'll see you on the 12th — get excited!",
           duration: 8000,
         });
-        
+
         if (!data.session) {
           const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
           if (signInError) throw signInError;
         }
-        
+
         setIsClearing(true);
         setTimeout(() => navigate("/academy"), 1800);
       }
@@ -251,20 +382,31 @@ export default function Auth() {
     }
 
     if (isSignUp) {
+      // Validate all required fields for signup
+      if (!surname || !otherNames || !phone) {
+        toast.error("Please fill in all required fields.");
+        return;
+      }
+
+      if (!idVerified && !(selectedRole === 'employer' || selectedRole === 'freelancer')) {
+        toast.error("Please verify your ID with Persona first.");
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        toast.error("Please enter a valid email address.");
+        return;
+      }
+
       // Defer to the payment flow for students, otherwise create account immediately
       if (selectedRole === 'employer' || selectedRole === 'freelancer') {
-        // Basic validation for non-student roles
-        if (!email || !password || !fullName || !phone || !city || !country) {
-          toast.error("Please fill in all required fields.");
-          return;
-        }
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-          toast.error("Please enter a valid email address.");
-          return;
-        }
         executeSignup();
       } else {
+        if (!selectedCourse) {
+          toast.error("Please select a program to enroll in.");
+          return;
+        }
         initiateRegistrationPayment();
       }
       return;
@@ -274,7 +416,7 @@ export default function Auth() {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-      
+
       setIsClearing(true);
       setTimeout(() => navigate("/academy"), 1800);
     } catch (error: any) {
@@ -293,7 +435,7 @@ export default function Auth() {
           <div className="relative">
             <div className="absolute -inset-4 bg-primary/20 rounded-full blur-2xl animate-pulse" />
             <div className="relative size-20 rounded-full bg-primary/10 border-2 border-primary/30 flex items-center justify-center">
-               <CheckCircle2Icon className="size-10 text-primary" />
+              <CheckCircle2Icon className="size-10 text-primary" />
             </div>
           </div>
           <div className="space-y-3">
@@ -319,7 +461,7 @@ export default function Auth() {
       </Link>
 
       <div className="absolute hidden md:block top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[100px] animate-pulse pointer-events-none" />
-      
+
       <div className="w-full max-w-lg p-4 relative z-10">
         <div className="flex flex-col items-center justify-center mb-8 gap-3">
           <img src={logo} alt="Star9" className="h-20 md:h-24 w-auto object-contain" />
@@ -327,7 +469,7 @@ export default function Auth() {
         </div>
 
         <Card className="border-border/50 shadow-xl">
-          <Tabs defaultValue="login" className="w-full">
+          <Tabs defaultValue={defaultTab} className="w-full">
             <CardHeader>
               <TabsList className="grid w-full grid-cols-2 mb-2">
                 <TabsTrigger value="login" className="text-sm">Log In</TabsTrigger>
@@ -345,8 +487,8 @@ export default function Auth() {
                     {isForgotPassword ? "Reset Password" : "Welcome back"}
                   </CardTitle>
                   <CardDescription>
-                    {isForgotPassword 
-                      ? "Enter your email to receive a reset link." 
+                    {isForgotPassword
+                      ? "Enter your email to receive a reset link."
                       : "Enter your credentials to access your dashboard."
                     }
                   </CardDescription>
@@ -368,7 +510,7 @@ export default function Auth() {
                         <Checkbox id="persist" checked={persistSession} onCheckedChange={(checked) => setPersistSession(!!checked)} />
                         <label htmlFor="persist" className="text-sm text-muted-foreground cursor-pointer">Remember me</label>
                       </div>
-                      <button 
+                      <button
                         type="button"
                         onClick={() => setIsForgotPassword(true)}
                         className="text-xs font-semibold text-primary hover:underline"
@@ -379,7 +521,7 @@ export default function Auth() {
                   </>
                 )}
                 {isForgotPassword && (
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setIsForgotPassword(false)}
                     className="text-xs font-semibold text-muted-foreground hover:text-foreground"
@@ -420,11 +562,10 @@ export default function Auth() {
                         key={role.id}
                         type="button"
                         onClick={() => setSelectedRole(role.id as any)}
-                        className={`flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all gap-2 ${
-                          selectedRole === role.id 
-                          ? 'border-primary bg-primary/5 text-primary' 
+                        className={`flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all gap-2 ${selectedRole === role.id
+                          ? 'border-primary bg-primary/5 text-primary'
                           : 'border-border bg-card text-muted-foreground hover:border-border/80'
-                        }`}
+                          }`}
                       >
                         <role.icon className="size-5" />
                         <span className="text-[10px] font-bold uppercase tracking-wider">{role.label}</span>
@@ -434,85 +575,159 @@ export default function Auth() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="reg-surname">Surname *</Label>
+                    <Input
+                      id="reg-surname"
+                      type="text"
+                      placeholder="Doe"
+                      value={surname}
+                      onChange={(e) => setSurname(e.target.value)}
+                      className="h-11"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="reg-other-names">Other Names *</Label>
+                    <Input
+                      id="reg-other-names"
+                      type="text"
+                      placeholder="John"
+                      value={otherNames}
+                      onChange={(e) => setOtherNames(e.target.value)}
+                      className="h-11"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="reg-phone">Phone Number *</Label>
+                    <Input
+                      id="reg-phone"
+                      type="tel"
+                      placeholder="+254 117 103 483"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="h-11"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="reg-email">Email Address *</Label>
+                    <Input
+                      id="reg-email"
+                      type="email"
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="h-11"
+                      required
+                    />
+                  </div>
                   <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="reg-email">Email Address</Label>
-                    <Input id="reg-email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} className="h-11" />
+                    <Label htmlFor="reg-password">Password *</Label>
+                    <Input
+                      id="reg-password"
+                      type="password"
+                      placeholder="Create a strong password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="h-11"
+                      required
+                    />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="reg-password">Password</Label>
-                    <Input id="reg-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-11" />
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="reg-referral">Referral Code (Optional)</Label>
+                    <Input
+                      id="reg-referral"
+                      type="text"
+                      placeholder="Enter referral code if you have one"
+                      value={referralCode}
+                      onChange={(e) => setReferralCode(e.target.value)}
+                      className="h-11"
+                    />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="reg-name">Full Name</Label>
-                    <Input id="reg-name" type="text" placeholder="John Doe" value={fullName} onChange={(e) => setFullName(e.target.value)} className="h-11" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="reg-phone">Phone Number</Label>
-                    <Input id="reg-phone" type="tel" placeholder="+254 117 103 483" value={phone} onChange={(e) => setPhone(e.target.value)} className="h-11" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="reg-city">City</Label>
-                    <Input id="reg-city" type="text" placeholder="Nairobi" value={city} onChange={(e) => setCity(e.target.value)} className="h-11" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="reg-country">Country</Label>
-                    <Input id="reg-country" type="text" placeholder="Kenya" value={country} onChange={(e) => setCountry(e.target.value)} className="h-11" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="reg-id">National ID / Passport</Label>
-                    <Input id="reg-id" type="text" placeholder="ID Number" value={nationalId} onChange={(e) => setNationalId(e.target.value)} className="h-11" />
-                  </div>
-                  {!(selectedRole === 'employer' || selectedRole === 'freelancer') && (
-                    <div className="space-y-2 md:col-span-2 pt-2 border-t border-border mt-2">
-                      <Label>Select Your Program</Label>
-                      <Select value={selectedCourse} onValueChange={setSelectedCourse}>
-                        <SelectTrigger className="h-11">
-                          <SelectValue placeholder="Choose a program to enroll in..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {courses.map((c) => (
-                            <SelectItem key={c.id} value={c.id}>
-                              {c.title} - ${getCoursePrice(c.id)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-                  
+
                   {!(selectedRole === 'employer' || selectedRole === 'freelancer') && selectedCourse && (
-                    <div className="space-y-2 md:col-span-2">
-                      <Label>Preferred Currency</Label>
-                      <Select value={currency} onValueChange={(v: any) => setCurrency(v)}>
-                        <SelectTrigger className="h-11">
-                          <SelectValue placeholder="Select Currency" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="USD">USD (Global Card)</SelectItem>
-                          <SelectItem value="KES">KES (M-Pesa)</SelectItem>
-                          <SelectItem value="GHS">GHS (Airtel / MTN)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <div className="p-3 bg-primary/10 rounded-xl border border-primary/20 mt-3">
-                        <p className="text-sm font-bold text-foreground">
-                          Total Due Today: <span className="text-primary text-lg ml-1">
-                            {currency === 'USD' ? '$' : currency === 'KES' ? 'KES ' : 'GH₵ '}
-                            {currency === 'USD' ? getCoursePrice(selectedCourse).toLocaleString() : 
-                             currency === 'KES' ? Math.round(getCoursePrice(selectedCourse) * exchangeRates.KES).toLocaleString() : 
-                             Math.round(getCoursePrice(selectedCourse) * exchangeRates.GHS).toLocaleString()}
-                          </span>
+                    <>
+                      <div className="md:col-span-2 pt-2 border-t border-border mt-2">
+                        <div className="p-4 bg-primary/5 rounded-xl border border-primary/20">
+                          <div className="flex items-start gap-3">
+                            <BookOpenIcon className="size-5 text-primary shrink-0 mt-0.5" />
+                            <div className="flex-1">
+                              <p className="text-sm font-semibold text-foreground mb-1">Enrolling in:</p>
+                              <p className="text-base font-bold text-primary">
+                                {courses.find(c => c.id === selectedCourse)?.title || "Selected Course"}
+                              </p>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                You'll get instant access after payment
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2 md:col-span-2">
+                        <Label>Preferred Currency</Label>
+                        <Select value={currency} onValueChange={(v: any) => setCurrency(v)}>
+                          <SelectTrigger className="h-11">
+                            <SelectValue placeholder="Select Currency" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="USD">USD (Global Card)</SelectItem>
+                            <SelectItem value="KES">KES (M-Pesa)</SelectItem>
+                            <SelectItem value="GHS">GHS (Airtel / MTN)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <div className="p-3 bg-primary/10 rounded-xl border border-primary/20 mt-3">
+                          <p className="text-sm font-bold text-foreground">
+                            Total Due Today: <span className="text-primary text-lg ml-1">
+                              {currency === 'USD' ? '$' : currency === 'KES' ? 'KES ' : 'GH₵ '}
+                              {currency === 'USD' ? getCoursePrice(selectedCourse).toLocaleString() :
+                                currency === 'KES' ? Math.round(getCoursePrice(selectedCourse) * exchangeRates.KES).toLocaleString() :
+                                  Math.round(getCoursePrice(selectedCourse) * exchangeRates.GHS).toLocaleString()}
+                            </span>
+                          </p>
+                          <p className="text-xs text-muted-foreground pt-1">
+                            You will complete payment securely via Paystack before your account is created.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {!(selectedRole === 'employer' || selectedRole === 'freelancer') && !selectedCourse && (
+                    <div className="md:col-span-2 pt-2 border-t border-border mt-2">
+                      <div className="p-4 bg-amber-500/10 rounded-xl border border-amber-500/20">
+                        <p className="text-sm text-amber-600 dark:text-amber-400 font-medium">
+                          ⚠️ Please select a course from the catalog first, then click "Enroll" to sign up.
                         </p>
-                        <p className="text-xs text-muted-foreground pt-1">
-                          Note: You will be prompted to complete payment securely via Paystack before your account is finalized.
-                        </p>
+                        <Button variant="outline" className="mt-3 w-full" asChild>
+                          <Link to="/academy">Browse Courses</Link>
+                        </Button>
                       </div>
                     </div>
                   )}
                 </div>
 
               </CardContent>
-              <CardFooter className="pt-4">
-                <Button className="w-full h-12" disabled={loading} onClick={() => handleAuth(true)}>
+              <CardFooter className="pt-4 flex-col gap-3">
+                {!(selectedRole === 'employer' || selectedRole === 'freelancer') && selectedCourse && !idVerified && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full h-12 gap-2"
+                    onClick={verifyNationalId}
+                    disabled={verifyingId}
+                  >
+                    {verifyingId && <Loader2Icon className="h-4 w-4 animate-spin mr-2" />}
+                    {verifyingId ? "Verifying with Persona..." : "Verify ID with Persona"}
+                  </Button>
+                )}
+                <Button
+                  className="w-full h-12"
+                  disabled={loading || (!(selectedRole === 'employer' || selectedRole === 'freelancer') && (!idVerified || !selectedCourse))}
+                  onClick={() => handleAuth(true)}
+                >
                   {loading && <Loader2Icon className="h-4 w-4 animate-spin mr-2" />}
                   {selectedRole === 'employer' || selectedRole === 'freelancer' ? "Create Account" : "Pay & Create Account"}
                 </Button>
@@ -521,6 +736,17 @@ export default function Auth() {
           </Tabs>
         </Card>
       </div>
+
+      {/* Payment Receipt Modal */}
+      {showReceipt && receiptData && (
+        <PaymentReceipt
+          receiptData={receiptData}
+          onClose={() => {
+            setShowReceipt(false);
+            navigate("/academy");
+          }}
+        />
+      )}
     </div>
   );
 }

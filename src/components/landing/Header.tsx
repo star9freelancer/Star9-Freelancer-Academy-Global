@@ -1,46 +1,34 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { 
-  Moon as MoonIcon, 
-  Sun as SunIcon, 
-  Menu as MenuIcon, 
-  X as XIcon, 
-  LayoutDashboard as LayoutDashboardIcon, 
-  Home as HomeIcon, 
-  BookOpen as BookOpenIcon, 
-  Globe as GlobeIcon, 
-  Users as UsersIcon, 
-  Sparkles as SparklesIcon 
+import {
+  Menu as MenuIcon,
+  X as XIcon,
+  Home as HomeIcon,
+  BookOpen as BookOpenIcon,
+  Globe as GlobeIcon,
+  Sparkles as SparklesIcon,
+  ChevronDown as ChevronDownIcon,
+  Users as UsersIcon,
+  Link as LinkIcon,
+  Phone as PhoneIcon,
+  Info as InfoIcon,
+  Briefcase as BriefcaseIcon,
+  Award as AwardIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import logo from "@/assets/logo_highres_transparent.png";
-import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
 import { getStoredTheme, applyTheme } from "@/lib/theme";
 
 const Header = () => {
-  const [scrolled, setScrolled] = useState(false);
-  const [user, setUser] = useState<any>(null);
-  const [dark, setDark] = useState(() => getStoredTheme());
+  const [dark] = useState(() => getStoredTheme());
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      subscription.unsubscribe();
-    };
-  }, []);
 
   useEffect(() => {
     applyTheme(dark);
@@ -50,7 +38,30 @@ const Header = () => {
     { label: "Home", href: "/", icon: HomeIcon },
     { label: "Academy", href: "/academy", icon: BookOpenIcon },
     { label: "Global", href: "/global", icon: GlobeIcon },
+    { label: "Referrals", href: "/referrals", icon: UsersIcon },
+    { label: "Contact", href: "/contact", icon: PhoneIcon },
+  ];
+
+  const moreLinks = [
     { label: "Support", href: "/support", icon: SparklesIcon },
+    { label: "Careers", href: "/academy?tab=careers", icon: BriefcaseIcon },
+    { label: "Social", href: "/academy?tab=community", icon: UsersIcon },
+    { label: "Credentials", href: "/academy?tab=certificates", icon: AwardIcon },
+    { label: "About", href: "/about", icon: InfoIcon },
+    { label: "Terms", href: "/terms", icon: LinkIcon },
+    { label: "Privacy", href: "/privacy", icon: LinkIcon },
+  ];
+
+  const mobileMoreLinks = [
+    { label: "Referrals", href: "/referrals", icon: UsersIcon },
+    { label: "Contact", href: "/contact", icon: PhoneIcon },
+    { label: "Support", href: "/support", icon: SparklesIcon },
+    { label: "Careers", href: "/academy?tab=careers", icon: BriefcaseIcon },
+    { label: "Social", href: "/academy?tab=community", icon: UsersIcon },
+    { label: "Credentials", href: "/academy?tab=certificates", icon: AwardIcon },
+    { label: "About", href: "/about", icon: InfoIcon },
+    { label: "Terms", href: "/terms", icon: LinkIcon },
+    { label: "Privacy", href: "/privacy", icon: LinkIcon },
   ];
 
   return (
@@ -59,66 +70,63 @@ const Header = () => {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", damping: 20, stiffness: 100 }}
-        className={`flex items-center gap-2 md:gap-3 px-4 py-2.5 rounded-full backdrop-blur-xl border shadow-lg max-w-full transition-all duration-300 ${
-          scrolled
-            ? "bg-background/80 border-border"
-            : "bg-background/40 border-border/50"
-        }`}
+        className="flex items-center gap-2 md:gap-3 px-6 py-1.5 max-w-full transition-all duration-300 bg-white rounded-full shadow-lg border border-gray-100"
       >
         {/* Logo */}
-        <Link to="/" className="p-2 rounded-full hover:bg-accent transition-colors shrink-0 flex items-center gap-3">
+        <Link to="/" className="p-1 rounded-full hover:opacity-80 transition-opacity shrink-0">
           <img src={logo} alt="Star9 Freelancer" className="h-16 sm:h-20 w-auto object-contain" />
-          <span className="font-bold text-lg md:text-xl tracking-tight hidden sm:block">Star9 Freelancer</span>
         </Link>
 
-        <div className="h-6 w-px bg-border mx-1 shrink-0 hidden md:block" />
+        <div className="h-6 w-px bg-gray-200 mx-2 shrink-0 hidden md:block" />
 
         {/* Nav Links */}
         <div className="hidden md:flex items-center gap-1">
           {navLinks.map((l) => (
-            <Button key={l.label} variant="ghost" size="sm" className="text-sm font-medium rounded-full gap-2 px-4 text-muted-foreground hover:text-foreground hover:bg-accent shrink-0" asChild>
+            <Button key={l.label} variant="ghost" size="sm" className="text-sm font-medium rounded-full gap-2 px-4 text-primary hover:text-primary hover:bg-primary/10 shrink-0" asChild>
               <Link to={l.href}>
-                <l.icon className="size-4 opacity-50" />
+                <l.icon className="size-4 opacity-70" />
                 {l.label}
               </Link>
             </Button>
           ))}
+
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-all text-primary hover:bg-primary/10 outline-none shrink-0">
+              More <ChevronDownIcon className="size-3" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48 rounded-2xl p-2 mt-2">
+              {moreLinks.map((link) => (
+                <DropdownMenuItem key={link.label} asChild className="rounded-xl gap-2 p-3 cursor-pointer">
+                  <Link to={link.href}>
+                    <link.icon className="size-4" /> {link.label}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
-        <div className="h-6 w-px bg-border mx-1 shrink-0 hidden md:block" />
-
-        {/* Right side */}
-        <div className="hidden md:flex items-center gap-2">
-          {/* Theme Toggle */}
-          <button 
-            onClick={() => setDark(!dark)}
-            className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-accent transition-all"
-            title={dark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-          >
-            {dark ? <SunIcon className="size-4" /> : <MoonIcon className="size-4" />}
-          </button>
-          {user ? (
-            <Button size="sm" className="gap-2 rounded-full bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/20 brightness-110" asChild>
-              <Link to="/academy">
-                <LayoutDashboardIcon className="size-3.5" />
-                Academy
-              </Link>
-            </Button>
-          ) : (
-            <>
-              <Button variant="ghost" size="sm" className="rounded-full text-white/50 hover:text-white" asChild>
-                <Link to="/auth">Log In</Link>
-              </Button>
-              <Button size="sm" className="rounded-full bg-white text-black hover:bg-zinc-200" asChild>
-                <Link to="/auth">Start Now</Link>
-              </Button>
-            </>
-          )}
+        {/* Mobile More Button */}
+        <div className="md:hidden flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition-all text-primary hover:bg-primary/10 outline-none shrink-0">
+              More <ChevronDownIcon className="size-3" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 rounded-2xl p-2 mt-2">
+              {mobileMoreLinks.map((link) => (
+                <DropdownMenuItem key={link.label} asChild className="rounded-xl gap-2 p-3 cursor-pointer">
+                  <Link to={link.href}>
+                    <link.icon className="size-4" /> {link.label}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Mobile toggle */}
-        <button 
-          className="md:hidden p-2 rounded-full bg-accent text-foreground" 
+        <button
+          className="md:hidden p-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -129,7 +137,7 @@ const Header = () => {
       {/* Premium Mobile Overlay */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -138,7 +146,6 @@ const Header = () => {
             <div className="space-y-4">
               <div className="flex items-center gap-3 mb-8 pb-8 border-b border-border/50">
                 <img src={logo} alt="Star9 Freelancer" className="h-16 w-auto object-contain" />
-                <span className="font-bold text-xl tracking-tight">Star9 Freelancer</span>
               </div>
               <p className="text-[10px] font-mono uppercase tracking-[0.5em] text-muted-foreground/30 mb-8">Navigation Menu</p>
               {navLinks.map((l, i) => (
@@ -158,24 +165,29 @@ const Header = () => {
                   </Link>
                 </motion.div>
               ))}
+
+              <p className="text-[10px] font-mono uppercase tracking-[0.5em] text-muted-foreground/30 mb-4 mt-8">More</p>
+              {mobileMoreLinks.map((l, i) => (
+                <motion.div
+                  key={l.label}
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: (navLinks.length + i) * 0.1 }}
+                >
+                  <Link
+                    to={l.href}
+                    className="flex items-center justify-between py-3 border-b border-border text-lg font-semibold text-foreground hover:text-primary transition-colors"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {l.label}
+                    <l.icon className="size-5 text-primary opacity-50" />
+                  </Link>
+                </motion.div>
+              ))}
             </div>
 
-            <div className="mt-auto space-y-4">
-               {user ? (
-                 <Button className="w-full h-14 rounded-2xl text-lg font-bold bg-primary text-white" asChild onClick={() => setMobileOpen(false)}>
-                   <Link to="/academy">Go to Dashboard</Link>
-                 </Button>
-               ) : (
-                 <div className="grid grid-cols-2 gap-4">
-                   <Button variant="outline" className="h-14 rounded-2xl border-white/10 text-white" asChild onClick={() => setMobileOpen(false)}>
-                     <Link to="/auth">Log In</Link>
-                   </Button>
-                   <Button className="h-14 rounded-2xl bg-white text-black font-bold" asChild onClick={() => setMobileOpen(false)}>
-                     <Link to="/auth">Join Now</Link>
-                   </Button>
-                 </div>
-               )}
-               <p className="text-center text-[10px] font-mono text-white/20 uppercase tracking-widest pt-4">&copy; {new Date().getFullYear()} Star9 Freelancer</p>
+            <div className="mt-auto">
+              <p className="text-center text-[10px] font-mono text-white/20 uppercase tracking-widest pt-4">&copy; {new Date().getFullYear()} Star9 Freelancer</p>
             </div>
           </motion.div>
         )}

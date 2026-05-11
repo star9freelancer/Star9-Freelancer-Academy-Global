@@ -10,49 +10,65 @@
     --font-mono: 'JetBrains Mono', monospace;
 
     --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
+    --foreground: 217 100% 34%;
+    /* Star9 Blue for text */
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 217 100% 34%;
+    /* Star9 Blue for card text */
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 217 100% 34%;
+    /* Star9 Blue for popover text */
 
-    --primary: 213 73% 39%; /* #1B5DAB */
+    --primary: 217 100% 34%;
+    /* #0047AB - Star9 Blue */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 33 93% 54%; /* #F7941D */
+    --secondary: 33 100% 50%;
+    /* #FF8C00 - Star9 Orange */
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 0 0% 98%;
+    --muted-foreground: 217 80% 45%;
+    /* Lighter blue for muted text */
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 33 100% 97%;
+    /* Very light orange background */
+    --accent-foreground: 217 100% 34%;
+    /* Star9 Blue for accent text */
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 213 73% 39%;
+    --border: 217 50% 90%;
+    /* Light blue borders */
+    --input: 0 0% 100%;
+    /* White input backgrounds */
+    --ring: 217 100% 34%;
+    /* Star9 Blue for focus rings */
 
     --radius: 0.3rem;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 213 73% 39%;
+    --sidebar-background: 0 0% 100%;
+    /* White sidebar */
+    --sidebar-foreground: 217 100% 34%;
+    /* Star9 Blue text */
+    --sidebar-primary: 217 100% 34%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 213 73% 39%;
+    --sidebar-accent: 33 100% 97%;
+    /* Light orange accent */
+    --sidebar-accent-foreground: 217 100% 34%;
+    /* Star9 Blue */
+    --sidebar-border: 217 50% 90%;
+    /* Light blue borders */
+    --sidebar-ring: 217 100% 34%;
 
     /* Custom tokens */
     --glass-bg: 0 0% 100% / 0.7;
     --shadow-card: 0 4px 24px -4px hsl(222 47% 11% / 0.1);
     --shadow-card-hover: 0 12px 32px -8px hsl(222 47% 11% / 0.15);
-    --gradient-hero: linear-gradient(135deg, hsl(213 73% 39%) 0%, hsl(33 93% 54%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(217 100% 34%) 0%, hsl(33 100% 50%) 100%);
   }
 
   .dark {
@@ -65,38 +81,40 @@
     --popover: 222 25% 11%;
     --popover-foreground: 210 20% 92%;
 
-    --primary: 213 73% 39%;
+    --primary: 217 100% 45%;
+    /* Lighter blue for dark mode */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 33 93% 54%;
+    --secondary: 33 100% 55%;
+    /* Lighter orange for dark mode */
     --secondary-foreground: 0 0% 100%;
 
     --muted: 222 20% 16%;
     --muted-foreground: 220 10% 60%;
 
-    --accent: 213 30% 18%;
-    --accent-foreground: 213 73% 70%;
+    --accent: 217 50% 20%;
+    --accent-foreground: 217 100% 70%;
 
     --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 222 20% 18%;
     --input: 222 20% 18%;
-    --ring: 213 73% 55%;
+    --ring: 217 100% 55%;
 
     --sidebar-background: 222 25% 10%;
     --sidebar-foreground: 210 20% 92%;
-    --sidebar-primary: 213 73% 55%;
+    --sidebar-primary: 217 100% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 213 30% 18%;
-    --sidebar-accent-foreground: 213 73% 70%;
+    --sidebar-accent: 217 50% 20%;
+    --sidebar-accent-foreground: 217 100% 70%;
     --sidebar-border: 222 20% 18%;
-    --sidebar-ring: 213 73% 55%;
+    --sidebar-ring: 217 100% 55%;
 
     --glass-bg: 222 25% 11% / 0.7;
     --shadow-card: 0 4px 24px -4px hsl(0 0% 0% / 0.3);
     --shadow-card-hover: 0 12px 32px -8px hsl(0 0% 0% / 0.5);
-    --gradient-hero: linear-gradient(135deg, hsl(213 73% 25%) 0%, hsl(213 73% 15%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(217 100% 25%) 0%, hsl(33 100% 40%) 100%);
   }
 }
 
@@ -117,11 +135,11 @@
 
 @layer utilities {
   .glass {
-    @apply bg-zinc-950/40 backdrop-blur-3xl border border-white/5;
+    @apply bg-white/90 backdrop-blur-3xl border border-primary/10;
   }
 
   .glass-light {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10;
+    @apply bg-white/95 backdrop-blur-xl border border-primary/20;
   }
 
   .shadow-glow-primary {
@@ -133,8 +151,12 @@
   }
 
   .text-gradient-primary {
-    @apply bg-gradient-to-r from-primary via-emerald-400 to-primary bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent;
     background-size: 200% auto;
+  }
+
+  .text-gradient-brand {
+    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
   }
 }
 
@@ -149,22 +171,38 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-zinc-800 rounded-full hover:bg-zinc-700 transition-colors;
+  @apply bg-primary/30 rounded-full hover:bg-primary/50 transition-colors;
 }
 
 /* Base Styles */
 ::selection {
-  @apply bg-primary/30 text-white;
+  @apply bg-secondary/30 text-primary;
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 @keyframes pulse-glow {
-  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(var(--primary), 0.4); }
-  50% { opacity: 0.8; transform: scale(0.95); box-shadow: 0 0 20px 10px rgba(var(--primary), 0); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(var(--primary), 0.4);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(0.95);
+    box-shadow: 0 0 20px 10px rgba(var(--primary), 0);
+  }
 }
 
 .animate-shimmer {
@@ -174,4 +212,3 @@
 .animate-pulse-glow {
   animation: pulse-glow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
-
