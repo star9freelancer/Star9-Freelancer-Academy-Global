@@ -264,32 +264,33 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
 
       {/* Your Referral Link - Show if user is logged in and has profile */}
       {user && profile && (
-        <div className="p-6 rounded-2xl border border-primary/20 bg-primary/5 space-y-4">
+        <div className="p-4 md:p-6 rounded-2xl border border-primary/20 bg-primary/5 space-y-4">
           <div className="flex items-center gap-2">
             <LinkIcon className="size-5 text-primary" />
-            <h3 className="font-semibold text-foreground">Your Referral Link</h3>
+            <h3 className="font-semibold text-foreground text-sm md:text-base">Your Referral Link</h3>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex-1 px-4 py-3 rounded-xl bg-background border border-border font-mono text-sm text-muted-foreground overflow-x-auto whitespace-nowrap">
-              {referralLink}
+          <div className="flex flex-col gap-3">
+            <div className="flex-1 px-3 md:px-4 py-2 md:py-3 rounded-xl bg-background border border-border font-mono text-xs md:text-sm text-muted-foreground overflow-x-auto">
+              <span className="whitespace-nowrap">{referralLink}</span>
             </div>
             <div className="flex gap-2">
               <Button
                 variant="outline"
-                className="gap-2 shrink-0"
+                className="gap-2 flex-1 md:flex-none"
                 onClick={copyLink}
               >
                 {copied ? <CheckIcon className="size-4 text-emerald-400" /> : <CopyIcon className="size-4" />}
-                {copied ? "Copied!" : "Copy"}
+                <span className="text-sm">{copied ? "Copied!" : "Copy"}</span>
               </Button>
-              <Button className="gap-2 shrink-0" onClick={shareLink}>
-                <Share2Icon className="size-4" /> Share
+              <Button className="gap-2 flex-1 md:flex-none" onClick={shareLink}>
+                <Share2Icon className="size-4" />
+                <span className="text-sm">Share</span>
               </Button>
             </div>
           </div>
           <p className="text-xs text-muted-foreground">
             Your referral code: <span className="font-mono font-semibold text-primary">{referralCode}</span>.
-            Commissions are confirmed after the referred student completes payment.
+            <span className="hidden sm:inline"> Commissions are confirmed after the referred student completes payment.</span>
           </p>
         </div>
       )}
@@ -297,30 +298,30 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
       {/* Stat Cards - Show if user is logged in and has profile */}
       {user && profile && (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {statCards.map((s, i) => (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+            {statCards.map((s) => (
               <div
                 key={s.label}
-                className="p-5 rounded-2xl border border-border bg-card space-y-3"
+                className="p-4 md:p-5 rounded-xl md:rounded-2xl border border-border bg-card space-y-2 md:space-y-3"
               >
-                <div className={`size-9 rounded-xl ${s.bg} flex items-center justify-center`}>
-                  <s.icon className={`size-4 ${s.color}`} />
+                <div className={`size-8 md:size-9 rounded-lg md:rounded-xl ${s.bg} flex items-center justify-center`}>
+                  <s.icon className={`size-3.5 md:size-4 ${s.color}`} />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-foreground">
+                  <p className="text-xl md:text-2xl font-bold text-foreground">
                     {s.prefix ?? ""}{loading ? "--" : s.value}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{s.label}</p>
+                  <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">{s.label}</p>
                 </div>
               </div>
             ))}
           </div>
 
           {/* Withdrawal Section - Always show */}
-          <div className="flex flex-col items-center gap-4 p-6 rounded-2xl border border-border bg-card">
+          <div className="flex flex-col items-center gap-4 p-4 md:p-6 rounded-xl md:rounded-2xl border border-border bg-card">
             <div className="text-center">
-              <p className="text-sm text-muted-foreground mb-2">Available for Withdrawal</p>
-              <p className="text-3xl font-bold text-emerald-600">
+              <p className="text-xs md:text-sm text-muted-foreground mb-2">Available for Withdrawal</p>
+              <p className="text-2xl md:text-3xl font-bold text-emerald-600">
                 ${(referrerInfo?.available_balance || stats.pending_earnings || 0).toFixed(2)}
               </p>
             </div>
@@ -328,7 +329,7 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
               size="lg"
               onClick={() => setShowWithdrawal(true)}
               disabled={(referrerInfo?.available_balance || stats.pending_earnings || 0) < 10}
-              className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 md:px-8 w-full md:w-auto disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
             >
               <DownloadIcon className="size-4" />
               {(referrerInfo?.available_balance || stats.pending_earnings || 0) >= 10
@@ -336,7 +337,7 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
                 : "Minimum $10 Required"}
             </Button>
             {(referrerInfo?.available_balance || stats.pending_earnings || 0) < 10 && (
-              <p className="text-xs text-muted-foreground text-center">
+              <p className="text-xs text-muted-foreground text-center px-4">
                 You need at least $10 in earnings to request a withdrawal
               </p>
             )}
@@ -346,18 +347,18 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
 
       {/* Commission Guide */}
       <div className="space-y-3">
-        <h3 className="font-semibold text-foreground">Commission Rates</h3>
-        <div className="grid sm:grid-cols-3 gap-4">
+        <h3 className="font-semibold text-foreground text-sm md:text-base">Commission Rates</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
           {commissionGuide.map((c, i) => (
-            <div key={i} className={`p-4 rounded-xl border ${c.color} space-y-2`}>
-              <p className="text-sm font-semibold text-foreground">{c.course}</p>
+            <div key={i} className={`p-3 md:p-4 rounded-lg md:rounded-xl border ${c.color} space-y-2`}>
+              <p className="text-xs md:text-sm font-semibold text-foreground">{c.course}</p>
               <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Course price</span>
-                <span className="text-sm font-bold text-foreground">{c.price}</span>
+                <span className="text-[10px] md:text-xs text-muted-foreground">Course price</span>
+                <span className="text-xs md:text-sm font-bold text-foreground">{c.price}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Your commission</span>
-                <span className={`text-sm font-bold`}>{c.commission}</span>
+                <span className="text-[10px] md:text-xs text-muted-foreground">Your commission</span>
+                <span className={`text-xs md:text-sm font-bold`}>{c.commission}</span>
               </div>
             </div>
           ))}
@@ -390,26 +391,50 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
               </Button>
             </div>
           ) : (
-            <div className="rounded-2xl border border-border overflow-hidden">
-              <div className="grid grid-cols-4 gap-4 px-5 py-3 bg-muted/40 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                <span>Referred</span>
-                <span>Course</span>
-                <span>Commission</span>
-                <span>Status</span>
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden md:block rounded-2xl border border-border overflow-hidden">
+                <div className="grid grid-cols-4 gap-4 px-5 py-3 bg-muted/40 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  <span>Referred</span>
+                  <span>Course</span>
+                  <span>Commission</span>
+                  <span>Status</span>
+                </div>
+                <div className="divide-y divide-border">
+                  {stats.referrals.map((r) => (
+                    <div key={r.id} className="grid grid-cols-4 gap-4 px-5 py-4 items-center hover:bg-muted/20 transition-colors">
+                      <span className="text-sm text-foreground font-medium truncate">{r.referred_email}</span>
+                      <span className="text-sm text-muted-foreground truncate">{r.course_name}</span>
+                      <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">${r.commission}</span>
+                      <Badge className={`text-xs border w-fit ${statusColor[r.status]}`}>
+                        {r.status.charAt(0).toUpperCase() + r.status.slice(1)}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="divide-y divide-border">
-                {stats.referrals.map((r, i) => (
-                  <div key={r.id} className="grid grid-cols-4 gap-4 px-5 py-4 items-center hover:bg-muted/20 transition-colors">
-                    <span className="text-sm text-foreground font-medium truncate">{r.referred_email}</span>
-                    <span className="text-sm text-muted-foreground truncate">{r.course_name}</span>
-                    <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">${r.commission}</span>
-                    <Badge className={`text-xs border w-fit ${statusColor[r.status]}`}>
-                      {r.status.charAt(0).toUpperCase() + r.status.slice(1)}
-                    </Badge>
+
+              {/* Mobile Card View */}
+              <div className="md:hidden space-y-3">
+                {stats.referrals.map((r) => (
+                  <div key={r.id} className="p-4 rounded-xl border border-border bg-card space-y-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-foreground truncate">{r.referred_email}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{r.course_name}</p>
+                      </div>
+                      <Badge className={`text-xs border shrink-0 ${statusColor[r.status]}`}>
+                        {r.status.charAt(0).toUpperCase() + r.status.slice(1)}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between pt-2 border-t border-border">
+                      <span className="text-xs text-muted-foreground">Commission</span>
+                      <span className="text-sm font-bold text-emerald-600">${r.commission}</span>
+                    </div>
                   </div>
                 ))}
               </div>
-            </div>
+            </>
           )}
         </div>
       )}
