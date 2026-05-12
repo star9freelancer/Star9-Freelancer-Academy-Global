@@ -68,13 +68,20 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
   const [withdrawalAmount, setWithdrawalAmount] = useState("");
   const [withdrawing, setWithdrawing] = useState(false);
 
-  const referralCode = referrerInfo?.referral_code || "XXXXXXXX";
+  const referralCode = profile?.referral_code || referrerInfo?.referral_code || "XXXXXXXX";
   const referralLink = `${window.location.origin}/auth?tab=register&ref=${referralCode}`;
 
   useEffect(() => {
     if (!user?.id) return;
+
+    // If we have profile with referral_code, we know they're a referrer
+    if (profile?.referral_code) {
+      setIsReferrer(true);
+      setReferrerInfo(profile);
+    }
+
     fetchStats();
-  }, [user?.id]);
+  }, [user?.id, profile]);
 
   const fetchStats = async () => {
     setLoading(true);

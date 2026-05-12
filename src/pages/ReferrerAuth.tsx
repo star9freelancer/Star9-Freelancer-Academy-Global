@@ -123,11 +123,11 @@ export default function ReferrerAuth() {
 
             if (profileError) throw profileError;
 
-            // Create referrer record (without payment details)
+            // Create referrer record
             const { error: referrerError } = await supabase
                 .from("referrers")
                 .insert({
-                    referrer_profile_id: authData.user.id,
+                    user_id: authData.user.id,
                     referral_code: referralCode,
                     username: username,
                 });
