@@ -39,10 +39,7 @@ export const AcademyFooter = () => {
     <footer className="w-full mt-auto pt-10 pb-20 md:pb-8 border-t border-border px-6">
       <div className="max-w-full mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
         <div className="flex flex-col md:flex-row items-center gap-6">
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="Star9" className="h-16 w-auto opacity-80 object-contain" />
-            <span className="text-xs text-muted-foreground font-medium">Star9 Academy</span>
-          </div>
+          <img src={logo} alt="Star9" className="h-16 w-auto opacity-80 object-contain" />
 
           <div className="flex items-center gap-4">
             <a href="https://web.facebook.com/people/Star9-Freelancer/61572019842249/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
