@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { 
+import {
   Music2 as TikTokIcon,
   MessageCircle as WhatsAppIcon
 } from "lucide-react";
-import logo from "@/assets/logo_highres_transparent.png";
+import logo from "@/assets/Star9_Logo.png";
 
 const FacebookIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -62,7 +62,7 @@ export const AcademyFooter = () => {
             </a>
           </div>
         </div>
-        
+
         <div className="flex flex-col md:flex-row items-center gap-6">
           <div className="flex gap-4 text-xs text-muted-foreground">
             <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>

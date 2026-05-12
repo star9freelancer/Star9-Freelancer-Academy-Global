@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Loader2, ArrowLeft, Users } from "lucide-react";
-import logo from "@/assets/logo_highres_transparent.png";
+import logo from "@/assets/Star9_Logo.png";
 
 export default function ReferrerAuth() {
     const [email, setEmail] = useState("");

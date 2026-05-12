@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { 
+import {
   MessageCircle as WhatsAppIcon,
   Music2 as TikTokIcon
 } from "lucide-react";
-import logo from "@/assets/logo_highres_transparent.png";
+import logo from "@/assets/Star9_Logo.png";
 
 const FacebookIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -74,9 +74,9 @@ const Footer = () => (
 
       <div className="flex flex-col md:flex-row items-center justify-between gap-6">
         <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium text-muted-foreground">
-          <Link to="/about"   className="hover:text-primary transition-colors">About</Link>
+          <Link to="/about" className="hover:text-primary transition-colors">About</Link>
           <Link to="/academy" className="hover:text-primary transition-colors">Academy</Link>
-          <Link to="/global"  className="hover:text-primary transition-colors">Global</Link>
+          <Link to="/global" className="hover:text-primary transition-colors">Global</Link>
           <Link to="/contact" className="hover:text-primary transition-colors">Contact Page</Link>
           <a href="https://wa.me/254117103483" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-emerald-500 hover:text-emerald-400 font-bold transition-colors">
             <WhatsAppIcon className="size-4" /> WhatsApp
