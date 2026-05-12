@@ -3,10 +3,10 @@ import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import ReferralDashboard from "@/components/academy/ReferralDashboard";
-import Header from "@/components/landing/Header";
 import Footer from "@/components/landing/Footer";
 import { Button } from "@/components/ui/button";
 import { Loader2, LogOut } from "lucide-react";
+import logo from "@/assets/logo_highres_transparent.png";
 
 export default function ReferrerDashboard() {
     const [user, setUser] = useState<any>(null);
@@ -66,22 +66,40 @@ export default function ReferrerDashboard() {
 
     return (
         <div className="min-h-screen bg-background">
-            <Header />
+            {/* Custom Header with Logout */}
+            <header className="fixed top-0 left-0 right-0 z-50 flex justify-center p-4 md:p-5">
+                <nav className="flex items-center justify-between gap-2 md:gap-3 px-6 py-1.5 w-full max-w-7xl transition-all duration-300 bg-white rounded-full shadow-lg border border-gray-100">
+                    {/* Logo */}
+                    <Link to="/" className="p-1 rounded-full hover:opacity-80 transition-opacity shrink-0">
+                        <img src={logo} alt="Star9 Freelancer" className="h-16 sm:h-20 w-auto object-contain" />
+                    </Link>
 
-            <main className="pt-32 pb-20 px-6">
+                    <div className="h-6 w-px bg-gray-200 mx-2 shrink-0 hidden md:block" />
+
+                    {/* Title - Hidden on mobile */}
+                    <div className="hidden md:block flex-1">
+                        <h1 className="text-lg font-bold text-primary">Referrer Dashboard</h1>
+                    </div>
+
+                    {/* Logout Button */}
+                    <Button
+                        variant="outline"
+                        onClick={handleLogout}
+                        className="gap-2 rounded-full border-primary/20 hover:bg-primary/10 hover:text-primary"
+                        size="sm"
+                    >
+                        <LogOut className="size-4" />
+                        <span className="hidden sm:inline">Logout</span>
+                    </Button>
+                </nav>
+            </header>
+
+            <main className="pt-32 pb-20 px-4 md:px-6">
                 <div className="max-w-7xl mx-auto">
-                    {/* Header */}
-                    <div className="flex items-center justify-between mb-8">
-                        <div>
-                            <h1 className="text-3xl font-bold">Referrer Dashboard</h1>
-                            <p className="text-muted-foreground">
-                                Welcome back, {profile?.full_name}
-                            </p>
-                        </div>
-                        <Button variant="outline" onClick={handleLogout} className="gap-2">
-                            <LogOut className="size-4" />
-                            Logout
-                        </Button>
+                    {/* Welcome Message */}
+                    <div className="mb-8">
+                        <h2 className="text-2xl md:text-3xl font-bold">Welcome back, {profile?.full_name}</h2>
+                        <p className="text-muted-foreground mt-1">Manage your referrals and track your earnings</p>
                     </div>
 
                     {/* Referral Dashboard Component */}
