@@ -320,8 +320,8 @@ export default function ReferrerAuth() {
                                 </div>
 
                                 <div className="p-4 rounded-lg bg-primary/5 border border-primary/20 mt-4">
-                                    <p className="text-sm text-muted-foreground">
-                                        <strong className="text-foreground">Note:</strong> You can add your payment details later in settings when you're ready to withdraw earnings.
+                                    <p className="text-sm text-muted-foreground text-center">
+                                        Already have an account? <button type="button" onClick={() => document.querySelector('[value="login"]')?.dispatchEvent(new MouseEvent('click', { bubbles: true }))} className="text-primary font-semibold hover:underline">Log in here</button>
                                     </p>
                                 </div>
                             </CardContent>
