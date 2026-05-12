@@ -23,7 +23,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import logo from "@/assets/logo_highres_transparent.png";
+import logo from "@/assets/Star9_Logo.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { getStoredTheme, applyTheme } from "@/lib/theme";
 
