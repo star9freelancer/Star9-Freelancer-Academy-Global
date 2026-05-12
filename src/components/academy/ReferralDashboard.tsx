@@ -98,17 +98,18 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
         setIsReferrer(true);
         setReferrerInfo(profile);
 
-        // Try to fetch additional stats from referrers table
+        // Try to fetch additional stats from referrers table (optional enhancement)
         try {
           const result = await getReferrerDashboard(user.id);
 
-          if (result.success && result.isReferrer) {
+          if (result.success && result.isReferrer && result.referrer) {
+            // Only update if we got valid data
             setReferrerInfo(result.referrer);
             setStats({
               total_referrals: result.referrer.total_referrals || 0,
               pending_earnings: result.referrer.available_balance || 0,
               paid_earnings: result.referrer.total_withdrawn || 0,
-              referrals: result.referrals.map((r: any) => ({
+              referrals: (result.referrals || []).map((r: any) => ({
                 id: r.id,
                 referred_email: r.referred_email,
                 course_name: r.course_name || "Pending enrollment",
@@ -117,10 +118,19 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
                 created_at: r.created_at,
               })),
             });
+          } else {
+            // Use default stats if referrers table doesn't exist
+            console.log("Using default stats - referrers table not set up yet");
+            setStats({
+              total_referrals: 0,
+              pending_earnings: 0,
+              paid_earnings: 0,
+              referrals: [],
+            });
           }
-        } catch (err) {
-          console.warn("Could not fetch detailed stats, using defaults:", err);
-          // Use default stats if tables don't exist yet
+        } catch (err: any) {
+          // Silently handle errors - tables might not exist yet
+          console.log("Referrers table not available, using profile data only");
           setStats({
             total_referrals: 0,
             pending_earnings: 0,
@@ -132,11 +142,7 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
         setIsReferrer(false);
       }
     } catch (error: any) {
-      console.error("Error fetching stats:", error);
-      // Don't show error toast if it's just missing tables
-      if (!error.message?.includes("relation") && !error.message?.includes("does not exist")) {
-        toast.error("Failed to load referral data");
-      }
+      console.error("Error in fetchStats:", error);
     } finally {
       setLoading(false);
     }
