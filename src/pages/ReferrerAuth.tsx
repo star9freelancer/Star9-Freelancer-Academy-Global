@@ -7,10 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Loader2, ArrowLeft, Users, Shield } from "lucide-react";
+import { Loader2, ArrowLeft, Users } from "lucide-react";
 import logo from "@/assets/logo_highres_transparent.png";
-import ReCAPTCHA from "react-google-recaptcha";
-import { useEffect, useRef } from "react";
 
 export default function ReferrerAuth() {
     const [email, setEmail] = useState("");
@@ -20,25 +18,7 @@ export default function ReferrerAuth() {
     const [phone, setPhone] = useState("");
     const [loading, setLoading] = useState(false);
     const [isForgotPassword, setIsForgotPassword] = useState(false);
-    const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
-    const recaptchaRef = useRef<ReCAPTCHA>(null);
     const navigate = useNavigate();
-
-    const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY || "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"; // Test key
-
-    const handleRecaptchaChange = (token: string | null) => {
-        setRecaptchaToken(token);
-    };
-
-    const handleRecaptchaError = () => {
-        toast.error("reCAPTCHA verification failed. Please try again.");
-        setRecaptchaToken(null);
-    };
-
-    const handleRecaptchaExpired = () => {
-        toast.warning("reCAPTCHA expired. Please verify again.");
-        setRecaptchaToken(null);
-    };
 
     const handleForgotPassword = async () => {
         if (!email) {
@@ -66,19 +46,11 @@ export default function ReferrerAuth() {
             return;
         }
 
-        if (!recaptchaToken) {
-            toast.error("Please verify that you are not a robot.");
-            return;
-        }
-
         setLoading(true);
         try {
             const { data, error } = await supabase.auth.signInWithPassword({
                 email,
                 password,
-                options: {
-                    captchaToken: recaptchaToken,
-                }
             });
 
             if (error) throw error;
@@ -111,11 +83,6 @@ export default function ReferrerAuth() {
             return;
         }
 
-        if (!recaptchaToken) {
-            toast.error("Please verify that you are not a robot.");
-            return;
-        }
-
         setLoading(true);
         try {
             // Create auth user
@@ -127,7 +94,6 @@ export default function ReferrerAuth() {
                         user_type: "referrer",
                         full_name: fullName,
                     },
-                    captchaToken: recaptchaToken,
                 }
             });
 
@@ -260,23 +226,11 @@ export default function ReferrerAuth() {
                                         ← Back to Login
                                     </button>
                                 )}
-                                {!isForgotPassword && (
-                                    <div className="flex justify-center pt-2">
-                                        <ReCAPTCHA
-                                            ref={recaptchaRef}
-                                            sitekey={RECAPTCHA_SITE_KEY}
-                                            onChange={handleRecaptchaChange}
-                                            onErrored={handleRecaptchaError}
-                                            onExpired={handleRecaptchaExpired}
-                                            theme="light"
-                                        />
-                                    </div>
-                                )}
                             </CardContent>
                             <CardFooter className="flex flex-col gap-3">
                                 <Button
                                     className="w-full h-12"
-                                    disabled={loading || (!isForgotPassword && !recaptchaToken)}
+                                    disabled={loading}
                                     onClick={isForgotPassword ? handleForgotPassword : handleLogin}
                                 >
                                     {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
@@ -370,27 +324,11 @@ export default function ReferrerAuth() {
                                         <strong className="text-foreground">Note:</strong> You can add your payment details later in settings when you're ready to withdraw earnings.
                                     </p>
                                 </div>
-
-                                <div className="flex justify-center pt-2">
-                                    <ReCAPTCHA
-                                        ref={recaptchaRef}
-                                        sitekey={RECAPTCHA_SITE_KEY}
-                                        onChange={handleRecaptchaChange}
-                                        onErrored={handleRecaptchaError}
-                                        onExpired={handleRecaptchaExpired}
-                                        theme="light"
-                                    />
-                                </div>
-                                {!recaptchaToken && (
-                                    <p className="text-xs text-center text-muted-foreground">
-                                        Please complete the reCAPTCHA verification above
-                                    </p>
-                                )}
                             </CardContent>
                             <CardFooter>
                                 <Button
                                     className="w-full h-12"
-                                    disabled={loading || !recaptchaToken}
+                                    disabled={loading}
                                     onClick={handleSignup}
                                 >
                                     {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
