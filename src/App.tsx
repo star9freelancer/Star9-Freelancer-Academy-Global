@@ -127,8 +127,8 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <CookieConsent />
         <BrowserRouter>
+          <CookieConsent />
           <Routes>
             <Route path="/" element={<EnrollmentGate><Index /></EnrollmentGate>} />
             <Route path="/auth" element={<EnrollmentGate><Auth /></EnrollmentGate>} />
