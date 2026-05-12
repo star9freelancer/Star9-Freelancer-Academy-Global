@@ -278,24 +278,40 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
 
       {/* Stat Cards (Logged In Referrers Only) */}
       {user && isReferrer && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {statCards.map((s, i) => (
-            <div
-              key={s.label}
-              className="p-5 rounded-2xl border border-border bg-card space-y-3"
-            >
-              <div className={`size-9 rounded-xl ${s.bg} flex items-center justify-center`}>
-                <s.icon className={`size-4 ${s.color}`} />
+        <>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {statCards.map((s, i) => (
+              <div
+                key={s.label}
+                className="p-5 rounded-2xl border border-border bg-card space-y-3"
+              >
+                <div className={`size-9 rounded-xl ${s.bg} flex items-center justify-center`}>
+                  <s.icon className={`size-4 ${s.color}`} />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-foreground">
+                    {s.prefix ?? ""}{loading ? "--" : s.value}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{s.label}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-2xl font-bold text-foreground">
-                  {s.prefix ?? ""}{loading ? "--" : s.value}
-                </p>
-                <p className="text-xs text-muted-foreground mt-0.5">{s.label}</p>
-              </div>
+            ))}
+          </div>
+
+          {/* Withdrawal Button */}
+          {(referrerInfo?.available_balance || 0) >= 10 && (
+            <div className="flex justify-center">
+              <Button
+                size="lg"
+                onClick={() => setShowWithdrawal(true)}
+                className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8"
+              >
+                <DownloadIcon className="size-4" />
+                Withdraw ${referrerInfo?.available_balance?.toFixed(2)}
+              </Button>
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
 
       {/* Commission Guide */}
