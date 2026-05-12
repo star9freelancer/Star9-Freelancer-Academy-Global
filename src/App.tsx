@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import CookieConsent from "@/components/CookieConsent";
 import Index from "./pages/Index.tsx";
 import Academy from "./pages/Academy.tsx";
 import Global from "./pages/Global.tsx";
@@ -126,6 +127,7 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <CookieConsent />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<EnrollmentGate><Index /></EnrollmentGate>} />
