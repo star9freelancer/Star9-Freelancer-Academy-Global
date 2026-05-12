@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Loader2, ArrowLeft, Users, Shield } from "lucide-react";
 import logo from "@/assets/logo_highres_transparent.png";
 import ReCAPTCHA from "react-google-recaptcha";
+import { useEffect, useRef } from "react";
 
 export default function ReferrerAuth() {
     const [email, setEmail] = useState("");
@@ -20,12 +21,23 @@ export default function ReferrerAuth() {
     const [loading, setLoading] = useState(false);
     const [isForgotPassword, setIsForgotPassword] = useState(false);
     const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+    const recaptchaRef = useRef<ReCAPTCHA>(null);
     const navigate = useNavigate();
 
     const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY || "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"; // Test key
 
     const handleRecaptchaChange = (token: string | null) => {
         setRecaptchaToken(token);
+    };
+
+    const handleRecaptchaError = () => {
+        toast.error("reCAPTCHA verification failed. Please try again.");
+        setRecaptchaToken(null);
+    };
+
+    const handleRecaptchaExpired = () => {
+        toast.warning("reCAPTCHA expired. Please verify again.");
+        setRecaptchaToken(null);
     };
 
     const handleForgotPassword = async () => {
@@ -251,8 +263,11 @@ export default function ReferrerAuth() {
                                 {!isForgotPassword && (
                                     <div className="flex justify-center pt-2">
                                         <ReCAPTCHA
+                                            ref={recaptchaRef}
                                             sitekey={RECAPTCHA_SITE_KEY}
                                             onChange={handleRecaptchaChange}
+                                            onErrored={handleRecaptchaError}
+                                            onExpired={handleRecaptchaExpired}
                                             theme="light"
                                         />
                                     </div>
@@ -358,11 +373,19 @@ export default function ReferrerAuth() {
 
                                 <div className="flex justify-center pt-2">
                                     <ReCAPTCHA
+                                        ref={recaptchaRef}
                                         sitekey={RECAPTCHA_SITE_KEY}
                                         onChange={handleRecaptchaChange}
+                                        onErrored={handleRecaptchaError}
+                                        onExpired={handleRecaptchaExpired}
                                         theme="light"
                                     />
                                 </div>
+                                {!recaptchaToken && (
+                                    <p className="text-xs text-center text-muted-foreground">
+                                        Please complete the reCAPTCHA verification above
+                                    </p>
+                                )}
                             </CardContent>
                             <CardFooter>
                                 <Button
