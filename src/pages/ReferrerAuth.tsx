@@ -18,6 +18,7 @@ export default function ReferrerAuth() {
     const [phone, setPhone] = useState("");
     const [loading, setLoading] = useState(false);
     const [isForgotPassword, setIsForgotPassword] = useState(false);
+    const [activeTab, setActiveTab] = useState("login");
     const navigate = useNavigate();
 
     const handleForgotPassword = async () => {
@@ -169,7 +170,7 @@ export default function ReferrerAuth() {
                 </div>
 
                 <Card className="border-border/50 shadow-xl">
-                    <Tabs defaultValue="login" className="w-full">
+                    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                         <CardHeader>
                             <TabsList className="grid w-full grid-cols-2 mb-2">
                                 <TabsTrigger value="login" className="text-sm">Log In</TabsTrigger>
@@ -321,7 +322,14 @@ export default function ReferrerAuth() {
 
                                 <div className="p-4 rounded-lg bg-primary/5 border border-primary/20 mt-4">
                                     <p className="text-sm text-muted-foreground text-center">
-                                        Already have an account? <button type="button" onClick={() => document.querySelector('[value="login"]')?.dispatchEvent(new MouseEvent('click', { bubbles: true }))} className="text-primary font-semibold hover:underline">Log in here</button>
+                                        Already have an account?{" "}
+                                        <button
+                                            type="button"
+                                            onClick={() => setActiveTab("login")}
+                                            className="text-primary font-semibold hover:underline"
+                                        >
+                                            Sign in here
+                                        </button>
                                     </p>
                                 </div>
                             </CardContent>
