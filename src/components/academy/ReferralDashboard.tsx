@@ -86,34 +86,49 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
   const fetchStats = async () => {
     setLoading(true);
     try {
-      const result = await getReferrerDashboard(user.id);
-
-      if (result.success && result.isReferrer) {
+      // First check if user has referral_code in profile (simpler check)
+      if (profile?.referral_code) {
         setIsReferrer(true);
-        setReferrerInfo(result.referrer);
-        setStats({
-          total_referrals: result.referrer.total_referrals,
-          pending_earnings: result.referrer.available_balance,
-          paid_earnings: result.referrer.total_withdrawn,
-          referrals: result.referrals.map((r: any) => ({
-            id: r.id,
-            referred_email: r.referred_email,
-            course_name: r.course_name || "Pending enrollment",
-            commission: r.commission_amount || 0,
-            status: r.status,
-            created_at: r.created_at,
-          })),
-        });
+        setReferrerInfo(profile);
+
+        // Try to fetch additional stats from referrers table
+        try {
+          const result = await getReferrerDashboard(user.id);
+
+          if (result.success && result.isReferrer) {
+            setReferrerInfo(result.referrer);
+            setStats({
+              total_referrals: result.referrer.total_referrals || 0,
+              pending_earnings: result.referrer.available_balance || 0,
+              paid_earnings: result.referrer.total_withdrawn || 0,
+              referrals: result.referrals.map((r: any) => ({
+                id: r.id,
+                referred_email: r.referred_email,
+                course_name: r.course_name || "Pending enrollment",
+                commission: r.commission_amount || 0,
+                status: r.status,
+                created_at: r.created_at,
+              })),
+            });
+          }
+        } catch (err) {
+          console.warn("Could not fetch detailed stats, using defaults:", err);
+          // Use default stats if tables don't exist yet
+          setStats({
+            total_referrals: 0,
+            pending_earnings: 0,
+            paid_earnings: 0,
+            referrals: [],
+          });
+        }
       } else {
         setIsReferrer(false);
       }
     } catch (error: any) {
       console.error("Error fetching stats:", error);
-      // If tables don't exist, show setup message
-      if (error.message?.includes("relation") || error.message?.includes("does not exist")) {
-        toast.error("Referral system not set up", {
-          description: "Please contact admin to set up the referral database tables.",
-        });
+      // Don't show error toast if it's just missing tables
+      if (!error.message?.includes("relation") && !error.message?.includes("does not exist")) {
+        toast.error("Failed to load referral data");
       }
     } finally {
       setLoading(false);
@@ -139,20 +154,26 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
     }
 
     setWithdrawing(true);
-    const result = await requestWithdrawal(referrerInfo.id, amount);
 
-    if (result.success) {
-      toast.success("Withdrawal request submitted!", {
-        description: "Your request will be processed within 2-3 business days.",
-      });
-      setShowWithdrawal(false);
-      setWithdrawalAmount("");
-      fetchStats();
-    } else {
-      toast.error(result.error || "Failed to request withdrawal");
+    try {
+      const result = await requestWithdrawal(referrerInfo.id, amount);
+
+      if (result.success) {
+        toast.success("Withdrawal request submitted!", {
+          description: "Your request will be processed within 2-3 business days.",
+        });
+        setShowWithdrawal(false);
+        setWithdrawalAmount("");
+        fetchStats();
+      } else {
+        toast.error(result.error || "Failed to request withdrawal");
+      }
+    } catch (error: any) {
+      console.error("Withdrawal error:", error);
+      toast.error("Withdrawal system not available yet. Please contact support.");
+    } finally {
+      setWithdrawing(false);
     }
-
-    setWithdrawing(false);
   };
 
   const copyLink = async () => {
