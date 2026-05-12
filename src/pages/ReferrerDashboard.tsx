@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import ReferralDashboard from "@/components/academy/ReferralDashboard";
+import Header from "@/components/landing/Header";
 import Footer from "@/components/landing/Footer";
-import { Button } from "@/components/ui/button";
-import { Loader2, LogOut } from "lucide-react";
-import logo from "@/assets/logo_highres_transparent.png";
-import { motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
 
 export default function ReferrerDashboard() {
     const [user, setUser] = useState<any>(null);
@@ -67,38 +65,8 @@ export default function ReferrerDashboard() {
 
     return (
         <div className="min-h-screen bg-background">
-            {/* Animated Header matching home page design */}
-            <header className="fixed top-0 left-0 right-0 z-50 flex justify-center p-4 md:p-5">
-                <motion.nav
-                    initial={{ y: -100, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ type: "spring", damping: 20, stiffness: 100 }}
-                    className="flex items-center gap-2 md:gap-3 px-6 py-1.5 max-w-7xl w-full transition-all duration-300 bg-white rounded-full shadow-lg border border-gray-100"
-                >
-                    {/* Logo */}
-                    <Link to="/" className="p-1 rounded-full hover:opacity-80 transition-opacity shrink-0">
-                        <img src={logo} alt="Star9 Freelancer" className="h-16 sm:h-20 w-auto object-contain" />
-                    </Link>
-
-                    <div className="h-6 w-px bg-gray-200 mx-2 shrink-0 hidden md:block" />
-
-                    {/* Title - Hidden on mobile */}
-                    <div className="hidden md:flex flex-1 items-center">
-                        <span className="text-sm font-medium text-primary">Referrer Dashboard</span>
-                    </div>
-
-                    {/* Logout Button */}
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleLogout}
-                        className="gap-2 rounded-full text-sm font-medium text-primary hover:text-primary hover:bg-primary/10 shrink-0 px-4"
-                    >
-                        <LogOut className="size-4 opacity-70" />
-                        <span className="hidden sm:inline">Logout</span>
-                    </Button>
-                </motion.nav>
-            </header>
+            {/* Use the same Header component with logout */}
+            <Header onLogout={handleLogout} />
 
             <main className="pt-32 pb-20 px-4 md:px-6">
                 <div className="max-w-7xl mx-auto">

@@ -13,7 +13,8 @@ import {
   Phone as PhoneIcon,
   Info as InfoIcon,
   Briefcase as BriefcaseIcon,
-  Award as AwardIcon
+  Award as AwardIcon,
+  LogOut as LogOutIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +27,11 @@ import logo from "@/assets/logo_highres_transparent.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { getStoredTheme, applyTheme } from "@/lib/theme";
 
-const Header = () => {
+interface HeaderProps {
+  onLogout?: () => void;
+}
+
+const Header = ({ onLogout }: HeaderProps = {}) => {
   const [dark] = useState(() => getStoredTheme());
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -123,6 +128,18 @@ const Header = () => {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+
+        {/* Logout Button (Desktop & Mobile) */}
+        {onLogout && (
+          <button
+            onClick={onLogout}
+            className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors shrink-0"
+            aria-label="Logout"
+            title="Logout"
+          >
+            <LogOutIcon className="size-5" />
+          </button>
+        )}
 
         {/* Mobile toggle */}
         <button
