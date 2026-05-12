@@ -316,19 +316,31 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
             ))}
           </div>
 
-          {/* Withdrawal Button */}
-          {(referrerInfo?.available_balance || 0) >= 10 && (
-            <div className="flex justify-center">
-              <Button
-                size="lg"
-                onClick={() => setShowWithdrawal(true)}
-                className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8"
-              >
-                <DownloadIcon className="size-4" />
-                Withdraw ${referrerInfo?.available_balance?.toFixed(2)}
-              </Button>
+          {/* Withdrawal Section - Always show */}
+          <div className="flex flex-col items-center gap-4 p-6 rounded-2xl border border-border bg-card">
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground mb-2">Available for Withdrawal</p>
+              <p className="text-3xl font-bold text-emerald-600">
+                ${(referrerInfo?.available_balance || stats.pending_earnings || 0).toFixed(2)}
+              </p>
             </div>
-          )}
+            <Button
+              size="lg"
+              onClick={() => setShowWithdrawal(true)}
+              disabled={(referrerInfo?.available_balance || stats.pending_earnings || 0) < 10}
+              className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <DownloadIcon className="size-4" />
+              {(referrerInfo?.available_balance || stats.pending_earnings || 0) >= 10
+                ? "Withdraw Earnings"
+                : "Minimum $10 Required"}
+            </Button>
+            {(referrerInfo?.available_balance || stats.pending_earnings || 0) < 10 && (
+              <p className="text-xs text-muted-foreground text-center">
+                You need at least $10 in earnings to request a withdrawal
+              </p>
+            )}
+          </div>
         </>
       )}
 
