@@ -583,8 +583,13 @@ const CourseDashboard = () => {
     };
 
     const handleLessonClick = (lesson: any) => {
-        // Navigate to CoursePlayer instead of switching tabs
-        navigate(`/academy/course/${courseId}`);
+        setSelectedLesson(lesson);
+        setActiveTab("lesson");
+        setShowQuiz(false);
+        setQuizAnswers({});
+        setQuizSubmitted(false);
+        setQuizScore(0);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleMarkComplete = async () => {
