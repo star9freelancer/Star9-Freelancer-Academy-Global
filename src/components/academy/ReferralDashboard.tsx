@@ -74,10 +74,17 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
   useEffect(() => {
     if (!user?.id) return;
 
+    console.log("ReferralDashboard - User:", user?.id);
+    console.log("ReferralDashboard - Profile:", profile);
+    console.log("ReferralDashboard - Referral Code:", profile?.referral_code);
+
     // If we have profile with referral_code, we know they're a referrer
     if (profile?.referral_code) {
+      console.log("Setting isReferrer to true");
       setIsReferrer(true);
       setReferrerInfo(profile);
+    } else {
+      console.log("No referral code found in profile");
     }
 
     fetchStats();
@@ -245,25 +252,8 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
   return (
     <div className="space-y-8 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
 
-      {/* Header */}
-      {!user ? (
-        <div className="text-center space-y-4 py-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-[0.2em]">
-            Partner Programme
-          </div>
-          <h2 className="text-3xl md:text-4xl font-black italic tracking-tighter">
-            Become a <span className="text-primary italic">Star9</span> Partner
-          </h2>
-          <p className="text-muted-foreground text-sm max-w-md mx-auto leading-relaxed">
-            Join our global network of referrers and earn competitive commissions while helping others build their freelance careers.
-          </p>
-          <div className="pt-4">
-            <Button size="lg" className="rounded-2xl px-10 h-14 bg-primary text-white font-bold tracking-tight hover:bg-primary/90" asChild>
-              <Link to="/auth">Join as Partner <ArrowRightIcon className="size-4 ml-2" /></Link>
-            </Button>
-          </div>
-        </div>
-      ) : (
+      {/* Header - Always show for logged in users on referrer dashboard */}
+      {user && (
         <div>
           <h2 className="text-2xl font-bold text-foreground mb-1">Referral Programme</h2>
           <p className="text-muted-foreground">
@@ -272,8 +262,8 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
         </div>
       )}
 
-      {/* Your Referral Link (Logged In Referrers Only) */}
-      {user && isReferrer && (
+      {/* Your Referral Link - Show if user is logged in and has profile */}
+      {user && profile && (
         <div className="p-6 rounded-2xl border border-primary/20 bg-primary/5 space-y-4">
           <div className="flex items-center gap-2">
             <LinkIcon className="size-5 text-primary" />
@@ -304,8 +294,8 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
         </div>
       )}
 
-      {/* Stat Cards (Logged In Referrers Only) */}
-      {user && isReferrer && (
+      {/* Stat Cards - Show if user is logged in and has profile */}
+      {user && profile && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {statCards.map((s, i) => (
@@ -362,8 +352,8 @@ const ReferralDashboard = ({ user, profile }: ReferralDashboardProps) => {
         </div>
       </div>
 
-      {/* Referral History (Logged In Referrers Only) */}
-      {user && isReferrer && (
+      {/* Referral History - Show if user is logged in and has profile */}
+      {user && profile && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-foreground">Referral History</h3>
