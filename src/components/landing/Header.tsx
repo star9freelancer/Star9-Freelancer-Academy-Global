@@ -70,12 +70,12 @@ const Header = ({ onLogout }: HeaderProps = {}) => {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex justify-center p-4 md:p-5">
+    <header className="fixed top-0 left-0 right-0 z-50 flex justify-center p-2 md:p-5">
       <motion.nav
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", damping: 20, stiffness: 100 }}
-        className="flex items-center gap-2 md:gap-3 px-6 py-1.5 max-w-full transition-all duration-300 bg-white rounded-full shadow-lg border border-gray-100"
+        className="flex items-center gap-2 md:gap-3 px-4 py-1 md:px-6 md:py-1.5 max-w-full transition-all duration-300 bg-white rounded-full shadow-lg border border-gray-100"
       >
         {/* Logo */}
         <Link to="/" className="p-1 rounded-full hover:opacity-80 transition-opacity shrink-0">
