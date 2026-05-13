@@ -457,8 +457,8 @@ const CourseDashboard = () => {
                             // Table might not exist yet - use localStorage fallback
                             console.warn('user_lesson_progress table not found, using localStorage');
                             const localKey = `course_progress_${user.id}_${courseId}`;
-                            const localProgress = JSON.parse(localStorage.getItem(localKey) || '[]');
-                            const completed = new Set(localProgress);
+                            const localProgress = JSON.parse(localStorage.getItem(localKey) || '[]') as string[];
+                            const completed = new Set<string>(localProgress);
                             setCompletedLessons(completed);
                             const totalLessons = allLessons.length;
                             setProgress(totalLessons > 0 ? Math.round((completed.size / totalLessons) * 100) : 0);
@@ -472,8 +472,8 @@ const CourseDashboard = () => {
                         console.error('Error fetching progress:', progressErr);
                         // Fallback to localStorage
                         const localKey = `course_progress_${user.id}_${courseId}`;
-                        const localProgress = JSON.parse(localStorage.getItem(localKey) || '[]');
-                        setCompletedLessons(new Set(localProgress));
+                        const localProgress = JSON.parse(localStorage.getItem(localKey) || '[]') as string[];
+                        setCompletedLessons(new Set<string>(localProgress));
                     }
                 }
             } catch (error) {
