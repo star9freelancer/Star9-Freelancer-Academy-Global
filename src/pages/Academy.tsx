@@ -163,8 +163,8 @@ const Academy = () => {
       navigate('/auth?tab=register', { state: { courseId, from: '/academy' } });
       return;
     }
-    setEnrolling(courseId);
-    setPaymentModalOpen(true);
+    // If user is already logged in, redirect them to auth page to complete enrollment
+    navigate('/auth?tab=register', { state: { courseId, from: '/academy' } });
   };
 
   const handleOpenCourse = (courseId: string) => {
