@@ -48,6 +48,15 @@ const CourseDashboard = () => {
     // Get course from CURRICULUM_LEDGER via useAcademyData
     const course = courses.find(c => c.id === courseId);
 
+    // Debug logging
+    console.log('CourseDashboard Debug:', {
+        courseId,
+        coursesCount: courses.length,
+        courseIds: courses.map(c => c.id),
+        foundCourse: !!course,
+        courseModules: course?.modules?.length || 0
+    });
+
     // New structure: modules come from CURRICULUM_LEDGER
     const weeks = course?.modules || [];
 
@@ -427,13 +436,29 @@ const CourseDashboard = () => {
     // Fetch course data and progress
     useEffect(() => {
         const fetchCourseAndProgress = async () => {
-            if (!courseId || !course) {
+            console.log('fetchCourseAndProgress called:', { courseId, hasCourse: !!course, coursesLength: courses.length });
+
+            if (!courseId) {
+                console.log('No courseId, setting loading to false');
+                setLoading(false);
+                return;
+            }
+
+            // Wait for courses to load
+            if (courses.length === 0) {
+                console.log('Courses not loaded yet, waiting...');
+                return; // Don't set loading to false, keep waiting
+            }
+
+            if (!course) {
+                console.log('Course not found in CURRICULUM_LEDGER');
                 setLoading(false);
                 return;
             }
 
             try {
                 // Set course data from CURRICULUM_LEDGER
+                console.log('Setting course data:', { title: course.title, modulesCount: course.modules?.length });
                 setCourseData(course);
 
                 // Calculate progress if user is logged in
@@ -445,6 +470,8 @@ const CourseDashboard = () => {
                             allLessons.push(lesson);
                         });
                     });
+
+                    console.log('Total lessons found:', allLessons.length);
 
                     try {
                         const { data: progressData, error: progressError } = await supabase
@@ -485,7 +512,7 @@ const CourseDashboard = () => {
         };
 
         fetchCourseAndProgress();
-    }, [courseId, user, course]);
+    }, [courseId, user, course, courses.length]);
 
     const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
