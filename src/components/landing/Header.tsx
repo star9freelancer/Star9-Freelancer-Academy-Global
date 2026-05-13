@@ -79,7 +79,7 @@ const Header = ({ onLogout }: HeaderProps = {}) => {
       >
         {/* Logo */}
         <Link to="/" className="p-1 rounded-full hover:opacity-80 transition-opacity shrink-0">
-          <img src={logo} alt="Star9 Freelancer" className="h-20 sm:h-24 w-auto object-contain" />
+          <img src={logo} alt="Star9 Freelancer" className="h-28 sm:h-32 w-auto object-contain" />
         </Link>
 
         <div className="h-6 w-px bg-gray-200 mx-2 shrink-0 hidden md:block" />
@@ -162,7 +162,7 @@ const Header = ({ onLogout }: HeaderProps = {}) => {
           >
             <div className="space-y-4">
               <div className="flex items-center gap-3 mb-8 pb-8 border-b border-border/50">
-                <img src={logo} alt="Star9 Freelancer" className="h-20 w-auto object-contain" />
+                <img src={logo} alt="Star9 Freelancer" className="h-28 w-auto object-contain" />
               </div>
               <p className="text-[10px] font-mono uppercase tracking-[0.5em] text-muted-foreground/30 mb-8">Navigation Menu</p>
               {navLinks.map((l, i) => (
