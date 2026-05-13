@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { useAcademyData } from "@/hooks/useAcademyData";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -18,6 +19,7 @@ const CourseDashboard = () => {
     const { courseId } = useParams();
     const navigate = useNavigate();
     const { user, profile, refreshProfile } = useAuth();
+    const { courses } = useAcademyData();
     const [activeTab, setActiveTab] = useState("overview");
     const [progress, setProgress] = useState(0);
     const [profileModalOpen, setProfileModalOpen] = useState(false);
@@ -43,8 +45,11 @@ const CourseDashboard = () => {
     const [expandedWeeks, setExpandedWeeks] = useState<Set<string>>(new Set(['week1'])); // Week 1 expanded by default
     const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set()); // Track expanded modules
 
-    // New structure: weeks come directly from database
-    const weeks = courseData?.lessons || [];
+    // Get course from CURRICULUM_LEDGER via useAcademyData
+    const course = courses.find(c => c.id === courseId);
+
+    // New structure: modules come from CURRICULUM_LEDGER
+    const weeks = course?.modules || [];
 
     // Helper function to get all lessons in sequential order
     const getAllLessons = () => {
@@ -419,88 +424,68 @@ const CourseDashboard = () => {
         return <p className="text-gray-500 text-center py-8">Content not available</p>;
     };
 
-    // Fetch course data from database
+    // Fetch course data and progress
     useEffect(() => {
-        const fetchCourse = async () => {
-            if (!courseId) return;
+        const fetchCourseAndProgress = async () => {
+            if (!courseId || !course) {
+                setLoading(false);
+                return;
+            }
 
             try {
-                const { data, error } = await supabase
-                    .from('academy_courses')
-                    .select('*')
-                    .eq('id', courseId)
-                    .single();
+                // Set course data from CURRICULUM_LEDGER
+                setCourseData(course);
 
-                if (error) throw error;
+                // Calculate progress if user is logged in
+                if (user && course.modules && Array.isArray(course.modules)) {
+                    // Get all lessons from all modules
+                    const allLessons: any[] = [];
+                    course.modules.forEach((module: any) => {
+                        module.lessons?.forEach((lesson: any) => {
+                            allLessons.push(lesson);
+                        });
+                    });
 
-                if (data) {
-                    console.log('Course data loaded:', data);
-                    console.log('Lessons raw:', data.lessons);
-                    console.log('Lessons type:', typeof data.lessons);
+                    try {
+                        const { data: progressData, error: progressError } = await supabase
+                            .from('user_lesson_progress')
+                            .select('lesson_id')
+                            .eq('user_id', user.id)
+                            .eq('course_id', courseId);
 
-                    // Handle JSONB - might be string or already parsed
-                    let parsedLessons = data.lessons;
-                    if (typeof data.lessons === 'string') {
-                        try {
-                            parsedLessons = JSON.parse(data.lessons);
-                            console.log('Parsed lessons from string:', parsedLessons);
-                        } catch (e) {
-                            console.error('Failed to parse lessons:', e);
-                        }
-                    }
-
-                    // Update courseData with parsed lessons
-                    const courseWithParsedLessons = {
-                        ...data,
-                        lessons: parsedLessons
-                    };
-
-                    console.log('Final course data:', courseWithParsedLessons);
-                    setCourseData(courseWithParsedLessons);
-
-                    // Calculate progress if user is logged in
-                    if (user && parsedLessons && Array.isArray(parsedLessons)) {
-                        try {
-                            const { data: progressData, error: progressError } = await supabase
-                                .from('user_lesson_progress')
-                                .select('lesson_id')
-                                .eq('user_id', user.id)
-                                .eq('course_id', courseId);
-
-                            if (progressError) {
-                                // Table might not exist yet - use localStorage fallback
-                                console.warn('user_lesson_progress table not found, using localStorage');
-                                const localKey = `course_progress_${user.id}_${courseId}`;
-                                const localProgress = JSON.parse(localStorage.getItem(localKey) || '[]');
-                                const completed = new Set(localProgress);
-                                setCompletedLessons(completed);
-                                const totalLessons = data.lessons.length;
-                                setProgress(Math.round((completed.size / totalLessons) * 100));
-                            } else if (progressData) {
-                                const completed = new Set(progressData.map((p: any) => p.lesson_id));
-                                setCompletedLessons(completed);
-                                const totalLessons = parsedLessons.length;
-                                setProgress(Math.round((completed.size / totalLessons) * 100));
-                            }
-                        } catch (progressErr) {
-                            console.error('Error fetching progress:', progressErr);
-                            // Fallback to localStorage
+                        if (progressError) {
+                            // Table might not exist yet - use localStorage fallback
+                            console.warn('user_lesson_progress table not found, using localStorage');
                             const localKey = `course_progress_${user.id}_${courseId}`;
                             const localProgress = JSON.parse(localStorage.getItem(localKey) || '[]');
-                            setCompletedLessons(new Set(localProgress));
+                            const completed = new Set(localProgress);
+                            setCompletedLessons(completed);
+                            const totalLessons = allLessons.length;
+                            setProgress(totalLessons > 0 ? Math.round((completed.size / totalLessons) * 100) : 0);
+                        } else if (progressData) {
+                            const completed = new Set(progressData.map((p: any) => p.lesson_id));
+                            setCompletedLessons(completed);
+                            const totalLessons = allLessons.length;
+                            setProgress(totalLessons > 0 ? Math.round((completed.size / totalLessons) * 100) : 0);
                         }
+                    } catch (progressErr) {
+                        console.error('Error fetching progress:', progressErr);
+                        // Fallback to localStorage
+                        const localKey = `course_progress_${user.id}_${courseId}`;
+                        const localProgress = JSON.parse(localStorage.getItem(localKey) || '[]');
+                        setCompletedLessons(new Set(localProgress));
                     }
                 }
             } catch (error) {
-                console.error('Error fetching course:', error);
+                console.error('Error loading course:', error);
                 toast.error('Failed to load course data');
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchCourse();
-    }, [courseId, user]);
+        fetchCourseAndProgress();
+    }, [courseId, user, course]);
 
     const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
