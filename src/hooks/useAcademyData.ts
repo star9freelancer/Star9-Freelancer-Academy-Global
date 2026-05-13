@@ -417,7 +417,7 @@ export const useAcademyData = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  // Fetch Courses
+  // Fetch Courses with enhanced curriculum data
   const coursesQuery = useQuery({
     queryKey: ["academy_courses"],
     retry: 1, // Don't hang on retries
