@@ -36,6 +36,31 @@
       background-color: #ffffff;
       margin: 0;
     }
+
+    #root:empty::before {
+      content: '';
+      width: 120px;
+      height: 120px;
+      background-image: url('/logo.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.7;
+        transform: scale(0.95);
+      }
+    }
   </style>
 </head>
 
