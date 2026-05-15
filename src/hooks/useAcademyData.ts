@@ -237,7 +237,7 @@ export const CURRICULUM_LEDGER: Record<string, Module[]> = {
   // ───────────────────────────────────────────────────────────
   // AI for Freelancers
   // ───────────────────────────────────────────────────────────
-  "6e1a970e-1d2a-46ee-a483-0e93fdc4d826": [
+  "00000000-0000-0000-0000-000000000001": [
     {
       id: "ai-m0",
       title: "Module 1: Freelance Foundations (Basics)",
