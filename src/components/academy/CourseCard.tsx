@@ -96,8 +96,8 @@ const CourseCard = ({ course, enrollment, onEnroll, onOpen }: CourseCardProps) =
               <span>
                 {(() => {
                   // Count total modules from lessons structure
-                  if (course.lessons && Array.isArray(course.lessons)) {
-                    const totalModules = course.lessons.reduce((count: number, week: any) => {
+                  if (course.modules && Array.isArray(course.modules)) {
+                    const totalModules = course.modules.reduce((count: number, week: any) => {
                       return count + (week.modules?.length || 0);
                     }, 0);
                     return `${totalModules} ${totalModules === 1 ? 'Module' : 'Modules'}`;

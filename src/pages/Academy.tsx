@@ -131,13 +131,24 @@ const Academy = () => {
       if (!user) {
         setActiveTab("catalog");
       } else if (profile && activeTab === "home") {
+        // Check if user has any enrollments
+        const userEnrollments = Array.from(enrollments.values());
+
+        // If user has enrollments, redirect to their first enrolled course
+        if (userEnrollments.length > 0 && !profile.role) {
+          const firstEnrollment = userEnrollments[0];
+          navigate(`/academy/course/${firstEnrollment.course_id}`);
+          return;
+        }
+
+        // Role-based redirects
         if (profile.role === 'employer') setActiveTab('employer');
         else if (profile.role === 'freelancer') setActiveTab('careers');
         else if (profile.role === 'referrer') setActiveTab('referral');
         else setActiveTab('catalog'); // Default to catalog for regular users
       }
     }
-  }, [user, profile, authLoading, activeTab]);
+  }, [user, profile, authLoading, activeTab, enrollments, navigate]);
 
   const handleThemeToggle = () => {
     const next = !isDarkMode;
