@@ -45,6 +45,24 @@ export default function Auth() {
   const [showReceipt, setShowReceipt] = useState(false);
   const [receiptData, setReceiptData] = useState<any>(null);
 
+  // Handler for when receipt is closed - redirect to course dashboard
+  const handleReceiptClose = () => {
+    setShowReceipt(false);
+
+    toast.success("🎉 You're enrolled! Lessons begin Tuesday, 12th May.", {
+      description: "Taking you to your course dashboard...",
+      duration: 3000,
+    });
+
+    setIsClearing(true);
+    // Redirect to course dashboard
+    if (selectedCourse) {
+      setTimeout(() => navigate(`/academy/course/${selectedCourse}`), 1800);
+    } else {
+      setTimeout(() => navigate("/academy"), 1800);
+    }
+  };
+
   // New State for Registration Course Selection
   const { courses } = useAcademyData();
   const [currency, setCurrency] = useState<'USD' | 'KES' | 'GHS'>('USD');
@@ -259,6 +277,7 @@ export default function Auth() {
                 setReceiptData(receipt);
                 setShowReceipt(true);
 
+                // Execute signup and enrollment
                 await executeSignup();
               } else {
                 toast.error("Payment verification failed.");
@@ -355,22 +374,25 @@ export default function Auth() {
           await trackReferral(referralCode, data.user.id, email, fullName);
         }
 
-        toast.success("🎉 You're enrolled! Lessons begin Tuesday, 12th May.", {
-          description: "Your account is ready. We'll see you on the 12th — get excited!",
-          duration: 8000,
-        });
-
         if (!data.session) {
           const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
           if (signInError) throw signInError;
         }
 
-        setIsClearing(true);
-        // Redirect to course dashboard if enrolled in a course, otherwise to academy
-        if (selectedCourse && selectedRole === 'student') {
-          setTimeout(() => navigate(`/academy/course/${selectedCourse}`), 1800);
-        } else {
-          setTimeout(() => navigate("/academy"), 1800);
+        // Don't show the clearing animation or redirect yet if we're showing a receipt
+        if (!showReceipt) {
+          toast.success("🎉 You're enrolled! Lessons begin Tuesday, 12th May.", {
+            description: "Your account is ready. We'll see you on the 12th — get excited!",
+            duration: 8000,
+          });
+
+          setIsClearing(true);
+          // Redirect to course dashboard if enrolled in a course, otherwise to academy
+          if (selectedCourse && selectedRole === 'student') {
+            setTimeout(() => navigate(`/academy/course/${selectedCourse}`), 1800);
+          } else {
+            setTimeout(() => navigate("/academy"), 1800);
+          }
         }
       }
     } catch (error: any) {
@@ -746,10 +768,7 @@ export default function Auth() {
       {showReceipt && receiptData && (
         <PaymentReceipt
           receiptData={receiptData}
-          onClose={() => {
-            setShowReceipt(false);
-            navigate("/academy");
-          }}
+          onClose={handleReceiptClose}
         />
       )}
     </div>

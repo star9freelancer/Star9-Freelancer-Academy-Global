@@ -50,14 +50,19 @@ const PaymentReceipt = ({ receiptData, onClose }: PaymentReceiptProps) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <Card className="max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-                <CardHeader className="flex flex-row items-center justify-between border-b">
-                    <div className="flex items-center gap-2">
-                        <CheckCircle2 className="size-6 text-emerald-500" />
-                        <h2 className="text-xl font-bold">Payment Successful</h2>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
+            <Card className="max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-in zoom-in-95 duration-300">
+                <CardHeader className="flex flex-row items-center justify-between border-b bg-gradient-to-r from-emerald-50 to-green-50">
+                    <div className="flex items-center gap-3">
+                        <div className="size-10 rounded-full bg-emerald-500 flex items-center justify-center">
+                            <CheckCircle2 className="size-6 text-white" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-bold text-gray-900">Payment Successful!</h2>
+                            <p className="text-sm text-gray-600">Your enrollment is confirmed</p>
+                        </div>
                     </div>
-                    <Button variant="ghost" size="icon" onClick={onClose}>
+                    <Button variant="ghost" size="icon" onClick={onClose} className="hover:bg-white/50">
                         <X className="size-4" />
                     </Button>
                 </CardHeader>
@@ -127,13 +132,13 @@ const PaymentReceipt = ({ receiptData, onClose }: PaymentReceiptProps) => {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex gap-3 mt-6">
-                        <Button onClick={downloadPDF} className="flex-1 gap-2">
-                            <Download className="size-4" />
-                            Download PDF
+                    <div className="flex flex-col gap-3 mt-6">
+                        <Button onClick={downloadPDF} className="w-full gap-2 h-12 text-base">
+                            <Download className="size-5" />
+                            Download Receipt (PDF)
                         </Button>
-                        <Button onClick={onClose} variant="outline" className="flex-1">
-                            Close
+                        <Button onClick={onClose} variant="default" className="w-full h-12 text-base bg-emerald-600 hover:bg-emerald-700">
+                            Continue to Course Dashboard →
                         </Button>
                     </div>
                 </CardContent>
