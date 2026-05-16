@@ -67,7 +67,7 @@ const EnrollmentGate = ({ children }: { children: React.ReactNode }) => {
       try {
         // Check if user has any active enrollments
         const { data: enrollments, error } = await supabase
-          .from('academy_enrollments')
+          .from('user_enrollments')
           .select('course_id, status')
           .eq('user_id', user.id)
           .eq('status', 'active')
