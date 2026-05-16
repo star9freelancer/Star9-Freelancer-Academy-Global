@@ -115,23 +115,37 @@ const FREELANCE_FOUNDATIONS = (prefix: string) => [
   },
 ];
 
-export const CURRICULUM_LEDGER: Record<string, Module[]> = {
+export const CURRICULUM_LEDGER: Record<string, any[]> = {
   "22222222-2222-2222-2222-222222222222": [
     {
-      id: "mf-m0",
-      title: "Module 1: Freelance Foundations (Basics)",
-      lessons: FREELANCE_FOUNDATIONS("mf"),
-    },
+      id: "mf-week-1",
+      title: "Week 1: Freelance Foundations",
+      duration: "4-6 hours",
+      modules: [
+        {
+          id: "mf-m0",
+          title: "Module 1: Freelance Foundations (Basics)",
+          lessons: FREELANCE_FOUNDATIONS("mf"),
+        },
+      ]
+    }
   ],
   "00000000-0000-0000-0000-000000000001": WEEK_1_AI_MODULES,
   "33333333-3333-3333-3333-333333333333": [
     {
-      id: "tp-m1",
-      title: "Phase 1: Global Vetting",
-      lessons: [
-        { id: "tp-m1-l1", title: "The International Teaching Landscape", duration: "15:00", isCompleted: false, type: "video", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
-      ],
-    },
+      id: "tp-week-1",
+      title: "Week 1: Global Vetting",
+      duration: "3-5 hours",
+      modules: [
+        {
+          id: "tp-m1",
+          title: "Phase 1: Global Vetting",
+          lessons: [
+            { id: "tp-m1-l1", title: "The International Teaching Landscape", duration: "15:00", isCompleted: false, type: "video", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+          ],
+        },
+      ]
+    }
   ],
 };
 
@@ -164,6 +178,7 @@ export const useAcademyData = () => {
   const enrollmentsQuery = useQuery({
     queryKey: ["user_enrollments", user?.id],
     retry: 1,
+    staleTime: 30000, // Cache for 30 seconds to prevent excessive re-fetching
     queryFn: async () => {
       if (!user) return [];
       const { data, error } = await supabase
@@ -171,7 +186,10 @@ export const useAcademyData = () => {
         .select("*")
         .eq("user_id", user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('[useAcademyData] Enrollment query error:', error);
+        throw error;
+      }
       return data || [];
     },
     enabled: !!user

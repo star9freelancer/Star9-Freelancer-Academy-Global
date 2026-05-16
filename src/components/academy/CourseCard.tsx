@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -24,19 +25,11 @@ interface CourseCardProps {
 
 const CourseCard = ({ course, enrollment, onEnroll, onOpen }: CourseCardProps) => {
   const { isAdmin } = useAuth();
-  const isEnrolled = !!enrollment || isAdmin; // Admins are treated as enrolled
-  const progress = enrollment?.progress || 0;
-  const isLocked = isEnrolled && !isAdmin && new Date() < COHORT_START; // Admins bypass cohort lock
 
-  // DEBUG: Log admin status (remove after testing)
-  console.log(`[CourseCard] ${course.title}:`, {
-    isAdmin,
-    isEnrolled,
-    isLocked,
-    hasEnrollment: !!enrollment,
-    cohortStart: COHORT_START,
-    now: new Date()
-  });
+  // Memoize computed values to prevent unnecessary re-renders
+  const isEnrolled = useMemo(() => !!enrollment || isAdmin, [enrollment, isAdmin]);
+  const progress = useMemo(() => enrollment?.progress || 0, [enrollment?.progress]);
+  const isLocked = useMemo(() => isEnrolled && !isAdmin && new Date() < COHORT_START, [isEnrolled, isAdmin]);
 
   const handleCardClick = () => {
     if (isLocked) {

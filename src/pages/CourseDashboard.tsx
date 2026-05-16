@@ -60,6 +60,9 @@ const CourseDashboard = () => {
     // New structure: modules come from CURRICULUM_LEDGER
     const weeks = course?.modules || [];
 
+    // Helper to get quiz data (supports both quiz and quiz_data properties)
+    const getQuizData = (lesson: any) => lesson?.quiz_data || lesson?.quiz;
+
     // Helper function to get all lessons in sequential order
     const getAllLessons = () => {
         const allLessons: any[] = [];
@@ -107,8 +110,17 @@ const CourseDashboard = () => {
     const renderLessonNotes = (notes: string) => {
         if (!notes) return null;
 
+        // Remove image markdown syntax
+        let cleanedNotes = notes.replace(/!\[.*?\]\(.*?\)/g, '');
+
+        // Remove inline code blocks (backticks)
+        cleanedNotes = cleanedNotes.replace(/`([^`]+)`/g, '$1');
+
         // Normalize line endings (handle both \r\n and \n)
-        const normalizedNotes = notes.replace(/\r\n/g, '\n');
+        cleanedNotes = cleanedNotes.replace(/\r\n/g, '\n');
+
+        // Remove any remaining markdown links [text](url) but keep the text
+        cleanedNotes = cleanedNotes.replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1');
 
         // Helper to format bold text
         const formatBoldText = (text: string) => {
@@ -119,13 +131,62 @@ const CourseDashboard = () => {
         };
 
         // Split by double newlines for blocks
-        const blocks = normalizedNotes.split('\n\n');
+        const blocks = cleanedNotes.split('\n\n');
         const sections: any[] = [];
         let currentSection: any = null;
 
         blocks.forEach((block) => {
             const trimmedBlock = block.trim();
             if (!trimmedBlock) return;
+
+            // Check if it's a markdown heading (# or ## or ###)
+            if (trimmedBlock.startsWith('### ')) {
+                // Save previous section
+                if (currentSection) {
+                    sections.push(currentSection);
+                }
+
+                const heading = trimmedBlock.substring(4).trim();
+                currentSection = {
+                    type: 'section',
+                    heading: heading,
+                    headingLevel: 3,
+                    content: []
+                };
+                return;
+            }
+
+            if (trimmedBlock.startsWith('## ')) {
+                // Save previous section
+                if (currentSection) {
+                    sections.push(currentSection);
+                }
+
+                const heading = trimmedBlock.substring(3).trim();
+                currentSection = {
+                    type: 'section',
+                    heading: heading,
+                    headingLevel: 2,
+                    content: []
+                };
+                return;
+            }
+
+            if (trimmedBlock.startsWith('# ')) {
+                // Save previous section
+                if (currentSection) {
+                    sections.push(currentSection);
+                }
+
+                const heading = trimmedBlock.substring(2).trim();
+                currentSection = {
+                    type: 'section',
+                    heading: heading,
+                    headingLevel: 1,
+                    content: []
+                };
+                return;
+            }
 
             // Check if it's a heading (starts with **)
             if (trimmedBlock.startsWith('**') && trimmedBlock.includes('**')) {
@@ -143,6 +204,7 @@ const CourseDashboard = () => {
                     currentSection = {
                         type: 'section',
                         heading: heading,
+                        headingLevel: 3,
                         content: rest ? [rest] : []
                     };
                     return;
@@ -184,14 +246,14 @@ const CourseDashboard = () => {
         }
 
         return (
-            <div className="space-y-6">
+            <div className="space-y-8">
                 {sections.map((section, idx) => {
                     // Render table
                     if (section.type === 'table') {
                         return (
-                            <div key={idx} className="overflow-hidden rounded-xl shadow-sm">
+                            <div key={idx} className="overflow-hidden rounded-xl border border-gray-200 shadow-sm">
                                 <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gradient-to-r from-primary/5 to-primary/10">
+                                    <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
                                         <tr>
                                             {section.headers.map((header: string, i: number) => (
                                                 <th key={i} className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
@@ -202,7 +264,7 @@ const CourseDashboard = () => {
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-100">
                                         {section.rows.map((row: string[], i: number) => (
-                                            <tr key={i} className="hover:bg-gray-50 transition-colors">
+                                            <tr key={i} className="hover:bg-gray-50/50 transition-colors duration-150">
                                                 {row.map((cell: string, j: number) => (
                                                     <td key={j} className="px-6 py-4 text-sm text-gray-700 leading-relaxed">
                                                         {formatBoldText(cell)}
@@ -218,19 +280,25 @@ const CourseDashboard = () => {
 
                     // Render section with heading
                     if (section.type === 'section') {
+                        const headingClass = section.headingLevel === 1
+                            ? "text-3xl font-bold text-gray-900 mb-5 tracking-tight"
+                            : section.headingLevel === 2
+                                ? "text-2xl font-bold text-gray-900 mb-4 tracking-tight"
+                                : "text-xl font-semibold text-gray-900 mb-3";
+
                         return (
                             <div key={idx} className="space-y-4">
-                                <h3 className="text-lg font-semibold text-gray-900">
+                                <h3 className={headingClass}>
                                     {section.heading}
                                 </h3>
-                                <div className="space-y-3">
+                                <div className="space-y-4 text-base">
                                     {section.content.map((item: any, i: number) => {
                                         // If it's a table object
                                         if (typeof item === 'object' && item.type === 'table') {
                                             return (
-                                                <div key={i} className="overflow-hidden rounded-xl shadow-sm">
+                                                <div key={i} className="overflow-hidden rounded-xl border border-gray-200 shadow-sm">
                                                     <table className="min-w-full divide-y divide-gray-200">
-                                                        <thead className="bg-gradient-to-r from-primary/5 to-primary/10">
+                                                        <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
                                                             <tr>
                                                                 {item.headers.map((header: string, hi: number) => (
                                                                     <th key={hi} className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
@@ -241,7 +309,7 @@ const CourseDashboard = () => {
                                                         </thead>
                                                         <tbody className="bg-white divide-y divide-gray-100">
                                                             {item.rows.map((row: string[], ri: number) => (
-                                                                <tr key={ri} className="hover:bg-gray-50 transition-colors">
+                                                                <tr key={ri} className="hover:bg-gray-50/50 transition-colors duration-150">
                                                                     {row.map((cell: string, ci: number) => (
                                                                         <td key={ci} className="px-6 py-4 text-sm text-gray-700 leading-relaxed">
                                                                             {formatBoldText(cell)}
@@ -259,13 +327,13 @@ const CourseDashboard = () => {
                                         if (item.startsWith('•') || item.startsWith('-')) {
                                             const items = item.split('\n').filter((line: string) => line.trim());
                                             return (
-                                                <ul key={i} className="space-y-2.5">
+                                                <ul key={i} className="space-y-3 ml-1">
                                                     {items.map((listItem: string, li: number) => {
                                                         const cleanItem = listItem.replace(/^[•\-]\s*/, '');
                                                         return (
                                                             <li key={li} className="flex items-start gap-3 text-gray-700 leading-relaxed">
-                                                                <span className="text-primary mt-1.5 flex-shrink-0">•</span>
-                                                                <span className="flex-1">{formatBoldText(cleanItem)}</span>
+                                                                <span className="text-gray-400 mt-1 flex-shrink-0 text-lg">•</span>
+                                                                <span className="flex-1 pt-0.5">{formatBoldText(cleanItem)}</span>
                                                             </li>
                                                         );
                                                     })}
@@ -275,7 +343,7 @@ const CourseDashboard = () => {
 
                                         // Convert regular text to clean paragraph
                                         return (
-                                            <p key={i} className="text-gray-700 leading-relaxed">
+                                            <p key={i} className="text-gray-700 leading-relaxed text-base">
                                                 {formatBoldText(item)}
                                             </p>
                                         );
@@ -287,23 +355,27 @@ const CourseDashboard = () => {
 
                     // Render standalone text
                     const content = section.content;
-                    const sentences = content.split(/\.\s+|\:\s+/).filter((s: string) => s.trim());
 
-                    if (sentences.length > 1) {
+                    // Check if it's a bullet list
+                    if (content.includes('\n-') || content.includes('\n•')) {
+                        const items = content.split('\n').filter((line: string) => line.trim());
                         return (
-                            <div key={idx} className="space-y-2.5">
-                                {sentences.map((sentence: string, si: number) => (
-                                    <div key={si} className="flex items-start gap-3 text-gray-700 leading-relaxed">
-                                        <span className="text-primary mt-1.5 flex-shrink-0">•</span>
-                                        <span className="flex-1">{formatBoldText(sentence.trim())}</span>
-                                    </div>
-                                ))}
-                            </div>
+                            <ul key={idx} className="space-y-3 ml-1">
+                                {items.map((listItem: string, li: number) => {
+                                    const cleanItem = listItem.replace(/^[•\-]\s*/, '');
+                                    return (
+                                        <li key={li} className="flex items-start gap-3 text-gray-700 leading-relaxed text-base">
+                                            <span className="text-gray-400 mt-1 flex-shrink-0 text-lg">•</span>
+                                            <span className="flex-1 pt-0.5">{formatBoldText(cleanItem)}</span>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
                         );
                     }
 
                     return (
-                        <p key={idx} className="text-gray-700 leading-relaxed">
+                        <p key={idx} className="text-gray-700 leading-relaxed text-base">
                             {formatBoldText(content)}
                         </p>
                     );
@@ -1029,7 +1101,7 @@ const CourseDashboard = () => {
                                 )}
 
                                 {/* Course Notes */}
-                                {selectedLesson.notes && !showQuiz && (
+                                {(selectedLesson.content || selectedLesson.notes) && !showQuiz && (
                                     <Card className="bg-white border-0 shadow-sm">
                                         <CardHeader className="pb-4">
                                             <div className="flex items-center gap-2">
@@ -1038,13 +1110,13 @@ const CourseDashboard = () => {
                                             </div>
                                         </CardHeader>
                                         <CardContent className="pt-0">
-                                            {renderLessonContent(selectedLesson.notes)}
+                                            {renderLessonContent(selectedLesson.content || selectedLesson.notes)}
                                         </CardContent>
                                     </Card>
                                 )}
 
                                 {/* Quiz Section */}
-                                {selectedLesson.quiz && (
+                                {getQuizData(selectedLesson) && (
                                     <Card className="bg-white border-gray-200">
                                         <CardHeader className="border-b border-gray-200 bg-purple-50">
                                             <CardTitle className="text-xl text-gray-900 flex items-center gap-2">
@@ -1064,7 +1136,7 @@ const CourseDashboard = () => {
                                                 </div>
                                             ) : !quizSubmitted ? (
                                                 <div className="space-y-6">
-                                                    {selectedLesson.quiz.questions.map((q: any, idx: number) => (
+                                                    {getQuizData(selectedLesson).questions.map((q: any, idx: number) => (
                                                         <div key={idx} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
                                                             <p className="font-semibold text-gray-900 mb-3">
                                                                 {idx + 1}. {q.question}
@@ -1094,19 +1166,20 @@ const CourseDashboard = () => {
                                                     <div className="flex gap-3 pt-4">
                                                         <Button
                                                             onClick={async () => {
-                                                                const score = selectedLesson.quiz.questions.reduce((acc: number, q: any, idx: number) => {
+                                                                const quizData = getQuizData(selectedLesson);
+                                                                const score = quizData.questions.reduce((acc: number, q: any, idx: number) => {
                                                                     return acc + (quizAnswers[idx] === q.correctAnswer ? 1 : 0);
                                                                 }, 0);
                                                                 setQuizScore(score);
                                                                 setQuizSubmitted(true);
 
                                                                 // Auto-complete if passed (80% = 4/5 or more)
-                                                                const passingScore = Math.ceil(selectedLesson.quiz.questions.length * 0.8);
+                                                                const passingScore = Math.ceil(quizData.questions.length * 0.8);
                                                                 if (score >= passingScore && !completedLessons.has(selectedLesson.id)) {
                                                                     await handleMarkComplete();
                                                                 }
                                                             }}
-                                                            disabled={Object.keys(quizAnswers).length < selectedLesson.quiz.questions.length}
+                                                            disabled={Object.keys(quizAnswers).length < getQuizData(selectedLesson).questions.length}
                                                             size="lg"
                                                             className="flex-1"
                                                         >
@@ -1125,13 +1198,13 @@ const CourseDashboard = () => {
                                                 </div>
                                             ) : (
                                                 <div className="text-center py-8 space-y-4">
-                                                    <div className={`text-6xl mb-4 ${quizScore >= Math.ceil(selectedLesson.quiz.questions.length * 0.8) ? 'text-green-500' : 'text-red-500'}`}>
-                                                        {quizScore >= Math.ceil(selectedLesson.quiz.questions.length * 0.8) ? '🎉' : '📚'}
+                                                    <div className={`text-6xl mb-4 ${quizScore >= Math.ceil(getQuizData(selectedLesson).questions.length * 0.8) ? 'text-green-500' : 'text-red-500'}`}>
+                                                        {quizScore >= Math.ceil(getQuizData(selectedLesson).questions.length * 0.8) ? '🎉' : '📚'}
                                                     </div>
                                                     <h3 className="text-2xl font-bold text-gray-900">
-                                                        Score: {quizScore} / {selectedLesson.quiz.questions.length} ({Math.round((quizScore / selectedLesson.quiz.questions.length) * 100)}%)
+                                                        Score: {quizScore} / {getQuizData(selectedLesson).questions.length} ({Math.round((quizScore / getQuizData(selectedLesson).questions.length) * 100)}%)
                                                     </h3>
-                                                    {quizScore >= Math.ceil(selectedLesson.quiz.questions.length * 0.8) ? (
+                                                    {quizScore >= Math.ceil(getQuizData(selectedLesson).questions.length * 0.8) ? (
                                                         <div className="space-y-3">
                                                             <div className="p-4 bg-green-50 rounded-lg border border-green-200">
                                                                 <p className="text-green-800 font-semibold">✅ Passed! (80% required)</p>
@@ -1161,7 +1234,7 @@ const CourseDashboard = () => {
                                                         <div className="space-y-3">
                                                             <div className="p-4 bg-red-50 rounded-lg border border-red-200">
                                                                 <p className="text-red-800 font-semibold">❌ Not Passed (80% required)</p>
-                                                                <p className="text-red-700 text-sm mt-1">You need at least {Math.ceil(selectedLesson.quiz.questions.length * 0.8)} out of {selectedLesson.quiz.questions.length} correct to proceed.</p>
+                                                                <p className="text-red-700 text-sm mt-1">You need at least {Math.ceil(getQuizData(selectedLesson).questions.length * 0.8)} out of {getQuizData(selectedLesson).questions.length} correct to proceed.</p>
                                                             </div>
                                                             <Button
                                                                 variant="outline"

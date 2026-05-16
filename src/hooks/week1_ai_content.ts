@@ -3,10 +3,11 @@
 
 import { Module } from "./useAcademyData";
 
-export const WEEK_1_AI_MODULES: Module[] = [
+// Define the modules first
+const AI_WEEK_1_MODULES_DATA: Module[] = [
     {
         id: "ai-w1-m1",
-        title: "Week 1 - Module 1: Introduction to AI for Freelancing",
+        title: "Module 1: Introduction to AI for Freelancing",
         lessons: [
             {
                 id: "ai-w1-m1-l1",
@@ -14,6 +15,7 @@ export const WEEK_1_AI_MODULES: Module[] = [
                 duration: "15:00",
                 isCompleted: false,
                 type: "article" as const,
+                videoUrl: "https://www.youtube.com/embed/ad79nYk2keg",
                 content: `![AI Concept](https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=1200)
 
 # What Is AI?
@@ -51,6 +53,7 @@ AI is like a very smart intern who has read the entire internet. The intern work
                 duration: "18:00",
                 isCompleted: false,
                 type: "article" as const,
+                videoUrl: "https://www.youtube.com/embed/JTxsNm9IdYU",
                 content: `![Freelancer Benefits](https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1200)
 
 # Benefits of AI for Freelancers
@@ -97,6 +100,7 @@ Maria is a freelance writer from Mexico. English is her second language. She use
                 duration: "20:00",
                 isCompleted: false,
                 type: "article" as const,
+                videoUrl: "https://www.youtube.com/embed/5p248yoa3oE",
                 content: `![AI Limitations](https://images.unsplash.com/photo-1620712943543-bcc4628c9757?auto=format&fit=crop&q=80&w=1200)
 
 # Limitations of AI
@@ -141,6 +145,7 @@ Only you know the client's personality, history, and hidden needs. AI gives gene
                 duration: "25:00",
                 isCompleted: false,
                 type: "article" as const,
+                videoUrl: "https://www.youtube.com/embed/_ZvnD73m40o",
                 content: `![Prompt Engineering](https://images.unsplash.com/photo-1587620962725-abab7fe55159?auto=format&fit=crop&q=80&w=1200)
 
 # Prompting Basics
@@ -193,6 +198,7 @@ AI improves with each round.
                 duration: "22:00",
                 isCompleted: false,
                 type: "article" as const,
+                videoUrl: "https://www.youtube.com/embed/VznoKyh6AXs",
                 content: `![AI in Action](https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200)
 
 # Real Examples of AI in Freelancing
@@ -308,7 +314,7 @@ AI improves with each round.
     },
     {
         id: "ai-w1-m2",
-        title: "Week 1 - Module 2: AI for Social Media Marketing",
+        title: "Module 2: AI for Social Media Marketing",
         lessons: [
             {
                 id: "ai-w1-m2-l1",
@@ -316,6 +322,7 @@ AI improves with each round.
                 duration: "20:00",
                 isCompleted: false,
                 type: "article" as const,
+                videoUrl: "https://www.youtube.com/embed/g-M0BqCTh-k",
                 content: `![Star9 Platform](https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80&w=1200)
 
 # Star9 Freelancer Account
@@ -342,13 +349,16 @@ Star9 is a professional platform for freelancers similar to LinkedIn but focused
 
 ## How AI helps with Star9
 
-### Prompt for Headline:
+**Prompt for Headline:**
+
 "Write 5 professional headlines for a freelance virtual assistant. Include who I help which is small business owners. Short and clear."
 
-### Prompt for Bio:
+**Prompt for Bio:**
+
 "Write a 4-sentence bio for Star9. I am a freelance proofreader. I help bloggers and students. Friendly but professional tone."
 
-### Prompt for Services List:
+**Prompt for Services List:**
+
 "List 8 services for a freelance social media manager. Each service should be 2 to 4 words. Example: 'Content calendar creation.'"
 
 ## Step-by-step to create your Star9 profile
@@ -372,6 +382,7 @@ Sofia used AI to write her Star9 bio. She edited it to add her personality: "I l
                 duration: "25:00",
                 isCompleted: false,
                 type: "article" as const,
+                videoUrl: "https://www.youtube.com/embed/QCIvHSRJwY4",
                 content: `![LinkedIn](https://images.unsplash.com/photo-1611944212129-29977ae1398c?auto=format&fit=crop&q=80&w=1200)
 
 # LinkedIn for Freelancers
@@ -423,6 +434,7 @@ AI makes daily posting easy.`,
                 duration: "22:00",
                 isCompleted: false,
                 type: "article" as const,
+                videoUrl: "https://www.youtube.com/embed/Ek3aeUhHaFY",
                 content: `![Facebook Marketing](https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&q=80&w=1200)
 
 # Facebook for Freelancers
@@ -476,6 +488,7 @@ AI makes daily posting easy.`,
                 duration: "20:00",
                 isCompleted: false,
                 type: "article" as const,
+                videoUrl: "https://www.youtube.com/embed/bOOQJRHMy8o",
                 content: `![Twitter X](https://images.unsplash.com/photo-1611605698335-8b1569810432?auto=format&fit=crop&q=80&w=1200)
 
 # Twitter and X for Freelancers
@@ -534,6 +547,7 @@ AI makes daily posting easy.`,
                 duration: "30:00",
                 isCompleted: false,
                 type: "article" as const,
+                videoUrl: "https://www.youtube.com/embed/AIrWB9q5R8k",
                 content: `![Content Scheduling](https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&q=80&w=1200)
 
 # AI for Content Creation and Scheduling
@@ -672,4 +686,14 @@ Ahmed is a freelance social media manager. He uses AI to write 30 posts on Sunda
             },
         ],
     },
+];
+
+// Export as a week structure (array of weeks, each containing modules)
+export const WEEK_1_AI_MODULES = [
+    {
+        id: "ai-week-1",
+        title: "Week 1: AI Basics + Social Media Marketing",
+        duration: "6-8 hours",
+        modules: AI_WEEK_1_MODULES_DATA
+    }
 ];
