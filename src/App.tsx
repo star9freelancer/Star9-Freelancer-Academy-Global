@@ -11,7 +11,6 @@ import Global from "./pages/Global.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Auth from "./pages/Auth.tsx";
 import Admin from "./pages/Admin.tsx";
-import CoursePlayer from "./pages/CoursePlayer.tsx";
 import CourseDashboard from "./pages/CourseDashboard.tsx";
 import Verify from "./pages/Verify.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
@@ -141,7 +140,6 @@ const App = () => (
 
             {/* Protected — requires login */}
             <Route path="/academy/course/:courseId" element={<ProtectedRoute><CourseDashboard /></ProtectedRoute>} />
-            <Route path="/academy/course/:courseId/lesson/:lessonId" element={<ProtectedRoute><CoursePlayer /></ProtectedRoute>} />
 
             {/* Protected Admin Routes */}
             <Route path="/admin" element={<EnrollmentGate><ProtectedRoute requireAdmin><Admin /></ProtectedRoute></EnrollmentGate>} />

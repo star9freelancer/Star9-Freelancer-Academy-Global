@@ -1011,7 +1011,13 @@ const CourseDashboard = () => {
                                                                     <div className="px-4 pb-4 space-y-2">
                                                                         {moduleLessons.map((lesson: any, idx: number) => {
                                                                             const isCompleted = completedLessons.has(lesson.id);
-                                                                            const prevLesson = idx > 0 ? moduleLessons[idx - 1] : null;
+
+                                                                            // Get all lessons in sequential order across all weeks/modules
+                                                                            const allLessons = getAllLessons();
+                                                                            const currentLessonIndex = allLessons.findIndex(l => l.id === lesson.id);
+
+                                                                            // Check if previous lesson is completed (sequential unlocking across entire course)
+                                                                            const prevLesson = currentLessonIndex > 0 ? allLessons[currentLessonIndex - 1] : null;
                                                                             const isLocked = prevLesson && !completedLessons.has(prevLesson.id);
 
                                                                             return (
@@ -1021,7 +1027,15 @@ const CourseDashboard = () => {
                                                                                         ? 'border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed'
                                                                                         : 'border-gray-200 hover:border-primary/40 hover:shadow-md cursor-pointer bg-white'
                                                                                         }`}
-                                                                                    onClick={() => !isLocked && handleLessonClick(lesson)}
+                                                                                    onClick={() => {
+                                                                                        if (isLocked) {
+                                                                                            toast.error("Complete the previous lesson first", {
+                                                                                                description: "Lessons must be completed in order. Quizzes require 80% to pass."
+                                                                                            });
+                                                                                        } else {
+                                                                                            handleLessonClick(lesson);
+                                                                                        }
+                                                                                    }}
                                                                                 >
                                                                                     <div className="flex items-center justify-between gap-3">
                                                                                         <div className="flex items-center gap-2">
@@ -1034,12 +1048,20 @@ const CourseDashboard = () => {
                                                                                             )}
                                                                                             <span className="text-sm font-medium text-gray-900">{lesson.title}</span>
                                                                                         </div>
-                                                                                        {lesson.duration && (
-                                                                                            <Badge variant="outline" className="gap-1 text-xs border-primary/30 bg-primary/5 font-bold text-primary px-2.5 py-0.5">
-                                                                                                <Clock className="size-3 text-primary" />
-                                                                                                {lesson.duration}
-                                                                                            </Badge>
-                                                                                        )}
+                                                                                        <div className="flex items-center gap-2">
+                                                                                            {lesson.duration && (
+                                                                                                <Badge variant="outline" className="gap-1 text-xs border-primary/30 bg-primary/5 font-bold text-primary px-2.5 py-0.5">
+                                                                                                    <Clock className="size-3 text-primary" />
+                                                                                                    {lesson.duration}
+                                                                                                </Badge>
+                                                                                            )}
+                                                                                            {isLocked && (
+                                                                                                <Badge variant="outline" className="gap-1 text-xs border-amber-500/30 bg-amber-50 text-amber-700 px-2.5 py-0.5">
+                                                                                                    <Lock className="size-3" />
+                                                                                                    Locked
+                                                                                                </Badge>
+                                                                                            )}
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                             );
@@ -1078,6 +1100,11 @@ const CourseDashboard = () => {
                                             <Badge className="bg-green-500 text-white gap-1 px-4 py-2">
                                                 <CheckCircle className="size-4" />
                                                 Completed
+                                            </Badge>
+                                        ) : getQuizData(selectedLesson) ? (
+                                            <Badge className="bg-purple-500 text-white gap-1 px-4 py-2">
+                                                <ClipboardList className="size-4" />
+                                                Quiz Required
                                             </Badge>
                                         ) : (
                                             <Button onClick={handleMarkComplete} size="lg" className="px-6">
@@ -1276,10 +1303,17 @@ const CourseDashboard = () => {
                                         onClick={() => {
                                             const nextLesson = getNextLesson(selectedLesson.id);
                                             if (nextLesson) {
-                                                handleLessonClick(nextLesson);
+                                                // Check if current lesson is completed before allowing next
+                                                if (!completedLessons.has(selectedLesson.id)) {
+                                                    toast.error("Complete this lesson first", {
+                                                        description: "You must complete the current lesson before moving to the next one."
+                                                    });
+                                                } else {
+                                                    handleLessonClick(nextLesson);
+                                                }
                                             }
                                         }}
-                                        disabled={!getNextLesson(selectedLesson.id)}
+                                        disabled={!getNextLesson(selectedLesson.id) || !completedLessons.has(selectedLesson.id)}
                                     >
                                         Next Lesson →
                                     </Button>
