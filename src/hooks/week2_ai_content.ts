@@ -15,10 +15,8 @@ const AI_WEEK_2_MODULES_DATA: Module[] = [
                 duration: "20:00",
                 isCompleted: false,
                 type: "article" as const,
-                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-                content: `![AI Research](https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=1200)
-
-# AI for Fast Research
+                videoUrl: "https://www.youtube.com/embed/kZ3VCqh_Hl4",
+                content: `# AI for Fast Research
 
 ## The old way of researching
 
@@ -93,10 +91,8 @@ const AI_WEEK_2_MODULES_DATA: Module[] = [
                 duration: "25:00",
                 isCompleted: false,
                 type: "article" as const,
-                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-                content: `![Blog Writing](https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&q=80&w=1200)
-
-# Writing Blogs, Articles, and Long-Form Content
+                videoUrl: "https://www.youtube.com/embed/g7T23Xzys-c",
+                content: `# Writing Blogs, Articles, and Long-Form Content
 
 ## How freelancers use AI for writing
 
@@ -153,10 +149,8 @@ const AI_WEEK_2_MODULES_DATA: Module[] = [
                 duration: "22:00",
                 isCompleted: false,
                 type: "article" as const,
-                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-                content: `![Proposals](https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=1200)
-
-# Writing Client Proposals That Win Work
+                videoUrl: "https://www.youtube.com/embed/BKorP55Aqvg",
+                content: `# Writing Client Proposals That Win Work
 
 ## What is a client proposal?
 
@@ -240,10 +234,8 @@ Sent before a client hires you. Usually 1 to 3 pages.
                 duration: "20:00",
                 isCompleted: false,
                 type: "article" as const,
-                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-                content: `![Email Writing](https://images.unsplash.com/photo-1557200134-90327ee9fafa?auto=format&fit=crop&q=80&w=1200)
-
-# Writing Professional Emails and Follow-Ups
+                videoUrl: "https://www.youtube.com/embed/czsuGvXfeQA",
+                content: `# Writing Professional Emails and Follow-Ups
 
 ## Types of freelance emails AI can write
 
@@ -323,10 +315,8 @@ Thank you,
                 duration: "18:00",
                 isCompleted: false,
                 type: "article" as const,
-                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-                content: `![Editing](https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&q=80&w=1200)
-
-# Editing and Proofreading with AI
+                videoUrl: "https://www.youtube.com/embed/RTwyec3fjqI",
+                content: `# Editing and Proofreading with AI
 
 ## The problem
 
@@ -407,10 +397,8 @@ Thank you,
                 duration: "15:00",
                 isCompleted: false,
                 type: "article" as const,
-                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-                content: `![Ethics](https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=1200)
-
-# Ethical Use of AI
+                videoUrl: "https://www.youtube.com/embed/AaAE1IB_WVM",
+                content: `# Ethical Use of AI
 
 ## What is ethical AI use?
 
@@ -545,10 +533,8 @@ Thank you,
                 duration: "20:00",
                 isCompleted: false,
                 type: "article" as const,
-                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-                content: `![Data Organization](https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1200)
-
-# Organizing Messy Data with AI
+                videoUrl: "https://www.youtube.com/embed/0oCca6RGikg",
+                content: `# Organizing Messy Data with AI
 
 ## The problem
 
@@ -630,10 +616,8 @@ You need to organize it before you can analyze it.
                 duration: "22:00",
                 isCompleted: false,
                 type: "article" as const,
-                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-                content: `![Data Analysis](https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200)
-
-# Calculations and Pattern Finding with AI
+                videoUrl: "https://www.youtube.com/embed/UFGod42xYPU",
+                content: `# Calculations and Pattern Finding with AI
 
 ## What AI can calculate
 
@@ -700,10 +684,8 @@ Monday at 9am: 50 likes. Monday at 6pm: 120 likes. Tuesday at 9am: 40 likes. Tue
                 duration: "25:00",
                 isCompleted: false,
                 type: "article" as const,
-                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-                content: `![Charts](https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1200)
-
-# Creating Simple Charts with No Coding
+                videoUrl: "https://www.youtube.com/embed/K74_FNnlIF8",
+                content: `# Creating Simple Charts with No Coding
 
 ## Why charts matter for freelancers
 
@@ -771,7 +753,7 @@ Monday at 9am: 50 likes. Monday at 6pm: 120 likes. Tuesday at 9am: 40 likes. Tue
                 duration: "20:00",
                 isCompleted: false,
                 type: "article" as const,
-                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                videoUrl: "https://www.youtube.com/embed/kLiLOkzLetE",
                 content: `![Data Summary](https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=1200)
 
 # Writing Client-Friendly Data Summaries

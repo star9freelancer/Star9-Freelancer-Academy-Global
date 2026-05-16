@@ -15,9 +15,8 @@ const AI_WEEK_3_MODULES_DATA: Module[] = [
                 duration: "20:00",
                 isCompleted: false,
                 type: "article" as const,
-                content: `![AI Website Builder](https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&q=80&w=1200)
-
-# What Are AI Website Builders?
+                videoUrl: "https://www.youtube.com/embed/mEYE5JOynMY",
+                content: `# What Are AI Website Builders?
 
 ## The old way of building a website
 - Hire a developer for $500 to $2000
@@ -66,9 +65,8 @@ Carlos is a freelance photographer. He used Durable.co to create a portfolio web
                 duration: "30:00",
                 isCompleted: false,
                 type: "article" as const,
-                content: `![Website Creation](https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200)
-
-# Creating Your Website with Durable.co
+                videoUrl: "https://www.youtube.com/embed/Wjwu_nB0Zy0",
+                content: `# Creating Your Website with Durable.co
 
 ## Step-by-step guide to building your first AI website
 
@@ -133,9 +131,8 @@ Carlos is a freelance photographer. He used Durable.co to create a portfolio web
                 duration: "25:00",
                 isCompleted: false,
                 type: "article" as const,
-                content: `![Content Generation](https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=1200)
-
-# Generating Website Content with AI
+                videoUrl: "https://www.youtube.com/embed/8DkyvhRVvWI",
+                content: `# Generating Website Content with AI
 
 ## Why use AI for website content?
 - Writer's block? AI gives you 10 options instantly
@@ -168,9 +165,8 @@ Carlos is a freelance photographer. He used Durable.co to create a portfolio web
                 duration: "20:00",
                 isCompleted: false,
                 type: "article" as const,
-                content: `![Web Design](https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&q=80&w=1200)
-
-# Simple Web Design Without Coding
+                videoUrl: "https://www.youtube.com/embed/ZFQkb26UD1Y",
+                content: `# Simple Web Design Without Coding
 
 ## Good news! AI website builders do 90 percent of design for you.
 
@@ -209,9 +205,8 @@ Pick 2 colors only: one main color for headings/buttons/links, and one backgroun
                 duration: "25:00",
                 isCompleted: false,
                 type: "article" as const,
-                content: `![Website Publishing](https://images.unsplash.com/photo-1432888622747-4eb9a8f2c293?auto=format&fit=crop&q=80&w=1200)
-
-# Publishing and Sharing Your Website
+                videoUrl: "https://www.youtube.com/embed/6h649f2fB9Q",
+                content: `# Publishing and Sharing Your Website
 
 ## Before you publish: Final checklist
 - ✓ Homepage headline is clear. Visitor knows what you do in 3 seconds
@@ -323,9 +318,8 @@ Pick 2 colors only: one main color for headings/buttons/links, and one backgroun
                 duration: "18:00",
                 isCompleted: false,
                 type: "article" as const,
-                content: `![Time Management](https://images.unsplash.com/photo-1501139083538-0139583c060f?auto=format&fit=crop&q=80&w=1200)
-
-# Why Freelancers Need Time Management
+                videoUrl: "https://www.youtube.com/embed/oTugjssqOT0",
+                content: `# Why Freelancers Need Time Management
 
 ## The freelance time problem
 
@@ -360,9 +354,8 @@ Priya is a freelance graphic designer. She used to work 10 hours a day but felt 
                 duration: "25:00",
                 isCompleted: false,
                 type: "article" as const,
-                content: `![Schedules](https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&q=80&w=1200)
-
-# Creating Schedules and Timetables with AI
+                videoUrl: "https://www.youtube.com/embed/WXBA4eWskrc",
+                content: `# Creating Schedules and Timetables with AI
 
 ## What AI needs to build your schedule
 
@@ -400,9 +393,8 @@ Priya is a freelance graphic designer. She used to work 10 hours a day but felt 
                 duration: "22:00",
                 isCompleted: false,
                 type: "article" as const,
-                content: `![Time Blocking](https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&q=80&w=1200)
-
-# Time Blocking for Deep Work
+                videoUrl: "https://www.youtube.com/embed/OM22XUQN30U",
+                content: `# Time Blocking for Deep Work
 
 ## What is time blocking?
 Instead of a to-do list, you assign specific tasks to specific time blocks.
@@ -441,9 +433,8 @@ This pattern maximizes productivity and prevents burnout.`,
                 duration: "20:00",
                 isCompleted: false,
                 type: "article" as const,
-                content: `![Productivity Tools](https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&q=80&w=1200)
-
-# Free Productivity Tools
+                videoUrl: "https://www.youtube.com/embed/3IZvbxLEFHI",
+                content: `# Free Productivity Tools
 
 ## Three free tools every freelancer needs
 
@@ -494,9 +485,8 @@ This pattern maximizes productivity and prevents burnout.`,
                 duration: "25:00",
                 isCompleted: false,
                 type: "article" as const,
-                content: `![Multiple Clients](https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=1200)
-
-# Managing Multiple Clients and Deadlines
+                videoUrl: "https://www.youtube.com/embed/502ILHjX9EE",
+                content: `# Managing Multiple Clients and Deadlines
 
 ## The challenge
 - Client A wants work on Monday
@@ -541,9 +531,8 @@ Each week, decide how many hours per client:
                 duration: "25:00",
                 isCompleted: false,
                 type: "article" as const,
-                content: `![Avoiding Burnout](https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&q=80&w=1200)
-
-# Avoiding Burnout with AI
+                videoUrl: "https://www.youtube.com/embed/P6zcSFA7ymo",
+                content: `# Avoiding Burnout with AI
 
 ## What is freelance burnout?
 - Feeling exhausted all the time

@@ -16,36 +16,42 @@ const AI_WEEK_1_MODULES_DATA: Module[] = [
                 isCompleted: false,
                 type: "article" as const,
                 videoUrl: "https://www.youtube.com/embed/ad79nYk2keg",
-                content: `![AI Concept](https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=1200)
-
-# What Is AI?
+                content: `# What Is AI?
 
 ## AI stands for Artificial Intelligence
 
 AI is a very fast computer program that has read millions of books, websites, and conversations. It learns patterns from all that reading. When you ask a question, AI predicts the most likely correct answer based on those patterns.
 
+---
+
 ## A simple analogy
 
 AI is like a very smart intern who has read the entire internet. The intern works fast but does not truly understand emotions or facts. You still need to check the intern's work.
 
+---
+
 ## What AI is NOT
 
-- AI does not think like a human
-- AI does not have feelings or opinions
-- AI does not know what is true or false
-- AI does not remember past conversations unless you tell it to
+- **AI does not think like a human** - It processes patterns, not thoughts
+- **AI does not have feelings or opinions** - It simulates responses based on data
+- **AI does not know what is true or false** - It predicts likely answers
+- **AI does not remember past conversations** - Unless you tell it to
+
+---
 
 ## Everyday examples of AI you already use
 
-- Google Search suggestions
-- Email spam filters
-- Netflix recommendations
-- Phone autocorrect and predictive text
-- ChatGPT, Gemini, Copilot
+- **Google Search suggestions** - Predicts what you're looking for
+- **Email spam filters** - Identifies unwanted messages
+- **Netflix recommendations** - Suggests shows based on your viewing
+- **Phone autocorrect and predictive text** - Completes your sentences
+- **ChatGPT, Gemini, Copilot** - Conversational AI assistants
+
+---
 
 ## Key takeaway
 
-**AI is a tool, not a person. You are the boss. AI works for you.**`,
+> **AI is a tool, not a person. You are the boss. AI works for you.**`,
             },
             {
                 id: "ai-w1-m1-l2",
@@ -54,9 +60,7 @@ AI is like a very smart intern who has read the entire internet. The intern work
                 isCompleted: false,
                 type: "article" as const,
                 videoUrl: "https://www.youtube.com/embed/JTxsNm9IdYU",
-                content: `![Freelancer Benefits](https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1200)
-
-# Benefits of AI for Freelancers
+                content: `# Benefits of AI for Freelancers
 
 ## Benefit 1: Saves time
 
@@ -101,9 +105,7 @@ Maria is a freelance writer from Mexico. English is her second language. She use
                 isCompleted: false,
                 type: "article" as const,
                 videoUrl: "https://www.youtube.com/embed/5p248yoa3oE",
-                content: `![AI Limitations](https://images.unsplash.com/photo-1620712943543-bcc4628c9757?auto=format&fit=crop&q=80&w=1200)
-
-# Limitations of AI
+                content: `# Limitations of AI
 
 ## Limitation 1: AI can be wrong
 
@@ -146,9 +148,7 @@ Only you know the client's personality, history, and hidden needs. AI gives gene
                 isCompleted: false,
                 type: "article" as const,
                 videoUrl: "https://www.youtube.com/embed/_ZvnD73m40o",
-                content: `![Prompt Engineering](https://images.unsplash.com/photo-1587620962725-abab7fe55159?auto=format&fit=crop&q=80&w=1200)
-
-# Prompting Basics
+                content: `# Prompting Basics
 
 ## What is a prompt?
 
@@ -199,9 +199,7 @@ AI improves with each round.
                 isCompleted: false,
                 type: "article" as const,
                 videoUrl: "https://www.youtube.com/embed/VznoKyh6AXs",
-                content: `![AI in Action](https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200)
-
-# Real Examples of AI in Freelancing
+                content: `# Real Examples of AI in Freelancing
 
 ## Example 1: Writing a client proposal
 
@@ -323,9 +321,7 @@ AI improves with each round.
                 isCompleted: false,
                 type: "article" as const,
                 videoUrl: "https://www.youtube.com/embed/g-M0BqCTh-k",
-                content: `![Star9 Platform](https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80&w=1200)
-
-# Star9 Freelancer Account
+                content: `# Star9 Freelancer Account
 
 ## What is Star9?
 
@@ -383,9 +379,7 @@ Sofia used AI to write her Star9 bio. She edited it to add her personality: "I l
                 isCompleted: false,
                 type: "article" as const,
                 videoUrl: "https://www.youtube.com/embed/QCIvHSRJwY4",
-                content: `![LinkedIn](https://images.unsplash.com/photo-1611944212129-29977ae1398c?auto=format&fit=crop&q=80&w=1200)
-
-# LinkedIn for Freelancers
+                content: `# LinkedIn for Freelancers
 
 ## Why LinkedIn for freelancers?
 
@@ -435,9 +429,7 @@ AI makes daily posting easy.`,
                 isCompleted: false,
                 type: "article" as const,
                 videoUrl: "https://www.youtube.com/embed/Ek3aeUhHaFY",
-                content: `![Facebook Marketing](https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&q=80&w=1200)
-
-# Facebook for Freelancers
+                content: `# Facebook for Freelancers
 
 ## Why Facebook?
 
@@ -489,9 +481,7 @@ AI makes daily posting easy.`,
                 isCompleted: false,
                 type: "article" as const,
                 videoUrl: "https://www.youtube.com/embed/bOOQJRHMy8o",
-                content: `![Twitter X](https://images.unsplash.com/photo-1611605698335-8b1569810432?auto=format&fit=crop&q=80&w=1200)
-
-# Twitter and X for Freelancers
+                content: `# Twitter and X for Freelancers
 
 ## Why Twitter or X?
 
@@ -548,9 +538,7 @@ AI makes daily posting easy.`,
                 isCompleted: false,
                 type: "article" as const,
                 videoUrl: "https://www.youtube.com/embed/AIrWB9q5R8k",
-                content: `![Content Scheduling](https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&q=80&w=1200)
-
-# AI for Content Creation and Scheduling
+                content: `# AI for Content Creation and Scheduling
 
 ## The problem: Posting every day is exhausting  
 ## The solution: Content batching plus scheduling
