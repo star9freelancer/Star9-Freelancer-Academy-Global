@@ -366,7 +366,12 @@ export default function Auth() {
         }
 
         setIsClearing(true);
-        setTimeout(() => navigate("/academy"), 1800);
+        // Redirect to course dashboard if enrolled in a course, otherwise to academy
+        if (selectedCourse && selectedRole === 'student') {
+          setTimeout(() => navigate(`/academy/course/${selectedCourse}`), 1800);
+        } else {
+          setTimeout(() => navigate("/academy"), 1800);
+        }
       }
     } catch (error: any) {
       toast.error(error.message || "An error occurred during account creation.");

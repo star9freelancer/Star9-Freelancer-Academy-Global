@@ -54,8 +54,8 @@ import {
 } from "@/components/ui/dialog";
 import logo from "@/assets/logo_highres_transparent.png";
 import { getStoredTheme, applyTheme } from "@/lib/theme";
+import { getExchangeRates, convertFromUSD, formatCurrency, getPaymentAmount } from "@/lib/currencyConverter";
 
-const STAR9_EXCHANGE_RATE = 150;
 const COHORT_START = new Date("2026-05-12T00:00:00");
 
 const Academy = () => {
@@ -89,6 +89,8 @@ const Academy = () => {
     degree: '', graduation_year: '', experience_years: '', skills: [],
     national_id_passport: ''
   });
+  const [exchangeRates, setExchangeRates] = useState<any>(null);
+  const [loadingRates, setLoadingRates] = useState(false);
 
   const navigate = useNavigate();
 
@@ -109,6 +111,19 @@ const Academy = () => {
       skills: profile.skills || []
     });
   }, [profile]);
+
+  // Fetch exchange rates when payment modal opens
+  useEffect(() => {
+    if (paymentModalOpen && !exchangeRates) {
+      setLoadingRates(true);
+      getExchangeRates().then(rates => {
+        setExchangeRates(rates);
+        setLoadingRates(false);
+      }).catch(() => {
+        setLoadingRates(false);
+      });
+    }
+  }, [paymentModalOpen, exchangeRates]);
 
   useEffect(() => {
     if (!authLoading) {
@@ -163,8 +178,9 @@ const Academy = () => {
       navigate('/auth?tab=register', { state: { courseId, from: '/academy' } });
       return;
     }
-    // If user is already logged in, redirect them to auth page to complete enrollment
-    navigate('/auth?tab=register', { state: { courseId, from: '/academy' } });
+    // If user is already logged in, open payment modal for enrollment
+    setEnrolling(courseId);
+    setPaymentModalOpen(true);
   };
 
   const handleOpenCourse = (courseId: string) => {
@@ -179,17 +195,18 @@ const Academy = () => {
     navigate(`/academy/course/${courseId}`);
   };
 
-  const initiatePayment = (currency: 'USD' | 'KES' | 'GHS') => {
+  const initiatePayment = async (currency: 'USD' | 'KES' | 'GHS') => {
     const courseId = enrolling;
     if (!courseId) return;
     const courseObj = courses.find(c => c.id === courseId);
+
+    // Determine base USD price
     let basePrice = 50;
     if (courseObj?.title.toLowerCase().includes("mastering freelancing")) basePrice = 100;
     if (courseObj?.title.toLowerCase().includes("teacher preparation")) basePrice = 1500;
 
-    let amount = basePrice * 100;
-    if (currency === 'KES') amount = Math.round(basePrice * STAR9_EXCHANGE_RATE) * 100;
-    if (currency === 'GHS') amount = Math.round(basePrice * 15) * 100;
+    // Get converted amount using live exchange rates
+    const amount = await getPaymentAmount(basePrice, currency);
 
     const paystackKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
     if (!paystackKey) { toast.error("Payment configuration error."); return; }
@@ -225,12 +242,30 @@ const Academy = () => {
             { display_name: "Course ID", variable_name: "course_id", value: courseId }
           ]
         },
-        callback: () => {
-          toast.success("🎉 Enrolled! Lessons begin Tuesday, 12th May.", {
-            description: "We'll see you on the 12th — get excited!",
-            duration: 8000,
+        callback: async () => {
+          // Create enrollment record
+          const { error: enrollError } = await supabase.from('user_enrollments').insert({
+            user_id: user?.id,
+            course_id: courseId,
+            progress: 0
           });
-          setTimeout(() => invalidateAll(), 3000);
+
+          if (enrollError) {
+            console.error('Enrollment error:', enrollError);
+            toast.error("Enrollment failed. Please contact support.");
+            return;
+          }
+
+          toast.success("🎉 Enrolled! Redirecting to your course...", {
+            description: "Get ready to start learning!",
+            duration: 3000,
+          });
+
+          // Invalidate cache and redirect to course dashboard
+          setTimeout(() => {
+            invalidateAll();
+            navigate(`/academy/course/${courseId}`);
+          }, 1500);
         },
         onClose: () => setEnrolling(null)
       });
@@ -487,27 +522,37 @@ const Academy = () => {
             </div>
           )}
 
+          <div className="bg-muted/50 border border-border rounded-xl p-3 text-xs text-muted-foreground flex items-start gap-2">
+            <GlobeIcon className="size-4 shrink-0 mt-0.5" />
+            <p>Prices are automatically converted from USD using live exchange rates. The exact amount will be confirmed before payment.</p>
+          </div>
+
           <div className="grid gap-3 pt-4">
-            <Button onClick={() => initiatePayment('USD')} className="h-14 flex justify-between px-6 rounded-2xl group">
+            <Button onClick={() => initiatePayment('USD')} className="h-14 flex justify-between px-6 rounded-2xl group" disabled={loadingRates}>
               <span className="flex items-center gap-3"><CreditCardIcon className="size-5" /> Global Card (USD)</span>
-              <span className="font-mono">$ {
-                courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") ? "1500" :
+              <span className="font-mono">
+                {loadingRates ? '...' : `$ ${courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") ? "1,500" :
                   courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("mastering") ? "100" : "50"
-              }</span>
+                  }`}
+              </span>
             </Button>
-            <Button onClick={() => initiatePayment('KES')} variant="outline" className="h-14 flex justify-between px-6 rounded-2xl group border-emerald-500/20 hover:bg-emerald-500/5">
+            <Button onClick={() => initiatePayment('KES')} variant="outline" className="h-14 flex justify-between px-6 rounded-2xl group border-emerald-500/20 hover:bg-emerald-500/5" disabled={loadingRates}>
               <span className="flex items-center gap-3"><SmartphoneIcon className="size-5 text-emerald-500" /> M-Pesa (KES)</span>
-              <span className="font-mono text-emerald-500">KES {(
-                courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") ? 1500 :
-                  courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("mastering") ? 100 : 50
-              ) * STAR9_EXCHANGE_RATE}</span>
+              <span className="font-mono text-emerald-500">
+                {loadingRates ? '...' : exchangeRates ? `KES ${Math.round((
+                  courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") ? 1500 :
+                    courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("mastering") ? 100 : 50
+                ) * exchangeRates.KES).toLocaleString()}` : 'KES ...'}
+              </span>
             </Button>
-            <Button onClick={() => initiatePayment('GHS')} variant="outline" className="h-14 flex justify-between px-6 rounded-2xl group border-amber-500/20 hover:bg-amber-500/5">
+            <Button onClick={() => initiatePayment('GHS')} variant="outline" className="h-14 flex justify-between px-6 rounded-2xl group border-amber-500/20 hover:bg-amber-500/5" disabled={loadingRates}>
               <span className="flex items-center gap-3"><SmartphoneIcon className="size-5 text-amber-500" /> Airtel / MTN (GHS)</span>
-              <span className="font-mono text-amber-500">GH₵ {(
-                courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") ? 1500 :
-                  courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("mastering") ? 100 : 50
-              ) * 15}</span>
+              <span className="font-mono text-amber-500">
+                {loadingRates ? '...' : exchangeRates ? `GH₵ ${Math.round((
+                  courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("teacher") ? 1500 :
+                    courses.find(c => c.id === enrolling)?.title.toLowerCase().includes("mastering") ? 100 : 50
+                ) * exchangeRates.GHS).toLocaleString()}` : 'GH₵ ...'}
+              </span>
             </Button>
           </div>
         </DialogContent>

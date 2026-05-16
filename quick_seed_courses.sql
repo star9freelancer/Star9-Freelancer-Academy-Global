@@ -2,14 +2,14 @@
 -- Run this in Supabase SQL Editor
 
 -- Clean up first
-DELETE FROM academy_lessons WHERE course_id IN ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', '33333333-3333-3333-3333-333333333333');
-DELETE FROM academy_courses WHERE id IN ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', '33333333-3333-3333-3333-333333333333');
+DELETE FROM academy_lessons WHERE course_id IN ('00000000-0000-0000-0000-000000000001', '22222222-2222-2222-2222-222222222222', '33333333-3333-3333-3333-333333333333');
+DELETE FROM academy_courses WHERE id IN ('00000000-0000-0000-0000-000000000001', '22222222-2222-2222-2222-222222222222', '33333333-3333-3333-3333-333333333333');
 
 -- Insert the 3 courses with FIXED UUIDs that match CURRICULUM_LEDGER
 INSERT INTO academy_courses (id, slug, title, category, ai_tools_covered, overview, learning_outcomes, assessment_details, duration, commitment, price, status, image_url)
 VALUES 
   (
-    '11111111-1111-1111-1111-111111111111',
+    '00000000-0000-0000-0000-000000000001',
     'ai-for-freelancers',
     'AI for Freelancers', 
     'AI & Automation', 

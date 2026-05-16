@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
 import { WEEK_1_AI_MODULES } from "./week1_ai_content";
+import { WEEK_2_AI_MODULES } from "./week2_ai_content";
 
 export interface Lesson {
   id: string;
@@ -130,7 +131,10 @@ export const CURRICULUM_LEDGER: Record<string, any[]> = {
       ]
     }
   ],
-  "00000000-0000-0000-0000-000000000001": WEEK_1_AI_MODULES,
+  "00000000-0000-0000-0000-000000000001": [
+    ...WEEK_1_AI_MODULES,
+    ...WEEK_2_AI_MODULES
+  ],
   "33333333-3333-3333-3333-333333333333": [
     {
       id: "tp-week-1",
